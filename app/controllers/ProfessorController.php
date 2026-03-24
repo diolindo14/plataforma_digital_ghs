@@ -1,0 +1,225 @@
+<?php
+class ProfessorController extends Controller {
+    public function __construct() {
+        parent::__construct();
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'professor') {
+            header('Location: /green/auth');
+            exit;
+        }
+    }
+
+    public function index() {
+        $profModel = $this->model('Professor');
+        $profData = $profModel->findByUserId($_SESSION['user_id']);
+        
+        if (!$profData) {
+            $_SESSION['flash_error'] = "Perfil de professor não encontrado para este utilizador.";
+            header('Location: /green/auth');
+            exit;
+        }
+
+        $classes = $profModel->getAssignedClasses($profData['id']);
+        
+        $selected_turma = $_GET['turma_id'] ?? (!empty($classes) ? $classes[0]['turma_id'] : null);
+        $selected_disciplina = $_GET['disciplina_id'] ?? (!empty($classes) ? $classes[0]['disciplina_id'] : null);
+        
+        $horarioModel = $this->model('Horario');
+        $comunicadoModel = $this->model('Comunicado');
+        $notaModel = $this->model('Nota');
+        $frequenciaModel = $this->model('Frequencia');
+
+        $data = [
+            'professor' => $profData,
+            'classes' => $classes,
+            'students' => $selected_turma ? $profModel->getStudentsByTurma($selected_turma) : [],
+            'horario' => $horarioModel->getHorarioByProfessor($profData['id']),
+            'comunicados' => $comunicadoModel->getComunicadosParaUtilizador($_SESSION['user_id'], 'professor'),
+            'notas' => ($selected_turma && $selected_disciplina) ? $notaModel->getNotasByTurma($selected_turma, $selected_disciplina) : [],
+            'meus_sumarios' => $frequenciaModel->getSummariesByProfessor($profData['id']),
+            'meus_materiais' => $this->model('Material')->getByProfessor($profData['id']),
+            'meus_eventos' => $this->model('Evento')->getForProfessor($profData['id']),
+            'reclamacoes' => $notaModel->getFeedbacksParaProfessor($profData['id']),
+            'minha_assiduidade' => $frequenciaModel->getDetailedAttendanceForProfessor($profData['id']),
+            'selected_turma' => $selected_turma,
+            'selected_disciplina' => $selected_disciplina,
+        ];
+        
+        // Filtrar horário de hoje
+        $diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+        $hojeStr = $diasSemana[date('w')];
+        
+        $data['horario_hoje'] = array_filter($data['horario'], function($h) use ($hojeStr) {
+            return $h['dia_semana'] == $hojeStr;
+        });
+        $data['hoje'] = $hojeStr;
+        $data['tempos_aula'] = [
+            '1º' => ['07:20', '08:50'],
+            '2º' => ['08:55', '10:25'],
+            '3º' => ['10:45', '12:15'],
+            '4º' => ['12:20', '13:50'],
+            'N1' => ['17:45', '19:15'],
+            'N2' => ['19:20', '20:50'],
+            'N3' => ['21:00', '22:30'],
+            'N4' => ['22:35', '24:00']
+        ];
+        $data['dias_semana'] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+        $this->view('professor/dashboard', $data);
+    }
+
+    public function saveNota() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->verifyCsrfToken();
+            $notaModel = $this->model('Nota');
+            $res = $notaModel->saveNotasRow($_POST);
+            if ($res) $this->logActivity('Lançar Nota', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
+            echo json_encode(['success' => $res]);
+            exit;
+        }
+    }
+
+    public function saveComunicado() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->verifyCsrfToken();
+            $model = $this->model('Comunicado');
+            $res = $model->create($_POST);
+            if ($res) $this->logActivity('Professor Enviar Comunicado', ['titulo' => $_POST['titulo'] ?? 'N/A']);
+            echo json_encode(['success' => $res]);
+            exit;
+        }
+    }
+
+    public function deleteComunicado() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
+            $this->verifyCsrfToken();
+            $model = $this->model('Comunicado');
+            $res = $model->delete($_POST['id'], $_SESSION['user_id']);
+            if ($res) $this->logActivity('Professor Remover Comunicado', ['id' => $_POST['id']]);
+            echo json_encode(['success' => $res]);
+            exit;
+        }
+        echo json_encode(['success' => false]);
+        exit;
+    }
+
+
+    public function marcarLido() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comunicado_id'])) {
+            $comModel = $this->model('Comunicado');
+            $success = $comModel->marcarComoLido($_POST['comunicado_id'], $_SESSION['user_id']);
+            echo json_encode(['success' => $success]);
+            exit;
+        }
+        echo json_encode(['success' => false]);
+        exit;
+    }
+
+    public function saveSummary() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->verifyCsrfToken();
+            $model = $this->model('Frequencia');
+            $res = $model->saveSummary($_POST);
+            if ($res) $this->logActivity('Lançar Sumário', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
+            echo json_encode(['success' => $res]);
+            exit;
+        }
+    }
+
+    public function uploadMaterial() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_FILES['ficheiro'])) {
+            echo json_encode(['success' => false, 'message' => 'Pedido inválido.']);
+            exit;
+        }
+        $this->verifyCsrfToken();
+
+        $profModel = $this->model('Professor');
+        $profData  = $profModel->findByUserId($_SESSION['user_id']);
+
+        $targetDir = 'public/uploads/materiais/';
+        if (!is_dir($targetDir)) mkdir($targetDir, 0755, true);
+
+        // --- Validação Segura de Upload ---
+        $maxSize      = 20 * 1024 * 1024; // 20 MB
+        $allowedMimes = [
+            'application/pdf',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/zip', 'application/x-zip-compressed',
+            'image/jpeg', 'image/png'
+        ];
+        $allowedExts  = ['pdf', 'ppt', 'pptx', 'doc', 'docx', 'zip', 'jpg', 'jpeg', 'png'];
+
+        if ($_FILES['ficheiro']['size'] > $maxSize) {
+            echo json_encode(['success' => false, 'message' => 'Ficheiro demasiado grande (máx. 20MB).']);
+            exit;
+        }
+
+        $origExt = strtolower(pathinfo($_FILES['ficheiro']['name'], PATHINFO_EXTENSION));
+        if (!in_array($origExt, $allowedExts, true)) {
+            echo json_encode(['success' => false, 'message' => 'Tipo de ficheiro não permitido.']);
+            exit;
+        }
+
+        $finfo    = new finfo(FILEINFO_MIME_TYPE);
+        $realMime = $finfo->file($_FILES['ficheiro']['tmp_name']);
+        if (!in_array($realMime, $allowedMimes, true)) {
+            echo json_encode(['success' => false, 'message' => 'Tipo MIME inválido.']);
+            exit;
+        }
+
+        $safeFilename = 'MAT_' . time() . '_' . bin2hex(random_bytes(6)) . '.' . $origExt;
+
+        if (!move_uploaded_file($_FILES['ficheiro']['tmp_name'], $targetDir . $safeFilename)) {
+            echo json_encode(['success' => false, 'message' => 'Erro ao guardar ficheiro.']);
+            exit;
+        }
+
+        $materialModel = $this->model('Material');
+        $this->logActivity('Upload de Material', ['titulo' => $_POST['titulo'] ?? 'N/A']);
+        $res = $materialModel->create([
+            'turma_id'       => $_POST['turma_id'],
+            'disciplina_id'  => $_POST['disciplina_id'],
+            'professor_id'   => $profData['id'],
+            'titulo'         => $_POST['titulo'],
+            'nome_ficheiro'  => $_FILES['ficheiro']['name'],
+            'caminho_ficheiro' => $targetDir . $safeFilename,
+            'tipo_ficheiro'  => $origExt
+        ]);
+
+        echo json_encode(['success' => $res]);
+        exit;
+    }
+
+    public function saveEvento() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->verifyCsrfToken();
+            $eventoModel = $this->model('Evento');
+            if ($eventoModel->create($_POST)) {
+                $this->logActivity('Professor Agendar Evento', ['titulo' => $_POST['titulo'] ?? 'N/A']);
+                $_SESSION['flash_success'] = "Evento agendado com sucesso!";
+            } else {
+                $_SESSION['flash_error'] = "Erro ao agendar evento.";
+            }
+            header('Location: /green/professor/dashboard');
+        }
+    }
+
+    public function deleteEvento($id) {
+        $eventoModel = $this->model('Evento');
+        if ($eventoModel->delete($id)) {
+            $this->logActivity('Professor Remover Evento', ['id' => $id]);
+            $_SESSION['flash_success'] = "Agendamento removido!";
+        } else {
+            $_SESSION['flash_error'] = "Erro ao remover agendamento.";
+        }
+        header('Location: /green/professor/dashboard');
+    }
+}

@@ -1,0 +1,18 @@
+id - int(11)
+estudante_id - int(11)
+matricula_id - int(11)
+tipo_pagamento_id - int(11)
+ano_letivo - year(4)
+mes_referencia - tinyint(4)
+descricao - varchar(200)
+valor - decimal(10,2)
+data_vencimento - date
+data_pagamento - date
+status - enum('Pendente','Pago','Vencido','Cancelado')
+forma_pagamento - enum('Dinheiro','Transferência','Mobile Money')
+comprovativo_arquivo - varchar(255)
+referencia_bancaria - varchar(100)
+processado_por - int(11)
+observacoes - text
+data_criacao - timestamp
+data_atualizacao - timestamp

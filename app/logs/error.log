@@ -1,0 +1,23 @@
+[2026-03-24 14:51:11] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 14:53:10] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 18:35:33] DB Connection Error: SQLSTATE[HY000] [2002] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente
+[2026-03-24 19:17:10] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 19:22:34] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 19:24:46] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 19:29:00] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 19:29:54] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 19:41:54] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 19:58:07] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 19:59:20] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 19:59:22] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:02:13] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:03:40] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:09:27] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:09:28] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:09:42] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:10:09] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:10:16] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:21:39] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 20:21:47] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 21:41:29] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 21:41:38] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1

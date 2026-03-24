@@ -1,0 +1,14 @@
+id - int(11)
+titulo - varchar(200)
+mensagem - text
+tipo - enum('Geral','Alunos','Professores','Turma','Urgente')
+prioridade - enum('Baixa','Normal','Alta','Urgente')
+destinatario_tipo - enum('Todos','Ano','Turma','Curso')
+destinatario_id - int(11)
+anexo - varchar(255)
+criado_por - int(11)
+data_criacao - timestamp
+data_publicacao - datetime
+data_expiracao - date
+agendado - tinyint(1)
+ativo - tinyint(1)

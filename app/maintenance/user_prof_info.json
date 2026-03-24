@@ -1,0 +1,75 @@
+{
+    "user_13": {
+        "id": 13,
+        "nome_completo": "Rebeca",
+        "tipo": "admin"
+    },
+    "professors": [
+        {
+            "prof_id": 1,
+            "user_id": 19,
+            "nome_completo": "Domingos Correia",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 2,
+            "user_id": 22,
+            "nome_completo": "Justino Gomes",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 3,
+            "user_id": 29,
+            "nome_completo": "Domingos Insumb\u00fa",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 4,
+            "user_id": 30,
+            "nome_completo": "Mamadu Bentem Jal\u00f3",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 5,
+            "user_id": 31,
+            "nome_completo": "Oscar Gomes Romero",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 6,
+            "user_id": 32,
+            "nome_completo": "Samba Djob",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 7,
+            "user_id": 33,
+            "nome_completo": "Estev\u00e3o Siga",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 8,
+            "user_id": 34,
+            "nome_completo": "Didier Fernandes",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 9,
+            "user_id": 35,
+            "nome_completo": "Valdemar Melicio",
+            "tipo": "professor"
+        },
+        {
+            "prof_id": 10,
+            "user_id": 36,
+            "nome_completo": "Sampum Nan Sum",
+            "tipo": "professor"
+        }
+    ],
+    "attendance_counts": [
+        {
+            "professor_id": 1,
+            "count": 4
+        }
+    ]
+}

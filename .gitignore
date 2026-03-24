@@ -1,0 +1,19 @@
+# Ignorar ficheiros temporários e desnecessários
+tmp/
+tmp_*
+check_*
+import_data.php
+migrate_horarios.php
+dump_anos.php
+final_check.php
+schema_output.txt
+table_schema.json
+all_disciplinas.json
+prof_disc.json
+verify_*
+.gemini/
+brain/
+public/uploads/*
+!public/uploads/.gitkeep
+.DS_Store
+Thumbs.db

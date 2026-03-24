@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal da Secretaria - Green</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+        .sidebar { background: #0f172a; min-height: 100vh; color: white; padding: 20px; position: fixed; width: 260px; }
+        .sidebar a { color: #cbd5e1; text-decoration: none; display: flex; align-items: center; padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; cursor: pointer; }
+        .sidebar a:hover, .sidebar a.active { background: #1e293b; color: #10b981; }
+        .main-content { margin-left: 260px; padding: 30px; width: calc(100% - 260px); }
+        .card-stat { background: white; border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 20px; height: 100%; }
+        .icon-box { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
+        .tab-pane { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="d-flex align-items-center gap-3 mb-5 px-2">
+                <div style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #10b981; background: white; overflow: hidden;">
+                    <img src="/green/img/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <h5 class="mb-0 fw-bold">Secretaria</h5>
+            </div>
+            
+            <nav class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                <a class="nav-link active" data-bs-toggle="pill" data-bs-target="#pane-dashboard" role="tab"><ion-icon name="grid-outline" class="me-2"></ion-icon> Dashboard</a>
+                <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-matriculas" role="tab"><ion-icon name="people-outline" class="me-2"></ion-icon> Matrículas</a>
+                <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-pagamentos" role="tab"><ion-icon name="card-outline" class="me-2"></ion-icon> Pagamentos</a>
+                <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-comunicados" role="tab"><ion-icon name="megaphone-outline" class="me-2"></ion-icon> Comunicados</a>
+            </nav>
+
+            <hr class="border-secondary my-4">
+            <a href="/green/" class="text-light mb-2"><ion-icon name="home-outline" class="me-2"></ion-icon> Voltar ao Site</a>
+            <a href="/green/auth/logout" class="text-danger"><ion-icon name="log-out-outline" class="me-2"></ion-icon> Sair</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Flash Messages -->
+            <?php if(isset($_SESSION['flash_success'])): ?>
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                    <?= $this->e($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+            <?php if(isset($_SESSION['flash_error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                    <?= $this->e($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-dark">Bem-vindo(a), <?= htmlspecialchars($data['nome'] ?? 'Colaborador') ?></h2>
+                <div>
+                    <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">Portal Secretaria Ativo</span>
+                </div>
+            </div>
+
+            <div class="tab-content" id="v-pills-tabContent">
+                <!-- Dashboard Pane -->
+                <div class="tab-pane fade show active" id="pane-dashboard" role="tabpanel">
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-4">
+                            <div class="card-stat">
+                                <div class="icon-box" style="background: #ecfdf5; color: #10b981;">
+                                    <ion-icon name="document-text-outline"></ion-icon>
+                                </div>
+                                <h3 class="fw-bold mb-1"><?= $data['stats']['matriculas_pendentes'] ?? 0 ?></h3>
+                                <p class="text-muted mb-0 small fw-bold">Matrículas Pendentes</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card-stat">
+                                <div class="icon-box" style="background: #eff6ff; color: #3b82f6;">
+                                    <ion-icon name="wallet-outline"></ion-icon>
+                                </div>
+                                <h3 class="fw-bold mb-1"><?= $data['stats']['pagamentos_validar'] ?? 0 ?></h3>
+                                <p class="text-muted mb-0 small fw-bold">Pagamentos a Validar</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card-stat">
+                                <div class="icon-box" style="background: #fffbeb; color: #f59e0b;">
+                                    <ion-icon name="chatbubbles-outline"></ion-icon>
+                                </div>
+                                <h3 class="fw-bold mb-1"><?= count($data['comunicados'] ?? []) ?></h3>
+                                <p class="text-muted mb-0 small fw-bold">Comunicados Ativos</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h5 class="fw-bold mb-3">Atividades Recentes</h5>
+                        <p class="text-muted small">As últimas ações realizadas no portal aparecerão aqui brevemente.</p>
+                        <hr class="my-3 opacity-25">
+                        <div class="d-flex align-items-center gap-3 py-2">
+                            <div class="bg-light p-2 rounded-circle text-primary"><ion-icon name="sync-outline"></ion-icon></div>
+                            <div>
+                                <p class="mb-0 small fw-bold">Sistema Atualizado</p>
+                                <p class="mb-0 text-muted" style="font-size: 0.75rem;">Sincronização completa com a base de dados académica.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matrículas Pane -->
+                <div class="tab-pane fade" id="pane-matriculas" role="tabpanel">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="card-header bg-white py-3 border-0">
+                            <h5 class="mb-0 fw-bold">Validação de Matrículas</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light shadow-sm">
+                                    <tr>
+                                        <th class="ps-4">Estudante</th>
+                                        <th>Ano Letivo</th>
+                                        <th>Status</th>
+                                        <th class="text-end pe-4">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if(empty($data['matriculas_pendentes'])): ?>
+                                        <tr><td colspan="4" class="text-center py-5 text-muted">Nenhuma matrícula pendente de validação.</td></tr>
+                                    <?php else: ?>
+                                        <?php foreach($data['matriculas_pendentes'] as $m): ?>
+                                            <tr>
+                                                <td class="ps-4">
+                                                    <div class="fw-bold"><?= $this->e($m['nome']) ?></div>
+                                                    <div class="text-muted small">Proc: #<?= $m['id'] ?></div>
+                                                </td>
+                                                <td><?= htmlspecialchars($m['ano_letivo']) ?></td>
+                                                <td><span class="badge bg-warning text-dark px-3"><?= $this->e($m['status']) ?></span></td>
+                                                <td class="text-end pe-4">
+                                                    <form action="/green/secretaria/approveMatricula/<?= $m['id'] ?>" method="POST" style="display:inline;">
+                                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                                        <button type="submit" class="btn btn-sm btn-success border-0 shadow-sm" onclick="return confirm('Aprovar esta matrícula?')"><ion-icon name="checkmark-outline"></ion-icon></button>
+                                                    </form>
+                                                    <button class="btn btn-sm btn-danger border-0 shadow-sm ms-1" data-bs-toggle="modal" data-bs-target="#rejectModal<?= $m['id'] ?>"><ion-icon name="close-outline"></ion-icon></button>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Modal Rejeitar -->
+                                            <div class="modal fade" id="rejectModal<?= $m['id'] ?>" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="/green/secretaria/rejectMatricula/<?= $m['id'] ?>" method="POST" class="modal-content border-0 shadow-lg">
+                                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title fw-bold">Rejeitar Matrícula</h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body p-4">
+                                                            <label class="form-label fw-bold small">Motivo da Rejeição</label>
+                                                            <textarea name="motivo" class="form-control" rows="3" required placeholder="Ex: Documentação de BI ilegível..."></textarea>
+                                                        </div>
+                                                        <div class="modal-footer border-0">
+                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Voltar</button>
+                                                            <button type="submit" class="btn btn-danger fw-bold">Confirmar Rejeição</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagamentos Pane -->
+                <div class="tab-pane fade" id="pane-pagamentos" role="tabpanel">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="card-header bg-white py-3 border-0">
+                            <h5 class="mb-0 fw-bold">Validação de Pagamentos (Comprovativos)</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light shadow-sm">
+                                    <tr>
+                                        <th class="ps-4">Estudante / Descrição</th>
+                                        <th>Valor (XOF)</th>
+                                        <th>Vencimento</th>
+                                        <th class="text-center">Comprovativo</th>
+                                        <th class="text-end pe-4">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if(empty($data['pagamentos_validar'])): ?>
+                                        <tr><td colspan="5" class="text-center py-5 text-muted">Nenhum pagamento com comprovativo pendente de validação.</td></tr>
+                                    <?php else: ?>
+                                        <?php foreach($data['pagamentos_validar'] as $p): ?>
+                                            <tr>
+                                                <td class="ps-4">
+                                                    <div class="fw-bold text-dark"><?= $this->e($p['aluno_nome'] ?? 'N/A') ?></div>
+                                                    <div class="text-muted small"><?= $this->e($p['descricao']) ?></div>
+                                                </td>
+                                                <td class="fw-bold"><?= number_format($p['valor'], 0, ',', '.') ?></td>
+                                                <td><?= date('d/m/Y', strtotime($p['data_vencimento'])) ?></td>
+                                                <td class="text-center">
+                                                    <a href="/green/<?= $p['comprovativo_arquivo'] ?>" target="_blank" class="btn btn-xs btn-outline-primary py-0"><ion-icon name="document-attach-outline"></ion-icon> Ver</a>
+                                                </td>
+                                                <td class="text-end pe-4">
+                                                    <form action="/green/secretaria/validatePayment/<?= $p['id'] ?>" method="POST" style="display:inline;">
+                                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                                        <button type="submit" class="btn btn-sm btn-primary border-0 shadow-sm" onclick="return confirm('Validar este pagamento?')"><ion-icon name="card-outline" class="me-1"></ion-icon> Validar</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comunicados Pane -->
+                <div class="tab-pane fade" id="pane-comunicados" role="tabpanel">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                                <h5 class="fw-bold mb-3">Novo Comunicado</h5>
+                                <form action="/green/secretaria/saveComunicado" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
+    
+
+    
+
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Título</label>
+                                        <input type="text" name="titulo" class="form-control" required placeholder="Ex: Aviso de Feriado">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Mensagem</label>
+                                        <textarea name="conteudo" class="form-control" rows="5" required placeholder="Texto do comunicado..."></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Para:</label>
+                                        <select name="tipo_destinatario" class="form-select">
+                                            <option value="Todos">Todos os utilizadores</option>
+                                            <option value="Alunos">Apenas Estudantes</option>
+                                            <option value="Professores">Apenas Professores</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100 fw-bold border-0 shadow-sm">Publicar Comunicado</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                                <div class="card-header bg-white py-3 border-0">
+                                    <h5 class="mb-0 fw-bold">Comunicados Recentes</h5>
+                                </div>
+                                <div class="p-4">
+                                    <?php if(empty($data['comunicados'])): ?>
+                                        <p class="text-center text-muted py-5">Sem comunicados registados.</p>
+                                    <?php else: ?>
+                                        <?php foreach(array_slice($data['comunicados'], 0, 5) as $c): ?>
+                                            <div class="d-flex gap-3 mb-4 border-bottom pb-3">
+                                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3 h-100"><ion-icon name="megaphone-outline" class="fs-4"></ion-icon></div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <h6 class="fw-bold mb-1"><?= $this->e($c['titulo']) ?></h6>
+                                                        <span class="badge bg-light text-muted fw-normal" style="font-size: 0.7rem;"><?= date('d/m/Y', strtotime($c['data_criacao'])) ?></span>
+                                                    </div>
+                                                    <p class="text-muted small mb-1"><?= nl2br($this->e($c['conteudo'])) ?></p>
+                                                    <span class="badge bg-light text-primary fw-normal" style="font-size: 0.65rem;">Alvo: <?= ucfirst($c['tipo_utilizador'] ?? 'Todos') ?></span>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

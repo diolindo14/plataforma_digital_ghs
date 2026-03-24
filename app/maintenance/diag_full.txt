@@ -1,0 +1,23 @@
+=== ASSIDUIDADE PROFESSORES ===
+ID: 1 | Prof ID: 1 | Data: 2026-03-20 | Status: Presença
+ID: 2 | Prof ID: 1 | Data: 2026-03-24 | Status: Falta
+ID: 3 | Prof ID: 1 | Data: 2026-03-20 | Status: Presença
+ID: 5 | Prof ID: 1 | Data: 2026-03-24 | Status: Presença
+
+=== PROFESSORES TABLE ===
+Prof ID: 1 | User ID: 19 | Nome: Domingos Correia
+Prof ID: 2 | User ID: 22 | Nome: Justino Gomes
+Prof ID: 3 | User ID: 29 | Nome: Domingos Insumbú
+Prof ID: 4 | User ID: 30 | Nome: Mamadu Bentem Jaló
+Prof ID: 5 | User ID: 31 | Nome: Oscar Gomes Romero
+Prof ID: 6 | User ID: 32 | Nome: Samba Djob
+Prof ID: 7 | User ID: 33 | Nome: Estevão Siga
+Prof ID: 8 | User ID: 34 | Nome: Didier Fernandes
+Prof ID: 9 | User ID: 35 | Nome: Valdemar Melicio
+Prof ID: 10 | User ID: 36 | Nome: Sampum Nan Sum
+
+=== CHECKING JOINS ===
+ID: 1 | Prof: Domingos Correia (ID: 1) | Turma: GHS-4T1 | Disc: Redes Digitais — Sistemas, Aplicação e Serviços
+ID: 3 | Prof: Domingos Correia (ID: 1) | Turma: GHS-4T1 | Disc: Redes Digitais — Sistemas, Aplicação e Serviços
+ID: 2 | Prof: Domingos Correia (ID: 1) | Turma: GHS-4T1 | Disc: Redes Digitais — Sistemas, Aplicação e Serviços
+ID: 5 | Prof: Domingos Correia (ID: 1) | Turma: GHS-4T1 | Disc: Redes Digitais — Sistemas, Aplicação e Serviços
