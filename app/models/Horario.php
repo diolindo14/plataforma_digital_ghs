@@ -69,6 +69,26 @@ class Horario {
         return $stmt->fetchAll();
     }
 
+    public function buildWeeklyGridForProfessor($professor_id) {
+        $rows = $this->getHorarioByProfessor($professor_id);
+        $dias  = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+        $grid  = [];
+        $tempos = [];
+
+        foreach ($rows as $r) {
+            $t = (int)$r['tempo_num'];
+            $d = $r['dia_semana'];
+            if (!isset($tempos[$t])) {
+                $tempos[$t] = ['inicio' => $r['hora_inicio'], 'fim' => $r['hora_fim']];
+            }
+            // Add turma code to sigla for professor view
+            $r['sigla'] = $r['sigla'] . " (" . $r['turma_codigo'] . ")";
+            $grid[$t][$d] = $r;
+        }
+        ksort($tempos);
+        return ['tempos' => $tempos, 'grid' => $grid, 'dias' => $dias];
+    }
+
     // ─── Admin CRUD ──────────────────────────────────────────────
 
     public function allocate($data) {

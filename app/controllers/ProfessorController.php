@@ -57,11 +57,16 @@ class ProfessorController extends Controller {
             '2º' => ['08:55', '10:25'],
             '3º' => ['10:45', '12:15'],
             '4º' => ['12:20', '13:50'],
+            'T1' => ['13:00', '14:30'],
+            'T2' => ['14:35', '16:05'],
+            'T3' => ['16:10', '17:40'],
+            'T4' => ['17:45', '19:15'],
             'N1' => ['17:45', '19:15'],
             'N2' => ['19:20', '20:50'],
             'N3' => ['21:00', '22:30'],
             'N4' => ['22:35', '24:00']
         ];
+        $data['gridData'] = $horarioModel->buildWeeklyGridForProfessor($data['professor']['id']);
         $data['dias_semana'] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
         $this->view('professor/dashboard', $data);

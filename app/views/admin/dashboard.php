@@ -179,6 +179,12 @@
                 <a class="nav-link" id="tab-matriculas" data-bs-toggle="pill" data-bs-target="#pane-matriculas" href="javascript:void(0)" role="tab">
                     <ion-icon name="document-text-outline"></ion-icon> Validação de Matrículas
                 </a>
+                <a class="nav-link" id="tab-pendentes" data-bs-toggle="pill" data-bs-target="#pane-pendentes" href="javascript:void(0)" role="tab">
+                    <ion-icon name="person-add-outline"></ion-icon> Aprovação de Contas
+                    <?php if(!empty($data['pendentes'])): ?>
+                        <span class="badge bg-danger ms-auto"><?= count($data['pendentes']) ?></span>
+                    <?php endif; ?>
+                </a>
 
                 <div class="sidebar-section-label mt-3">Gestão Académica & Financeira</div>
                 <a class="nav-link" id="tab-pedagogico" data-bs-toggle="pill" data-bs-target="#pane-pedagogico" href="javascript:void(0)" role="tab">
@@ -243,6 +249,61 @@
         <?php endif; ?>
         
         <div class="tab-content" id="v-pills-tabContent">
+            
+            <!-- Aprovação de Contas Pendentes -->
+            <div class="tab-pane fade" id="pane-pendentes" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0 text-dark">Aprovação de Contas</h2>
+                        <p class="text-muted small">Validar novos registos de alunos realizados via login público.</p>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <?php if(empty($data['pendentes'])): ?>
+                            <div class="text-center py-5 text-muted">
+                                <ion-icon name="checkmark-done-circle-outline" style="font-size: 4rem;" class="opacity-25"></ion-icon>
+                                <h5 class="mt-3">Nenhum registo pendente</h5>
+                                <p class="small">Todos os novos cadastros já foram processados.</p>
+                            </div>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle datatable-simple">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nome Completo</th>
+                                            <th>E-mail</th>
+                                            <th>Data de Registo</th>
+                                            <th class="text-end">Acções</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($data['pendentes'] as $u): ?>
+                                            <tr>
+                                                <td class="fw-bold text-dark"><?= htmlspecialchars($u['nome_completo']) ?></td>
+                                                <td><?= htmlspecialchars($u['email']) ?></td>
+                                                <td><?= date('d/m/Y H:i', strtotime($u['data_criacao'])) ?></td>
+                                                <td class="text-end">
+                                                    <form action="/green/admin/approveAccount/<?= $u['id'] ?>" method="POST" class="d-inline">
+                                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                                        <button type="submit" class="btn btn-sm btn-success fw-bold px-3">
+                                                            <ion-icon name="checkmark-outline" class="me-1"></ion-icon> Aprovar
+                                                        </button>
+                                                    </form>
+                                                    <a href="/green/admin/deleteUser/<?= $u['id'] ?>" class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Rejeitar e excluir este registo?')">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
             
             <!-- Calendário Escolar -->
             <div class="tab-pane fade" id="pane-calendario" role="tabpanel">

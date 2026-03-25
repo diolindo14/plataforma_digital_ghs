@@ -73,7 +73,8 @@ class Academico {
                 a.turma_id,
                 a.disciplina_id,
                 cn.status as feedback_status,
-                cn.comentario as feedback_comentario
+                cn.comentario as feedback_comentario,
+                cn.resposta_professor
             FROM notas n
             JOIN avaliacoes a ON n.avaliacao_id = a.id
             JOIN tipos_avaliacao ta ON a.tipo_avaliacao_id = ta.id
@@ -96,6 +97,7 @@ class Academico {
                     'disciplina_id' => $r['disciplina_id'],
                     'feedback_status' => $r['feedback_status'] ?? 'Pendente',
                     'feedback_comentario' => $r['feedback_comentario'],
+                    'resposta_professor' => $r['resposta_professor'] ?? null,
                     'notas' => [1=>0, 2=>0, 3=>0, 4=>0, 5=>null]
                 ];
             }

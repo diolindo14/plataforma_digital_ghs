@@ -1,0 +1,82 @@
+id,codigo,nome
+1,MAT1,Matemática
+2,FIS1,Física
+3,POR1,Português
+4,TEC1,"Tecnologias Informáticas"
+5,API1,"Aplicações Informáticas"
+6,GEO1,"Geométrica Descritivas A e B"
+7,ING1,Inglês
+8,QUI1,Química
+9,MET1,"Metodologia Científica — Guia para Eficiências nos Estudos"
+10,AMA2,"Análise Matemática"
+11,ARC2,"Fundamentos de Arquitetura de Computadores"
+12,ALG2,"Álgebra Linear, Geométrica Analítica Vetorial"
+13,MEC2,"Mecânica e Electricidade"
+14,IPR2,"Introdução a Programação"
+15,CIR2,"Circuitos para Comunicações"
+16,POO2,"Programação Orientada a Objectos"
+17,AED2,"Algoritmos e Estruturas de Dados"
+18,POR2,Português
+19,ING2,Inglês
+20,GCE3,"Gestão e Contabilidade Empresarial"
+21,BD3,"Bases de Dados"
+22,SO3,"Sistemas Operativos"
+23,TC3,"Teoria da Computação"
+24,HARD3,"Hardware e Microprocessador"
+25,RD13,"Redes Digitais — Fundamentos"
+26,CDS3,"Concepção e Desenvolvimento de Sistemas"
+27,PR3,"Programação em Rede - HTML e CSS"
+28,EDP4,EDP
+29,MCG4,"Multimédia e Computação Gráfica"
+30,RD24,"Redes Digitais — Sistemas, Aplicação e Serviços"
+31,IA4,"Inteligência Artificial"
+32,MC4,MC
+33,ES4,"Engenharia de Software"
+34,TSI4,"Tecnologia para Sistemas Inteligentes"
+35,CDSI4,"Concepção e Desenvolvimento de Sistemas Informáticos"
+36,IPM4,"Interação Pessoa–Máquina"
+37,PI4,"Processamento de Informação"
+38,MET4,"Metodologia Científica"
+39,,"Ética e Deontologia Profissional"
+40,IGE,"Introdução à Gestão Empresarial"
+41,JAVASCR,"Programação em Rede - JavaScript"
+42,PHP,"Programação em Rede - PHP"
+43,RD2,"Redes Digitais — Sistemas e Serviços"
+44,SID,"Sistemas de Informação e Decisão"
+45,SQLSRV,"Administração de SQL Server"
+46,AO,"Arquitetura de Operações"
+47,JAVASTD,"Programação Java Standard"
+48,VBNET,"Programação em VB.NET"
+49,MA,"Manutenção Avançada"
+50,IS,"Infraestrutura de Servidores"
+51,AD,"Active Directory"
+52,SR,"Segurança de Redes"
+53,LINUX,"Administração Linux"
+54,WT,"Web Technologies"
+55,QUIM,QUIM
+56,TI,TI
+57,POR,POR
+58,FIS,FIS
+59,MAT,MAT
+60,ING,ING
+61,APL,APL
+62,GDA,GDA
+63,AED,AED
+64,POO,POO
+65,ALGA,ALGA
+66,ECC,ECC
+67,HM,HM
+68,FBD,FBD
+69,TC,TC
+70,RD1,RD1
+71,CDSI,CDSI
+72,JS,JS
+73,SO,SO
+74,IA,IA
+75,MC,MC
+76,ES,ES
+77,MCG,MCG
+78,PI,PI
+79,TSI,TSI
+80,IPM,IPM
+81,"SQL Server","SQL Server"

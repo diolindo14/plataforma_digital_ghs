@@ -1,0 +1,47 @@
+[
+    {
+        "id": 43,
+        "codigo": "RD2",
+        "nome": "Redes Digitais \u2014 Sistemas e Servi\u00e7os"
+    },
+    {
+        "id": 44,
+        "codigo": "SID",
+        "nome": "Sistemas de Informa\u00e7\u00e3o e Decis\u00e3o"
+    },
+    {
+        "id": 74,
+        "codigo": "IA",
+        "nome": "IA"
+    },
+    {
+        "id": 75,
+        "codigo": "MC",
+        "nome": "MC"
+    },
+    {
+        "id": 76,
+        "codigo": "ES",
+        "nome": "ES"
+    },
+    {
+        "id": 77,
+        "codigo": "MCG",
+        "nome": "MCG"
+    },
+    {
+        "id": 78,
+        "codigo": "PI",
+        "nome": "PI"
+    },
+    {
+        "id": 79,
+        "codigo": "TSI",
+        "nome": "TSI"
+    },
+    {
+        "id": 80,
+        "codigo": "IPM",
+        "nome": "IPM"
+    }
+]

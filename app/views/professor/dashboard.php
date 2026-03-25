@@ -147,6 +147,21 @@
                 </div>
             </div>
         </div>
+
+        <!-- Hidden labels for printing official header -->
+        <?php 
+            $current_turma_label = 'N/A';
+            $current_nivel_label = 'ANO';
+            foreach($data['classes'] as $c) {
+                if ($c['turma_id'] == $data['selected_turma']) {
+                    $current_turma_label = $c['turma_codigo'];
+                    $current_nivel_label = $c['turno'] ?? 'ANO';
+                    break;
+                }
+            }
+        ?>
+        <div id="print-turma-label" style="display:none;"><?= $current_turma_label ?></div>
+        <div id="print-nivel-label" style="display:none;"><?= $current_nivel_label ?></div>
         
         <div class="tab-content" id="v-pills-tabContent">
             
@@ -254,7 +269,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <button class="btn btn-sm btn-outline-success"><ion-icon name="print-outline"></ion-icon> Imprimir</button>
+                        <button class="btn btn-sm btn-outline-success" onclick="printSection('pane-notas')"><ion-icon name="print-outline"></ion-icon> Imprimir</button>
                     </div>
                 </div>
                 
@@ -276,7 +291,7 @@
                                         <th class="text-center text-white bg-success">Total AC<br><small>(20 pts)</small></th>
                                         <th class="text-center border-start border-primary" style="width: 90px;">Exame</th>
                                         <th class="text-center text-white bg-dark">Média Final</th>
-                                        <th class="text-center">Ação</th>
+                                        <th class="text-center">Feedback / Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -316,7 +331,10 @@
                                                     ?>
                                                 </td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-sm btn-success btn-save-nota" onclick="saveNota(this)">Guardar</button>
+                                                    <div class="mb-1">
+                                                        <textarea class="form-control form-control-sm val-resposta" placeholder="Resposta/Feedback..." rows="1"><?= htmlspecialchars($sn['resposta_professor'] ?? '') ?></textarea>
+                                                    </div>
+                                                    <button class="btn btn-sm btn-success btn-save-nota w-100" onclick="saveNota(this)">Guardar</button>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -742,9 +760,14 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="#pane-notas" onclick="$('#tab-notas').tab('show')" class="btn btn-sm btn-primary fw-bold rounded-pill">
-                                                        <ion-icon name="create-outline"></ion-icon> Corrigir Nota
-                                                    </a>
+                                                    <div class="d-flex gap-2 justify-content-end">
+                                                        <button class="btn btn-sm btn-outline-danger fw-bold rounded-pill" onclick="abrirModalResposta(<?= $r['estudante_id'] ?>, '<?= $r['estudante_nome'] ?>', <?= $r['turma_id'] ?>, <?= $r['disciplina_id'] ?>)">
+                                                            <ion-icon name="chatbubble-ellipses-outline"></ion-icon> Responder
+                                                        </button>
+                                                        <a href="#pane-notas" onclick="$('#tab-notas').tab('show'); switchClass('<?= $r['turma_id'] ?>|<?= $r['disciplina_id'] ?>');" class="btn btn-sm btn-primary fw-bold rounded-pill text-nowrap">
+                                                            <ion-icon name="create-outline"></ion-icon> Corrigir Nota
+                                                        </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -763,7 +786,10 @@
             <div class="tab-pane fade" id="pane-assiduidade">
                 <div class="card shadow-sm border-0 border-top border-4 border-info">
                     <div class="card-body p-4">
-                        <h4 class="fw-bold mb-4">Meu Histórico de Assiduidade</h4>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-bold mb-0">Meu Histórico de Assiduidade</h4>
+                            <button class="btn btn-sm btn-outline-info" onclick="printSection('pane-assiduidade')"><ion-icon name="print-outline"></ion-icon> Imprimir</button>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle datatable-simple">
                                 <thead class="table-light">
@@ -831,52 +857,21 @@
                 <h5 class="modal-title fw-bold text-dark pt-3">Grade Horária Semanal - Docente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered text-center align-middle mb-0" style="border: 1px solid #000 !important;">
-                        <thead style="background-color: #f8f9fa;">
-                            <tr style="border-bottom: 2px solid #000;">
-                                <th style="border: 1px solid #000; padding: 10px; font-weight: bold; width: 80px;">TEMPO</th>
-                                <th style="border: 1px solid #000; padding: 10px; font-weight: bold; width: 100px;">HORA</th>
-                                <?php foreach($data['dias_semana'] as $d): ?>
-                                    <th style="border: 1px solid #000; padding: 10px; font-weight: bold;"><?= strtoupper($d) ?></th>
-                                <?php endforeach; ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($data['tempos_aula'] as $t_label => $t_horas): ?>
-                                <tr style="border-bottom: 1px solid #000;">
-                                    <td style="border: 1px solid #000; font-weight: bold; background: #fdfdfd;"><?= $t_label ?></td>
-                                    <td style="border: 1px solid #000; font-size: 0.8rem; background: #fdfdfd;"><?= $t_horas[0] ?> - <?= $t_horas[1] ?></td>
-                                    <?php foreach($data['dias_semana'] as $dia): ?>
-                                        <td style="border: 1px solid #000; padding: 0; min-width: 120px; height: 60px; vertical-align: top;">
-                                            <?php 
-                                            $found = false;
-                                            foreach($data['horario'] as $h) {
-                                                if($h['dia_semana'] == $dia && substr($h['hora_inicio'], 0, 5) == $t_horas[0]) {
-                                                    echo '<div style="display: flex; flex-direction: column; height: 100%;">';
-                                                    // Top Row: Sigla
-                                                    echo '<div style="padding: 5px; font-weight: bold; border-bottom: 1px solid #ddd; flex: 1; display: flex; align-items: center; justify-content: center;">' . ($h['sigla'] ?: $h['nome_display']) . '</div>';
-                                                    // Bottom Row: Sala | Turma
-                                                    echo '<div style="padding: 3px; font-size: 0.7rem; color: #333; background: #fdfdfd; flex: 1; display: flex; align-items: center; justify-content: center;">';
-                                                    echo $h['sala'] . ' <span class="mx-1">|</span> ' . $h['turma_codigo'];
-                                                    echo '</div>';
-                                                    echo '</div>';
-                                                    $found = true;
-                                                    break;
-                                                }
-                                            }
-                                            if(!$found) echo '<span style="color: #eee; display: flex; align-items: center; justify-content: center; height: 100%;"> - </span>';
-                                            ?>
-                                        </td>
-                                    <?php endforeach; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <div class="modal-body p-0">
+                <div class="card border-0 shadow-none">
+                    <div class="card-body p-4">
+                        <?php
+                        $gridData = $data['gridData'] ?? [];
+                        $turmaInfo = [
+                            'codigo' => 'HORÁRIO DOCENTE',
+                            'nivel' => $data['professor']['nome_completo'] ?? ''
+                        ];
+                        if (file_exists(__DIR__ . '/../shared/horario_grid.php')) {
+                            include __DIR__ . '/../shared/horario_grid.php';
+                        }
+                        ?>
+                    </div>
                 </div>
-                
-
             </div>
             <div class="modal-footer border-0 pb-4">
                 <button type="button" class="btn btn-secondary px-4 fw-bold shadow-sm" data-bs-dismiss="modal">Fechar</button>
@@ -924,6 +919,7 @@ function saveNota(btn) {
         tpi: row.find('.val-tpi').val(),
         ce: row.find('.val-ce').val(),
         exame: row.find('.val-exame').val(),
+        resposta_professor: row.find('.val-resposta').val(),
         csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     };
 
@@ -1127,11 +1123,155 @@ function publicarMaterial() {
         });
     });
 
+function printSection(paneId) {
+    const pane = document.getElementById(paneId);
+    if (!pane) return;
+
+    // Capture current values of all inputs/textareas
+    const clonedPane = pane.cloneNode(true);
+    const inputs = pane.querySelectorAll('input, textarea, select');
+    const clonedInputs = clonedPane.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach((input, index) => {
+        if (clonedInputs[index]) {
+            const span = document.createElement('span');
+            if (input.tagName === 'SELECT') {
+                const selectedOption = input.options[input.selectedIndex];
+                span.textContent = selectedOption ? selectedOption.text : '-';
+            } else {
+                span.textContent = input.value || '-';
+                // Preserve styling if it's a total column
+                if (input.classList.contains('text-total-ac') || input.classList.contains('text-media-final')) {
+                    span.className = 'fw-bold fs-5';
+                }
+            }
+            clonedInputs[index].parentNode.replaceChild(span, clonedInputs[index]);
+        }
+    });
+
+    const printWindow = window.open('', '_blank', 'width=1000,height=800');
+    const cssLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+        .map(l => `<link rel="stylesheet" href="${l.href}">`)
+        .join('\n');
+
+    // Official Header Logic
+    const turmaLabel = $('#print-turma-label').text() || 'N/A';
+    const nivelLabel = $('#print-nivel-label').text() || 'ANO';
+    const officialHeader = `
+        <div class="text-center mb-4" style="font-size: 1.3rem; font-weight: 800; font-family: 'Outfit', sans-serif; border-bottom: 3px solid #1a1a1a; padding-bottom: 15px; margin-bottom: 25px; color: #1a1a1a; text-transform: uppercase;">
+            (Grupo: GHS-${turmaLabel} | HORARIO | Nivel: ${nivelLabel})
+        </div>
+    `;
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            ${cssLinks}
+            <style>
+                body { padding: 40px; font-family: 'Outfit', sans-serif; background: white !important; }
+                .card { border: none !important; box-shadow: none !important; }
+                .btn, .form-select, .nav, .sidebar, #backToTop, .dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate { display: none !important; }
+                table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px; }
+                th, td { border: 1px solid #ddd !important; padding: 10px !important; text-align: left; }
+                th { background-color: #f8f9fa !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
+                @media print {
+                    .no-print { display: none !important; }
+                    body { padding: 0; margin: 0; }
+                    @page { margin: 1cm; }
+                }
+            </style>
+        </head>
+        <body>
+            ${officialHeader}
+            <div class="print-content">
+                ${clonedPane.innerHTML}
+            </div>
+            <div class="mt-5 text-end text-muted small">
+                Documento emitido em: ${new Date().toLocaleString()}
+            </div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => { printWindow.print(); }, 800);
+}
+
+function abrirModalResposta(estId, nome, tid, did) {
+    $('#resp_est_id').val(estId);
+    $('#resp_turma_id').val(tid);
+    $('#resp_disc_id').val(did);
+    $('#resp_nome_aluno').text(nome);
+    const modal = new bootstrap.Modal(document.getElementById('modalRespostaReclamacao'));
+    modal.show();
+}
+
+function salvarRespostaReclamacao() {
+    const btn = $('#btnSalvarResposta');
+    const data = {
+        estudante_id: $('#resp_est_id').val(),
+        turma_id: $('#resp_turma_id').val(),
+        disciplina_id: $('#resp_disc_id').val(),
+        resposta_professor: $('#textoResposta').val(),
+        csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+    };
+
+    if (!data.resposta_professor) {
+        alert('Por favor, escreva uma resposta.');
+        return;
+    }
+
+    btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
+
+    $.post('/green/professor/saveNota', data, function(res) {
+        if (res.success) {
+            alert('Resposta enviada com sucesso! A reclamação foi marcada como resolvida.');
+            location.reload();
+        } else {
+            alert('Erro ao enviar resposta.');
+        }
+    }, 'json').always(function() {
+        btn.text('Enviar Resposta').prop('disabled', false);
+    });
+}
+
 function deleteEvento(id) {
     if (confirm('Deseja cancelar este agendamento?')) {
         window.location.href = '/green/professor/deleteEvento/' + id;
     }
 }
 </script>
+
+<!-- Modal Resposta Reclamação -->
+<div class="modal fade" id="modalRespostaReclamacao" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold">Responder à Reclamação</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p>Respondendo ao aluno: <strong id="resp_nome_aluno"></strong></p>
+                <input type="hidden" id="resp_est_id">
+                <input type="hidden" id="resp_turma_id">
+                <input type="hidden" id="resp_disc_id">
+                
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Sua Resposta / Justificativa</label>
+                    <textarea id="textoResposta" class="form-control" rows="4" placeholder="Explique a nota ou informe que já foi corrigida..."></textarea>
+                </div>
+                <div class="alert alert-info small">
+                    <ion-icon name="information-circle"></ion-icon> Ao enviar, a reclamação será marcada como <strong>Resolvida</strong> no portal do aluno.
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnSalvarResposta" onclick="salvarRespostaReclamacao()" class="btn btn-danger fw-bold">Enviar Resposta</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

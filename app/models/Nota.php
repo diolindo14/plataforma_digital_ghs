@@ -59,10 +59,17 @@ class Nota {
             // Mark pending complaints as resolved for this student/turma/discipline
             $stmtRes = $this->db->prepare("
                 UPDATE concordancia_notas 
-                SET status = 'Resolvido', data_resposta = NOW() 
+                SET status = 'Resolvido', 
+                    resposta_professor = :resp,
+                    data_resposta = NOW() 
                 WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'
             ");
-            $stmtRes->execute([':eid' => $estudante_id, ':tid' => $turma_id, ':did' => $disciplina_id]);
+            $stmtRes->execute([
+                ':eid' => $estudante_id, 
+                ':tid' => $turma_id, 
+                ':did' => $disciplina_id,
+                ':resp' => $data['resposta_professor'] ?? null
+            ]);
 
             $this->db->commit();
             return true;
@@ -74,10 +81,14 @@ class Nota {
 
     public function getNotasByTurma($turma_id, $disciplina_id) {
         $stmt = $this->db->prepare("
-            SELECT n.estudante_id, ta.nome as tipo_nome, n.nota as valor, ta.id as tipo_id
+            SELECT n.estudante_id, ta.nome as tipo_nome, n.nota as valor, ta.id as tipo_id,
+                   cn.status as feedback_status, cn.comentario as feedback_comentario
             FROM notas n
             JOIN avaliacoes a ON n.avaliacao_id = a.id
             JOIN tipos_avaliacao ta ON a.tipo_avaliacao_id = ta.id
+            LEFT JOIN concordancia_notas cn ON n.estudante_id = cn.estudante_id 
+                AND a.turma_id = cn.turma_id 
+                AND a.disciplina_id = cn.disciplina_id
             WHERE a.turma_id = :tid AND a.disciplina_id = :did
         ");
         $stmt->execute([':tid' => $turma_id, ':did' => $disciplina_id]);
@@ -86,8 +97,14 @@ class Nota {
         $packed = [];
         foreach ($results as $r) {
             $eid = $r['estudante_id'];
-            if (!isset($packed[$eid])) $packed[$eid] = [];
-            $packed[$eid][$r['tipo_id']] = $r['valor'];
+            if (!isset($packed[$eid])) {
+                $packed[$eid] = [
+                    'notas' => [],
+                    'feedback_status' => $r['feedback_status'],
+                    'feedback_comentario' => $r['feedback_comentario']
+                ];
+            }
+            $packed[$eid]['notas'][$r['tipo_id']] = $r['valor'];
         }
         return $packed;
     }

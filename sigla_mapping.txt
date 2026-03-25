@@ -1,0 +1,10 @@
+id	codigo
+76	ES
+74	IA
+80	IPM
+75	MC
+77	MCG
+78	PI
+43	RD2
+44	SID
+79	TSI

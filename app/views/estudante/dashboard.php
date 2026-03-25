@@ -63,8 +63,31 @@
     <!-- Main Content -->
     <main class="content flex-grow-1">
         
+        <?php if(isset($data['alerta_matricula'])): ?>
+            <div class="alert alert-warning alert-dismissible fade show shadow-sm border-0 border-start border-4 border-warning rounded-3 mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <ion-icon name="time-outline" class="me-3 fs-3 text-warning"></ion-icon>
+                    <div>
+                        <h6 class="fw-bold mb-1">Prazo de Matrícula Crítico</h6>
+                        <p class="mb-0 small"><?= $data['alerta_matricula'] ?></p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if(isset($data['smart_delinquency']) && $data['smart_delinquency']['is_delinquent']): ?>
+            <div class="alert alert-danger shadow-sm border-0 border-start border-4 border-danger rounded-3 mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <ion-icon name="alert-circle" class="me-3 fs-3 text-danger"></ion-icon>
+                    <div>
+                        <h6 class="fw-bold mb-1">Atraso de Pagamento Detectado</h6>
+                        <p class="mb-0 small">A sua conta encontra-se irregular. Foram detectados <strong><?= $data['smart_delinquency']['missing_months'] ?> meses</strong> de mensalidades em atraso. Por favor, regularize a sua situação na tesouraria.</p>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
         <?php 
-        // Mensagens de upload de comprovativo
         $uploadErrors = [
             'size'   => 'O ficheiro é demasiado grande. Máximo permitido: 5MB.',
             'ext'    => 'Tipo de ficheiro não permitido. Use PDF, JPG ou PNG.',
@@ -186,9 +209,13 @@
                     <div class="col-md-3">
                         <div class="card border-0 shadow-sm" style="border-left: 5px solid #EF4444 !important;">
                             <div class="card-body">
-                                <p class="text-muted fw-bold mb-1 text-uppercase small">Pendências Finan.</p>
-                                <?php if (!empty($data['pendencias_count'])): ?>
-                                    <h4 class="fw-bold mb-0 text-danger text-uppercase mt-1"><?= (string)$data['pendencias_count'] ?> Fatura(s)</h4>
+                                <p class="text-muted fw-bold mb-1 text-uppercase small">Situação Financeira</p>
+                                <?php if ($data['smart_delinquency']['is_delinquent']): ?>
+                                    <h4 class="fw-bold mb-0 text-danger text-uppercase mt-1">Irregular</h4>
+                                    <small class="text-muted"><?= $data['smart_delinquency']['missing_months'] ?> mês(es) em falta</small>
+                                <?php elseif (!empty($data['pendencias_count'])): ?>
+                                    <h4 class="fw-bold mb-0 text-warning text-uppercase mt-1">Pendente</h4>
+                                    <small class="text-muted">Aguardando validação</small>
                                 <?php else: ?>
                                     <h4 class="fw-bold mb-0 text-success text-uppercase mt-1">Regularizado</h4>
                                 <?php endif; ?>
@@ -253,8 +280,8 @@
             <div class="tab-pane fade" id="pane-horario" role="tabpanel">
                 <div class="d-flex justify-content-between align-items-end mb-4">
                     <div>
-                        <h4 class="fw-bold mb-1">Grade Horária Semanal</h4>
-                        <p class="text-muted small">Horários oficiais da turma com todas as salas e laboratórios.</p>
+                        <h4 class="fw-bold mb-1">Grade Horária Semanal - <?= $this->e($data['estudante']['turma_codigo'] ?? 'S/ Turma') ?></h4>
+                        <p class="text-muted small">Consulte os horários oficiais para o <?= $this->e($data['estudante']['ano_curso_id'] ?? '1') ?>º Ano.</p>
                     </div>
                 </div>
 
@@ -323,7 +350,14 @@
                                                 <?php elseif($n['feedback_status'] == 'Reclamado'): ?>
                                                     <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 small" title="<?= htmlspecialchars($n['feedback_comentario']) ?>"><ion-icon name="warning"></ion-icon> Reclamação Enviada</span>
                                                 <?php elseif($n['feedback_status'] == 'Resolvido'): ?>
-                                                    <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25 small"><ion-icon name="sync-outline"></ion-icon> Nota Corrigida - Aguardando Aceitação</span>
+                                                    <div>
+                                                        <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25 small"><ion-icon name="sync-outline"></ion-icon> Nota Corrigida pelo Professor</span>
+                                                        <?php if (!empty($n['resposta_professor'])): ?>
+                                                            <div class="mt-1 p-2 bg-light rounded small text-muted border-start border-3 border-warning">
+                                                                <ion-icon name="chatbubble-outline" class="me-1"></ion-icon><?= htmlspecialchars($n['resposta_professor']) ?>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 <?php else: ?>
                                                     <span class="badge bg-light text-muted border small">Pendente de Revisão</span>
                                                 <?php endif; ?>

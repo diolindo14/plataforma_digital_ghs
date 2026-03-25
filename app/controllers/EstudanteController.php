@@ -16,9 +16,42 @@ class EstudanteController extends Controller {
         $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
         
         if (!$estudanteData) {
-            $_SESSION['flash_error'] = "Perfil de estudante não encontrado para este utilizador. Por favor, contacte a administração.";
+            $_SESSION['flash_error'] = "Perfil de estudante não encontrado.";
             header('Location: /green/auth');
             exit;
+        }
+
+        // --- Lógica de Verificação de 48h para Matrícula ---
+        $db = Database::getInstance();
+        $userStmt = $db->prepare("SELECT data_aprovacao FROM utilizadores WHERE id = :id");
+        $userStmt->execute([':id' => $_SESSION['user_id']]);
+        $userData = $userStmt->fetch();
+
+        if ($userData && !empty($userData['data_aprovacao'])) {
+            // Verificar se já tem matrícula (mesmo que pendente)
+            $checkMat = $db->prepare("SELECT id FROM matriculas WHERE estudante_id = :eid LIMIT 1");
+            $checkMat->execute([':eid' => $estudanteData['id']]);
+            $hasMatricula = $checkMat->fetch();
+
+            if (!$hasMatricula) {
+                $aprovacao = strtotime($userData['data_aprovacao']);
+                $agora = time();
+                $diff = $agora - $aprovacao;
+                $limite = 48 * 3600; // 48 horas em segundos
+
+                if ($diff > $limite) {
+                    // Excluir conta por inatividade de matrícula
+                    $db->prepare("DELETE FROM utilizadores WHERE id = :id")->execute([':id' => $_SESSION['user_id']]);
+                    session_destroy();
+                    session_start();
+                    $_SESSION['flash_error'] = "O seu prazo de 48h para realizar a matrícula expirou. A sua conta foi removida automaticamente conforme a política institucional.";
+                    header('Location: /green/auth');
+                    exit;
+                } else {
+                    $horasRestantes = round(($limite - $diff) / 3600);
+                    $data['alerta_matricula'] = "Atenção: Você tem apenas $horasRestantes horas para realizar a sua matrícula, caso contrário a sua conta será removida.";
+                }
+            }
         }
 
         // Buscar matrícula ativa para pegar a turma e dados extras
@@ -56,6 +89,8 @@ class EstudanteController extends Controller {
         $stmtFaltas = Database::getInstance()->prepare("SELECT COUNT(*) FROM frequencias WHERE estudante_id = :eid AND status = 'F'");
         $stmtFaltas->execute([':eid' => $estudanteData['id']]);
         $faltas_count = $stmtFaltas->fetchColumn();
+
+        $smart_delinquency = $financeiroModel->getStudentDelinquencyStatus($estudanteData['id']);
 
         $pendencias = 0;
         foreach ($pagamentos as $p) {
@@ -99,7 +134,16 @@ class EstudanteController extends Controller {
             'materiais' => $this->model('Material')->getByTurma($turma_id),
             'comunicados' => $comunicados,
             'unread_count' => $unread_count,
-            'proximas_aulas' => ($turma_id ? count($academicoModel->getScheduleByTurma($turma_id)) : 0),
+            'proximas_aulas' => (function($h_list) {
+                $hoje = ['Monday'=>'Segunda', 'Tuesday'=>'Terça', 'Wednesday'=>'Quarta', 'Thursday'=>'Quinta', 'Friday'=>'Sexta','Saturday'=>'Sábado','Sunday'=>'Domingo'][date('l')];
+                $agora = date('H:i');
+                $count = 0;
+                foreach ($h_list as $h) {
+                    if ($h['dia_semana'] == $hoje && substr($h['hora_inicio'], 0, 5) >= $agora) $count++;
+                }
+                return $count;
+            })($data['horario'] ?? []),
+            'smart_delinquency' => $smart_delinquency,
             'historico_global' => $academicoModel->getGlobalHistory($estudanteData['id']),
             'tempos_aula' => [
                 '1º' => ['07:20', '08:50'],

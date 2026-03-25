@@ -1,0 +1,4 @@
+### DIAGNOSTICO: Prof 13 em Turma 7 ###
+Disciplinas de Prof 13 em Turma 7 (professor_disciplina):
+  - ID 30: Redes Digitais — Sistemas, Aplicação e Serviços
+    -> Slot ID 666 | Segunda (14:35:00 - 16:05:00) | Prof atual: 13 (Domingos Correia)

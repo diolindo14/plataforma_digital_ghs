@@ -1,0 +1,56 @@
+[
+    {
+        "id": 43,
+        "codigo": "RD2",
+        "nome": "Redes Digitais \u2014 Sistemas e Servi\u00e7os",
+        "professor_id": null
+    },
+    {
+        "id": 44,
+        "codigo": "SID",
+        "nome": "Sistemas de Informa\u00e7\u00e3o e Decis\u00e3o",
+        "professor_id": null
+    },
+    {
+        "id": 74,
+        "codigo": "IA",
+        "nome": "IA",
+        "professor_id": null
+    },
+    {
+        "id": 75,
+        "codigo": "MC",
+        "nome": "MC",
+        "professor_id": null
+    },
+    {
+        "id": 76,
+        "codigo": "ES",
+        "nome": "ES",
+        "professor_id": null
+    },
+    {
+        "id": 77,
+        "codigo": "MCG",
+        "nome": "MCG",
+        "professor_id": null
+    },
+    {
+        "id": 78,
+        "codigo": "PI",
+        "nome": "PI",
+        "professor_id": null
+    },
+    {
+        "id": 79,
+        "codigo": "TSI",
+        "nome": "TSI",
+        "professor_id": null
+    },
+    {
+        "id": 80,
+        "codigo": "IPM",
+        "nome": "IPM",
+        "professor_id": null
+    }
+]

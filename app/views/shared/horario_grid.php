@@ -61,18 +61,42 @@ $diasLabels = ['SEG','TER','QUA','QUI','SEX','SÁB'];
 </style>
 
 <div class="horario-container">
-    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
-        <div>
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print gap-3 flex-wrap">
+        <div class="d-flex align-items-center gap-3">
             <?php if (!empty($turmaInfo)): ?>
-                <h5 class="mb-0">
-                    Grupo: <?= htmlspecialchars($turmaInfo['codigo']) ?> 
-                    | Nivel: <?= htmlspecialchars($turmaInfo['nivel'] ?? '—') ?>
+                <h5 class="mb-0 fw-bold">
+                    <ion-icon name="calendar-outline" class="me-1"></ion-icon>
+                    <?= htmlspecialchars($turmaInfo['codigo']) ?> 
+                    <span class="text-muted mx-2">|</span> 
+                    <small class="text-secondary"><?= htmlspecialchars($turmaInfo['nivel'] ?? '—') ?></small>
                 </h5>
+            <?php endif; ?>
+            
+            <?php if (isset($gridData['grid']) && count($gridData['grid']) > 0): ?>
+                <?php 
+                $uniqueTurmas = [];
+                foreach($gridData['grid'] as $tempo) {
+                    foreach($tempo as $dia => $slot) {
+                        if (isset($slot['turma_codigo'])) $uniqueTurmas[$slot['turma_id']] = $slot['turma_codigo'];
+                    }
+                }
+                ?>
+                <?php if (count($uniqueTurmas) > 1): ?>
+                    <div class="ms-3 d-flex align-items-center gap-2">
+                        <label class="small fw-bold text-muted text-nowrap">Filtrar Turma:</label>
+                        <select class="form-select form-select-sm border-0 shadow-sm bg-light" id="filter-turma-grid" onchange="filterGridByTurma(this.value)" style="width: 150px; border-radius: 8px;">
+                            <option value="all">Todas as Turmas</option>
+                            <?php foreach($uniqueTurmas as $tid => $tcod): ?>
+                                <option value="<?= $tid ?>"><?= $tcod ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-dark" onclick="window.print()">
-                <ion-icon name="print-outline" class="me-1"></ion-icon> Imprimir PDF
+            <button class="btn btn-sm btn-outline-dark fw-bold px-3 shadow-sm" onclick="window.print()">
+                <ion-icon name="print-outline" class="me-1"></ion-icon> Imprimir Horário
             </button>
         </div>
     </div>
@@ -83,13 +107,21 @@ $diasLabels = ['SEG','TER','QUA','QUI','SEX','SÁB'];
         </div>
     <?php else: ?>
 
-    <div class="header-info-edu d-none d-print-block">
-        HORÁRIO 2º SEMESTRE 2025-2026
-    </div>
-    <div class="mb-2 text-center d-none d-print-block" style="font-size: 1.1rem;">
-        Grupo: <?= htmlspecialchars($turmaInfo['codigo'] ?? 'N/A') ?> 
-        | Horário: <?= isset($gridData['tempos'][0]) ? substr($gridData['tempos'][0]['inicio'], 0, 5) : '—' ?>
-        | Nivel: <?= htmlspecialchars($turmaInfo['nivel'] ?? '—') ?>
+    <div class="d-none d-print-block">
+        <div class="d-flex justify-content-between align-items-center mb-0">
+            <div style="width: 150px;">
+                <img src="/green/img/logo.jpg" alt="Logo" style="width: 100%;">
+            </div>
+            <div class="text-center flex-grow-1">
+                <h2 style="font-family: serif; font-weight: bold; margin-bottom: 0;">HORÁRIO 2º SEMESTRE 2025-2026</h2>
+            </div>
+            <div style="width: 150px; text-align: right; font-size: 0.9rem;">
+                <?= date('d/m/Y') ?>
+            </div>
+        </div>
+        <div class="text-center mb-3" style="font-size: 1.25rem; font-weight: 800; font-family: 'Outfit', sans-serif; border-top: 3px solid #1a1a1a; padding-top: 15px; margin-top: 15px; color: #1a1a1a; text-transform: uppercase;">
+            (Grupo: GHS-<span id="print-turma-label"><?= htmlspecialchars(str_replace('GHS-', '', $turmaInfo['codigo'] ?? 'N/A')) ?></span> | HORARIO | Nivel: <span id="print-nivel-label"><?= htmlspecialchars($turmaInfo['nivel'] ?? 'ANO') ?></span>)
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -113,21 +145,20 @@ $diasLabels = ['SEG','TER','QUA','QUI','SEX','SÁB'];
                             <span class="hora-val"><?= substr($horas['inicio'],0,5) ?> - <?= substr($horas['fim'],0,5) ?></span>
                         </td>
                         <?php foreach ($diasOrder as $dia): ?>
-                            <td>
+                            <td class="slot-container-grid" data-turma-id="<?= $gridData['grid'][$tempo][$dia]['turma_id'] ?? '' ?>">
                                 <?php $slot = $gridData['grid'][$tempo][$dia] ?? null; ?>
-                                <?php if ($slot): ?>
-                                    <div class="slot-wrapper">
+                                <div class="slot-wrapper" style="<?= !$slot ? 'display:none;' : '' ?>">
+                                    <?php if ($slot): ?>
                                         <div class="slot-subject"><?= htmlspecialchars($slot['sigla']) ?></div>
                                         <div class="slot-room"><?= htmlspecialchars($slot['sala'] ?? 'S1') ?></div>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="slot-empty-edu">
-                                        <svg preserveAspectRatio="none" viewBox="0 0 100 100">
-                                            <line x1="0" y1="0" x2="100" y2="100" />
-                                            <line x1="100" y1="0" x2="0" y2="100" />
-                                        </svg>
-                                    </div>
-                                <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="slot-empty-edu" style="<?= $slot ? 'display:none;' : '' ?>">
+                                    <svg preserveAspectRatio="none" viewBox="0 0 100 100">
+                                        <line x1="0" y1="0" x2="100" y2="100" />
+                                        <line x1="100" y1="0" x2="0" y2="100" />
+                                    </svg>
+                                </div>
                             </td>
                         <?php endforeach; ?>
                     </tr>
@@ -144,6 +175,40 @@ $diasLabels = ['SEG','TER','QUA','QUI','SEX','SÁB'];
 </div>
 
 <script>
-// No-op for now as hover and tooltips are removed for formal style
+function filterGridByTurma(turmaId) {
+    const slots = document.querySelectorAll('.slot-container-grid');
+    slots.forEach(slot => {
+        const slotTurmaId = slot.getAttribute('data-turma-id');
+        const wrapper = slot.querySelector('.slot-wrapper');
+        const empty = slot.querySelector('.slot-empty-edu');
+        
+        if (!wrapper || !empty) return;
+
+        if (turmaId === 'all') {
+            // Show if it has content
+            if (slotTurmaId) {
+                wrapper.style.display = 'flex';
+                empty.style.display = 'none';
+            } else {
+                 wrapper.style.display = 'none';
+                 empty.style.display = 'flex';
+            }
+        } else if (slotTurmaId === turmaId) {
+            wrapper.style.display = 'flex';
+            empty.style.display = 'none';
+        } else {
+            wrapper.style.display = 'none';
+            empty.style.display = 'flex';
+        }
+    });
+
+    // Update Print Header if needed (optional)
+    const filterSelect = document.getElementById('filter-turma-grid');
+    const selectedText = filterSelect ? filterSelect.options[filterSelect.selectedIndex].text : '';
+    const printTurmaLabel = document.getElementById('print-turma-label');
+    if (printTurmaLabel) {
+        printTurmaLabel.innerText = turmaId === 'all' ? '<?= htmlspecialchars($turmaInfo['codigo'] ?? "N/A") ?>' : selectedText;
+    }
+}
 </script>
 

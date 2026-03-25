@@ -1,0 +1,42 @@
+--- TABLE: turmas ---
+id | int(11) | NO
+codigo | varchar(20) | NO
+ano_id | int(11) | NO
+turno | enum('Manhã','Tarde','Noite') | NO
+numero_turma | tinyint(4) | NO
+sala_principal | varchar(20) | YES
+vagas | int(11) | YES
+ativa | tinyint(1) | YES
+data_criacao | timestamp | NO
+
+--- TABLE: disciplinas ---
+id | int(11) | NO
+codigo | varchar(10) | NO
+nome | varchar(100) | NO
+ano_id | int(11) | NO
+carga_horaria | int(11) | YES
+credito | decimal(3,1) | YES
+descricao | text | YES
+ativa | tinyint(1) | YES
+data_criacao | timestamp | NO
+
+--- TABLE: horarios ---
+id | int(11) | NO
+turma_id | int(11) | NO
+disciplina_id | int(11) | NO
+professor_id | int(11) | NO
+dia_semana | enum('Segunda','Terça','Quarta','Quinta','Sexta','Sábado') | NO
+hora_inicio | time | NO
+hora_fim | time | NO
+sala | varchar(20) | NO
+tempo_aula | tinyint(4) | YES
+data_criacao | timestamp | NO
+
+--- TABLE: professor_disciplina ---
+id | int(11) | NO
+professor_id | int(11) | NO
+disciplina_id | int(11) | NO
+turma_id | int(11) | YES
+ano_letivo | year(4) | NO
+data_criacao | timestamp | NO
+

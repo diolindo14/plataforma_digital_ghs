@@ -32,9 +32,21 @@ class DashboardModel {
         $stmt->execute([':mes' => $mesAtual, ':ano' => $anoAtual]);
         $stats['pagamentos_mes'] = $stmt->fetch()['total'] ?? 0;
 
-        // Inadimplência: Estudantes com pagamentos vencidos
-        $stmt = $this->db->query("SELECT COUNT(DISTINCT estudante_id) as total FROM pagamentos WHERE status = 'Vencido' OR (status = 'Pendente' AND data_vencimento < CURRENT_DATE)");
-        $stats['inadimplencia'] = $stmt->fetch()['total'] ?? 0;
+        // Inadimplência Inteligente: Total de alunos com pagamentos em falta de meses anteriores (M+1)
+        $sqlInad = "
+            SELECT COUNT(*) as total FROM (
+                SELECT e.id, 
+                    (TIMESTAMPDIFF(MONTH, MIN(m.data_criacao), DATE_SUB(DATE_FORMAT(NOW(), '%Y-%m-01'), INTERVAL 1 DAY)) + 1) as months_expected,
+                    (SELECT COUNT(*) FROM pagamentos p WHERE p.estudante_id = e.id AND p.status = 'Pago') as payments_done
+                FROM estudantes e
+                JOIN matriculas m ON e.id = m.estudante_id
+                WHERE m.status = 'Aprovada'
+                GROUP BY e.id
+                HAVING payments_done < months_expected
+            ) as subquery
+        ";
+        $stmtInad = $this->db->query($sqlInad);
+        $stats['inadimplencia'] = $stmtInad->fetch()['total'] ?? 0;
         
         return $stats;
     }

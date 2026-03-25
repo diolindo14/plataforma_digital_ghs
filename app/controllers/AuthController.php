@@ -39,9 +39,9 @@ class AuthController extends Controller {
                 if ($user['status'] !== 'ativo') {
                     // Check if pending email
                     if ($user['status'] === 'pendente') {
-                        $_SESSION['flash_error'] = "Por favor, valide o seu e-mail antes de aceder.";
+                        $_SESSION['flash_error'] = "A sua conta aguarda aprovação administrativa.";
                     } else {
-                        $_SESSION['flash_error'] = "Conta inativa.";
+                        $_SESSION['flash_error'] = "Conta inativa ou bloqueada.";
                     }
                     header('Location: /green/auth');
                     exit;

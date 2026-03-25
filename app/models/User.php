@@ -165,4 +165,9 @@ class User {
         }
     }
 
+    public function getPendingUsers() {
+        $stmt = $this->db->prepare("SELECT * FROM utilizadores WHERE status = 'pendente' ORDER BY data_criacao DESC");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

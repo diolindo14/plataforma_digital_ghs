@@ -23,6 +23,7 @@ class AdminController extends Controller {
         $data['chartData'] = $this->model('DashboardModel')->getAdminChartData();
         $data['matriculas'] = $this->model('Matricula')->getPendingEnrollments();
         $data['estudantes'] = $this->model('Estudante')->getAllStudents();
+        $data['pendentes'] = $this->model('User')->getPendingUsers();
         
         // Novos dados pedagógicos
         $frequenciaModel = $this->model('Frequencia');
@@ -282,6 +283,20 @@ class AdminController extends Controller {
             echo '</tr>';
         }
         echo '</tbody></table></div>';
+    }
+
+    public function approveAccount($id) {
+        $this->verifyCsrfToken();
+        $db = Database::getInstance();
+        $stmt = $db->prepare("UPDATE utilizadores SET status = 'ativo', data_aprovacao = NOW() WHERE id = :id");
+        if ($stmt->execute([':id' => $id])) {
+            $this->logActivity('Aprovar Conta Utilizador', ['user_id' => $id]);
+            $_SESSION['flash_success'] = "Conta aprovada com sucesso! O prazo de 48h para matrícula iniciou.";
+        } else {
+            $_SESSION['flash_error'] = "Erro ao aprovar conta.";
+        }
+        header('Location: /green/admin');
+        exit;
     }
 
     public function approveMatricula($id) {
