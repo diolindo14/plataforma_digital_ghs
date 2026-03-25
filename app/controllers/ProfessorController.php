@@ -62,7 +62,7 @@ class ProfessorController extends Controller {
             'N3' => ['21:00', '22:30'],
             'N4' => ['22:35', '24:00']
         ];
-        $data['dias_semana'] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+        $data['dias_semana'] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
         $this->view('professor/dashboard', $data);
     }

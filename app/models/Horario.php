@@ -22,7 +22,7 @@ class Horario {
             FROM horarios h
             JOIN disciplinas d ON h.disciplina_id = d.id
             WHERE h.turma_id = :tid
-            ORDER BY FIELD(h.dia_semana,'Segunda','Terça','Quarta','Quinta','Sexta'), 
+            ORDER BY FIELD(h.dia_semana,'Segunda','Terça','Quarta','Quinta','Sexta','Sábado'), 
                      h.hora_inicio
         ");
         $stmt->execute([':tid' => $turma_id]);
@@ -34,7 +34,7 @@ class Horario {
      */
     public function buildWeeklyGrid($turma_id) {
         $rows = $this->getHorarioByTurma($turma_id);
-        $dias  = ['Segunda','Terça','Quarta','Quinta','Sexta'];
+        $dias  = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
         $grid  = [];      // grid[tempo][dia] = slot
         $tempos = [];     // tempo => [hora_inicio, hora_fim]
 
@@ -63,7 +63,7 @@ class Horario {
             JOIN disciplinas d ON h.disciplina_id = d.id
             JOIN turmas t ON h.turma_id = t.id
             WHERE h.professor_id = :pid
-            ORDER BY FIELD(h.dia_semana,'Segunda','Terça','Quarta','Quinta','Sexta'), h.hora_inicio
+            ORDER BY FIELD(h.dia_semana,'Segunda','Terça','Quarta','Quinta','Sexta','Sábado'), h.hora_inicio
         ");
         $stmt->execute([':pid' => $professor_id]);
         return $stmt->fetchAll();
@@ -153,7 +153,7 @@ class Horario {
             JOIN disciplinas d ON h.disciplina_id = d.id
             LEFT JOIN professores p ON h.professor_id = p.id
             LEFT JOIN utilizadores u ON p.utilizador_id = u.id
-            ORDER BY t.codigo, FIELD(h.dia_semana,'Segunda','Terça','Quarta','Quinta','Sexta'), h.hora_inicio
+            ORDER BY t.codigo, FIELD(h.dia_semana,'Segunda','Terça','Quarta','Quinta','Sexta','Sábado'), h.hora_inicio
         ");
         $stmt->execute();
         return $stmt->fetchAll();

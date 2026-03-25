@@ -2311,10 +2311,18 @@ function clearAnoForm() {
                                 <label class="small fw-bold">Tempo / Horário</label>
                                 <select id="select_tempo_horario" class="form-select form-select-sm" onchange="updateTempoValues(this, 'horario_ini', 'horario_fim')" required>
                                     <option value="" disabled selected>Selecionar tempo...</option>
-                                    <option value="13:00|14:30">1º Tempo (13:00 – 14:30)</option>
-                                    <option value="14:35|16:05">2º Tempo (14:35 – 16:05)</option>
-                                    <option value="16:10|17:40">3º Tempo (16:10 – 17:40)</option>
-                                    <option value="17:45|19:15">4º Tempo (17:45 – 19:15)</option>
+                                    <optgroup label="Manhã / Tarde">
+                                        <option value="07:20|08:50">1º Tempo (07:20 – 08:50)</option>
+                                        <option value="08:55|10:25">2º Tempo (08:55 – 10:25)</option>
+                                        <option value="10:45|12:15">3º Tempo (10:45 – 12:15)</option>
+                                        <option value="12:20|13:50">4º Tempo (12:20 – 13:50)</option>
+                                    </optgroup>
+                                    <optgroup label="Noite">
+                                        <option value="17:45|19:15">N1 (17:45 – 19:15)</option>
+                                        <option value="19:20|20:50">N2 (19:20 – 20:50)</option>
+                                        <option value="21:00|22:30">N3 (21:00 – 22:30)</option>
+                                        <option value="22:35|24:00">N4 (22:35 – 24:00)</option>
+                                    </optgroup>
                                 </select>
                                 <input type="hidden" name="hora_inicio" id="horario_ini">
                                 <input type="hidden" name="hora_fim" id="horario_fim">
@@ -2757,10 +2765,18 @@ function showStats(id, titulo) {
                                 <label class="small fw-bold">Tempo / Horário</label>
                                 <select class="form-select form-select-sm" onchange="updateTempoValues(this, 'modelo_ini', 'modelo_fim')" required>
                                     <option value="" disabled selected>Selecionar tempo...</option>
-                                    <option value="13:00|14:30">1º Tempo (13:00 – 14:30)</option>
-                                    <option value="14:35|16:05">2º Tempo (14:35 – 16:05)</option>
-                                    <option value="16:10|17:40">3º Tempo (16:10 – 17:40)</option>
-                                    <option value="17:45|19:15">4º Tempo (17:45 – 19:15)</option>
+                                    <optgroup label="Manhã / Tarde">
+                                        <option value="07:20|08:50">1º Tempo (07:20 – 08:50)</option>
+                                        <option value="08:55|10:25">2º Tempo (08:55 – 10:25)</option>
+                                        <option value="10:45|12:15">3º Tempo (10:45 – 12:15)</option>
+                                        <option value="12:20|13:50">4º Tempo (12:20 – 13:50)</option>
+                                    </optgroup>
+                                    <optgroup label="Noite">
+                                        <option value="17:45|19:15">N1 (17:45 – 19:15)</option>
+                                        <option value="19:20|20:50">N2 (19:20 – 20:50)</option>
+                                        <option value="21:00|22:30">N3 (21:00 – 22:30)</option>
+                                        <option value="22:35|24:00">N4 (22:35 – 24:00)</option>
+                                    </optgroup>
                                 </select>
                                 <input type="hidden" name="hora_inicio" id="modelo_ini">
                                 <input type="hidden" name="hora_fim" id="modelo_fim">

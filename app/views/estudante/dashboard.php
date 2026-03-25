@@ -1,3 +1,4 @@
+<?php /** @var $this Controller */ ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -93,8 +94,8 @@
             <div class="d-flex gap-3 align-items-center">
                 <button class="btn btn-light shadow-sm position-relative rounded-circle p-2 px-3" onclick="document.getElementById('tab-comunicados').click()">
                     <ion-icon name="notifications-outline" class="fs-4 mt-1"></ion-icon>
-                    <?php if($data['unread_count'] > 0): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left:-10px;"><?= $data['unread_count'] ?></span>
+                    <?php if(!empty($data['unread_count'])): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left:-10px;"><?= (string)$data['unread_count'] ?></span>
                     <?php endif; ?>
                 </button>
                 <div class="d-flex align-items-center gap-3">
@@ -162,7 +163,7 @@
                         <div class="card border-0 shadow-sm" style="border-left: 5px solid #10B981 !important;">
                             <div class="card-body">
                                 <p class="text-muted fw-bold mb-1 text-uppercase small">Média Global</p>
-                                <h3 class="fw-bold mb-0 text-dark"><?= empty($data['media_geral']) ? 'N/A' : number_format($data['media_geral'], 1) ?> <small class="text-muted fs-6">/ 20</small></h3>
+                                <h3 class="fw-bold mb-0 text-dark"><?= empty($data['media_geral']) ? 'N/A' : number_format((float)$data['media_geral'], 1) ?> <small class="text-muted fs-6">/ 20</small></h3>
                             </div>
                         </div>
                     </div>
@@ -186,8 +187,8 @@
                         <div class="card border-0 shadow-sm" style="border-left: 5px solid #EF4444 !important;">
                             <div class="card-body">
                                 <p class="text-muted fw-bold mb-1 text-uppercase small">Pendências Finan.</p>
-                                <?php if ($data['pendencias_count'] > 0): ?>
-                                    <h4 class="fw-bold mb-0 text-danger text-uppercase mt-1"><?= $data['pendencias_count'] ?> Fatura(s)</h4>
+                                <?php if (!empty($data['pendencias_count'])): ?>
+                                    <h4 class="fw-bold mb-0 text-danger text-uppercase mt-1"><?= (string)$data['pendencias_count'] ?> Fatura(s)</h4>
                                 <?php else: ?>
                                     <h4 class="fw-bold mb-0 text-success text-uppercase mt-1">Regularizado</h4>
                                 <?php endif; ?>
@@ -261,7 +262,11 @@
                     <div class="card-body p-3">
                         <?php
                         $gridData  = $data['gridData'] ?? [];
-                        $turmaInfo = ['codigo' => $data['estudante']['turma_codigo'] ?? '', 'turno' => $data['estudante']['turno'] ?? ''];
+                        $turmaInfo = [
+                            'codigo' => $data['estudante']['turma_codigo'] ?? '', 
+                            'turno' => $data['estudante']['turno'] ?? '',
+                            'nivel' => ($data['estudante']['ano_curso_id'] ?? '1') . 'º ANO'
+                        ];
                         if (file_exists(__DIR__ . '/../shared/horario_grid.php')) {
                             include __DIR__ . '/../shared/horario_grid.php';
                         }

@@ -231,7 +231,7 @@ class AdminController extends Controller {
         $model = $this->model('Horario');
         $horarios = $model->getHorarioByTurma($turma_id);
         
-        $dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+        $dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
         $tempos = [
             '1º' => ['07:20', '08:50'],
             '2º' => ['08:55', '10:25'],
@@ -248,30 +248,36 @@ class AdminController extends Controller {
             return;
         }
 
-        echo '<div class="table-responsive"><table class="table table-bordered table-sm text-center small align-middle">
-                <thead class="table-dark">
-                    <tr><th>TEMPO</th><th>HORA</th>';
-        foreach ($dias as $d) echo '<th>' . strtoupper($d) . '</th>';
+        echo '<div class="table-responsive">
+                <table class="table table-bordered text-center align-middle mb-0" style="border: 1px solid #000 !important; background: #fff;">
+                <thead style="background-color: #f8f9fa;">
+                    <tr style="border-bottom: 2px solid #000;">
+                        <th style="border: 1px solid #000; padding: 10px; font-weight: bold; width: 80px;">TEMPO</th>
+                        <th style="border: 1px solid #000; padding: 10px; font-weight: bold; width: 100px;">HORA</th>';
+        foreach ($dias as $d) echo '<th style="border: 1px solid #000; padding: 10px; font-weight: bold;">' . strtoupper($d) . '</th>';
         echo '</tr></thead><tbody>';
 
         foreach ($tempos as $t_label => $t_horas) {
-            echo '<tr>
-                    <td class="fw-bold bg-light">'.$t_label.'</td>
-                    <td class="small nowrap">'.$t_horas[0].' – '.$t_horas[1].'</td>';
+            echo '<tr style="border-bottom: 1px solid #000;">
+                    <td style="border: 1px solid #000; font-weight: bold; background: #fdfdfd;">'.$t_label.'</td>
+                    <td style="border: 1px solid #000; font-size: 0.8rem; background: #fdfdfd;">'.$t_horas[0].' - '.$t_horas[1].'</td>';
             foreach ($dias as $d) {
                 $found = false;
+                echo '<td style="border: 1px solid #000; padding: 0; min-width: 120px; height: 60px; vertical-align: top;">';
                 foreach ($horarios as $h) {
                     if ($h['dia_semana'] == $d && substr($h['hora_inicio'], 0, 5) == $t_horas[0]) {
-                        echo '<td class="p-2">
-                                <div class="fw-bold text-primary">'.$h['nome_display'].' ('.$h['sigla'].')</div>
-                                <div class="text-muted" style="font-size:0.7rem">'.$h['sala'].'</div>
-                                <div class="mt-1"><button class="btn btn-xs p-0 text-danger" onclick="if(confirm(\'Remover slot?\')) window.location.href=\'/green/admin/deleteHorario/'.$h['id'].'\'"><ion-icon name="close-circle-outline"></ion-icon></button></div>
-                              </td>';
+                        echo '<div style="display: flex; flex-direction: column; height: 100%;">';
+                        echo '<div style="padding: 5px; font-weight: bold; border-bottom: 1px solid #eee; flex: 1; display: flex; align-items: center; justify-content: center;">' . $h['sigla'] . '</div>';
+                        echo '<div style="padding: 3px; font-size: 0.75rem; color: #666; background: #fafafa; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">';
+                        echo '<span>' . $h['sala'] . '</span>';
+                        echo '<button class="btn btn-link text-danger p-0 mt-1" style="font-size: 0.7rem; text-decoration: none;" onclick="if(confirm(\'Remover slot?\')) window.location.href=\'/green/admin/deleteHorario/'.$h['id'].'\'"><ion-icon name="trash-outline"></ion-icon></button>';
+                        echo '</div></div>';
                         $found = true;
                         break;
                     }
                 }
-                if (!$found) echo '<td class="text-muted">-</td>';
+                if (!$found) echo '<span style="color: #eee; display: flex; align-items: center; justify-content: center; height: 100%;"> - </span>';
+                echo '</td>';
             }
             echo '</tr>';
         }
@@ -591,20 +597,46 @@ class AdminController extends Controller {
         $slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (empty($slots)) {
-            echo '<p class="text-center text-muted py-3">Sem modelo definido para este ano.</p>';
+            echo '<div class="text-center py-5 text-muted">
+                    <ion-icon name="calendar-outline" style="font-size: 3rem;" class="opacity-25"></ion-icon>
+                    <p class="mt-2">Nenhum slot definido para este modelo de ano.</p>
+                  </div>';
         } else {
-            echo '<table class="table table-sm small">
-                    <thead><tr><th>Dia</th><th>Hora</th><th>Disciplina</th><th>Ação</th></tr></thead>
-                    <tbody>';
+            echo '<div class="table-responsive">
+                    <table class="table table-hover table-sm align-middle mb-0" style="font-size: 0.85rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">DIA</th>
+                                <th>HORÁRIO</th>
+                                <th>DISCIPLINA</th>
+                                <th class="text-end pe-3">AÇÃO</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
             foreach ($slots as $s) {
+                $checkNight = (int)substr($s['hora_inicio'], 0, 2) >= 17;
+                $badgeClass = $checkNight ? 'bg-dark' : 'bg-primary';
+                $tempoLabel = $checkNight ? 'NOITE' : 'DIA';
+                
                 echo '<tr>
-                        <td>'.$s['dia_semana'].'</td>
-                        <td>'.substr($s['hora_inicio'],0,5).'-'.substr($s['hora_fim'],0,5).'</td>
-                        <td>'.($s['disciplina_nome'] ?? 'A definir').'</td>
-                        <td><button class="btn btn-xs text-danger" onclick="deleteModeloSlot('.$s['id'].', '.$s['ano_id'].')"><ion-icon name="trash"></ion-icon></button></td>
+                        <td class="ps-3 fw-bold">'.$s['dia_semana'].'</td>
+                        <td>
+                            <span class="badge '.$badgeClass.' bg-opacity-10 text-'.($checkNight ? 'dark' : 'primary').' px-2">
+                                '.substr($s['hora_inicio'],0,5).' – '.substr($s['hora_fim'],0,5).'
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-bold">'.($s['disciplina_nome'] ?? 'A definir').'</div>
+                            <div class="text-muted extra-small">'.($s['sala'] ? 'Local: '.$s['sala'] : 'Sem local fixo').'</div>
+                        </td>
+                        <td class="text-end pe-3">
+                            <button class="btn btn-link text-danger p-0" onclick="deleteModeloSlot('.$s['id'].', '.$s['ano_id'].')" title="Remover Slot">
+                                <ion-icon name="trash-outline" style="font-size: 1.2rem;"></ion-icon>
+                            </button>
+                        </td>
                       </tr>';
             }
-            echo '</tbody></table>';
+            echo '</tbody></table></div>';
         }
     }
 

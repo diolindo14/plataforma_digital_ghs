@@ -833,37 +833,40 @@
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered text-center align-middle shadow-sm">
-                        <thead class="table-dark">
-                            <tr>
-                                <th class="py-3">TEMPO</th>
-                                <th class="py-3">HORA</th>
+                    <table class="table table-bordered text-center align-middle mb-0" style="border: 1px solid #000 !important;">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr style="border-bottom: 2px solid #000;">
+                                <th style="border: 1px solid #000; padding: 10px; font-weight: bold; width: 80px;">TEMPO</th>
+                                <th style="border: 1px solid #000; padding: 10px; font-weight: bold; width: 100px;">HORA</th>
                                 <?php foreach($data['dias_semana'] as $d): ?>
-                                    <th class="py-3"><?= strtoupper($d) ?></th>
+                                    <th style="border: 1px solid #000; padding: 10px; font-weight: bold;"><?= strtoupper($d) ?></th>
                                 <?php endforeach; ?>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach($data['tempos_aula'] as $t_label => $t_horas): ?>
-                                <tr>
-                                    <td class="fw-bold bg-light"><?= $t_label ?></td>
-                                    <td class="small fw-semibold text-muted"><?= $t_horas[0] ?> – <?= $t_horas[1] ?></td>
+                                <tr style="border-bottom: 1px solid #000;">
+                                    <td style="border: 1px solid #000; font-weight: bold; background: #fdfdfd;"><?= $t_label ?></td>
+                                    <td style="border: 1px solid #000; font-size: 0.8rem; background: #fdfdfd;"><?= $t_horas[0] ?> - <?= $t_horas[1] ?></td>
                                     <?php foreach($data['dias_semana'] as $dia): ?>
-                                        <td class="p-3" style="min-width: 140px;">
+                                        <td style="border: 1px solid #000; padding: 0; min-width: 120px; height: 60px; vertical-align: top;">
                                             <?php 
                                             $found = false;
                                             foreach($data['horario'] as $h) {
                                                 if($h['dia_semana'] == $dia && substr($h['hora_inicio'], 0, 5) == $t_horas[0]) {
-                                                    echo '<div class="p-2 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-25">';
-                                                    echo '<div class="fw-bold text-primary small">'.explode(':', $h['disciplina_nome'])[0].'</div>';
-                                                    echo '<div class="text-muted extra-small" style="font-size: 0.65rem;">('.$h['sala'].')</div>';
-                                                    echo '<div class="mt-1"><span class="badge bg-white text-dark border extra-small" style="font-size: 0.6rem;">'.$h['turma_codigo'].'</span></div>';
+                                                    echo '<div style="display: flex; flex-direction: column; height: 100%;">';
+                                                    // Top Row: Sigla
+                                                    echo '<div style="padding: 5px; font-weight: bold; border-bottom: 1px solid #ddd; flex: 1; display: flex; align-items: center; justify-content: center;">' . ($h['sigla'] ?: $h['nome_display']) . '</div>';
+                                                    // Bottom Row: Sala | Turma
+                                                    echo '<div style="padding: 3px; font-size: 0.7rem; color: #333; background: #fdfdfd; flex: 1; display: flex; align-items: center; justify-content: center;">';
+                                                    echo $h['sala'] . ' <span class="mx-1">|</span> ' . $h['turma_codigo'];
+                                                    echo '</div>';
                                                     echo '</div>';
                                                     $found = true;
                                                     break;
                                                 }
                                             }
-                                            if(!$found) echo '<span class="text-muted opacity-25">-</span>';
+                                            if(!$found) echo '<span style="color: #eee; display: flex; align-items: center; justify-content: center; height: 100%;"> - </span>';
                                             ?>
                                         </td>
                                     <?php endforeach; ?>
@@ -873,21 +876,7 @@
                     </table>
                 </div>
                 
-                <div class="row mt-4 px-2">
-                    <div class="col-12">
-                        <h6 class="fw-bold small text-muted text-uppercase mb-3">Legenda das Disciplinas & Locais</h6>
-                        <div class="d-flex flex-wrap gap-2 mb-4 text-start">
-                            <span class="badge border text-dark fw-normal bg-white">EDP: Ética e Deontologia Profissional</span>
-                            <span class="badge border text-dark fw-normal bg-white">MCG: Multimédia e Computação Gráfica</span>
-                            <span class="badge border text-dark fw-normal bg-white">RD2: Redes Digitais</span>
-                            <span class="badge border text-dark fw-normal bg-white">IA: Inteligência Artificial</span>
-                            <span class="badge border text-dark fw-normal bg-white">MC: Metodologia Científica</span>
-                            <span class="badge border text-dark fw-normal bg-white">ES: Engenharia de Software</span>
-                            <span class="badge border text-dark fw-normal bg-white">TSI: Tecnologia para Sistemas Inteligentes</span>
-                            <span class="badge border text-success fw-bold bg-white">LAB1 / LAB2 / LAB3: Laboratórios Técnicos</span>
-                        </div>
-                    </div>
-                </div>
+
             </div>
             <div class="modal-footer border-0 pb-4">
                 <button type="button" class="btn btn-secondary px-4 fw-bold shadow-sm" data-bs-dismiss="modal">Fechar</button>
