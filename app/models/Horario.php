@@ -35,19 +35,80 @@ class Horario {
     public function buildWeeklyGrid($turma_id) {
         $rows = $this->getHorarioByTurma($turma_id);
         $dias  = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-        $grid  = [];      // grid[tempo][dia] = slot
-        $tempos = [];     // tempo => [hora_inicio, hora_fim]
+        $grid  = [];      
+        
+        // Define default 4 slots based on shift
+        $stmtT = $this->db->prepare("SELECT turno FROM turmas WHERE id = :tid");
+        $stmtT->execute([':tid' => $turma_id]);
+        $turno = $stmtT->fetchColumn() ?: 'Manhã';
+
+        $tempos = $this->getDefaultTempos($turno);
 
         foreach ($rows as $r) {
             $t = (int)$r['tempo_num'];
             $d = $r['dia_semana'];
-            if (!isset($tempos[$t])) {
-                $tempos[$t] = ['inicio' => $r['hora_inicio'], 'fim' => $r['hora_fim']];
+            if (isset($tempos[$t])) {
+                $tempos[$t] = ['inicio' => substr($r['hora_inicio'], 0, 5), 'fim' => substr($r['hora_fim'], 0, 5)];
             }
             $grid[$t][$d] = $r;
         }
         ksort($tempos);
         return ['tempos' => $tempos, 'grid' => $grid, 'dias' => $dias];
+    }
+
+    public function buildWeeklyGridForProfessor($professor_id) {
+        $rows = $this->getHorarioByProfessor($professor_id);
+        $dias  = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+        $grid  = [];
+        $tempos = [];
+
+        foreach ($rows as $r) {
+            $t = (int)$r['tempo_num'];
+            $d = $r['dia_semana'];
+            if (!isset($tempos[$t])) {
+                $tempos[$t] = ['inicio' => substr($r['hora_inicio'], 0, 5), 'fim' => substr($r['hora_fim'],0,5)];
+            }
+            $r['sigla'] = $r['sigla'] . " (" . $r['turma_codigo'] . ")";
+            $grid[$t][$d] = $r;
+        }
+
+        if (empty($tempos)) {
+            $tempos = $this->getDefaultTempos('Manhã');
+        } else {
+            $max = max(array_keys($tempos));
+            if ($max < 4) $max = 4;
+            for ($i = 1; $i <= $max; $i++) {
+                if (!isset($tempos[$i])) $tempos[$i] = ['inicio' => '--:--', 'fim' => '--:--'];
+            }
+        }
+
+        ksort($tempos);
+        return ['tempos' => $tempos, 'grid' => $grid, 'dias' => $dias];
+    }
+
+    private function getDefaultTempos($turno) {
+        if ($turno == 'Tarde') {
+            return [
+                1 => ['inicio' => '13:00', 'fim' => '14:30'],
+                2 => ['inicio' => '14:40', 'fim' => '16:10'],
+                3 => ['inicio' => '16:20', 'fim' => '17:50'],
+                4 => ['inicio' => '18:00', 'fim' => '19:30']
+            ];
+        } elseif ($turno == 'Noite') {
+            return [
+                1 => ['inicio' => '17:30', 'fim' => '19:00'],
+                2 => ['inicio' => '19:10', 'fim' => '20:40'],
+                3 => ['inicio' => '20:50', 'fim' => '22:20'],
+                4 => ['inicio' => '22:30', 'fim' => '00:00']
+            ];
+        } else {
+            return [
+                1 => ['inicio' => '07:20', 'fim' => '08:50'],
+                2 => ['inicio' => '08:55', 'fim' => '10:25'],
+                3 => ['inicio' => '10:45', 'fim' => '12:15'],
+                4 => ['inicio' => '12:20', 'fim' => '13:50']
+            ];
+        }
     }
 
     // ─── Professor view ──────────────────────────────────────────
@@ -67,26 +128,6 @@ class Horario {
         ");
         $stmt->execute([':pid' => $professor_id]);
         return $stmt->fetchAll();
-    }
-
-    public function buildWeeklyGridForProfessor($professor_id) {
-        $rows = $this->getHorarioByProfessor($professor_id);
-        $dias  = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-        $grid  = [];
-        $tempos = [];
-
-        foreach ($rows as $r) {
-            $t = (int)$r['tempo_num'];
-            $d = $r['dia_semana'];
-            if (!isset($tempos[$t])) {
-                $tempos[$t] = ['inicio' => $r['hora_inicio'], 'fim' => $r['hora_fim']];
-            }
-            // Add turma code to sigla for professor view
-            $r['sigla'] = $r['sigla'] . " (" . $r['turma_codigo'] . ")";
-            $grid[$t][$d] = $r;
-        }
-        ksort($tempos);
-        return ['tempos' => $tempos, 'grid' => $grid, 'dias' => $dias];
     }
 
     // ─── Admin CRUD ──────────────────────────────────────────────

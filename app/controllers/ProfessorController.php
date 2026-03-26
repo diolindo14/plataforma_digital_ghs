@@ -203,6 +203,31 @@ class ProfessorController extends Controller {
         exit;
     }
 
+    public function saveRespostaReclamacao() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->verifyCsrfToken();
+            $estudante_id = $_POST['estudante_id'] ?? null;
+            $turma_id = $_POST['turma_id'] ?? null;
+            $disciplina_id = $_POST['disciplina_id'] ?? null;
+            $resposta = $_POST['resposta_professor'] ?? null;
+            
+            if ($estudante_id && $turma_id && $disciplina_id && $resposta) {
+                $db = Database::getInstance();
+                $stmt = $db->prepare("UPDATE concordancia_notas SET status = 'Resolvido', resposta_professor = :resp, data_resposta = NOW() WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'");
+                $res = $stmt->execute([':resp' => $resposta, ':eid' => $estudante_id, ':tid' => $turma_id, ':did' => $disciplina_id]);
+                if ($res) {
+                    $this->logActivity('Resposta à Reclamação', ['estudante_id' => $estudante_id]);
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true]);
+                    exit;
+                }
+            }
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false]);
+            exit;
+        }
+    }
+
     public function saveEvento() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();

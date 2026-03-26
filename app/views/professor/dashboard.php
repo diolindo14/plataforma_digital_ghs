@@ -782,6 +782,8 @@
                         </div>
                     </div>
                 </div>
+            </div> <!-- Close pane-reclamacoes -->
+
             <!-- Minha Assiduidade -->
             <div class="tab-pane fade" id="pane-assiduidade">
                 <div class="card shadow-sm border-0 border-top border-4 border-info">

@@ -57,7 +57,7 @@ class Comunicado {
         
         if ($tipoUser == 'professor') {
             $query .= " OR c.tipo = 'Professores' ";
-            $query .= " OR (c.tipo = 'Turma' AND c.destinatario_tipo = 'Turma') "; 
+            $query .= " OR c.criado_por = :user_id "; 
         } else if ($tipoUser == 'aluno') {
             $query .= " OR c.tipo = 'Alunos' ";
             if ($turmaId) {

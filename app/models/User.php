@@ -26,17 +26,18 @@ class User {
         return $stmt->execute();
     }
 
-    public function insertUser($nome, $email, $senha, $tipo) {
+    public function insertUser($nome, $email, $senha, $tipo, $status = 'pendente') {
         $check = $this->findByEmail($email);
         if ($check) return false;
         
         $hash = password_hash($senha, PASSWORD_DEFAULT);
 
-        $stmt = $this->db->prepare("INSERT INTO utilizadores (nome_completo, email, senha, tipo, status) VALUES (:nome, :email, :senha, :tipo, 'ativo')");
+        $stmt = $this->db->prepare("INSERT INTO utilizadores (nome_completo, email, senha, tipo, status) VALUES (:nome, :email, :senha, :tipo, :status)");
         $stmt->bindValue(':nome', $nome);
         $stmt->bindValue(':email', $email);
         $stmt->bindValue(':senha', $hash);
         $stmt->bindValue(':tipo', $tipo);
+        $stmt->bindValue(':status', $status);
         
         if ($stmt->execute()) {
             return $this->db->lastInsertId();
@@ -128,21 +129,24 @@ class User {
         return false;
     }
     public function updateUser($id, $data) {
-        $sql = "UPDATE utilizadores SET nome_completo = :nome, email = :email";
-        if (!empty($data['senha'])) {
-            $sql .= ", senha = :senha";
-        }
-        $sql .= " WHERE id = :id";
+        $fields = [];
+        if (array_key_exists('nome_completo', $data)) $fields[] = "nome_completo = :nome";
+        if (array_key_exists('email', $data)) $fields[] = "email = :email";
+        if (array_key_exists('status', $data)) $fields[] = "status = :status";
+        if (!empty($data['senha'])) $fields[] = "senha = :senha";
 
+        if (empty($fields)) return true;
+
+        $sql = "UPDATE utilizadores SET " . implode(', ', $fields) . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':nome', $data['nome_completo']);
-        $stmt->bindValue(':email', $data['email']);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         
+        if (array_key_exists('nome_completo', $data)) $stmt->bindValue(':nome', $data['nome_completo']);
+        if (array_key_exists('email', $data)) $stmt->bindValue(':email', $data['email']);
+        if (array_key_exists('status', $data)) $stmt->bindValue(':status', $data['status']);
         if (!empty($data['senha'])) {
-            $hash = password_hash($data['senha'], PASSWORD_BCRYPT);
-            $stmt->bindValue(':senha', $hash);
+            $stmt->bindValue(':senha', password_hash($data['senha'], PASSWORD_BCRYPT));
         }
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         
         return $stmt->execute();
     }
