@@ -1,4 +1,9 @@
 <?php
+/**
+ * Modelo Especialidade - Gestão de Cursos/Áreas de Estudo.
+ * 
+ * Define os agrupamentos pedagógicos da instituição.
+ */
 class Especialidade {
     private $db;
 
@@ -6,12 +11,18 @@ class Especialidade {
         $this->db = Database::getInstance();
     }
 
+    /**
+     * Lista todas as especializações ativas.
+     */
     public function getAll() {
         $stmt = $this->db->prepare("SELECT * FROM especializacoes ORDER BY nome ASC");
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
+    /**
+     * Cria uma nova especialização.
+     */
     public function createEspecialidade($data) {
         $stmt = $this->db->prepare("INSERT INTO especializacoes (codigo, nome, descricao, vagas, ativa) 
                                     VALUES (:codigo, :nome, :descricao, :vagas, 1)");
@@ -22,6 +33,9 @@ class Especialidade {
         return $stmt->execute();
     }
 
+    /**
+     * Atualiza dados da especialização.
+     */
     public function updateEspecialidade($id, $data) {
         $stmt = $this->db->prepare("UPDATE especializacoes SET codigo = :codigo, nome = :nome, 
                                     descricao = :descricao, vagas = :vagas, ativa = :ativa WHERE id = :id");
@@ -35,6 +49,9 @@ class Especialidade {
         ]);
     }
 
+    /**
+     * Remove uma especialização.
+     */
     public function deleteEspecialidade($id) {
         try {
             $stmt = $this->db->prepare("DELETE FROM especializacoes WHERE id = :id");

@@ -1,13 +1,28 @@
 <?php
+/**
+ * SecretariaController - Gestor Operacional da Plataforma.
+ * 
+ * Responsável pela recepção de novas matrículas, triagem de documentos 
+ * e pré-validação de pagamentos. Atua como o primeiro nível de governação 
+ * antes da supervisão do Administrador.
+ */
 class SecretariaController extends Controller {
+    
+    /**
+     * Construtor com restrição de acesso por Role-Based Access Control (RBAC).
+     */
     public function __construct() {
         parent::__construct();
         if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'secretaria') {
-            header('Location: /green/auth');
+            header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
     }
 
+    /**
+ * Controlador do Portal da Secretaria.
+     * Consolida dados de matrículas pendentes, pagamentos por validar e alertas de sistema.
+     */
     public function index() {
         $matriculaModel = $this->model('Matricula');
         $pagamentoModel = $this->model('Pagamento');
@@ -18,67 +33,137 @@ class SecretariaController extends Controller {
             'nome' => $_SESSION['user_name'] ?? 'Secretaria',
             'stats' => $dashboardModel->getSecretariaStats(),
             'matriculas_pendentes' => $matriculaModel->getPendingEnrollments(),
-            'pagamentos_pendentes' => $pagamentoModel->getAll(), // Simplified for now, can filter if needed
+            'pagamentos_pendentes' => $pagamentoModel->getAll(), 
             'comunicados' => $comunicadoModel->getAll(),
             'tipos_pagamento' => $pagamentoModel->getTiposPagamento(),
             'estudantes' => $this->model('Estudante')->getAllStudents()
         ];
 
-        // Filter payments to keep only those pending validation if preferred
+        // Lógica de Negócio: Filtra apenas pagamentos que possuem comprovativo enviado
         $data['pagamentos_validar'] = array_filter($data['pagamentos_pendentes'], function($p) {
             return $p['status'] === 'Pendente' && !empty($p['comprovativo_arquivo']);
         });
 
+        // Recupera notificações bidirecionais (GHS Message System)
+        $data['mensagens_painel'] = $this->model('Mensagem')->getUnreadMessages($_SESSION['user_id']);
+        $data['mensagens_historico'] = $this->model('Mensagem')->getReceivedMessages($_SESSION['user_id']);
+
+        // --- 🏆 MÉRITO ACADÉMICO ---
+        $acadRank = $this->model('Academico');
+        $data['ranking_escola'] = $acadRank->getRankingEscola(3);
+        $data['ranking_nivel']  = $acadRank->getRankingByNivel();
+
         $this->view('secretaria/index', $data);
     }
 
+    /**
+     * Fluxo de Aprovação de Matrícula (Nível Secretaria).
+     * 
+     * Documentação Funcional:
+     * 1. Altera o status da matrícula.
+     * 2. Ativa o utilizador no sistema core.
+     * 3. Executa alocação automática em turmas disponíveis.
+     * 4. Notifica o Administrador sobre a entrada de um novo aluno.
+     */
     public function approveMatricula($id) {
-        $this->verifyCsrfToken();
-        $model = $this->model('Matricula');
-        if ($model->updateStatus($id, 'Aprovada', $_SESSION['user_id'])) {
-            $this->logActivity('Aprovar Matrícula', ['matricula_id' => $id]);
-            $_SESSION['flash_success'] = "Matrícula aprovada com sucesso.";
+        $this->verifyCsrfToken(); 
+        $matriculaModel = $this->model('Matricula'); 
+        $db = Database::getInstance(); 
+        
+        $stmt = $db->prepare("SELECT m.*, u.nome_completo, u.email, u.id as user_id FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+        $stmt->execute([':id' => $id]);
+        $m = $stmt->fetch(); 
+
+        if ($matriculaModel->updateStatus($id, 'Aprovada', $_SESSION['user_id'])) {
+            $this->logActivity('Aprovar Matrícula Secretaria', ['matricula_id' => $id]); 
+            
+            // Ativação Core
+            $db->prepare("UPDATE utilizadores SET status = 'ativo' WHERE id = :uid")->execute([':uid' => $m['user_id']]);
+
+            // Alocação Inteligente (Turno/Ano)
+            $stmtT = $db->prepare("SELECT id FROM turmas WHERE ano_id = :ano AND turno = :turno AND vagas > (SELECT COUNT(*) FROM matriculas WHERE turma_id = turmas.id) LIMIT 1");
+            $stmtT->execute([':ano' => $m['ano_curso_id'], ':turno' => $m['turno']]);
+            $t = $stmtT->fetch(); 
+            
+            if ($t) {
+                $matriculaModel->assignToTurma($id, $t['id']); 
+                $_SESSION['flash_success'] = "Matrícula aprovada! Aluno ativado e alocado à turma automaticamente.";
+            } else {
+                $_SESSION['flash_success'] = "Matrícula aprovada e aluno ativado! (Alocação manual necessária).";
+            }
+
+            // Integração: Informe ao Admin
+            $notif = "A Secretaria (" . ($_SESSION['user_name'] ?? 'Membro') . ") aprovou a matrícula de " . ($m['nome_completo'] ?? 'N/A') . ".";
+            $this->model('Mensagem')->notifyGroup('admin', $notif, $_SESSION['user_id']); 
+            
         } else {
             $_SESSION['flash_error'] = "Erro ao aprovar matrícula.";
         }
-        header('Location: /green/secretaria');
+        header('Location: ' . URL_ROOT . '/secretaria'); 
     }
 
+    /**
+     * Rejeição de Matrícula.
+     * Permite à secretaria impedir o avanço de inscrições irregulares.
+     */
     public function rejectMatricula($id) {
-        $this->verifyCsrfToken();
-        $model = $this->model('Matricula');
-        $motivo = $_POST['motivo'] ?? 'Documentação incompleta';
+        $this->verifyCsrfToken(); 
+        $db = Database::getInstance(); 
+        $stmt = $db->prepare("SELECT u.nome_completo FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+        $stmt->execute([':id' => $id]);
+        $u = $stmt->fetch();
+
+        $model = $this->model('Matricula'); 
+        $motivo = $_POST['motivo'] ?? 'Documentação incompleta'; 
+        
         if ($model->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo)) {
-            $this->logActivity('Rejeitar Matrícula', ['matricula_id' => $id, 'motivo' => $motivo]);
+            $this->logActivity('Rejeitar Matrícula Secretaria', ['matricula_id' => $id, 'motivo' => $motivo]);
+            
+            $notif = "A Secretaria REJEITOU a matrícula de " . ($u['nome_completo'] ?? 'N/A') . ". Motivo: $motivo.";
+            $this->model('Mensagem')->notifyGroup('admin', $notif, $_SESSION['user_id']);
+            
             $_SESSION['flash_success'] = "Matrícula rejeitada.";
         } else {
             $_SESSION['flash_error'] = "Erro ao rejeitar matrícula.";
         }
-        header('Location: /green/secretaria');
+        header('Location: ' . URL_ROOT . '/secretaria'); 
     }
 
+    /**
+     * Validação de Fluxo de Caixa (Pagamentos).
+     */
     public function validatePayment($id) {
-        $this->verifyCsrfToken();
-        $model = $this->model('Pagamento');
-        if ($model->aprovarPagamento($id, $_SESSION['user_id'])) {
-            $this->logActivity('Validar Pagamento', ['pagamento_id' => $id]);
+        $this->verifyCsrfToken(); 
+        $db = Database::getInstance(); 
+        $stmt = $db->prepare("SELECT p.*, u.nome_completo FROM pagamentos p JOIN estudantes e ON p.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE p.id = :id");
+        $stmt->execute([':id' => $id]);
+        $p = $stmt->fetch();
+
+        if ($this->model('Pagamento')->aprovarPagamento($id, $_SESSION['user_id'])) {
+            $this->logActivity('Validar Pagamento Secretaria', ['pagamento_id' => $id]);
+            
+            $notif = "Pagamento validado pela Secretaria: " . ($p['nome_completo'] ?? 'N/A') . " (ID: $id).";
+            $this->model('Mensagem')->notifyGroup('admin', $notif, $_SESSION['user_id']);
+            
             $_SESSION['flash_success'] = "Pagamento validado com sucesso.";
         } else {
             $_SESSION['flash_error'] = "Erro ao validar pagamento.";
         }
-        header('Location: /green/secretaria');
+        header('Location: ' . URL_ROOT . '/secretaria'); 
     }
 
-    public function saveComunicado() {
+    /**
+     * Gestão de Notificações.
+     * 
+     * // Sugestão: Poderia ser implementado via AJAX para evitar o reload da página.
+     */
+    public function clearNotifications() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();
-            $model = $this->model('Comunicado');
-            if ($model->create($_POST)) {
-                $_SESSION['flash_success'] = "Comunicado enviado.";
-            } else {
-                $_SESSION['flash_error'] = "Erro ao enviar comunicado.";
-            }
-            header('Location: /green/secretaria');
+            $this->model('Mensagem')->markAllAsRead($_SESSION['user_id']);
+            $_SESSION['flash_success'] = "Painel de alertas limpo!";
         }
+        header('Location: ' . URL_ROOT . '/secretaria');
+        exit;
     }
 }

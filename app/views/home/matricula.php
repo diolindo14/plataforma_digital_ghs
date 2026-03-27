@@ -58,11 +58,11 @@
     <!-- Header Verde Escuro -->
     <div class="top-header">
         <div class="container position-relative">
-            <a href="/green/" class="back-link"><ion-icon name="arrow-back-outline"></ion-icon> Voltar ao site</a>
+            <a href="<?= URL_ROOT ?>/" class="back-link"><ion-icon name="arrow-back-outline"></ion-icon> Voltar ao site</a>
             
             <div class="d-flex align-items-center gap-3 ms-md-5 ps-md-4 mt-3 mt-md-0">
                 <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 bg-white p-1" style="height: 60px;">
-                    <img src="/green/img/logo.jpg" alt="Logo GHS" style="height: 100%; object-fit: contain;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="height: 100%; object-fit: contain;">
                 </div>
                 <div>
                     <h3 class="fw-bold mb-0 text-white fs-4">Inscrição Online</h3>
@@ -91,7 +91,7 @@
                 <!-- Main Form Card -->
                 <div class="card bg-white shadow-sm" style="border-radius: 12px; border: 1px solid #e2e8f0;">
                     <div class="card-body p-4 p-md-5">
-                        <form action="/green/matricula/submit" method="POST" enctype="multipart/form-data">
+                        <form action="<?= URL_ROOT ?>/matricula/submit" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     

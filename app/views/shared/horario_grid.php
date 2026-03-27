@@ -110,7 +110,7 @@ $diasLabels = ['SEG','TER','QUA','QUI','SEX','SÁB'];
     <div class="d-none d-print-block">
         <div class="d-flex justify-content-between align-items-center mb-0">
             <div style="width: 150px;">
-                <img src="/green/img/logo.jpg" alt="Logo" style="width: 100%;">
+                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 100%;">
             </div>
             <div class="text-center flex-grow-1">
                 <h2 style="font-family: serif; font-weight: bold; margin-bottom: 0;">HORÁRIO 2º SEMESTRE 2025-2026</h2>
@@ -139,7 +139,7 @@ $diasLabels = ['SEG','TER','QUA','QUI','SEX','SÁB'];
                 <?php foreach ($gridData['tempos'] as $tempo => $horas): ?>
                     <tr>
                         <td class="col-tempo">
-                            <span class="tempo-val"><?= ((int)$tempo) + 1 ?>º</span>
+                            <span class="tempo-val"><?= (int)$tempo ?>º</span>
                         </td>
                         <td class="col-hora">
                             <span class="hora-val"><?= substr($horas['inicio'],0,5) ?> - <?= substr($horas['fim'],0,5) ?></span>

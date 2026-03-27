@@ -44,7 +44,7 @@
         <div class="receipt-box">
             <div class="header">
                 <div class="logo-container">
-                    <img src="/green/img/logo.jpg" alt="Logo Escola" class="logo-img">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo Escola" class="logo-img">
                     <div class="school-name">Green Hard & Softh</div>
                 </div>
                 <div style="text-align: right; display: flex; flex-direction: column; justify-content: center;">
@@ -126,7 +126,7 @@
             }
             // Fallback para fechar se ainda estiver aberto (pode ser bloqueado pelo browser)
             setTimeout(function() {
-                if(!window.closed) window.location.href = '/green/estudante';
+                if(!window.closed) window.location.href = '<?= URL_ROOT ?>/estudante';
             }, 300);
         }
     </script>

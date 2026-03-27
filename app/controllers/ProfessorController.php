@@ -3,7 +3,7 @@ class ProfessorController extends Controller {
     public function __construct() {
         parent::__construct();
         if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'professor') {
-            header('Location: /green/auth');
+            header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
     }
@@ -14,7 +14,7 @@ class ProfessorController extends Controller {
         
         if (!$profData) {
             $_SESSION['flash_error'] = "Perfil de professor não encontrado para este utilizador.";
-            header('Location: /green/auth');
+            header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
 
@@ -68,6 +68,11 @@ class ProfessorController extends Controller {
         ];
         $data['gridData'] = $horarioModel->buildWeeklyGridForProfessor($data['professor']['id']);
         $data['dias_semana'] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+
+        // --- 🏆 MÉRITO ACADÉMICO ---
+        $acadRank = $this->model('Academico');
+        $data['ranking_escola'] = $acadRank->getRankingEscola(3);
+        $data['ranking_nivel']  = $acadRank->getRankingByNivel();
 
         $this->view('professor/dashboard', $data);
     }
@@ -238,7 +243,7 @@ class ProfessorController extends Controller {
             } else {
                 $_SESSION['flash_error'] = "Erro ao agendar evento.";
             }
-            header('Location: /green/professor/dashboard');
+            header('Location: ' . URL_ROOT . '/professor/dashboard');
         }
     }
 
@@ -250,6 +255,6 @@ class ProfessorController extends Controller {
         } else {
             $_SESSION['flash_error'] = "Erro ao remover agendamento.";
         }
-        header('Location: /green/professor/dashboard');
+        header('Location: ' . URL_ROOT . '/professor/dashboard');
     }
 }

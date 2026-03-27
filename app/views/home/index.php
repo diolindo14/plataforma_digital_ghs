@@ -21,7 +21,7 @@
         .brand-sub { font-size: 0.8rem; color: #64748b; font-weight: 500; }
 
         /* Hero */
-        .hero { background: linear-gradient(to right, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.3) 100%), url('/green/img/ghs.jpg') center/cover no-repeat; color: white; padding: 180px 0 60px 0; min-height: 95vh; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .hero { background: linear-gradient(to right, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.3) 100%), url('<?= URL_ROOT ?>/img/ghs.jpg') center/cover no-repeat; color: white; padding: 180px 0 60px 0; min-height: 95vh; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         .hero h1 { font-weight: 800; font-size: 4.5rem; letter-spacing: -1px; line-height: 1.1; margin-bottom: 20px; }
         .hero h1 span { color: #f59e0b; }
         .hero p { font-size: 1.35rem; font-weight: 400; max-width: 750px; line-height: 1.6; margin-bottom: 40px; color: #f1f5f9; }
@@ -105,8 +105,8 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
-        <div class="container">            <a class="navbar-brand d-flex align-items-center" href="/green/">
-                <img src="/green/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
+        <div class="container">            <a class="navbar-brand d-flex align-items-center" href="<?= URL_ROOT ?>/">
+                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <ion-icon name="menu" class="text-dark fs-1"></ion-icon>
@@ -116,12 +116,12 @@
                     <li class="nav-item"><a class="nav-link" href="#inicio">Início</a></li>
                     <li class="nav-item"><a class="nav-link" href="#curso">Curso</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sobre">Sobre</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/green/matricula">Inscrição</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= URL_ROOT ?>/matricula">Inscrição</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-4 mt-3 mt-lg-0 pb-3 pb-lg-0">
-                    <a href="/green/auth" class="nav-login-btn">Entrar</a>
-                    <a href="/green/matricula" class="nav-register-btn">Inscrever-se</a>
+                    <a href="<?= URL_ROOT ?>/auth" class="nav-login-btn">Entrar</a>
+                    <a href="<?= URL_ROOT ?>/matricula" class="nav-register-btn">Inscrever-se</a>
                 </div>
             </div>
         </div>
@@ -140,7 +140,7 @@
                     <p>A Green Hard & Softh é a primeira e única Escola Superior especializada em TIC na Guiné-Bissau. Licenciatura em Engenharia Informática com 5 especializações.</p>
                     
                     <div class="d-flex gap-3 flex-wrap">
-                        <a href="/green/matricula" class="btn-warning-custom d-inline-flex align-items-center gap-2">
+                        <a href="<?= URL_ROOT ?>/matricula" class="btn-warning-custom d-inline-flex align-items-center gap-2">
                             Inscrever-se Agora <ion-icon name="arrow-forward-outline"></ion-icon>
                         </a>
                         <a href="#curso" class="btn-outline-custom2">
@@ -382,7 +382,7 @@
             <h2>O Futuro é Hoje – Inscreve-te!</h2>
             <p class="fs-5 opacity-75 mb-5 max-w-700 mx-auto" style="max-width: 600px;">Junta-te à Green Hard & Softh e constrói o teu futuro na tecnologia. Licenciatura em Engenharia Informática com 5 especializações de última geração.</p>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <a href="/green/matricula" class="btn-warning-custom px-5 py-3 shadow-lg d-flex align-items-center gap-2">
+                <a href="<?= URL_ROOT ?>/matricula" class="btn-warning-custom px-5 py-3 shadow-lg d-flex align-items-center gap-2">
                     Inscrever-se Agora <ion-icon name="arrow-forward-outline"></ion-icon>
                 </a>
                 <a href="#contacto" class="btn-outline-custom2 px-5 py-3">Falar Connosco</a>
@@ -482,7 +482,7 @@
                 <div class="col-lg-4 pe-lg-5">
                     <div class="footer-logo">
                         <div class="footer-logo-circle">
-                            <img src="/green/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
+                            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
                         </div>
                         Green Hard & Softh
                     </div>
@@ -504,9 +504,9 @@
                 <div class="col-lg-2 col-md-6">
                     <h5 class="footer-heading">Plataforma</h5>
                     <ul class="footer-links">
-                        <li><a href="/green/auth">Portal do Aluno</a></li>
-                        <li><a href="/green/auth">Área do Professor</a></li>
-                        <li><a href="/green/matricula">Inscrição Online</a></li>
+                        <li><a href="<?= URL_ROOT ?>/auth">Portal do Aluno</a></li>
+                        <li><a href="<?= URL_ROOT ?>/auth">Área do Professor</a></li>
+                        <li><a href="<?= URL_ROOT ?>/matricula">Inscrição Online</a></li>
                     </ul>
                 </div>
 

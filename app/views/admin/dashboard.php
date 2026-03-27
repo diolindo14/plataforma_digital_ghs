@@ -64,7 +64,7 @@
 <!-- Modal Agendar Evento Central (Admin) -->
 <div class="modal fade" id="eventoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/saveEvento" method="POST" id="eventForm" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/saveEvento" method="POST" id="eventForm" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -145,7 +145,7 @@
         <!-- Brand / Logo -->
         <div class="sidebar-brand">
             <div class="logo-wrap">
-                <img src="/green/img/logo.jpg" alt="Logo GHS">
+                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS">
             </div>
             <h5 class="text-white mb-1">Portal GHS</h5>
             <span class="badge mb-1" style="background:rgba(220,38,38,.25); color:#f87171; font-size:.65rem; letter-spacing:.06em;">DIREÇÃO &amp; ADMIN</span>
@@ -195,8 +195,11 @@
                 </a>
 
                 <div class="sidebar-section-label mt-3">Ações Institucionais</div>
-                <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados" href="javascript:void(0)" role="tab">
-                    <ion-icon name="megaphone-outline"></ion-icon> Comunicados
+                <a class="nav-link" id="tab-notificacoes" data-bs-toggle="pill" data-bs-target="#pane-notificacoes" href="javascript:void(0)" role="tab">
+                    <ion-icon name="notifications-outline"></ion-icon> Histórico de Alertas
+                    <?php if(!empty($data['mensagens_painel'])): ?>
+                        <span class="badge bg-primary ms-auto"><?= count($data['mensagens_painel']) ?></span>
+                    <?php endif; ?>
                 </a>
                 <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" data-bs-target="#pane-calendario" href="javascript:void(0)" role="tab">
                     <ion-icon name="calendar-number-outline"></ion-icon> Calendário Escolar
@@ -205,10 +208,10 @@
 
             <div class="sidebar-section-label">Navegação Externa</div>
             <div class="nav flex-column nav-pills">
-                <a class="nav-link text-warning" href="/green/" target="_blank">
+                <a class="nav-link text-warning" href="<?= URL_ROOT ?>/" target="_blank">
                     <ion-icon name="earth-outline"></ion-icon> Voltar ao Site Público
                 </a>
-                <a class="nav-link text-danger fw-bold" href="/green/auth/logout">
+                <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout">
                     <ion-icon name="log-out-outline"></ion-icon> Terminar Sessão
                 </a>
             </div>
@@ -229,7 +232,7 @@
                     <ion-icon name="person-circle" style="font-size: 1.8rem; color: #DC2626;"></ion-icon>
                     <span class="fw-bold text-dark"><?= $this->e($_SESSION['user_name']) ?></span>
                 </div>
-                <a href="/green/auth/logout" class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
+                <a href="<?= URL_ROOT ?>/auth/logout" class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
                     <ion-icon name="log-out-outline"></ion-icon> Sair
                 </a>
             </div>
@@ -246,6 +249,18 @@
                 <?= $this->e($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        <?php endif; ?>
+
+        <!-- 🏆 QUADRO DE MÉRITO ACADÉMICO (visível apenas quando há dados) -->
+        <?php if (!empty($ranking_escola)): ?>
+        <div class="row mb-3">
+            <div class="col-12 col-xl-4">
+                <?php
+                    $show_details = true;
+                    include __DIR__ . '/../partials/merit_board.php';
+                ?>
+            </div>
+        </div>
         <?php endif; ?>
         
         <div class="tab-content" id="v-pills-tabContent">
@@ -285,13 +300,13 @@
                                                 <td><?= htmlspecialchars($u['email']) ?></td>
                                                 <td><?= date('d/m/Y H:i', strtotime($u['data_criacao'])) ?></td>
                                                 <td class="text-end">
-                                                    <form action="/green/admin/approveAccount/<?= $u['id'] ?>" method="POST" class="d-inline">
+                                                    <form action="<?= URL_ROOT ?>/admin/approveAccount/<?= $u['id'] ?>" method="POST" class="d-inline">
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                                         <button type="submit" class="btn btn-sm btn-success fw-bold px-3">
                                                             <ion-icon name="checkmark-outline" class="me-1"></ion-icon> Aprovar
                                                         </button>
                                                     </form>
-                                                    <a href="/green/admin/deleteUser/<?= $u['id'] ?>" class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Rejeitar e excluir este registo?')">
+                                                    <a href="<?= URL_ROOT ?>/admin/deleteUser/<?= $u['id'] ?>" class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Rejeitar e excluir este registo?')">
                                                         <ion-icon name="trash-outline"></ion-icon>
                                                     </a>
                                                 </td>
@@ -452,6 +467,57 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- ── SECÇÃO DE NOTIFICAÇÕES DE SISTEMA (GHS Workflow) ── -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                            <div class="card-header bg-white py-3 border-bottom border-light">
+                                <h6 class="fw-bold mb-0 d-flex align-items-center gap-2 text-dark">
+                                    <ion-icon name="notifications-circle-outline" class="text-primary fs-4"></ion-icon>
+                                    Alertas de Validação e Atividade da Secretaria
+                                </h6>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
+                                    <?php if(empty($data['mensagens_painel'])): ?>
+                                        <!-- Estado vazio quando não há alertas -->
+                                        <div class="p-4 text-center text-muted">
+                                            <p class="small mb-0">Nenhum alerta pendente no momento.</p>
+                                        </div>
+                                    <?php else: ?>
+                                        <?php foreach($data['mensagens_painel'] as $msg): ?>
+                                            <!-- Item de notificação individual -->
+                                            <div class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-start gap-3">
+                                                <div class="p-2 bg-primary bg-opacity-10 rounded-circle text-primary">
+                                                    <ion-icon name="information-circle"></ion-icon>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <span class="fw-bold small text-dark"><?= htmlspecialchars($msg['assunto']) ?></span>
+                                                        <span class="text-muted" style="font-size: 0.7rem;">
+                                                            <?= date('d/m/Y H:i', strtotime($msg['data_criacao'])) ?>
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-muted small" style="line-height: 1.4;">
+                                                        <?= htmlspecialchars($msg['mensagem']) ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-light py-2 d-flex justify-content-between align-items-center px-4">
+                                <form action="<?= URL_ROOT ?>/admin/clearNotifications" method="POST" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-link text-decoration-none small text-muted p-0">Limpar lidas</button>
+                                </form>
+                                <a href="javascript:void(0)" onclick="document.getElementById('tab-notificacoes').click()" class="text-decoration-none small fw-bold text-primary">Ver histórico completo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
 
@@ -475,6 +541,53 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Histórico Completo de Notificações de Sistema -->
+            <div class="tab-pane fade" id="pane-notificacoes" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0 text-dark">Histórico de Alertas de Sistema</h2>
+                        <p class="text-muted small">Registo completo de comunicações automáticas entre Administração e Secretaria.</p>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <?php if(empty($data['mensagens_historico'])): ?>
+                            <div class="text-center py-5 text-muted">
+                                <ion-icon name="mail-open-outline" style="font-size: 4rem; opacity: 0.2;"></ion-icon>
+                                <h5 class="mt-3">Sem alertas no histórico</h5>
+                            </div>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle datatable-simple">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Data/Hora</th>
+                                            <th>Assunto</th>
+                                            <th>Mensagem</th>
+                                            <th>Remetente</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($data['mensagens_historico'] as $msg): ?>
+                                            <tr class="<?= $msg['lida'] ? 'opacity-75' : 'bg-primary bg-opacity-10' ?>">
+                                                <td class="small text-muted" style="white-space: nowrap;">
+                                                    <ion-icon name="time-outline" class="me-1"></ion-icon>
+                                                    <?= date('d/m/Y H:i', strtotime($msg['data_criacao'])) ?>
+                                                </td>
+                                                <td><span class="badge bg-primary bg-opacity-10 text-primary fw-bold"><?= htmlspecialchars($msg['assunto']) ?></span></td>
+                                                <td class="small text-dark"><?= htmlspecialchars($msg['mensagem']) ?></td>
+                                                <td class="small fw-bold"><?= htmlspecialchars($msg['remetente_nome'] ?? 'Sistema') ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div> <!-- End of pane-notificacoes -->
 
             <!-- Formulários DataTables CRUD Estudantes -->
             <div class="tab-pane fade" id="pane-alunos">
@@ -543,12 +656,12 @@
                                                                 data-bs-toggle="modal" data-bs-target="#studentModal"><ion-icon name="create-outline" class="me-2"></ion-icon> Editar</a></li>
                                                             
                                                             <?php if($e['user_status'] === 'ativo'): ?>
-                                                                <li><a class="dropdown-item text-warning" href="/green/admin/toggleStudentStatus/<?= $e['utilizador_id'] ?>/suspenso"><ion-icon name="pause-circle-outline" class="me-2"></ion-icon> Suspender</a></li>
+                                                                <li><a class="dropdown-item text-warning" href="<?= URL_ROOT ?>/admin/toggleStudentStatus/<?= $e['utilizador_id'] ?>/suspenso"><ion-icon name="pause-circle-outline" class="me-2"></ion-icon> Suspender</a></li>
                                                             <?php else: ?>
-                                                                <li><a class="dropdown-item text-success" href="/green/admin/toggleStudentStatus/<?= $e['utilizador_id'] ?>/ativo"><ion-icon name="play-circle-outline" class="me-2"></ion-icon> Ativar</a></li>
+                                                                <li><a class="dropdown-item text-success" href="<?= URL_ROOT ?>/admin/toggleStudentStatus/<?= $e['utilizador_id'] ?>/ativo"><ion-icon name="play-circle-outline" class="me-2"></ion-icon> Ativar</a></li>
                                                             <?php endif; ?>
                                                             <li><a class="dropdown-item text-success fw-bold" href="#" onclick="prepareAlocacao(<?= $e['id'] ?>, '<?= htmlspecialchars($e['nome_completo']) ?>')" data-bs-toggle="modal" data-bs-target="#alocarAlunoModal"><ion-icon name="school-outline" class="me-2"></ion-icon> Alocar em Turma</a></li>
-                                                            <li><a class="dropdown-item text-info" href="/green/admin/resetStudentPassword/<?= $e['utilizador_id'] ?>" onclick="return confirm('Resetar senha para 123456 ou aleatória?')"><ion-icon name="key-outline" class="me-2"></ion-icon> Resetar Senha</a></li>
+                                                            <li><a class="dropdown-item text-info" href="<?= URL_ROOT ?>/admin/resetStudentPassword/<?= $e['utilizador_id'] ?>" onclick="return confirm('Resetar senha para 123456 ou aleatória?')"><ion-icon name="key-outline" class="me-2"></ion-icon> Resetar Senha</a></li>
                                                             <li><hr class="dropdown-divider"></li>
                                                             <li><a class="dropdown-item text-danger" href="javascript:confirmDeleteStudent(<?= $e['utilizador_id'] ?>)"><ion-icon name="trash-outline" class="me-2"></ion-icon> Excluir</a></li>
                                                         </ul>
@@ -636,7 +749,7 @@
             <!-- Modal: Alocar Aluno em Turma -->
             <div class="modal fade" id="alocarAlunoModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog">
-                    <form action="/green/admin/alocarAluno" method="POST" class="modal-content border-0 shadow-lg">
+                    <form action="<?= URL_ROOT ?>/admin/alocarAluno" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -792,7 +905,7 @@
                                                             <button class="btn btn-sm btn-info text-white" onclick="viewTurmaStudents(<?= $t['id'] ?>, '<?= $t['codigo'] ?>')" title="Ver Alunos"><ion-icon name="people-outline"></ion-icon></button>
                                                             <button class="btn btn-sm btn-primary" onclick="showHorario(<?= $t['id'] ?>, '<?= htmlspecialchars($t['codigo']) ?>')" title="Gerir Horário"><ion-icon name="time-outline"></ion-icon></button>
                                                             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#alocarEstudanteModal" onclick="prepareAllocation(<?= $t['id'] ?>, '<?= htmlspecialchars($t['codigo']) ?>')" title="Alocar Aluno"><ion-icon name="person-add-outline"></ion-icon></button>
-                                                            <button class="btn btn-sm btn-outline-danger" onclick="if(confirm('Tem certeza que deseja excluir esta turma?')) window.location.href='/green/admin/deleteTurma/<?= $t['id'] ?>'" title="Excluir"><ion-icon name="trash-outline"></ion-icon></button>
+                                                            <button class="btn btn-sm btn-outline-danger" onclick="if(confirm('Tem certeza que deseja excluir esta turma?')) window.location.href='<?= URL_ROOT ?>/admin/deleteTurma/<?= $t['id'] ?>'" title="Excluir"><ion-icon name="trash-outline"></ion-icon></button>
                                                          </div>
                                                      </td>
                                                 </tr>
@@ -932,7 +1045,7 @@
                                 <?php endif; ?>
                             </div>
                             <div class="d-flex gap-2">
-                                <a href="/green/admin/exportFinanceiro" class="btn btn-outline-dark"><ion-icon name="download-outline"></ion-icon> Exportar Excel</a>
+                                <a href="<?= URL_ROOT ?>/admin/exportFinanceiro" class="btn btn-outline-dark"><ion-icon name="download-outline"></ion-icon> Exportar Excel</a>
                                 <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#pagamentoModal"><ion-icon name="add-circle-outline"></ion-icon> Registar Pagamento</button>
                             </div>
                         </div>
@@ -954,14 +1067,14 @@
                                                 </div>
                                                 <div class="d-flex flex-column gap-1 ms-2">
                                                     <?php if (!empty($pp['comprovativo_arquivo'])): ?>
-                                                    <a href="/green/<?= $pp['comprovativo_arquivo'] ?>" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2" title="Ver Comprovativo">
+                                                    <a href="<?= URL_ROOT ?>/<?= $pp['comprovativo_arquivo'] ?>" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2" title="Ver Comprovativo">
                                                         <ion-icon name="eye-outline"></ion-icon> Ver
                                                     </a>
                                                     <?php endif; ?>
-                                                    <a href="/green/admin/validarPagamento/<?= $pp['id'] ?>" class="btn btn-sm btn-success py-0 px-2 fw-bold" title="Aprovar">
+                                                    <a href="<?= URL_ROOT ?>/admin/validarPagamento/<?= $pp['id'] ?>" class="btn btn-sm btn-success py-0 px-2 fw-bold" title="Aprovar">
                                                         <ion-icon name="checkmark-circle-outline"></ion-icon> Aprovar
                                                     </a>
-                                                    <a href="/green/admin/rejeitarPagamento/<?= $pp['id'] ?>" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="return confirm('Rejeitar este pagamento?')">
+                                                    <a href="<?= URL_ROOT ?>/admin/rejeitarPagamento/<?= $pp['id'] ?>" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="return confirm('Rejeitar este pagamento?')">
                                                         <ion-icon name="close-circle-outline"></ion-icon> Rejeitar
                                                     </a>
                                                 </div>
@@ -1011,11 +1124,11 @@
                                             <td>
                                                 <div class="d-flex gap-1">
                                                     <?php if(!empty($p['comprovativo_arquivo'])): ?>
-                                                        <a href="/green/<?= $p['comprovativo_arquivo'] ?>" target="_blank" class="btn btn-xs btn-outline-primary py-0 px-1" title="Ver Comprovativo"><ion-icon name="document-outline"></ion-icon></a>
+                                                        <a href="<?= URL_ROOT ?>/<?= $p['comprovativo_arquivo'] ?>" target="_blank" class="btn btn-xs btn-outline-primary py-0 px-1" title="Ver Comprovativo"><ion-icon name="document-outline"></ion-icon></a>
                                                     <?php endif; ?>
                                                     <?php if($p['status'] === 'Pendente'): ?>
-                                                        <a href="/green/admin/validarPagamento/<?= $p['id'] ?>" class="btn btn-xs btn-success py-0 px-1" title="Validar"><ion-icon name="checkmark-circle-outline"></ion-icon></a>
-                                                        <a href="/green/admin/rejeitarPagamento/<?= $p['id'] ?>" class="btn btn-xs btn-outline-danger py-0 px-1" title="Rejeitar" onclick="return confirm('Rejeitar este pagamento?')"><ion-icon name="close-circle-outline"></ion-icon></a>
+                                                        <a href="<?= URL_ROOT ?>/admin/validarPagamento/<?= $p['id'] ?>" class="btn btn-xs btn-success py-0 px-1" title="Validar"><ion-icon name="checkmark-circle-outline"></ion-icon></a>
+                                                        <a href="<?= URL_ROOT ?>/admin/rejeitarPagamento/<?= $p['id'] ?>" class="btn btn-xs btn-outline-danger py-0 px-1" title="Rejeitar" onclick="return confirm('Rejeitar este pagamento?')"><ion-icon name="close-circle-outline"></ion-icon></a>
                                                     <?php endif; ?>
                                                 </div>
                                             </td>
@@ -1082,7 +1195,7 @@
                                                                 <span class="badge bg-danger"><ion-icon name="close-circle"></ion-icon> Falta</span>
                                                             <?php endif; ?>
                                                         <?php else: ?>
-                                                            <form action="/green/admin/markTeacherAttendance" method="POST" class="d-inline">
+                                                            <form action="<?= URL_ROOT ?>/admin/markTeacherAttendance" method="POST" class="d-inline">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1113,7 +1226,7 @@
                                                     </td>
                                                     <td class="text-end">
                                                         <?php if (!($s['confirmado_admin'] ?? false)): ?>
-                                                            <a href="/green/admin/confirmSummary/<?= $s['id'] ?>" class="btn btn-sm btn-success fw-bold">Confirmar</a>
+                                                            <a href="<?= URL_ROOT ?>/admin/confirmSummary/<?= $s['id'] ?>" class="btn btn-sm btn-success fw-bold">Confirmar</a>
                                                         <?php endif; ?>
                                                     </td>
                                                 </tr>
@@ -1158,7 +1271,7 @@
                                                                     <span class="badge bg-danger">Falta</span>
                                                                 <?php endif; ?>
                                                             <?php else: ?>
-                                                                <form action="/green/admin/markTeacherAttendance" method="POST" class="d-block gap-1 justify-content-center">
+                                                                <form action="<?= URL_ROOT ?>/admin/markTeacherAttendance" method="POST" class="d-block gap-1 justify-content-center">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1222,7 +1335,7 @@
                                                         <?php if ($da['confirmado_admin']): ?>
                                                             <span class="badge bg-success">Confirmado</span>
                                                         <?php else: ?>
-                                                            <a href="/green/admin/confirmAttendance?turma_id=<?= $da['turma_id'] ?>&disciplina_id=<?= $da['disciplina_id'] ?>" class="btn btn-xs btn-outline-success py-0" style="font-size: 0.65rem;">Confirmar Lote</a>
+                                                            <a href="<?= URL_ROOT ?>/admin/confirmAttendance?turma_id=<?= $da['turma_id'] ?>&disciplina_id=<?= $da['disciplina_id'] ?>" class="btn btn-xs btn-outline-success py-0" style="font-size: 0.65rem;">Confirmar Lote</a>
                                                         <?php endif; ?>
                                                     </td>
                                                 </tr>
@@ -1292,7 +1405,7 @@
                                                         <?php if ($n['confirmado_admin'] ?? false): ?>
                                                             <span class="badge bg-success">Confirmado</span>
                                                         <?php else: ?>
-                                                            <a href="/green/admin/confirmGrades?turma_id=<?= $n['turma_id'] ?>&disciplina_id=<?= $n['disciplina_id'] ?? 0 ?>" class="btn btn-sm btn-outline-success py-0" style="font-size: 0.7rem;">Confirmar Lote</a>
+                                                            <a href="<?= URL_ROOT ?>/admin/confirmGrades?turma_id=<?= $n['turma_id'] ?>&disciplina_id=<?= $n['disciplina_id'] ?? 0 ?>" class="btn btn-sm btn-outline-success py-0" style="font-size: 0.7rem;">Confirmar Lote</a>
                                                         <?php endif; ?>
                                                     </td>
                                                 </tr>
@@ -1421,7 +1534,7 @@
 <!-- Modal Gerar Convite -->
 <div class="modal fade" id="conviteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/generateInvite" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/generateInvite" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1462,7 +1575,7 @@
 <!-- Modal Pagamento -->
 <div class="modal fade" id="pagamentoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/savePagamento" method="POST" enctype="multipart/form-data" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/savePagamento" method="POST" enctype="multipart/form-data" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1542,7 +1655,7 @@
 <!-- Modal Comunicado -->
 <div class="modal fade" id="comunicadoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form action="/green/admin/saveComunicado" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/saveComunicado" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1722,7 +1835,7 @@ $(document).ready(function() {
 <!-- Modal Turma -->
 <div class="modal fade" id="turmaModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/saveTurma" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/saveTurma" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1780,7 +1893,7 @@ $(document).ready(function() {
 <!-- Modal Especialidade -->
 <div class="modal fade" id="especialidadeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/saveEspecialidade" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/saveEspecialidade" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1830,7 +1943,7 @@ $(document).ready(function() {
 <!-- Modal Rejeitar Matrícula -->
 <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/rejectMatricula" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/rejectMatricula" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1860,7 +1973,7 @@ $(document).ready(function() {
 <!-- Modal Ano -->
 <div class="modal fade" id="anoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/saveAno" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/saveAno" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1907,7 +2020,7 @@ $(document).ready(function() {
 <!-- Modal Disciplina -->
 <div class="modal fade" id="disciplinaModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/saveDisciplina" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/saveDisciplina" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -1969,7 +2082,7 @@ $(document).ready(function() {
     const modal = new bootstrap.Modal(document.getElementById('horarioModal'));
     modal.show();
 
-    $.get('/green/admin/getHorariosAjax/' + id, function(html) {
+    $.get('<?= URL_ROOT ?>/admin/getHorariosAjax/' + id, function(html) {
         // Opcional: Se quiser transformar o HTML retornado em Grid, pode fazer no controller ou aqui.
         // O Controller AdminController@getHorariosAjax retorna uma tabela simples.
         // Vou manter a tabela simples por enquanto mas melhorar o estilo se for necessário.
@@ -1999,7 +2112,7 @@ function clearAnoForm() {
     });
     function confirmDeleteAno(id) {
         if(confirm('Atenção: Remover o ano curricular pode afetar disciplinas e turmas vinculadas. Continuar?')) {
-            window.location.href = '/green/admin/deleteAno/' + id;
+            window.location.href = '<?= URL_ROOT ?>/admin/deleteAno/' + id;
         }
     }
 
@@ -2027,7 +2140,7 @@ function clearAnoForm() {
     });
     function confirmDeleteDisciplina(id) {
         if(confirm('Deseja remover esta disciplina permanentemente?')) {
-            window.location.href = '/green/admin/deleteDisciplina/' + id;
+            window.location.href = '<?= URL_ROOT ?>/admin/deleteDisciplina/' + id;
         }
     }
 
@@ -2054,14 +2167,14 @@ function clearAnoForm() {
     });
     function confirmDeleteEsp(id) {
         if(confirm('Deseja remover esta área de especialização?')) {
-            window.location.href = '/green/admin/deleteEspecialidade/' + id;
+            window.location.href = '<?= URL_ROOT ?>/admin/deleteEspecialidade/' + id;
         }
     }
 
     // Professores
     function confirmDeleteProfessor(id) {
         if(confirm('Atenção: A conta do professor e todos os seus vínculos de horário serão removidos. Continuar?')) {
-            window.location.href = '/green/admin/deleteProfessor/' + id;
+            window.location.href = '<?= URL_ROOT ?>/admin/deleteProfessor/' + id;
         }
     }
 
@@ -2073,7 +2186,7 @@ function clearAnoForm() {
         new bootstrap.Modal(document.getElementById('horarioModal')).show();
         
         // Mocking AJAX load for now, would be a separate fetch
-        $.get('/green/admin/getHorariosAjax/' + turmaId, function(data) {
+        $.get('<?= URL_ROOT ?>/admin/getHorariosAjax/' + turmaId, function(data) {
             $('#horarios_list').html(data);
         });
     }
@@ -2086,7 +2199,7 @@ function clearAnoForm() {
     // Secretariado
     function confirmDeleteSecretaria(id) {
         if(confirm('Tem a certeza que deseja remover este membro da secretaria? O acesso administrativo será cancelado imediatamente.')) {
-            window.location.href = '/green/admin/deleteSecretaria/' + id;
+            window.location.href = '<?= URL_ROOT ?>/admin/deleteSecretaria/' + id;
         }
     }
 </script>
@@ -2097,7 +2210,7 @@ function clearAnoForm() {
         $('.btn-approve-matricula').click(function() {
             const id = $(this).data('id');
             if(confirm('Aprovar esta matrícula permanentemente?')) {
-                window.location.href = '/green/admin/approveMatricula/' + id;
+                window.location.href = '<?= URL_ROOT ?>/admin/approveMatricula/' + id;
             }
         });
 
@@ -2114,7 +2227,7 @@ function clearAnoForm() {
 <!-- Modal Professor -->
 <div class="modal fade" id="professorModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form action="/green/admin/createProfessor" id="profForm" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/createProfessor" id="profForm" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -2274,7 +2387,7 @@ function clearAnoForm() {
 <!-- Modal Secretaria -->
 <div class="modal fade" id="secretariaModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/createSecretaria" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/createSecretaria" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -2334,7 +2447,7 @@ function clearAnoForm() {
                 <div class="row">
                     <div class="col-md-4 border-end">
                         <h6 class="fw-bold mb-3 border-bottom pb-2">Novo Slot de Aula</h6>
-                        <form action="/green/admin/saveHorario" method="POST" class="row g-2">
+                        <form action="<?= URL_ROOT ?>/admin/saveHorario" method="POST" class="row g-2">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -2412,7 +2525,7 @@ function clearAnoForm() {
 <!-- Modal Alocar Estudante -->
 <div class="modal fade" id="alocarEstudanteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/admin/assignStudentToTurma" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/assignStudentToTurma" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -2449,7 +2562,7 @@ function clearAnoForm() {
 <!-- Modal Estudante -->
 <div class="modal fade" id="studentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form action="/green/admin/saveStudent" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/saveStudent" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -2596,7 +2709,7 @@ $(document).on('click', '.btn-edit-student', function() {
 
 function confirmDeleteStudent(id) {
     if(confirm('Tem a certeza que deseja excluir permanentemente este estudante e o seu acesso?')) {
-        window.location.href = '/green/admin/deleteStudent/' + id;
+        window.location.href = '<?= URL_ROOT ?>/admin/deleteStudent/' + id;
     }
 }
 
@@ -2649,7 +2762,7 @@ function loadSpecialDoc(type) {
         return;
     }
 
-    const url = '/green/public/uploads/matriculas/' + file;
+    const url = '<?= URL_ROOT ?>/public/uploads/matriculas/' + file;
     const ext = file.split('.').pop().toLowerCase();
 
     if(ext === 'pdf') {
@@ -2693,7 +2806,7 @@ $('.btn-view-docs').click(function() {
 $(document).on('click', '.btn-approve-matricula', function() {
     const id = $(this).data('id');
     if(id && confirm('Confirmar aprovação desta matrícula e criação de conta de aluno?')) {
-        window.location.href = '/green/admin/approveMatricula/' + id;
+        window.location.href = '<?= URL_ROOT ?>/admin/approveMatricula/' + id;
     }
 });
 </script>
@@ -2702,7 +2815,7 @@ $(document).on('click', '.btn-approve-matricula', function() {
 <!-- Modal Novo Comunicado -->
 <div class="modal fade" id="comunicadoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form action="/green/admin/saveComunicado" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/admin/saveComunicado" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -2764,7 +2877,7 @@ function showStats(id, titulo) {
     var modal = new bootstrap.Modal(document.getElementById('statsModal'));
     modal.show();
     
-    fetch('/green/admin/getComunicadoStats/' + id)
+    fetch('<?= URL_ROOT ?>/admin/getComunicadoStats/' + id)
         .then(response => response.json())
         .then(data => {
             tbody.innerHTML = '';
@@ -2798,7 +2911,7 @@ function showStats(id, titulo) {
                 <div class="row">
                     <div class="col-md-5 border-end">
                         <h6 class="fw-bold mb-3">Adicionar Slot ao Modelo</h6>
-                        <form action="/green/admin/saveHorarioModelo" method="POST" class="row g-2">
+                        <form action="<?= URL_ROOT ?>/admin/saveHorarioModelo" method="POST" class="row g-2">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -2872,35 +2985,33 @@ function showModelo(id, nome) {
     const modal = new bootstrap.Modal(document.getElementById('modeloModal'));
     modal.show();
     
-    fetch('/green/admin/getHorarioModeloAjax/' + id)
+    fetch('<?= URL_ROOT ?>/admin/getHorarioModeloAjax/' + id)
         .then(r => r.text())
         .then(html => $('#modelo_list').html(html));
 }
 
 function deleteModeloSlot(id, anoId) {
     if(confirm('Deseja remover este slot de aula do modelo deste ano?')) {
-        fetch('/green/admin/deleteHorarioModelo/' + id)
+        fetch('<?= URL_ROOT ?>/admin/deleteHorarioModelo/' + id)
             .then(() => showModelo(anoId, $('#modelo_ano_nome').text()));
     }
 }
 
 // Sobrescrever showHorario para incluir o link do modelo dinâmico
-const originalShowHorario = showHorario;
+var originalShowHorario = showHorario;
 showHorario = function(id, codigo) {
     originalShowHorario(id, codigo);
     
-    // Obter o ano_id da turma (Assumindo que podemos obter via AJAX ou data attribute)
-    // Para simplificar e garantir funcionamento, vamos buscar via fetch rápido
-    fetch('/green/admin/getTurmaInfo/' + id)
+    fetch('<?= URL_ROOT ?>/admin/getTurmaInfo/' + id)
         .then(r => r.json())
         .then(turma => {
-            $('#btn_apply_modelo').attr('href', '/green/admin/replicateModeloToTurma/' + turma.ano_id + '/' + id);
+            $('#btn_apply_modelo').attr('href', '<?= URL_ROOT ?>/admin/replicateModeloToTurma/' + turma.ano_id + '/' + id);
             if(turma.has_horario) {
                 $('#btn_apply_modelo').addClass('disabled').text('Horário já Populado');
             } else {
                 $('#btn_apply_modelo').removeClass('disabled').html('<ion-icon name="copy-outline"></ion-icon> Carregar Modelo do Ano ' + turma.ano_nome);
             }
-        });
+        }).catch(err => console.error(err));
 };
 
 function viewTurma(id) {
@@ -2908,7 +3019,7 @@ function viewTurma(id) {
     const modal = new bootstrap.Modal(document.getElementById('viewTurmaModal'));
     modal.show();
     
-    fetch('/green/admin/getTurmaInfo/' + id)
+    fetch('<?= URL_ROOT ?>/admin/getTurmaInfo/' + id)
         .then(r => r.json())
         .then(t => {
             let html = `
@@ -2945,7 +3056,7 @@ function viewTurmaStudents(id, codigo) {
     const modal = new bootstrap.Modal(document.getElementById('turmaStudentsModal'));
     modal.show();
     
-    fetch('/green/admin/getTurmaStudentsAjax/' + id)
+    fetch('<?= URL_ROOT ?>/admin/getTurmaStudentsAjax/' + id)
         .then(r => r.text())
         .then(html => $('#turmaStudentsContent').html(html));
 }
@@ -2955,7 +3066,7 @@ function viewProfessor(id) {
     const modal = new bootstrap.Modal(document.getElementById('viewProfessorModal'));
     modal.show();
     
-    fetch('/green/admin/getProfessorInfo/' + id)
+    fetch('<?= URL_ROOT ?>/admin/getProfessorInfo/' + id)
         .then(r => r.json())
         .then(p => {
             let html = `
@@ -3003,7 +3114,7 @@ function viewStudent(id) {
     const modal = new bootstrap.Modal(document.getElementById('viewStudentModal'));
     modal.show();
     
-    fetch('/green/admin/getStudentDetails/' + id)
+    fetch('<?= URL_ROOT ?>/admin/getStudentDetails/' + id)
         .then(r => r.json())
         .then(s => {
             let html = `
@@ -3076,11 +3187,11 @@ function viewStudent(id) {
 function editProfessor(id) {
     $('#profModalTitle').text('Editar Perfil do Professor');
     $('#btnProfSubmit').text('Salvar Alterações');
-    $('#profForm').attr('action', '/green/admin/updateProfessor');
+    $('#profForm').attr('action', '<?= URL_ROOT ?>/admin/updateProfessor');
     
     $('#atribuicoes-container').html('<div class="text-center py-2"><div class="spinner-border spinner-border-sm text-primary"></div></div>');
 
-    fetch('/green/admin/getProfessorData/' + id)
+    fetch('<?= URL_ROOT ?>/admin/getProfessorData/' + id)
         .then(r => r.json())
         .then(data => {
             const p = data.prof;
@@ -3115,7 +3226,7 @@ function editProfessor(id) {
 function clearProfessorForm() {
     $('#profModalTitle').text('Cadastrar Novo Professor');
     $('#btnProfSubmit').text('Criar Conta');
-    $('#profForm').attr('action', '/green/admin/createProfessor');
+    $('#profForm').attr('action', '<?= URL_ROOT ?>/admin/createProfessor');
     $('#prof_id').val('');
     $('#professorModal form')[0].reset();
     $('input[name="senha"]').attr('required', true);
@@ -3169,7 +3280,7 @@ function clearEventoForm() {
 
 function loadEventos() {
     $('#eventosList').html('<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-primary"></div></td></tr>');
-    fetch('/green/admin/getEventosAjax')
+    fetch('<?= URL_ROOT ?>/admin/getEventosAjax')
         .then(r => r.json())
         .then(data => {
             let html = '';
@@ -3203,7 +3314,7 @@ function loadEventos() {
 
 function deleteEvento(id) {
     if (confirm('Deseja remover este evento do calendário?')) {
-        window.location.href = '/green/admin/deleteEvento/' + id;
+        window.location.href = '<?= URL_ROOT ?>/admin/deleteEvento/' + id;
     }
 }
 
@@ -3219,7 +3330,7 @@ function toggleEventoDest(tipo) {
         select.attr('required', true);
         select.html('<option value="">A carregar...</option>');
         
-        const endpoint = (tipo === 'Ano') ? '/green/admin/getAnosJson' : '/green/admin/getTurmasJson';
+        const endpoint = (tipo === 'Ano') ? '<?= URL_ROOT ?>/admin/getAnosJson' : '<?= URL_ROOT ?>/admin/getTurmasJson';
         fetch(endpoint)
             .then(r => r.json())
             .then(data => {

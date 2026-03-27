@@ -25,7 +25,7 @@
 <!-- Modal Agendar Evento (Professor) -->
 <div class="modal fade" id="profEventoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/professor/saveEvento" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/professor/saveEvento" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -94,7 +94,7 @@
         <div>
             <div class="text-center mb-4 mt-2">
                 <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
-                    <img src="/green/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="fw-bold mt-2 text-white">Portal GHS</h5>
                 <span class="badge bg-secondary mb-3">Docente</span>
@@ -122,8 +122,8 @@
         </div>
 
         <div class="pb-4 w-100">
-            <a class="nav-link text-warning mb-1" href="/green/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
-            <a class="nav-link text-danger fw-bold" href="/green/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
+            <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
+            <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
         </div>
     </nav>
     
@@ -141,7 +141,7 @@
                         <ion-icon name="person-circle" style="font-size: 1.8rem; color: #10B981;"></ion-icon>
                         <span class="fw-bold text-dark"><?= $this->e($_SESSION['user_name']) ?></span>
                     </div>
-                    <a href="/green/auth/logout" class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
+                    <a href="<?= URL_ROOT ?>/auth/logout" class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
                         <ion-icon name="log-out-outline"></ion-icon> Sair
                     </a>
                 </div>
@@ -163,6 +163,18 @@
         <div id="print-turma-label" style="display:none;"><?= $current_turma_label ?></div>
         <div id="print-nivel-label" style="display:none;"><?= $current_nivel_label ?></div>
         
+        <!-- 🏆 QUADRO DE MÉRITO (visível quando há dados) -->
+        <?php if (!empty($data['ranking_escola'])): ?>
+        <div class="mb-4">
+            <?php
+                $ranking_escola = $data['ranking_escola'];
+                $ranking_nivel  = $data['ranking_nivel'];
+                $show_details   = false; // Professor vê apenas o Top 3 da escola
+                include __DIR__ . '/../partials/merit_board.php';
+            ?>
+        </div>
+        <?php endif; ?>
+
         <div class="tab-content" id="v-pills-tabContent">
             
             <!-- Dashboard Home -->
@@ -524,7 +536,7 @@
                                                         <h6 class="fw-bold mb-1"><?= htmlspecialchars($m['titulo']) ?></h6>
                                                         <small class="text-muted"><?= $m['turma_codigo'] ?> • <?= $m['disciplina_nome'] ?> • <?= strtoupper($m['tipo_ficheiro']) ?></small>
                                                     </div>
-                                                    <a href="/green/<?= $m['caminho_ficheiro'] ?>" target="_blank" class="btn btn-sm btn-light rounded-circle p-2">
+                                                    <a href="<?= URL_ROOT ?>/<?= $m['caminho_ficheiro'] ?>" target="_blank" class="btn btn-sm btn-light rounded-circle p-2">
                                                         <ion-icon name="download" class="fs-4 text-dark"></ion-icon>
                                                     </a>
                                                 </div>
@@ -927,7 +939,7 @@ function saveNota(btn) {
 
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    $.post('/green/professor/saveNota', data, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
         if(res.success) {
             alert('Notas salvas com sucesso!');
             location.reload(); // Recarregar para ver o total atualizado
@@ -951,7 +963,7 @@ function enviarComunicado() {
 
     btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    $.post('/green/professor/saveComunicado', data, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/saveComunicado', data, function(res) {
         if(res.success) {
             alert('Comunicado enviado com sucesso!');
             location.reload();
@@ -965,7 +977,7 @@ function enviarComunicado() {
 
 function excluirComunicado(id) {
     if (confirm('Tem certeza que deseja excluir este aviso? Ele sumirá para todos os alunos e professores desta turma.')) {
-        $.post('/green/professor/deleteComunicado', { id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
+        $.post('<?= URL_ROOT ?>/professor/deleteComunicado', { id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
             if (res.success) {
                 location.reload();
             } else {
@@ -1019,7 +1031,7 @@ function submeterSumario(btn) {
 
     $(btn).html('<span class="spinner-border spinner-border-sm"></span> Submetendo...').prop('disabled', true);
 
-    $.post('/green/professor/saveSummary', data, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/saveSummary', data, function(res) {
         if (res.success) {
             alert('Sumário e Chamada submetidos com sucesso!');
             location.reload();
@@ -1035,7 +1047,7 @@ function marcarComoLido(id, btn) {
     const card = $(btn).closest('.card');
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>...').prop('disabled', true);
     
-    $.post('/green/professor/marcarLido', { comunicado_id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/marcarLido', { comunicado_id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
         if (res.success) {
             // Remove unread badge
             card.find('.badge.bg-danger').fadeOut();
@@ -1061,7 +1073,7 @@ function publicarMaterial() {
     btn.html('<span class="spinner-border spinner-border-sm"></span> A publicar...').prop('disabled', true);
 
     $.ajax({
-        url: '/green/professor/uploadMaterial',
+        url: '<?= URL_ROOT ?>/professor/uploadMaterial',
         type: 'POST',
         data: formData,
         processData: false,
@@ -1088,7 +1100,7 @@ function publicarMaterial() {
         if (!val) return;
         const parts = val.split('|');
         const activeTab = $('.nav-link.active').attr('href').replace('#', '');
-        window.location.href = `/green/professor?turma_id=${parts[0]}&disciplina_id=${parts[1]}&tab=${activeTab}`;
+        window.location.href = `<?= URL_ROOT ?>/professor?turma_id=${parts[0]}&disciplina_id=${parts[1]}&tab=${activeTab}`;
     }
 
     // Restore Tab and Live Grades
@@ -1227,7 +1239,7 @@ function salvarRespostaReclamacao() {
 
     btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    $.post('/green/professor/saveNota', data, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
         if (res.success) {
             alert('Resposta enviada com sucesso! A reclamação foi marcada como resolvida.');
             location.reload();
@@ -1241,7 +1253,7 @@ function salvarRespostaReclamacao() {
 
 function deleteEvento(id) {
     if (confirm('Deseja cancelar este agendamento?')) {
-        window.location.href = '/green/professor/deleteEvento/' + id;
+        window.location.href = '<?= URL_ROOT ?>/professor/deleteEvento/' + id;
     }
 }
 </script>

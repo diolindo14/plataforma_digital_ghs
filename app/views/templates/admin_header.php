@@ -34,7 +34,7 @@
             <div class="position-sticky mt-4">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link <?= strpos($_SERVER['REQUEST_URI'], 'admin') !== false && !strpos($_SERVER['REQUEST_URI'], 'alunos') ? 'active' : '' ?>" href="/green/admin">
+                        <a class="nav-link <?= strpos($_SERVER['REQUEST_URI'], 'admin') !== false && !strpos($_SERVER['REQUEST_URI'], 'alunos') ? 'active' : '' ?>" href="<?= URL_ROOT ?>/admin">
                             <ion-icon name="grid-outline"></ion-icon> Dashboard
                         </a>
                     </li>
@@ -59,12 +59,12 @@
 
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="/green/" target="_blank">
+                        <a class="nav-link" href="<?= URL_ROOT ?>/" target="_blank">
                             <ion-icon name="earth-outline"></ion-icon> Ver Site Público
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger fw-bold" href="/green/auth/logout">
+                        <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout">
                             <ion-icon name="log-out-outline"></ion-icon> Terminar Sessão
                         </a>
                     </li>

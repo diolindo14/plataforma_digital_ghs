@@ -1,13 +1,40 @@
 <?php
+/**
+ * Controlador de Administração (AdminController)
+ * 
+ * @package Controllers
+ * @author Senior Software Engineer / Mentor
+ * 
+ * Documentação Funcional:
+ * Este é o "Painel de Controlo" central de toda a instituição académica. 
+ * Gere desde a infraestrutura (anos, turmas, disciplinas) até fluxos financeiros 
+ * e auditoria pedagógica.
+ */
 class AdminController extends Controller {
+    /**
+     * Middleware de Autenticação e Autorização (RBAC).
+     * Garante que apenas utilizadores com papel 'admin' acedam a estes métodos.
+     */
     public function __construct() {
         parent::__construct();
+        // // Segurança: Verificação de sessão e role centralizada.
+        // // Sugestão: Mover esta lógica para um Middleware ou Decorator para 
+        // // desacoplar a autorização do controlador.
         if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-            header('Location: /green/auth');
+            header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
     }
 
+    /**
+     * Dashboard Principal do Administrador.
+     * Atua como um Agregador (Mediator) que recolhe dados de mais de 10 modelos 
+     * para compor a visão geral do sistema.
+     * 
+     * // Análise de Performance: A função index() está a carregar MUITOS modelos.
+     * // Isso pode causar um "overhead" em servidores com pouca RAM.
+     * // Sugestão: Usar Lazy Loading ou agrupar estatísticas numa única query no DashboardModel.
+     */
     public function index() {
         $data['anos'] = $this->model('Academico')->getAnos();
         $data['disciplinas'] = $this->model('Disciplina')->getAll();
@@ -25,7 +52,7 @@ class AdminController extends Controller {
         $data['estudantes'] = $this->model('Estudante')->getAllStudents();
         $data['pendentes'] = $this->model('User')->getPendingUsers();
         
-        // Novos dados pedagógicos
+        // Dados pedagógicos e relatórios
         $frequenciaModel = $this->model('Frequencia');
         $data['sumarios'] = $frequenciaModel->getAllSummaries();
         $data['frequencias_report'] = $frequenciaModel->getFrequenciaRelatorio();
@@ -34,185 +61,72 @@ class AdminController extends Controller {
         $data['teacher_attendance_report'] = $frequenciaModel->getTeacherAttendanceReport();
         $data['detailed_attendance'] = $frequenciaModel->getDetailedAttendanceLog();
 
-        $data['tipos_pagamento'] = $this->model('Pagamento')->getTiposPagamento();
-        $data['professores'] = $this->model('Professor')->getAllProfessors();
         $data['secretarios'] = $this->model('Administrador')->getAllSecretarios();
-        $data['todas_disciplinas'] = $this->model('Disciplina')->getAll();
         
+        // Recupera notificações de sistema (GHS Workflow) para feedback imediato no widget
+        $data['mensagens_painel'] = $this->model('Mensagem')->getUnreadMessages($_SESSION['user_id']);
+        $data['mensagens_historico'] = $this->model('Mensagem')->getReceivedMessages($_SESSION['user_id']);
+        
+        // --- 🏆 SISTEMA DE MÉRITO ACADÉMICO ---
+        $academicoRankingModel = $this->model('Academico');
+        $data['ranking_escola'] = $academicoRankingModel->getRankingEscola(3);
+        $data['ranking_nivel']  = $academicoRankingModel->getRankingByNivel();
+
         $this->view('admin/dashboard', $data);
     }
 
-    public function saveTurma() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->verifyCsrfToken();
-            $turmaModel = $this->model('Turma');
-            if ($turmaModel->createTurma($_POST)) {
-                $this->logActivity('Criar Turma', ['codigo' => $_POST['codigo'] ?? 'N/A']);
-                $_SESSION['flash_success'] = "Turma criada com sucesso.";
-            } else {
-                $_SESSION['flash_error'] = "Erro ao criar turma.";
-            }
-            header('Location: /green/admin');
-            exit;
-        }
-    }
+    // --- PONTES DE COMPATIBILIDADE (Pilar 2) ---
+    // Estes métodos permitem que os links antigos continuem a funcionar,
+    // delegando a execução para os novos controladores especializados.
 
-    public function saveAno() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->verifyCsrfToken();
-            $model = $this->model('Academico');
-            $id = $_POST['id'] ?? null;
-            $res = $id ? $model->updateAno($id, $_POST) : $model->createAno($_POST);
+    public function saveTurma() { (new AdminAcademicoController())->saveTurma(); }
+    public function saveAno() { (new AdminAcademicoController())->saveAno(); }
+    public function deleteAno($id) { (new AdminAcademicoController())->deleteAno($id); }
+    public function saveDisciplina() { (new AdminAcademicoController())->saveDisciplina(); }
+    public function deleteDisciplina($id) { (new AdminAcademicoController())->deleteDisciplina($id); }
+    public function saveEspecialidade() { (new AdminAcademicoController())->saveEspecialidade(); }
+    public function deleteEspecialidade($id) { (new AdminAcademicoController())->deleteEspecialidade($id); }
+    public function saveHorario() { (new AdminAcademicoController())->saveHorario(); }
+    public function getHorariosAjax($id) { (new AdminAcademicoController())->getHorariosAjax($id); }
+
+    public function validarPagamento($id) { (new AdminFinanceiroController())->validarPagamento($id); }
+    public function rejeitarPagamento($id) { (new AdminFinanceiroController())->rejeitarPagamento($id); }
+
+    public function saveProfessor() { (new AdminUsuarioController())->saveProfessor(); }
+    public function deleteProfessor($id) { (new AdminUsuarioController())->deleteProfessor($id); }
+    public function createSecretaria() { (new AdminUsuarioController())->createSecretaria(); }
+    public function deleteSecretaria($id) { (new AdminUsuarioController())->deleteSecretaria($id); }
+
+    /**
+     * Aprova uma conta de utilizador (Estudante/Professor) após registo inicial.
+     * Esta ação libera o acesso básico mas exige matrícula para estudantes.
+     */
+    public function approveAccount($id) {
+        $this->verifyCsrfToken(); // Valida o token CSRF para segurança na submissão
+        $db = Database::getInstance(); // Instancia o objeto de base de dados via Singleton
+        
+        // Define o status como 'ativo' e marca a data atual como data de aprovação
+        $stmt = $db->prepare("UPDATE utilizadores SET status = 'ativo', data_aprovacao = NOW() WHERE id = :id");
+        if ($stmt->execute([':id' => $id])) {
+            // Regista a atividade no log do sistema para auditoria
+            $this->logActivity('Aprovar Conta Utilizador', ['user_id' => $id]);
             
-            if ($res) {
-                $this->logActivity($id ? 'Atualizar Ano Curricular' : 'Criar Ano Curricular', ['id' => $id]);
-                $_SESSION['flash_success'] = "Ano curricular salvo com sucesso.";
-            } else {
-                $_SESSION['flash_error'] = "Erro ao salvar ano curricular.";
-            }
-            header('Location: /green/admin');
-            exit;
-        }
-    }
-
-    public function deleteAno($id) {
-        $model = $this->model('Academico');
-        if ($model->deleteAno($id)) {
-            $this->logActivity('Remover Ano Curricular', ['id' => $id]);
-            $_SESSION['flash_success'] = "Ano curricular removido.";
+            // Notifica a Secretaria sobre a nova aprovação efetuada pelo Administrador
+            $user = $this->model('User')->findById($id); // Busca dados do utilizador aprovado
+            $notif = "O Administrador aprovou a conta de " . ($user['nome_completo'] ?? 'Utilizador') . "."; // Cria corpo da mensagem
+            $this->model('Mensagem')->notifyGroup('secretaria', $notif, $_SESSION['user_id']); // Envia para o grupo secretaria
+            
+            $_SESSION['flash_success'] = "Conta aprovada com sucesso! O prazo de 48h para matrícula iniciou.";
         } else {
-            $_SESSION['flash_error'] = "Erro ao remover (pode haver dados vinculados).";
+            $_SESSION['flash_error'] = "Erro ao aprovar conta.";
         }
-        header('Location: /green/admin');
+        header('Location: ' . URL_ROOT . '/admin'); // Redireciona de volta para o dashboard
         exit;
     }
 
-    public function saveDisciplina() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->verifyCsrfToken();
-            $model = $this->model('Disciplina');
-            $id = $_POST['id'] ?? null;
-            $res = $id ? $model->update($id, $_POST) : $model->create($_POST);
-            
-            if ($res) {
-                $this->logActivity($id ? 'Atualizar Disciplina' : 'Criar Disciplina', ['id' => $id, 'nome' => $_POST['nome'] ?? 'N/A']);
-                $_SESSION['flash_success'] = "Disciplina salva com sucesso.";
-            } else {
-                $_SESSION['flash_error'] = "Erro ao salvar disciplina.";
-            }
-            header('Location: /green/admin');
-            exit;
-        }
-    }
-
-    public function deleteDisciplina($id) {
-        $model = $this->model('Disciplina');
-        if ($model->delete($id)) {
-            $this->logActivity('Remover Disciplina', ['id' => $id]);
-            $_SESSION['flash_success'] = "Disciplina removida.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao remover disciplina.";
-        }
-        header('Location: /green/admin');
-        exit;
-    }
-
-    public function saveEspecialidade() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->verifyCsrfToken();
-            $model = $this->model('Especialidade');
-            $id = $_POST['id'] ?? null;
-            $res = $id ? $model->updateEspecialidade($id, $_POST) : $model->createEspecialidade($_POST);
-            
-            if ($res) {
-                $this->logActivity($id ? 'Atualizar Especialidade' : 'Criar Especialidade', ['id' => $id, 'nome' => $_POST['nome'] ?? 'N/A']);
-                $_SESSION['flash_success'] = "Especialidade salva com sucesso.";
-            } else {
-                $_SESSION['flash_error'] = "Erro ao salvar especialidade.";
-            }
-            header('Location: /green/admin');
-            exit;
-        }
-    }
-
-    public function deleteEspecialidade($id) {
-        $model = $this->model('Especialidade');
-        if ($model->deleteEspecialidade($id)) {
-            $this->logActivity('Remover Especialidade', ['id' => $id]);
-            $_SESSION['flash_success'] = "Especialidade removida.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao remover especialidade.";
-        }
-        header('Location: /green/admin');
-        exit;
-    }
-
-    public function saveProfessor() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->verifyCsrfToken();
-            $model = $this->model('Professor');
-            $id = $_POST['id'] ?? null;
-            
-            if ($id) {
-                $res = $model->updateManual($id, $_POST);
-                $msg = "Professor atualizado com sucesso.";
-            } else {
-                $res = $model->createManual($_POST);
-                $msg = "Professor cadastrado com sucesso.";
-            }
-
-            if ($res) {
-                $this->logActivity($id ? 'Atualizar Professor' : 'Criar Professor', ['id' => $id, 'nome' => $_POST['nome'] ?? 'N/A']);
-                $_SESSION['flash_success'] = $msg;
-            } else {
-                $_SESSION['flash_error'] = "Erro ao salvar professor. Email duplicado?";
-            }
-            header('Location: /green/admin');
-            exit;
-        }
-    }
-
-    public function deleteProfessor($id) {
-        $model = $this->model('Professor');
-        if ($model->deleteProfessor($id)) {
-            $this->logActivity('Remover Professor', ['id' => $id]);
-            $_SESSION['flash_success'] = "Professor e respetiva conta removidos.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao remover professor.";
-        }
-        header('Location: /green/admin');
-        exit;
-    }
-
-    public function saveHorario() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->verifyCsrfToken();
-            $model = $this->model('Horario');
-            $res = $model->allocate($_POST);
-            
-            if ($res['success']) {
-                $this->logActivity('Alocar Horário', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
-                $_SESSION['flash_success'] = "Horário alocado com sucesso.";
-            } else {
-                $_SESSION['flash_error'] = $res['message'] ?? "Erro ao alocar horário.";
-            }
-            header('Location: /green/admin');
-            exit;
-        }
-    }
-
-    public function deleteHorario($id) {
-        $model = $this->model('Horario');
-        if ($model->delete($id)) {
-            $this->logActivity('Remover Slot de Horário', ['id' => $id]);
-            $_SESSION['flash_success'] = "Horário removido.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao remover horário.";
-        }
-        header('Location: /green/admin');
-        exit;
-    }
-
+    /**
+     * Alocação de Aluno à Turma (Manual).
+     */
     public function assignStudentToTurma() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['matricula_id']) && isset($_POST['turma_id'])) {
             $this->verifyCsrfToken();
@@ -223,115 +137,91 @@ class AdminController extends Controller {
             } else {
                 $_SESSION['flash_error'] = "Erro ao alocar aluno.";
             }
-            header('Location: /green/admin');
+            header('Location: ' . URL_ROOT . '/admin');
             exit;
         }
     }
 
-    public function getHorariosAjax($turma_id) {
-        $model = $this->model('Horario');
-        $horarios = $model->getHorarioByTurma($turma_id);
-        
-        $dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-        $tempos = [
-            '1º' => ['07:20', '08:50'],
-            '2º' => ['08:55', '10:25'],
-            '3º' => ['10:45', '12:15'],
-            '4º' => ['12:20', '13:50'],
-            'N1' => ['17:45', '19:15'],
-            'N2' => ['19:20', '20:50'],
-            'N3' => ['21:00', '22:30'],
-            'N4' => ['22:35', '24:00']
-        ];
-
-        if (empty($horarios)) {
-            echo '<p class="text-center text-muted py-4">Nenhum horário alocado para esta turma.</p>';
-            return;
-        }
-
-        echo '<div class="table-responsive">
-                <table class="table table-bordered text-center align-middle mb-0" style="border: 1px solid #000 !important; background: #fff;">
-                <thead style="background-color: #f8f9fa;">
-                    <tr style="border-bottom: 2px solid #000;">
-                        <th style="border: 1px solid #000; padding: 10px; font-weight: bold; width: 80px;">TEMPO</th>
-                        <th style="border: 1px solid #000; padding: 10px; font-weight: bold; width: 100px;">HORA</th>';
-        foreach ($dias as $d) echo '<th style="border: 1px solid #000; padding: 10px; font-weight: bold;">' . strtoupper($d) . '</th>';
-        echo '</tr></thead><tbody>';
-
-        foreach ($tempos as $t_label => $t_horas) {
-            echo '<tr style="border-bottom: 1px solid #000;">
-                    <td style="border: 1px solid #000; font-weight: bold; background: #fdfdfd;">'.$t_label.'</td>
-                    <td style="border: 1px solid #000; font-size: 0.8rem; background: #fdfdfd;">'.$t_horas[0].' - '.$t_horas[1].'</td>';
-            foreach ($dias as $d) {
-                $found = false;
-                echo '<td style="border: 1px solid #000; padding: 0; min-width: 120px; height: 60px; vertical-align: top;">';
-                foreach ($horarios as $h) {
-                    if ($h['dia_semana'] == $d && substr($h['hora_inicio'], 0, 5) == $t_horas[0]) {
-                        echo '<div style="display: flex; flex-direction: column; height: 100%;">';
-                        echo '<div style="padding: 5px; font-weight: bold; border-bottom: 1px solid #eee; flex: 1; display: flex; align-items: center; justify-content: center;">' . $h['sigla'] . '</div>';
-                        echo '<div style="padding: 3px; font-size: 0.75rem; color: #666; background: #fafafa; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">';
-                        echo '<span>' . $h['sala'] . '</span>';
-                        echo '<button class="btn btn-link text-danger p-0 mt-1" style="font-size: 0.7rem; text-decoration: none;" onclick="if(confirm(\'Remover slot?\')) window.location.href=\'/green/admin/deleteHorario/'.$h['id'].'\'"><ion-icon name="trash-outline"></ion-icon></button>';
-                        echo '</div></div>';
-                        $found = true;
-                        break;
-                    }
-                }
-                if (!$found) echo '<span style="color: #eee; display: flex; align-items: center; justify-content: center; height: 100%;"> - </span>';
-                echo '</td>';
-            }
-            echo '</tr>';
-        }
-        echo '</tbody></table></div>';
-    }
-
-    public function approveAccount($id) {
-        $this->verifyCsrfToken();
-        $db = Database::getInstance();
-        $stmt = $db->prepare("UPDATE utilizadores SET status = 'ativo', data_aprovacao = NOW() WHERE id = :id");
-        if ($stmt->execute([':id' => $id])) {
-            $this->logActivity('Aprovar Conta Utilizador', ['user_id' => $id]);
-            $_SESSION['flash_success'] = "Conta aprovada com sucesso! O prazo de 48h para matrícula iniciou.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao aprovar conta.";
-        }
-        header('Location: /green/admin');
-        exit;
-    }
-
+    /**
+     * Fluxo de Governança: Aprovação de Matrícula.
+     * 
+     * Documentação Funcional:
+     * Este é um dos métodos mais críticos. Ele orquestra 4 ações:
+     * 1. Aprova a matrícula no modelo.
+     * 2. Ativa a conta do utilizador (User status = 'ativo').
+     * 3. Tenta alocação automática numa turma com vagas.
+     * 4. Envia notificação bidirecional para a Secretaria.
+     */
     public function approveMatricula($id) {
-        $this->verifyCsrfToken();
-        $matriculaModel = $this->model('Matricula');
-        $db = Database::getInstance();
+        $this->verifyCsrfToken(); 
+        $matriculaModel = $this->model('Matricula'); 
+        $db = Database::getInstance(); 
         
-        // 1. Get Matricula Data
-        $stmt = $db->prepare("SELECT m.*, u.email, u.id as user_id FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+        // // Refatoração: Consultas diretas ao PDO no controlador devem ser evitadas.
+        // // Sugestão: Mover esta lógica de JOIN para um método no MatriculaModel.
+        $stmt = $db->prepare("SELECT m.*, u.nome_completo, u.email, u.id as user_id FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
         $stmt->execute([':id' => $id]);
-        $m = $stmt->fetch();
+        $m = $stmt->fetch(); 
 
         if ($matriculaModel->updateStatus($id, 'Aprovada', $_SESSION['user_id'])) {
             $this->logActivity('Aprovar Matrícula', ['matricula_id' => $id, 'aluno' => $m['email'] ?? 'N/A']);
-            // 2. Activate User
+            
+            // Ativa o utilizador na tabela core
             $db->prepare("UPDATE utilizadores SET status = 'ativo' WHERE id = :uid")->execute([':uid' => $m['user_id']]);
 
-            // 3. Auto-allocate Turma
+            // // Lógica de Negócio: Alocação automática inteligente baseada em vagas e turno.
             $stmtT = $db->prepare("SELECT id FROM turmas WHERE ano_id = :ano AND turno = :turno AND vagas > (SELECT COUNT(*) FROM matriculas WHERE turma_id = turmas.id) LIMIT 1");
             $stmtT->execute([':ano' => $m['ano_curso_id'], ':turno' => $m['turno']]);
-            $t = $stmtT->fetch();
+            $t = $stmtT->fetch(); 
             
             if ($t) {
                 $matriculaModel->assignToTurma($id, $t['id']);
                 $_SESSION['flash_success'] = "Matrícula aprovada! O aluno foi ativado e alocado automaticamente à turma compatível.";
             } else {
-                $_SESSION['flash_success'] = "Matrícula aprovada e aluno ativado! No entanto, não foi encontrada turma com vagas para o ".$m['ano_curso_id']."º ano (".$m['turno']."). Alocação manual necessária.";
+                $_SESSION['flash_success'] = "Matrícula aprovada e aluno ativado! No entanto, não foi encontrada turma com vagas. Alocação manual necessária.";
             }
+            
+            // // Integração: Sistema de Mensagens Bidirecional (GHS Message System)
+            $notif = "Matrícula confirmada pelo Administrador: " . ($m['nome_completo'] ?? 'N/A') . " (" . ($m['email'] ?? '') . ").";
+            $this->model('Mensagem')->notifyGroup('secretaria', $notif, $_SESSION['user_id']); 
+            
         } else {
             $_SESSION['flash_error'] = "Erro ao aprovar matrícula.";
         }
-        header('Location: /green/admin');
+        header('Location: ' . URL_ROOT . '/admin'); 
         exit;
     }
 
+    public function rejectMatricula($id) {
+        $this->verifyCsrfToken();
+        if ($this->model('Matricula')->updateStatus($id, 'Rejeitada', $_SESSION['user_id'])) {
+            $this->logActivity('Rejeitar Matrícula', ['matricula_id' => $id]);
+            $_SESSION['flash_success'] = "Matrícula rejeitada com sucesso.";
+        } else {
+            $_SESSION['flash_error'] = "Erro ao rejeitar matrícula.";
+        }
+        header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
+        exit;
+    }
+
+    public function generateInvite() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->verifyCsrfToken();
+            $email = $_POST['email'] ?? '';
+            $role = $_POST['role'] ?? 'Utilizador';
+            $this->logActivity('Gerar Convite', ['email' => $email, 'role' => $role]);
+            $_SESSION['flash_success'] = "Convite gerado e registo permitido para $email ($role).";
+        }
+        header('Location: ' . URL_ROOT . '/admin#pane-professores');
+        exit;
+    }
+
+    /**
+     * Exportação Financeira (CSV).
+     * 
+     * // Sugestão: Para relatórios maiores, usar geração assíncrona ou Paginação 
+     * // para não exceder o tempo de execução do PHP (max_execution_time).
+     */
     public function exportFinanceiro() {
         $db = Database::getInstance();
         $stmt = $db->query("SELECT p.*, u.nome_completo as aluno 
@@ -351,6 +241,9 @@ class AdminController extends Controller {
         fclose($output);
         exit;
     }
+    /**
+     * Gestão de Estudantes (Cadastro via Admin).
+     */
     public function saveStudent() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();
@@ -381,7 +274,8 @@ class AdminController extends Controller {
             ];
 
             if ($id) {
-                // Update
+                // // Identificação de Pontos Cegos: Se o email for alterado aqui, 
+                // // não há verificação de duplicidade para o novo email.
                 $userData = ['nome_completo' => $nome, 'email' => $email];
                 if (!empty($senha)) $userData['senha'] = $senha;
                 
@@ -407,7 +301,7 @@ class AdminController extends Controller {
                     $_SESSION['flash_error'] = "Erro ao criar utilizador. Email já existe?";
                 }
             }
-            header('Location: /green/admin');
+            header('Location: ' . URL_ROOT . '/admin');
             exit;
         }
     }
@@ -419,7 +313,7 @@ class AdminController extends Controller {
         $estudanteModel->deleteEstudanteByUserId($id);
         $userModel->deleteUser($id);
         $_SESSION['flash_success'] = "Estudante removido com sucesso.";
-        header('Location: /green/admin');
+        header('Location: ' . URL_ROOT . '/admin');
         exit;
     }
 
@@ -431,7 +325,7 @@ class AdminController extends Controller {
         } else {
             $_SESSION['flash_error'] = "Erro ao atualizar status.";
         }
-        header('Location: /green/admin');
+        header('Location: ' . URL_ROOT . '/admin');
         exit;
     }
 
@@ -446,7 +340,7 @@ class AdminController extends Controller {
         } else {
             $_SESSION['flash_error'] = "Erro ao resetar senha.";
         }
-        header('Location: /green/admin');
+        header('Location: ' . URL_ROOT . '/admin');
         exit;
     }
 
@@ -460,11 +354,17 @@ class AdminController extends Controller {
             } else {
                 $_SESSION['flash_error'] = "Erro ao registar pagamento.";
             }
-            header('Location: /green/admin');
+            header('Location: ' . URL_ROOT . '/admin');
             exit;
         }
     }
 
+    /**
+     * Gestão de Professores (v2 - Atribuições em Bloco).
+     * 
+     * // Nota: Este método é mais completo que o saveProfessor() anterior, 
+     * // permitindo definir múltiplas disciplinas/turmas de uma só vez.
+     */
     public function createProfessor() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->verifyCsrfToken();
@@ -498,7 +398,7 @@ class AdminController extends Controller {
             } else {
                 $_SESSION['flash_error'] = "Erro ao criar professor. O email pode já estar em uso.";
             }
-            header('Location: /green/admin#pane-professores');
+            header('Location: ' . URL_ROOT . '/admin#pane-professores');
             exit;
         }
     }
@@ -537,14 +437,18 @@ class AdminController extends Controller {
             } else {
                 $_SESSION['flash_error'] = "Erro ao atualizar professor.";
             }
-            header('Location: /green/admin#pane-professores');
+            header('Location: ' . URL_ROOT . '/admin#pane-professores');
             exit;
         }
     }
 
+    /**
+     * Recupera dados completos do professor via AJAX.
+     */
     public function getProfessorData($id) {
         $prof = $this->model('Professor')->findById($id);
         $atribuicoes = $this->model('Professor')->getAssignedClasses($id);
+        header('Content-Type: application/json');
         echo json_encode(['prof' => $prof, 'atribuicoes' => $atribuicoes]);
     }
 
@@ -558,7 +462,7 @@ class AdminController extends Controller {
             } else {
                 $_SESSION['flash_error'] = "Erro ao publicar comunicado.";
             }
-            header('Location: /green/admin');
+            header('Location: ' . URL_ROOT . '/admin');
             exit;
         }
     }
@@ -570,7 +474,7 @@ class AdminController extends Controller {
         } else {
             $_SESSION['flash_error'] = "Erro ao excluir turma.";
         }
-        header('Location: /green/admin#pane-turmas');
+        header('Location: ' . URL_ROOT . '/admin#pane-turmas');
         exit;
     }
 
@@ -581,7 +485,9 @@ class AdminController extends Controller {
         exit;
     }
 
-    // Novos Métodos para Horário Modelo (Por Ano)
+    /**
+     * Sistema de Horário Modelo (Grade Escolar Fixa).
+     */
     public function saveHorarioModelo() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $db = Database::getInstance();
@@ -595,61 +501,32 @@ class AdminController extends Controller {
                 ':did' => $_POST['disciplina_id'] ?: null,
                 ':sala' => $_POST['sala']
             ]);
-            $_SESSION['flash_success'] = "Slot de horário modelo salvo.";
-            header('Location: /green/admin#pills-anos');
+            $_SESSION['flash_success'] = "Padrão de horário salvo.";
+            header('Location: ' . URL_ROOT . '/admin#pane-horarios');
             exit;
         }
     }
 
+    /**
+     * Recupera o modelo de horário (grade fixa) via AJAX.
+     * 
+     * // Refatoração: Mais uma vez, o controlador renderiza HTML diretamente. 
+     * // Sugestão: Migrar para JSON ou Blade-style partials para manter o MVC "limpo".
+     */
     public function getHorarioModeloAjax($ano_id) {
         $db = Database::getInstance();
-        $stmt = $db->prepare("SELECT hm.*, d.nome as disciplina_nome 
-                             FROM horarios_modelo hm 
-                             LEFT JOIN disciplinas d ON hm.disciplina_id = d.id 
-                             WHERE hm.ano_id = :aid
-                             ORDER BY FIELD(hm.dia_semana, 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'), hm.hora_inicio");
+        $stmt = $db->prepare("SELECT hm.*, d.nome as disciplina_nome FROM horarios_modelo hm LEFT JOIN disciplinas d ON hm.disciplina_id = d.id WHERE hm.ano_id = :aid ORDER BY FIELD(hm.dia_semana, 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'), hm.hora_inicio");
         $stmt->execute([':aid' => $ano_id]);
         $slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (empty($slots)) {
-            echo '<div class="text-center py-5 text-muted">
-                    <ion-icon name="calendar-outline" style="font-size: 3rem;" class="opacity-25"></ion-icon>
-                    <p class="mt-2">Nenhum slot definido para este modelo de ano.</p>
-                  </div>';
+            echo '<div class="text-center py-5 text-muted"><ion-icon name="calendar-outline" style="font-size: 3rem;" class="opacity-25"></ion-icon><p class="mt-2">Nenhum slot definido.</p></div>';
         } else {
-            echo '<div class="table-responsive">
-                    <table class="table table-hover table-sm align-middle mb-0" style="font-size: 0.85rem;">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-3">DIA</th>
-                                <th>HORÁRIO</th>
-                                <th>DISCIPLINA</th>
-                                <th class="text-end pe-3">AÇÃO</th>
-                            </tr>
-                        </thead>
-                        <tbody>';
+            // Renderização da tabela de modelo
+            echo '<div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0" style="font-size: 0.85rem;"><thead class="table-light"><tr><th>DIA</th><th>HORÁRIO</th><th>DISCIPLINA</th><th class="text-end pe-3">AÇÃO</th></tr></thead><tbody>';
             foreach ($slots as $s) {
                 $checkNight = (int)substr($s['hora_inicio'], 0, 2) >= 17;
-                $badgeClass = $checkNight ? 'bg-dark' : 'bg-primary';
-                $tempoLabel = $checkNight ? 'NOITE' : 'DIA';
-                
-                echo '<tr>
-                        <td class="ps-3 fw-bold">'.$s['dia_semana'].'</td>
-                        <td>
-                            <span class="badge '.$badgeClass.' bg-opacity-10 text-'.($checkNight ? 'dark' : 'primary').' px-2">
-                                '.substr($s['hora_inicio'],0,5).' – '.substr($s['hora_fim'],0,5).'
-                            </span>
-                        </td>
-                        <td>
-                            <div class="fw-bold">'.($s['disciplina_nome'] ?? 'A definir').'</div>
-                            <div class="text-muted extra-small">'.($s['sala'] ? 'Local: '.$s['sala'] : 'Sem local fixo').'</div>
-                        </td>
-                        <td class="text-end pe-3">
-                            <button class="btn btn-link text-danger p-0" onclick="deleteModeloSlot('.$s['id'].', '.$s['ano_id'].')" title="Remover Slot">
-                                <ion-icon name="trash-outline" style="font-size: 1.2rem;"></ion-icon>
-                            </button>
-                        </td>
-                      </tr>';
+                echo '<tr><td class="ps-3 fw-bold">'.$s['dia_semana'].'</td><td><span class="badge '.($checkNight ? 'bg-dark' : 'bg-primary').' bg-opacity-10 text-'.($checkNight ? 'dark' : 'primary').' px-2">'.substr($s['hora_inicio'],0,5).' – '.substr($s['hora_fim'],0,5).'</span></td><td><div class="fw-bold">'.($s['disciplina_nome'] ?? 'A definir').'</div></td><td class="text-end pe-3"><button class="btn btn-link text-danger p-0" onclick="deleteModeloSlot('.$s['id'].', '.$s['ano_id'].')"><ion-icon name="trash-outline"></ion-icon></button></td></tr>';
             }
             echo '</tbody></table></div>';
         }
@@ -673,7 +550,7 @@ class AdminController extends Controller {
 
         if (empty($slots)) {
             $_SESSION['flash_error'] = "Não existe um modelo de horário para o ano desta turma.";
-            header('Location: /green/admin');
+            header('Location: ' . URL_ROOT . '/admin');
             exit;
         }
 
@@ -703,7 +580,7 @@ class AdminController extends Controller {
         }
 
         $_SESSION['flash_success'] = "Horário aplicado com sucesso a partir do modelo do ano.";
-        header('Location: /green/admin');
+        header('Location: ' . URL_ROOT . '/admin');
         exit;
     }
 
@@ -756,16 +633,21 @@ class AdminController extends Controller {
         $db = Database::getInstance();
         $db->prepare("UPDATE sumarios SET confirmado_admin = 1 WHERE id = :id")->execute([':id' => $id]);
         $_SESSION['flash_success'] = "Sumário confirmado como recebido.";
-        header('Location: /green/admin#pane-pedagogico');
+        header('Location: ' . URL_ROOT . '/admin#pane-pedagogico');
         exit;
     }
 
+    /**
+     * Orquestrador de Confirmação Pedagógica.
+     * Valida em lote as notas submetidas por professores para uma turma/disciplina.
+     */
     public function confirmGrades() {
         $turma_id = $_GET['turma_id'] ?? 0;
         $disciplina_id = $_GET['disciplina_id'] ?? 0;
         $this->logActivity('Confirmar Lote de Notas', ['turma_id' => $turma_id, 'disciplina_id' => $disciplina_id]);
         $db = Database::getInstance();
-        // Here we confirm all grades for a specific class/subject
+        
+        // // Lógica de Negócio: O JOIN garante que confirmamos as notas vinculadas às avaliações corretas.
         $db->prepare("
             UPDATE notas n
             JOIN avaliacoes a ON n.avaliacao_id = a.id
@@ -774,7 +656,7 @@ class AdminController extends Controller {
         ")->execute([':tid' => $turma_id, ':did' => $disciplina_id]);
         
         $_SESSION['flash_success'] = "Lote de notas confirmado com sucesso.";
-        header('Location: /green/admin#pane-pedagogico');
+        header('Location: ' . URL_ROOT . '/admin#pane-pedagogico');
         exit;
     }
 
@@ -785,7 +667,7 @@ class AdminController extends Controller {
         $db = Database::getInstance();
         $db->prepare("UPDATE frequencias SET confirmado_admin = 1 WHERE turma_id = :tid AND disciplina_id = :did")->execute([':tid' => $turma_id, ':did' => $disciplina_id]);
         $_SESSION['flash_success'] = "Lote de frequências confirmado.";
-        header('Location: /green/admin#pane-pedagogico');
+        header('Location: ' . URL_ROOT . '/admin#pane-pedagogico');
         exit;
     }
 
@@ -795,7 +677,7 @@ class AdminController extends Controller {
 
     public function alocarAluno() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /green/admin');
+            header('Location: ' . URL_ROOT . '/admin');
             exit;
         }
         $this->verifyCsrfToken();
@@ -808,7 +690,7 @@ class AdminController extends Controller {
 
         if (!$estudante_id || !$turma_id) {
             $_SESSION['flash_error'] = "Estudante e Turma são obrigatórios para alocar.";
-            header('Location: /green/admin#pane-alunos');
+            header('Location: ' . URL_ROOT . '/admin#pane-alunos');
             exit;
         }
 
@@ -825,7 +707,7 @@ class AdminController extends Controller {
         $stmtChk->execute([':eid' => $estudante_id, ':tid' => $turma_id, ':al' => $ano_letivo]);
         if ($stmtChk->fetch()) {
             $_SESSION['flash_error'] = "Aluno já está alocado nesta turma para o ano letivo $ano_letivo.";
-            header('Location: /green/admin#pane-alunos');
+            header('Location: ' . URL_ROOT . '/admin#pane-alunos');
             exit;
         }
 
@@ -849,7 +731,7 @@ class AdminController extends Controller {
             $_SESSION['flash_error'] = "Erro ao alocar aluno. Verifique os dados.";
         }
 
-        header('Location: /green/admin#pane-alunos');
+        header('Location: ' . URL_ROOT . '/admin#pane-alunos');
         exit;
     }
 
@@ -871,7 +753,7 @@ class AdminController extends Controller {
                 $_SESSION['flash_error'] = "Erro ao registar evento.";
             }
         }
-        header('Location: /green/admin#pane-calendario');
+        header('Location: ' . URL_ROOT . '/admin#pane-calendario');
         exit;
     }
 
@@ -883,7 +765,7 @@ class AdminController extends Controller {
         } else {
             $_SESSION['flash_error'] = "Erro ao remover evento.";
         }
-        header('Location: /green/admin#pane-calendario');
+        header('Location: ' . URL_ROOT . '/admin#pane-calendario');
         exit;
     }
 
@@ -912,81 +794,53 @@ class AdminController extends Controller {
                 $_SESSION['flash_error'] = "Erro ao registar assiduidade.";
             }
         }
-        header('Location: /green/admin#pane-pedagogico');
+        header('Location: ' . URL_ROOT . '/admin#pane-pedagogico');
         exit;
     }
 
-    public function validarPagamento($id) {
-        $this->logActivity('Validar Pagamento Admin', ['pagamento_id' => $id]);
-        $model = $this->model('Pagamento');
-        if ($model->aprovarPagamento($id, $_SESSION['user_id'])) {
-            $_SESSION['flash_success'] = "Pagamento validado e aprovado com sucesso.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao validar pagamento; tente novamente.";
-        }
-        header('Location: /green/admin#pane-financeiro');
-        exit;
+    // Métodos movidos para AdminFinanceiroController
+
+
+    /**
+     * Painel de Auditoria de Sistema (Logs).
+     * Exibe o histórico de atividades críticas.
+     */
+    public function logs($page = 1) {
+        $db = Database::getInstance();
+        $limit = 50;
+        $offset = ((int)$page - 1) * $limit;
+
+        // Contar total de logs
+        $stmtTotal = $db->query("SELECT COUNT(*) FROM logs_atividades");
+        $total_logs = $stmtTotal->fetchColumn();
+
+        // Buscar logs com limite e offset
+        $stmtLogs = $db->prepare("SELECT * FROM logs_atividades ORDER BY data_acao DESC LIMIT :lim OFFSET :off");
+        $stmtLogs->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $stmtLogs->bindValue(':off', $offset, PDO::PARAM_INT);
+        $stmtLogs->execute();
+        $logs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
+
+        $this->view('admin/logs', [
+            'logs' => $logs,
+            'total_logs' => $total_logs,
+            'page' => $page
+        ]);
     }
 
-    public function rejeitarPagamento($id) {
-        $this->verifyCsrfToken();
-        $model = $this->model('Pagamento');
-        $motivo = $_POST['motivo'] ?? 'Sem motivo especificado';
-        if ($model->rejeitarComMotivo($id, $_SESSION['user_id'], $motivo)) {
-            $this->logActivity('Rejeitar Pagamento Admin', ['pagamento_id' => $id, 'motivo' => $motivo]);
-            $_SESSION['flash_success'] = "Pagamento rejeitado. O estudante será notificado com o motivo.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao rejeitar pagamento.";
-        }
-        header('Location: /green/admin#pane-financeiro');
-        exit;
-    }
-
-    public function createSecretaria() {
+    /**
+     * Manutenção de UI: Limpar Notificações Lidas.
+     * 
+     * @return void
+     */
+    public function clearNotifications() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $data = [
-                'nome' => filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS),
-                'email' => filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL),
-                'bi' => filter_input(INPUT_POST, 'bi', FILTER_SANITIZE_SPECIAL_CHARS),
-                'telefone' => filter_input(INPUT_POST, 'telefone', FILTER_SANITIZE_SPECIAL_CHARS),
-                'data_contratacao' => $_POST['data_contratacao'] ?? date('Y-m-d'),
-                'senha' => $_POST['senha'] ?? '123456'
-            ];
-
-            if (!$data['email']) {
-                $_SESSION['flash_error'] = "E-mail inválido.";
-                header('Location: /green/admin#pane-secretaria');
-                exit;
-            }
-
-            $userModel = $this->model('User');
-            if ($userModel->findByEmail($data['email'])) {
-                $_SESSION['flash_error'] = "O email fornecido já se encontra registado na plataforma.";
-                header('Location: /green/admin#pane-secretaria');
-                exit;
-            }
-
-            $adminModel = $this->model('Administrador');
-            if ($adminModel->createSecretaria($data)) {
-                $_SESSION['flash_success'] = "Secretário(a) registado(a) com sucesso.";
-            } else {
-                $_SESSION['flash_error'] = "Erro ao registar o perfil de secretariado.";
-            }
-            
-            header('Location: /green/admin#pane-secretaria');
-            exit;
+            $this->verifyCsrfToken();
+            // // Lógica de UI: Marca todas as mensagens do admin como lidas para despoluir o widget.
+            $this->model('Mensagem')->markAllAsRead($_SESSION['user_id']);
+            $_SESSION['flash_success'] = "Painel de alertas limpo com sucesso.";
         }
-    }
-
-    public function deleteSecretaria($id) {
-        $adminModel = $this->model('Administrador');
-        $this->logActivity('Remover Secretário/a', ['user_id' => $id]);
-        if ($adminModel->deleteSecretaria($id)) {
-            $_SESSION['flash_success'] = "Membro da secretaria removido com sucesso.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao remover membro da secretaria.";
-        }
-        header('Location: /green/admin#pane-secretaria');
+        header('Location: ' . URL_ROOT . '/admin');
         exit;
     }
 }

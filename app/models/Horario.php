@@ -90,23 +90,23 @@ class Horario {
         if ($turno == 'Tarde') {
             return [
                 1 => ['inicio' => '13:00', 'fim' => '14:30'],
-                2 => ['inicio' => '14:40', 'fim' => '16:10'],
-                3 => ['inicio' => '16:20', 'fim' => '17:50'],
-                4 => ['inicio' => '18:00', 'fim' => '19:30']
+                2 => ['inicio' => '14:35', 'fim' => '16:05'],
+                3 => ['inicio' => '16:10', 'fim' => '17:40'],
+                4 => ['inicio' => '17:45', 'fim' => '19:15']
             ];
         } elseif ($turno == 'Noite') {
             return [
-                1 => ['inicio' => '17:30', 'fim' => '19:00'],
-                2 => ['inicio' => '19:10', 'fim' => '20:40'],
-                3 => ['inicio' => '20:50', 'fim' => '22:20'],
+                1 => ['inicio' => '17:45', 'fim' => '19:15'],
+                2 => ['inicio' => '19:20', 'fim' => '20:50'],
+                3 => ['inicio' => '20:55', 'fim' => '22:25'],
                 4 => ['inicio' => '22:30', 'fim' => '00:00']
             ];
         } else {
             return [
                 1 => ['inicio' => '07:20', 'fim' => '08:50'],
                 2 => ['inicio' => '08:55', 'fim' => '10:25'],
-                3 => ['inicio' => '10:45', 'fim' => '12:15'],
-                4 => ['inicio' => '12:20', 'fim' => '13:50']
+                3 => ['inicio' => '10:30', 'fim' => '12:00'],
+                4 => ['inicio' => '12:05', 'fim' => '13:35']
             ];
         }
     }
@@ -187,11 +187,13 @@ class Horario {
     private function hasConflict($data) {
         $stmt = $this->db->prepare("
             SELECT COUNT(*) FROM horarios 
-            WHERE professor_id = :pid AND dia_semana = :dia 
+            WHERE (professor_id = :pid OR sala = :sala) 
+            AND dia_semana = :dia 
             AND ((hora_inicio < :fim AND hora_fim > :inicio))
         ");
         $stmt->execute([
-            ':pid'   => $data['professor_id'],
+            ':pid'   => $data['professor_id'] ?? null,
+            ':sala'  => $data['sala'],
             ':dia'   => $data['dia_semana'],
             ':inicio'=> $data['hora_inicio'],
             ':fim'   => $data['hora_fim'],

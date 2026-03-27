@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/green/styles.css">
+    <link rel="stylesheet" href="<?= URL_ROOT ?>/styles.css">
     
     <!-- Icons (Ionicons) -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -36,17 +36,17 @@
         <div class="auth-box glass-panel" style="position: relative;">
             
             <!-- Voltar ao Site -->
-            <a href="/green/" style="position: absolute; top: 25px; left: 25px; text-decoration: none; color: #64748b; display: flex; align-items: center; gap: 5px; font-size: 0.95rem; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#64748b'">
+            <a href="<?= URL_ROOT ?>/" style="position: absolute; top: 25px; left: 25px; text-decoration: none; color: #64748b; display: flex; align-items: center; gap: 5px; font-size: 0.95rem; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#64748b'">
                 <ion-icon name="arrow-back-outline"></ion-icon> Voltar ao Site
             </a>
 
             <!-- Branding -->
             <div class="brand" style="margin-bottom: 1.5rem;">
-                <img src="/green/img/logo.jpg" alt="Green Hard & Softh" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
+                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
             </div>
 
             <!-- Login View -->
-            <form id="view-login" class="auth-view active" action="/green/auth/login" method="POST">
+            <form id="view-login" class="auth-view active" action="<?= URL_ROOT ?>/auth/login" method="POST">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
                 
@@ -96,7 +96,7 @@
             </form>
 
             <!-- Register View -->
-            <form id="view-register" class="auth-view" action="/green/auth/register" method="POST">
+            <form id="view-register" class="auth-view" action="<?= URL_ROOT ?>/auth/register" method="POST">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
                 
@@ -142,7 +142,7 @@
             </form>
 
             <!-- Forgot Password View -->
-            <form id="view-forgot" class="auth-view" action="/green/auth/forgot" method="POST">
+            <form id="view-forgot" class="auth-view" action="<?= URL_ROOT ?>/auth/forgot" method="POST">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
                 
@@ -166,7 +166,7 @@
             </form>
 
             <!-- Two-Factor Authentication (2FA) View -->
-            <form id="view-2fa" class="auth-view" action="/green/auth/verify2fa" method="POST">
+            <form id="view-2fa" class="auth-view" action="<?= URL_ROOT ?>/auth/verify2fa" method="POST">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
                 
@@ -197,6 +197,6 @@
     <!-- Notification Toast -->
     <div id="toast" class="toast"></div>
 
-    <script src="/green/script.js"></script>
+    <script src="<?= URL_ROOT ?>/script.js"></script>
 </body>
 </html>

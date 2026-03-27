@@ -1,4 +1,10 @@
 <?php
+/**
+ * Modelo Professor - Gestão Docente e Atribuições Académicas.
+ * 
+ * Este modelo orquestra a relação entre o perfil docente, a conta de utilizador 
+ * e as disciplinas vinculadas em turmas específicas.
+ */
 class Professor {
     private $db;
 
@@ -6,6 +12,9 @@ class Professor {
         $this->db = Database::getInstance();
     }
 
+    /**
+     * Listagem completa de professores com info de atribuições via GROUP_CONCAT.
+     */
     public function getAllProfessors() {
         $stmt = $this->db->prepare("
             SELECT p.*, u.nome_completo, u.email, u.status as user_status,
@@ -22,18 +31,16 @@ class Professor {
         return $stmt->fetchAll();
     }
 
-    public function createProfessor($data) {
-        $stmt = $this->db->prepare("INSERT INTO professores (utilizador_id, bi, telefone, especialidade, grau_academico, data_contratacao) VALUES (:uid, :bi, :tel, :esp, :grau, :data_con)");
-        return $stmt->execute([
-            ':uid' => $data['utilizador_id'],
-            ':bi' => $data['bi'] ?? '0000000',
-            ':tel' => $data['telefone'] ?? '0000000',
-            ':esp' => $data['especialidade'] ?? 'Geral',
-            ':grau' => $data['grau_academico'] ?? null,
-            ':data_con' => $data['data_contratacao'] ?? date('Y-m-d')
-        ]);
-    }
-
+    /**
+     * Processamento de Atualização em Fluxo Transacional (Atomicidade).
+     * 
+     * @param int $id ID do professor.
+     * @param array $data Conjunto de dados para atualização.
+     * @return bool Sucesso da operação.
+     * 
+     * // Mentoria: O uso de transacções (beginTransaction/commit) é vital 
+     * // para evitar estados "orfãos" onde o utilizador muda mas o professor não.
+     */
     public function updateManual($id, $data) {
         try {
             $this->db->beginTransaction();
@@ -66,7 +73,7 @@ class Professor {
                 ':id' => $id
             ]);
             
-            // 4. Atualizar Alocações (Novo formato: array de objects/arrays)
+            // 4. Reconstrução de Grade Curricular/Atribuições
             $stmtDel = $this->db->prepare("DELETE FROM professor_disciplina WHERE professor_id = :pid");
             $stmtDel->execute([':pid' => $id]);
             
@@ -93,6 +100,9 @@ class Professor {
         }
     }
 
+    /**
+     * Cadastro Integral de Docente com Segurança Atómica.
+     */
     public function createManual($data) {
         try {
             $this->db->beginTransaction();
@@ -141,9 +151,11 @@ class Professor {
             $this->db->rollBack();
             return false;
         }
-        return false;
     }
 
+    /**
+     * Retorna detalhes expandidos do docente pelo seu ID.
+     */
     public function getDetails($id) {
         $stmt = $this->db->prepare("
             SELECT p.*, u.nome_completo, u.email, u.status as user_status
@@ -176,6 +188,9 @@ class Professor {
         return $this->getDetails($id);
     }
 
+    /**
+     * Localiza perfil de professor a partir do ID do utilizador autenticado.
+     */
     public function findByUserId($user_id) {
         $stmt = $this->db->prepare("
             SELECT p.*, u.nome_completo, u.email, u.status as user_status, p.foto_perfil as user_foto
@@ -187,6 +202,9 @@ class Professor {
         return $stmt->fetch();
     }
 
+    /**
+     * Retorna turmas e disciplinas vinculadas.
+     */
     public function getAssignedClasses($professor_id) {
         $stmt = $this->db->prepare("
             SELECT pd.*, d.nome as disciplina_nome, t.codigo as turma_codigo, t.turno 
@@ -200,6 +218,9 @@ class Professor {
         return $stmt->fetchAll();
     }
 
+    /**
+     * Recupera listagem de alunos de uma turma vinculada ao professor.
+     */
     public function getStudentsByTurma($turma_id) {
         $stmt = $this->db->prepare("
             SELECT e.*, u.nome_completo 

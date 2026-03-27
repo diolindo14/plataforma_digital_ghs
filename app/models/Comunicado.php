@@ -57,7 +57,7 @@ class Comunicado {
         
         if ($tipoUser == 'professor') {
             $query .= " OR c.tipo = 'Professores' ";
-            $query .= " OR c.criado_por = :user_id "; 
+            $query .= " OR c.criado_por = :criador_id "; 
         } else if ($tipoUser == 'aluno') {
             $query .= " OR c.tipo = 'Alunos' ";
             if ($turmaId) {
@@ -69,6 +69,11 @@ class Comunicado {
 
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':user_id', $utilizadorId);
+        
+        if ($tipoUser == 'professor') {
+            $stmt->bindValue(':criador_id', $utilizadorId);
+        }
+        
         if ($turmaId && $tipoUser == 'aluno') {
             $stmt->bindValue(':turma_id', $turmaId);
         }

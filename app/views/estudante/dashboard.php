@@ -37,7 +37,7 @@
         <div>
             <div class="text-center mb-4 mt-2">
                 <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #34D399; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
-                    <img src="/green/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="fw-bold mt-2 text-white">Portal GHS</h5>
                 <span class="badge bg-secondary mb-3">Área do Estudante</span>
@@ -55,8 +55,8 @@
         </div>
 
         <div class="pb-4 w-100">
-            <a class="nav-link text-warning mb-1" href="/green/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
-            <a class="nav-link text-danger fw-bold" href="/green/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
+            <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
+            <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
         </div>
     </nav>
     
@@ -124,11 +124,11 @@
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm">
                         <div style="width: 25px; height: 25px; border-radius: 50%; overflow: hidden;">
-                            <img src="<?= $data['estudante']['foto_perfil'] ? '/green/'.$data['estudante']['foto_perfil'] : '/green/img/user-default.png' ?>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="<?= $data['estudante']['foto_perfil'] ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                         <span class="fw-bold text-dark"><?= $this->e(explode(' ', $data['estudante']['nome_completo'])[0]) ?></span>
                     </div>
-                    <a href="/green/auth/logout" class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
+                    <a href="<?= URL_ROOT ?>/auth/logout" class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
                         <ion-icon name="log-out-outline"></ion-icon> Sair
                     </a>
                 </div>
@@ -140,7 +140,62 @@
             
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home" role="tabpanel">
-                
+
+                <!-- 🏆 ALERTA PERSONALIZADO DE MÉRITO ACADÉMICO -->
+                <?php if (!empty($data['meu_ranking'])): ?>
+                    <?php $mr = $data['meu_ranking']; ?>
+                    <?php if (!empty($mr['escola'])): ?>
+                    <!-- MELHOR DA ESCOLA TODA -->
+                    <div style="
+                        background: linear-gradient(135deg, #F59E0B 0%, #EF4444 50%, #EC4899 100%);
+                        border-radius: 20px; padding: 20px 28px; margin-bottom: 20px;
+                        display: flex; align-items: center; gap: 20px;
+                        box-shadow: 0 8px 30px rgba(245,158,11,0.35);
+                        animation: pulse-glow 2.5s infinite;
+                    ">
+                        <span style="font-size: 3rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));">🏆</span>
+                        <div>
+                            <h5 style="color:white; margin:0; font-weight:800; font-size:1.1rem;">
+                                Parabéns, <?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>! Você é o MELHOR ALUNO da escola!
+                            </h5>
+                            <p style="color:rgba(255,255,255,0.85); margin:0; font-size:0.85rem;">
+                                Média geral de <strong><?= number_format((float)($mr['escola']['media_geral'] ?? 0), 1) ?></strong> valores — Continue a brilhar! ⭐
+                            </p>
+                        </div>
+                    </div>
+                    <?php elseif (!empty($mr['nivel'])): ?>
+                    <!-- MELHOR DO NÍVEL -->
+                    <div style="
+                        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+                        border-radius: 20px; padding: 20px 28px; margin-bottom: 20px;
+                        display: flex; align-items: center; gap: 20px;
+                        box-shadow: 0 8px 30px rgba(16,185,129,0.3);
+                    ">
+                        <span style="font-size: 2.8rem;">🥇</span>
+                        <div>
+                            <h5 style="color:white; margin:0; font-weight:800; font-size:1.05rem;">
+                                Você é o melhor aluno do <?= htmlspecialchars($mr['nivel']['nivel_nome'] ?? '') ?>!
+                            </h5>
+                            <p style="color:rgba(255,255,255,0.85); margin:0; font-size:0.85rem;">
+                                Média: <strong><?= number_format((float)($mr['nivel']['media_geral'] ?? 0), 1) ?></strong> valores — Excelente desempenho!
+                            </p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <!-- Quadro de Mérito (Top 3 da escola) -->
+                <?php if (!empty($data['ranking_escola'])): ?>
+                <div class="mb-4">
+                    <?php
+                        $ranking_escola = $data['ranking_escola'];
+                        $ranking_nivel  = $data['ranking_nivel'] ?? [];
+                        $show_details   = false;
+                        include __DIR__ . '/../partials/merit_board.php';
+                    ?>
+                </div>
+                <?php endif; ?>
+
                 <?php if ($data['can_renew'] && $data['next_year']): ?>
                     <div class="card border-0 shadow-sm mb-4 bg-success text-white">
                         <div class="card-body d-flex justify-content-between align-items-center p-4">
@@ -471,7 +526,7 @@
                                             <h6 class="fw-bold mb-1"><?= htmlspecialchars($m['titulo']) ?></h6>
                                             <small class="text-muted"><?= htmlspecialchars($m['disciplina_nome']) ?> • <?= htmlspecialchars($m['professor_nome']) ?> • <?= strtoupper($m['tipo_ficheiro']) ?></small>
                                         </div>
-                                        <a href="/green/<?= $m['caminho_ficheiro'] ?>" target="_blank" class="btn btn-sm btn-light rounded-circle p-2">
+                                        <a href="<?= URL_ROOT ?>/<?= $m['caminho_ficheiro'] ?>" target="_blank" class="btn btn-sm btn-light rounded-circle p-2">
                                             <ion-icon name="download" class="fs-4 text-dark"></ion-icon>
                                         </a>
                                     </div>
@@ -525,7 +580,7 @@
                                             </td>
                                             <td>
                                                 <?php if ($p['status'] === 'Pago'): ?>
-                                                    <a href="/green/estudante/downloadRecibo/<?= $p['id'] ?>" class="btn btn-sm btn-outline-secondary"><ion-icon name="document-text"></ion-icon> Baixar</a>
+                                                    <a href="<?= URL_ROOT ?>/estudante/downloadRecibo/<?= $p['id'] ?>" class="btn btn-sm btn-outline-secondary"><ion-icon name="document-text"></ion-icon> Baixar</a>
                                                 <?php else: ?>
                                                     <button class="btn btn-sm btn-light" disabled>Aguarde</button>
                                                 <?php endif; ?>
@@ -634,7 +689,7 @@
                     <ion-icon name="information-circle-outline" class="me-1"></ion-icon>
                     O seu pagamento será validado pela secretaria em até 48h úteis.
                 </div>
-                <form id="formPagamento" action="/green/estudante/registarPagamento" method="post" enctype="multipart/form-data">
+                <form id="formPagamento" action="<?= URL_ROOT ?>/estudante/registarPagamento" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -682,7 +737,7 @@
                     <strong>Nível Seguinte:</strong> <?= $data['next_year']['nome'] ?? 'Próximo Ano' ?>
                 </div>
                 
-                <form action="/green/estudante/renewEnrollment" method="post" enctype="multipart/form-data">
+                <form action="<?= URL_ROOT ?>/estudante/renewEnrollment" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -731,7 +786,7 @@
                     <strong>Nível a Repetir:</strong> <?= $data['estudante']['nivel'] ?? 'N/A' ?>
                 </div>
                 
-                <form action="/green/estudante/renewEnrollment" method="post" enctype="multipart/form-data">
+                <form action="<?= URL_ROOT ?>/estudante/renewEnrollment" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -812,7 +867,7 @@
                     <ion-icon name="alert-circle-outline" class="me-1"></ion-icon>
                     Detectamos que está a usar uma password temporária ou padrão. Para proteger os seus dados académicos e financeiros, <strong>deve escolher uma nova password robusta</strong> antes de continuar.
                 </div>
-                <form action="/green/estudante/changePassword" method="POST">
+                <form action="<?= URL_ROOT ?>/estudante/changePassword" method="POST">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -881,7 +936,7 @@ $(document).ready(function() {
                 slotMinTime: "13:00:00",
                 slotMaxTime: "20:00:00",
                 allDaySlot: false,
-                events: '/green/estudante/getCalendarEvents'
+                events: '<?= URL_ROOT ?>/estudante/getCalendarEvents'
             });
             calendar.render();
         }
@@ -893,7 +948,7 @@ $(document).ready(function() {
         const btn = $(this).find('button');
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> A enviar...');
         
-        $.post('/green/estudante/registarFeedbackNota', data, function(res) {
+        $.post('<?= URL_ROOT ?>/estudante/registarFeedbackNota', data, function(res) {
             if (res.success) {
                 alert('A sua reclamação foi enviada com sucesso ao professor.');
                 location.reload();
@@ -907,7 +962,7 @@ $(document).ready(function() {
 
 function responderNotas(tid, did, status) {
     if (confirm('Tem certeza que deseja marcar como "' + status + '"? Esta ação é definitiva.')) {
-        $.post('/green/estudante/registarFeedbackNota', {
+        $.post('<?= URL_ROOT ?>/estudante/registarFeedbackNota', {
             turma_id: tid,
             disciplina_id: did,
             status: status,
@@ -933,7 +988,7 @@ function marcarComoLido(id, btn) {
     const card = $(btn).closest('.card');
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>...').prop('disabled', true);
     
-    $.post('/green/estudante/marcarLido', { 
+    $.post('<?= URL_ROOT ?>/estudante/marcarLido', { 
         comunicado_id: id,
         csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     }, function(res) {

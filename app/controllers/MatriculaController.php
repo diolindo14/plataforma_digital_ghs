@@ -19,7 +19,7 @@ class MatriculaController extends Controller {
 
             if (!$email || !$bi || !$nome) {
                 $_SESSION['flash_error'] = "Dados de contacto ou identificação inválidos.";
-                header('Location: /green/matricula');
+                header('Location: ' . URL_ROOT . '/matricula');
                 exit;
             }
 
@@ -28,7 +28,7 @@ class MatriculaController extends Controller {
 
             if (!$user_id) {
                 $_SESSION['flash_error'] = "Erro ao criar utilizador. Verifique se o email já existe.";
-                header('Location: /green/matricula');
+                header('Location: ' . URL_ROOT . '/matricula');
                 exit;
             }
 
@@ -63,30 +63,22 @@ class MatriculaController extends Controller {
                 'motivo' => $_POST['motivacao']
             ]);
 
-            // 4. Upload Seguro de Ficheiros
-            $upload_dir = 'public/uploads/matriculas/';
-            if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
-            
+            // 4. Upload Seguro de Ficheiros (Pilar 3: FileHelper)
             $files = ['doc_bi' => 'BI', 'doc_foto' => 'Fotografia', 'doc_cert' => 'Certificado', 'doc_comprovativo' => 'Comprovativo_Pagamento'];
-            $allowedMimes = ['application/pdf', 'image/jpeg', 'image/png'];
-            $finfo = new finfo(FILEINFO_MIME_TYPE);
             
             foreach ($files as $field => $tipo) {
                 if (isset($_FILES[$field]) && $_FILES[$field]['error'] == 0) {
-                    // Validação MIME Real
-                    $realMime = $finfo->file($_FILES[$field]['tmp_name']);
-                    if (!in_array($realMime, $allowedMimes)) continue;
-
-                    $ext = pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION);
-                    $new_name = $matricula_id . '_' . $field . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-                    
-                    if (move_uploaded_file($_FILES[$field]['tmp_name'], $upload_dir . $new_name)) {
-                        $matriculaModel->saveDocument($matricula_id, $tipo, $new_name, $upload_dir . $new_name);
+                    $upload = FileHelper::upload($_FILES[$field], 'matriculas', 5); // 5MB limit
+                    if ($upload['success']) {
+                        $matriculaModel->saveDocument($matricula_id, $tipo, basename($upload['path']), $upload['path']);
+                    } else {
+                        // Log de falha de segurança ou formato inválido
+                        error_log("Falha no upload de $tipo para matrícula $matricula_id: " . $upload['message']);
                     }
                 }
             }
 
-            header('Location: /green/matricula/sucesso');
+            header('Location: ' . URL_ROOT . '/matricula/sucesso');
             exit;
         }
     }

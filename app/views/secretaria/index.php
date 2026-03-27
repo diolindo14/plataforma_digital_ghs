@@ -25,7 +25,7 @@
         <div class="sidebar">
             <div class="d-flex align-items-center gap-3 mb-5 px-2">
                 <div style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #10b981; background: white; overflow: hidden;">
-                    <img src="/green/img/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="mb-0 fw-bold">Secretaria</h5>
             </div>
@@ -35,11 +35,17 @@
                 <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-matriculas" role="tab"><ion-icon name="people-outline" class="me-2"></ion-icon> Matrículas</a>
                 <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-pagamentos" role="tab"><ion-icon name="card-outline" class="me-2"></ion-icon> Pagamentos</a>
                 <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-comunicados" role="tab"><ion-icon name="megaphone-outline" class="me-2"></ion-icon> Comunicados</a>
+                <a class="nav-link" id="tab-notificacoes" data-bs-toggle="pill" data-bs-target="#pane-notificacoes" role="tab">
+                    <ion-icon name="notifications-outline" class="me-2"></ion-icon> Alertas
+                    <?php if(!empty($data['mensagens_painel'])): ?>
+                        <span class="badge bg-primary ms-auto"><?= count($data['mensagens_painel']) ?></span>
+                    <?php endif; ?>
+                </a>
             </nav>
 
             <hr class="border-secondary my-4">
-            <a href="/green/" class="text-light mb-2"><ion-icon name="home-outline" class="me-2"></ion-icon> Voltar ao Site</a>
-            <a href="/green/auth/logout" class="text-danger"><ion-icon name="log-out-outline" class="me-2"></ion-icon> Sair</a>
+            <a href="<?= URL_ROOT ?>/" class="text-light mb-2"><ion-icon name="home-outline" class="me-2"></ion-icon> Voltar ao Site</a>
+            <a href="<?= URL_ROOT ?>/auth/logout" class="text-danger"><ion-icon name="log-out-outline" class="me-2"></ion-icon> Sair</a>
         </div>
 
         <!-- Main Content -->
@@ -56,6 +62,15 @@
                     <?= $this->e($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
+            <?php endif; ?>
+
+            <!-- 🏆 QUADRO DE MÉRITO (só aparece quando há dados disponíveis) -->
+            <?php if (!empty($ranking_escola)): ?>
+            <div class="row mb-4">
+                <div class="col-12 col-xl-4">
+                    <?php $show_details = true; include __DIR__ . '/../partials/merit_board.php'; ?>
+                </div>
+            </div>
             <?php endif; ?>
 
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -98,21 +113,88 @@
                         </div>
                     </div>
                     
+                    <!-- ── ALERTAS DA ADMINISTRAÇÃO (GHS Workflow) ── -->
                     <div class="card border-0 shadow-sm rounded-4 p-4">
-                        <h5 class="fw-bold mb-3">Atividades Recentes</h5>
-                        <p class="text-muted small">As últimas ações realizadas no portal aparecerão aqui brevemente.</p>
-                        <hr class="my-3 opacity-25">
-                        <div class="d-flex align-items-center gap-3 py-2">
-                            <div class="bg-light p-2 rounded-circle text-primary"><ion-icon name="sync-outline"></ion-icon></div>
-                            <div>
-                                <p class="mb-0 small fw-bold">Sistema Atualizado</p>
-                                <p class="mb-0 text-muted" style="font-size: 0.75rem;">Sincronização completa com a base de dados académica.</p>
-                            </div>
+                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+                            <ion-icon name="notifications-circle-outline" class="text-primary fs-4"></ion-icon>
+                            Alertas da Administração
+                        </h5>
+                        <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                            <?php if(empty($data['mensagens_painel'])): ?>
+                                <!-- Estado vazio informativo -->
+                                <div class="p-3 text-center text-muted">
+                                    <p class="small mb-0">Nenhuma instrução pendente.</p>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach($data['mensagens_painel'] as $msg): ?>
+                                    <!-- Item de alerta individual vindo do modelo Mensagem -->
+                                    <div class="list-group-item list-group-item-action border-0 px-0 py-3 d-flex align-items-start gap-3">
+                                        <div class="p-2 bg-primary bg-opacity-10 rounded-circle text-primary shadow-sm">
+                                            <ion-icon name="information-circle"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="fw-bold small text-dark"><?= htmlspecialchars($msg['assunto'] ?? 'Notificação') ?></span>
+                                                <span class="text-muted" style="font-size: 0.7rem;">
+                                                    <?= date('d/m/Y H:i', strtotime($msg['data_criacao'])) ?>
+                                                </span>
+                                            </div>
+                                            <div class="text-muted small" style="line-height: 1.4;">
+                                                <?= htmlspecialchars($msg['mensagem']) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="mt-3 text-center border-top pt-3 d-flex justify-content-between align-items-center">
+                            <form action="<?= URL_ROOT ?>/secretaria/clearNotifications" method="POST" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <button type="submit" class="btn btn-sm btn-link text-decoration-none text-muted small p-0">Limpar lidas</button>
+                            </form>
+                            <button onclick="document.getElementById('tab-notificacoes').click()" class="btn btn-sm btn-link text-decoration-none text-primary fw-bold p-0">Ver histórico completo</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Matrículas Pane -->
+                <!-- Histórico de Alertas da Administração -->
+                <div class="tab-pane fade" id="pane-notificacoes" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-bold text-dark mb-0">Histórico de Alertas da Administração</h3>
+                    </div>
+                    
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <?php if(empty($data['mensagens_historico'])): ?>
+                                <div class="text-center py-5 text-muted">
+                                    <ion-icon name="mail-open-outline" style="font-size: 3rem; opacity: 0.3;"></ion-icon>
+                                    <p class="mt-2">Sem histórico de mensagens.</p>
+                                </div>
+                            <?php else: ?>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Assunto</th>
+                                                <th>Mensagem</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($data['mensagens_historico'] as $msg): ?>
+                                                <tr class="<?= $msg['lida'] ? 'opacity-75' : 'bg-primary bg-opacity-10' ?>">
+                                                    <td class="small text-muted" style="white-space: nowrap;"><?= date('d/m/Y H:i', strtotime($msg['data_criacao'])) ?></td>
+                                                    <td><span class="badge bg-primary bg-opacity-10 text-primary"><?= htmlspecialchars($msg['assunto'] ?? 'Alerta') ?></span></td>
+                                                    <td class="small"><?= htmlspecialchars($msg['mensagem']) ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
                 <div class="tab-pane fade" id="pane-matriculas" role="tabpanel">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                         <div class="card-header bg-white py-3 border-0">
@@ -141,7 +223,7 @@
                                                 <td><?= htmlspecialchars($m['ano_letivo']) ?></td>
                                                 <td><span class="badge bg-warning text-dark px-3"><?= $this->e($m['status']) ?></span></td>
                                                 <td class="text-end pe-4">
-                                                    <form action="/green/secretaria/approveMatricula/<?= $m['id'] ?>" method="POST" style="display:inline;">
+                                                    <form action="<?= URL_ROOT ?>/secretaria/approveMatricula/<?= $m['id'] ?>" method="POST" style="display:inline;">
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                                         <button type="submit" class="btn btn-sm btn-success border-0 shadow-sm" onclick="return confirm('Aprovar esta matrícula?')"><ion-icon name="checkmark-outline"></ion-icon></button>
                                                     </form>
@@ -152,7 +234,7 @@
                                             <!-- Modal Rejeitar -->
                                             <div class="modal fade" id="rejectModal<?= $m['id'] ?>" tabindex="-1">
                                                 <div class="modal-dialog">
-                                                    <form action="/green/secretaria/rejectMatricula/<?= $m['id'] ?>" method="POST" class="modal-content border-0 shadow-lg">
+                                                    <form action="<?= URL_ROOT ?>/secretaria/rejectMatricula/<?= $m['id'] ?>" method="POST" class="modal-content border-0 shadow-lg">
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                                         <div class="modal-header bg-danger text-white">
                                                             <h5 class="modal-title fw-bold">Rejeitar Matrícula</h5>
@@ -207,10 +289,10 @@
                                                 <td class="fw-bold"><?= number_format($p['valor'], 0, ',', '.') ?></td>
                                                 <td><?= date('d/m/Y', strtotime($p['data_vencimento'])) ?></td>
                                                 <td class="text-center">
-                                                    <a href="/green/<?= $p['comprovativo_arquivo'] ?>" target="_blank" class="btn btn-xs btn-outline-primary py-0"><ion-icon name="document-attach-outline"></ion-icon> Ver</a>
+                                                    <a href="<?= URL_ROOT ?>/<?= $p['comprovativo_arquivo'] ?>" target="_blank" class="btn btn-xs btn-outline-primary py-0"><ion-icon name="document-attach-outline"></ion-icon> Ver</a>
                                                 </td>
                                                 <td class="text-end pe-4">
-                                                    <form action="/green/secretaria/validatePayment/<?= $p['id'] ?>" method="POST" style="display:inline;">
+                                                    <form action="<?= URL_ROOT ?>/secretaria/validatePayment/<?= $p['id'] ?>" method="POST" style="display:inline;">
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                                         <button type="submit" class="btn btn-sm btn-primary border-0 shadow-sm" onclick="return confirm('Validar este pagamento?')"><ion-icon name="card-outline" class="me-1"></ion-icon> Validar</button>
                                                     </form>
@@ -230,7 +312,7 @@
                         <div class="col-md-4">
                             <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
                                 <h5 class="fw-bold mb-3">Novo Comunicado</h5>
-                                <form action="/green/secretaria/saveComunicado" method="POST">
+                                <form action="<?= URL_ROOT ?>/secretaria/saveComunicado" method="POST">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     

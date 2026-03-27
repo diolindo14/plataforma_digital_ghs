@@ -26,3 +26,46 @@
 [2026-03-26 07:32:30] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 147
 [2026-03-26 07:34:37] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 147
 [2026-03-26 15:07:43] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 147
+[2026-03-27 02:49:31] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.data_envio' in 'order clause' em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 52
+[2026-03-27 02:50:07] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.data_envio' in 'order clause' em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 52
+[2026-03-27 02:50:51] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.data_envio' in 'order clause' em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 52
+[2026-03-27 03:34:16] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:34:30] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:34:42] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:34:43] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:49] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:51] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:52] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:57] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:59] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:43:02] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:04] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:43:05] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\AuthController.php na linha 9
+[2026-03-27 03:43:06] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 2
+[2026-03-27 03:43:08] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:11] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:12] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:13] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:14] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:15] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:32] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:34] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:36] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:37] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:39] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:32] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:33] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:35] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:36] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:38] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 05:03:06] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:03:41] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 05:04:13] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:09:03] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:09:08] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:17:53] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:17:58] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:25:50] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 05:25:55] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 05:25:56] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 05:38:24] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76

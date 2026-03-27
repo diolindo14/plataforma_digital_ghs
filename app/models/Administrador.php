@@ -5,6 +5,21 @@ class Administrador {
     public function __construct() {
         $this->db = Database::getInstance();
     }
+    /**
+     * Recupera logs de auditoria do sistema (Pilar 7).
+     */
+    public function getLogs($page = 1, $limit = 50) {
+        $offset = ($page - 1) * $limit;
+        $stmt = $this->db->prepare("SELECT * FROM auditoria ORDER BY data_acao DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function countLogs() {
+        return $this->db->query("SELECT COUNT(*) FROM auditoria")->fetchColumn();
+    }
 
     public function getAllSecretarios() {
         $stmt = $this->db->prepare("

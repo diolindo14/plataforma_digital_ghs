@@ -22,7 +22,7 @@
         <p class="text-muted fs-5 mt-3 mb-4">A sua documentação e comprovativo foram enviados com sucesso. O seu processo passará agora pela fase de validação da secretaria.</p>
         
         <div class="d-flex flex-column gap-3">
-            <a href="/green/" class="btn btn-success rounded-pill fw-bold py-3 fs-5">Regressar à Página Inicial</a>
+            <a href="<?= URL_ROOT ?>/" class="btn btn-success rounded-pill fw-bold py-3 fs-5">Regressar à Página Inicial</a>
         </div>
     </div>
     

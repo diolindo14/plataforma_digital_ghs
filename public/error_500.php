@@ -21,7 +21,7 @@
         <div class="icon"><ion-icon name="construct-outline"></ion-icon></div>
         <h1>Interface em Manutenção</h1>
         <p>Lamentamos, mas ocorreu um erro técnico inesperado no servidor. A nossa equipa já foi notificada e o erro foi registado para correção imediata.</p>
-        <a href="/green/" class="btn">
+        <a href="<?= URL_ROOT ?>/" class="btn">
             <ion-icon name="home-outline"></ion-icon>
             Voltar ao Início
         </a>

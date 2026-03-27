@@ -2,9 +2,24 @@
 date_default_timezone_set('UTC');
 session_start();
 
-require_once 'core/App.php';
-require_once 'core/Controller.php';
-require_once 'core/Database.php';
+require_once 'core/config.php';
+
+// Autoloader Dinâmico - Modernização (Pilar 4)
+spl_autoload_register(function ($className) {
+    $paths = [
+        'core/' . $className . '.php',
+        'app/models/' . $className . '.php',
+        'app/helpers/' . $className . '.php'
+    ];
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            return;
+        }
+    }
+});
+
+// require_once manuais removidos (Autoloader assume agora)
 
 try {
     $app = new App();

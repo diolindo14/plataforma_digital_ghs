@@ -3,7 +3,7 @@ class EstudanteController extends Controller {
     public function __construct() {
         parent::__construct();
         if (!isset($_SESSION['user_id']) || ($_SESSION['user_role'] !== 'aluno' && $_SESSION['user_role'] !== 'estudante')) {
-            header('Location: /green/auth');
+            header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
     }
@@ -17,7 +17,7 @@ class EstudanteController extends Controller {
         
         if (!$estudanteData) {
             $_SESSION['flash_error'] = "Perfil de estudante não encontrado.";
-            header('Location: /green/auth');
+            header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
 
@@ -45,7 +45,7 @@ class EstudanteController extends Controller {
                     session_destroy();
                     session_start();
                     $_SESSION['flash_error'] = "O seu prazo de 48h para realizar a matrícula expirou. A sua conta foi removida automaticamente conforme a política institucional.";
-                    header('Location: /green/auth');
+                    header('Location: ' . URL_ROOT . '/auth');
                     exit;
                 } else {
                     $horasRestantes = round(($limite - $diff) / 3600);
@@ -154,6 +154,13 @@ class EstudanteController extends Controller {
             'dias_semana' => ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']
         ];
 
+        // --- 🏆 MÉRITO ACADÉMICO: Ranking e Alerta Personalizado ---
+        $acadRank = $academicoModel; // reutiliza o model já carregado
+        $data['ranking_escola']  = $acadRank->getRankingEscola(3);
+        $data['ranking_nivel']   = $acadRank->getRankingByNivel();
+        // Verifica se este estudante é o #1 de algum nível ou da escola toda
+        $data['meu_ranking']     = $acadRank->getStudentRankPosition($estudanteData['id']);
+
         $this->view('estudante/dashboard', $data);
     }
 
@@ -235,13 +242,13 @@ class EstudanteController extends Controller {
 
             if (strlen($newPw) < 6) {
                 $_SESSION['flash_error'] = "A nova password deve ter pelo menos 6 caracteres.";
-                header('Location: /green/estudante');
+                header('Location: ' . URL_ROOT . '/estudante');
                 exit;
             }
 
             if ($newPw !== $confirmPw) {
                 $_SESSION['flash_error'] = "As passwords não coincidem.";
-                header('Location: /green/estudante');
+                header('Location: ' . URL_ROOT . '/estudante');
                 exit;
             }
 
@@ -253,7 +260,7 @@ class EstudanteController extends Controller {
             } else {
                 $_SESSION['flash_error'] = "Erro ao alterar a password.";
             }
-            header('Location: /green/estudante');
+            header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
     }
@@ -286,7 +293,7 @@ class EstudanteController extends Controller {
 
     public function registarPagamento() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /green/estudante');
+            header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
         $this->verifyCsrfToken();
@@ -294,7 +301,7 @@ class EstudanteController extends Controller {
         $estudanteModel = $this->model('Estudante');
         $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
         if (!$estudanteData) {
-            header('Location: /green/estudante');
+            header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
 
@@ -310,14 +317,14 @@ class EstudanteController extends Controller {
 
             // 1. Verificar tamanho
             if ($_FILES['comprovativo']['size'] > $maxSize) {
-                header('Location: /green/estudante?tab=financeiro&error=size');
+                header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&error=size');
                 exit;
             }
 
             // 2. Verificar extensão (lista branca)
             $origExt = strtolower(pathinfo($_FILES['comprovativo']['name'], PATHINFO_EXTENSION));
             if (!in_array($origExt, $allowedExts, true)) {
-                header('Location: /green/estudante?tab=financeiro&error=ext');
+                header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&error=ext');
                 exit;
             }
 
@@ -325,7 +332,7 @@ class EstudanteController extends Controller {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $realMime = $finfo->file($_FILES['comprovativo']['tmp_name']);
             if (!in_array($realMime, $allowedMimes, true)) {
-                header('Location: /green/estudante?tab=financeiro&error=mime');
+                header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&error=mime');
                 exit;
             }
 
@@ -333,7 +340,7 @@ class EstudanteController extends Controller {
             $safeFilename = 'PAG_' . $estudanteData['id'] . '_' . bin2hex(random_bytes(8)) . '.' . $origExt;
 
             if (!move_uploaded_file($_FILES['comprovativo']['tmp_name'], $uploadDir . $safeFilename)) {
-                header('Location: /green/estudante?tab=financeiro&error=upload');
+                header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&error=upload');
                 exit;
             }
 
@@ -355,9 +362,9 @@ class EstudanteController extends Controller {
                 ':obs'  => $_POST['observacoes'] ?? null,
                 ':comp2' => $caminho
             ]);
-            header('Location: /green/estudante?tab=financeiro&success=1');
+            header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&success=1');
         } catch (\Exception $e) {
-            header('Location: /green/estudante?tab=financeiro&error=1');
+            header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&error=1');
         }
         exit;
     }
@@ -376,7 +383,7 @@ class EstudanteController extends Controller {
 
         if (!$p) {
             $_SESSION['flash_error'] = "O recibo solicitado não foi encontrado ou ainda não foi validado pela secretaria.";
-            header('Location: /green/estudante');
+            header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
 
@@ -390,7 +397,7 @@ class EstudanteController extends Controller {
 
     public function renewEnrollment() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /green/estudante');
+            header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
         $this->verifyCsrfToken();
@@ -398,7 +405,7 @@ class EstudanteController extends Controller {
         $estudanteModel = $this->model('Estudante');
         $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
         if (!$estudanteData) {
-            header('Location: /green/estudante');
+            header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
 
@@ -409,7 +416,7 @@ class EstudanteController extends Controller {
         if ($isRepetition) {
             if ($detailedStatus['status'] !== 'Reprovado') {
                 $_SESSION['flash_error'] = "Não tem permissão para renovação por repetição.";
-                header('Location: /green/estudante');
+                header('Location: ' . URL_ROOT . '/estudante');
                 exit;
             }
             $current = $matriculaModel->getCurrentYearInfo($estudanteData['id']);
@@ -419,7 +426,7 @@ class EstudanteController extends Controller {
         } else {
             if (!$detailedStatus['can_transit']) {
                 $_SESSION['flash_error'] = "Não é elegível para renovação por trânsito neste momento.";
-                header('Location: /green/estudante');
+                header('Location: ' . URL_ROOT . '/estudante');
                 exit;
             }
             $current = $matriculaModel->getCurrentYearInfo($estudanteData['id']);
@@ -432,7 +439,7 @@ class EstudanteController extends Controller {
 
         if (!$targetYearId) {
             $_SESSION['flash_error'] = "Nível de destino não encontrado.";
-            header('Location: /green/estudante');
+            header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
 
@@ -470,7 +477,7 @@ class EstudanteController extends Controller {
             $_SESSION['flash_error'] = "Erro ao processar renovação.";
         }
 
-        header('Location: /green/estudante');
+        header('Location: ' . URL_ROOT . '/estudante');
         exit;
     }
 }
