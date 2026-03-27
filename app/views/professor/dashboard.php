@@ -32,24 +32,35 @@
             margin-bottom: 20px;
             overflow: hidden;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.1);
+        }
+        .signature-wrapper:hover, .signature-wrapper:focus-within {
+            border-color: #059669;
+            box-shadow: 0 4px 20px rgba(16,185,129,0.25);
         }
         .signature-pad { 
             width: 100%; 
-            height: 200px; 
+            height: 220px; 
             cursor: crosshair; 
-            background-color: #fafafa; 
-            touch-action: none; 
+            background-color: #FDFDFD; 
+            touch-action: none;
+            display: block;
         }
         .signature-placeholder {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #94a3b8;
+            color: #CBD5E1;
             pointer-events: none;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.1rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
         }
         .signature-actions { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 5px; }
     </style>
@@ -475,10 +486,15 @@
                                 <ion-icon name="pencil-outline"></ion-icon> Assinatura Digital do Docente
                             </label>
                             <div class="signature-wrapper shadow-sm">
-                                <div class="signature-placeholder" id="sig-placeholder">Assine Aqui</div>
+                                <div class="signature-placeholder" id="sig-placeholder">
+                                    <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon>
+                                    Assine Aqui com Tinta Preta
+                                </div>
                                 <canvas id="signature-pad" class="signature-pad"></canvas>
                                 <div class="signature-actions">
-                                    <button type="button" class="btn btn-sm btn-light" id="clear-signature">Limpar</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" id="clear-signature">
+                                        <ion-icon name="trash-outline"></ion-icon> Limpar
+                                    </button>
                                 </div>
                             </div>
                             <p class="extra-small text-muted mt-n2 italic">Ao assinar, você confirma que as informações de frequência e o conteúdo do sumário são verídicos.</p>
@@ -1022,8 +1038,13 @@ $(document).ready(function() {
         });
 
         // Redimensionar quando mudar de tab (com delay para Bootstrap animation)
-        document.getElementById('tab-chamada')?.addEventListener('shown.bs.tab', () => {
-            setTimeout(resizeCanvas, 200);
+        // Usar o ID correto do tab de chamadas
+        document.querySelectorAll('[data-bs-toggle="pill"]').forEach(function(tabEl) {
+            tabEl.addEventListener('shown.bs.tab', function(event) {
+                if (event.target.id === 'tab-chamada') {
+                    setTimeout(resizeCanvas, 300);
+                }
+            });
         });
     }
 });
