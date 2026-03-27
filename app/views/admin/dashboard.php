@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
@@ -332,24 +334,38 @@
                     </button>
                 </div>
 
-                <div class="card border-0 shadow-sm rounded-4">
-                    <div class="card-body p-4">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle" id="table-eventos">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Data</th>
-                                        <th>Título</th>
-                                        <th>Tipo</th>
-                                        <th>Alcance</th>
-                                        <th>Criado Por</th>
-                                        <th class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="eventosList">
-                                    <!-- AJAX will populate this -->
-                                </tbody>
-                            </table>
+                <div class="row g-4">
+                    <div class="col-lg-12">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-body p-4">
+                                <div id="calendar-admin" style="min-height: 600px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mt-4">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-header bg-white py-3 border-bottom border-light">
+                                <h6 class="fw-bold mb-0">Lista de Eventos Registados</h6>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0" id="table-eventos">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Título</th>
+                                                <th>Tipo</th>
+                                                <th>Alcance</th>
+                                                <th>Criado Por</th>
+                                                <th class="text-end">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="eventosList">
+                                            <!-- AJAX will populate this -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -521,6 +537,18 @@
 
 
 
+                <!-- 🏆 QUADRO DE MÉRITO (Ranking Global) -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <?php
+                            $ranking_escola = $data['ranking_escola'] ?? [];
+                            $ranking_nivel  = $data['ranking_nivel'] ?? [];
+                            $show_details   = true; // No Admin, mostramos todos os detalhes
+                            include __DIR__ . '/../partials/merit_board.php';
+                        ?>
+                    </div>
+                </div>
+
                 <!-- Charts -->
                 <div class="row g-4 d-flex align-items-stretch">
                     <div class="col-md-6 h-100">
@@ -643,7 +671,7 @@
                                                                 data-nascimento="<?= $e['data_nascimento'] ?>"
                                                                 data-telefone="<?= htmlspecialchars($e['telefone']) ?>"
                                                                 data-telefone_alt="<?= htmlspecialchars($e['telefone_alternativo'] ?? '') ?>"
-                                                                data-estado_civil="<?= $e['estado_civil'] ?? 'Solteiro' ?>"
+                                                                data-estado_civil="<?= $e['estado_civil'] ?? 'Solteiro/a' ?>"
                                                                 data-cidade="<?= htmlspecialchars($e['cidade'] ?? '') ?>"
                                                                 data-bairro="<?= htmlspecialchars($e['bairro'] ?? '') ?>"
                                                                 data-morada="<?= htmlspecialchars($e['morada'] ?? '') ?>"
@@ -1201,11 +1229,9 @@
     
 
     
-
                                                                 <input type="hidden" name="professor_id" value="<?= $s['professor_id'] ?>">
                                                                 <input type="hidden" name="turma_id" value="<?= $s['turma_id'] ?>">
                                                                 <input type="hidden" name="disciplina_id" value="<?= $s['disciplina_id'] ?>">
-                                                                <input type="hidden" name="data" value="<?= $s['data'] ?>">
                                                                 <input type="hidden" name="tempo" value="<?= $s['tempo'] ?>">
                                                                 <div class="input-group input-group-sm mb-1" style="max-width: 150px;">
                                                                     <input type="text" name="justificacao" class="form-control" placeholder="Justificativa..." style="font-size: 0.7rem;">
@@ -2608,12 +2634,12 @@ function clearAnoForm() {
                         <input type="text" name="telefone_alternativo" id="student_telefone_alt" class="form-control" placeholder="+245 ...">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small text-muted text-uppercase">Estado Civil</label>
+                        <label class="form-label fw-bold small text-muted text-uppercase">Estado Civil / Género</label>
                         <select name="estado_civil" id="student_estado_civil" class="form-select">
-                            <option value="Solteiro">Solteiro</option>
-                            <option value="Casado">Casado</option>
-                            <option value="Divorciado">Divorciado</option>
-                            <option value="Viúvo">Viúvo</option>
+                            <option value="Solteiro/a">Solteiro/a</option>
+                            <option value="Casado/a">Casado/a</option>
+                            <option value="Divorciado/a">Divorciado/a</option>
+                            <option value="Viúvo/a">Viúvo/a</option>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -3346,6 +3372,35 @@ function toggleEventoDest(tipo) {
 // Initial load for calendar tab
 $('[data-bs-target="#pane-calendario"]').on('shown.bs.tab', function() {
     loadEventos();
+
+    // --- FULLCALENDAR INTERATIVO (Pilar 7) ---
+    var calendarEl = document.getElementById('calendar-admin');
+    if (calendarEl) {
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'pt-pt',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            buttonText: {
+                today: 'Hoje',
+                month: 'Mês',
+                week: 'Semana',
+                list: 'Agenda'
+            },
+            events: '<?= URL_ROOT ?>/admin/getCalendarEvents',
+            themeSystem: 'bootstrap5',
+            eventClick: function(info) {
+                alert('Evento: ' + info.event.title + '\nDescrição: ' + (info.event.extendedProps.description || 'Sem descrição'));
+            }
+        });
+        
+        $('button[data-bs-target="#pane-calendario"], a[data-bs-target="#pane-calendario"]').on('shown.bs.tab', function () {
+            calendar.render();
+        });
+    }
 });
 
 function prepareAlocacao(estudanteId, nome) {

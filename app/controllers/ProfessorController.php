@@ -257,4 +257,23 @@ class ProfessorController extends Controller {
         }
         header('Location: ' . URL_ROOT . '/professor/dashboard');
     }
+
+    public function getCalendarEvents() {
+        $events = $this->model('Evento')->getAll();
+        $formatted = [];
+        foreach($events as $e) {
+            // Professores veem eventos gerais e pedagógicos
+            $formatted[] = [
+                'id'    => $e['id'],
+                'title' => $e['titulo'],
+                'start' => $e['data_inicio'] . 'T' . ($e['hora_inicio'] ?? '08:00:00'),
+                'end'   => $e['data_fim'] . 'T' . ($e['hora_fim'] ?? '18:00:00'),
+                'color' => $e['cor'] ?? '#6366f1',
+                'description' => $e['descricao']
+            ];
+        }
+        header('Content-Type: application/json');
+        echo json_encode($formatted);
+        exit;
+    }
 }

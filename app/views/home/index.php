@@ -414,8 +414,13 @@
                     <div class="contact-info-item">
                         <div class="contact-icon"><ion-icon name="call-outline"></ion-icon></div>
                         <div class="contact-text">
-                            <h5>Telefones</h5>
-                            <p>+245 95 565 12 49<br>+245 95 529 54 75</p>
+                            <h5>Telefones / WhatsApp</h5>
+                            <p>
+                                <a href="https://wa.me/245966651249" target="_blank" style="color: inherit; text-decoration: none;">
+                                    <ion-icon name="logo-whatsapp" style="color: #25d366; vertical-align: middle;"></ion-icon> +245 96 665 12 49
+                                </a><br>
+                                +245 95 529 54 75
+                            </p>
                         </div>
                     </div>
                     
@@ -515,7 +520,11 @@
                     <ul class="footer-links">
                         <li>Av. Combatente Liberdade da Pátria</li>
                         <li>Guiné-Bissau</li>
-                        <li class="mt-3">+245 95 565 12 49</li>
+                        <li class="mt-3">
+                            <a href="https://wa.me/245966651249" target="_blank" style="color: inherit; text-decoration: none;">
+                                <ion-icon name="logo-whatsapp" style="color: #25d366; vertical-align: middle;"></ion-icon> +245 96 665 12 49
+                            </a>
+                        </li>
                         <li>+245 95 529 54 75</li>
                         <li class="mt-3">ghsespf@hotmail.com</li>
                     </ul>

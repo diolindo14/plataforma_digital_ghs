@@ -335,31 +335,104 @@ class Academico {
     }
 
     /**
-     * Verifica se um estudante específico é o melhor do seu nível.
-     * Usado para exibir o alerta/badge no portal do próprio aluno.
-     *
-     * @param int $estudante_id
-     * @return array|false  Dados do ranking se for #1, false caso contrário
+     * Retorna a posição exata de um estudante no seu nível e na escola toda.
+     * Motor de Ranking Multi-Período (1º Sem, 2º Sem, Anual).
      */
-    public function getStudentRankPosition($estudante_id) {
-        $rankingNivel  = $this->getRankingByNivel();
-        $rankingEscola = $this->getRankingEscola(1);
+    public function getDetailedStudentRank($estudante_id, $semestre = null) {
+        $whereSemestre = $semestre ? "AND av.semestre = :sem" : "";
+        $params = $semestre ? [':sem' => $semestre] : [];
 
-        $result = ['nivel' => null, 'escola' => null];
+        $sql = "
+            SELECT 
+                estudante_id,
+                ano_id,
+                SUM(nota_disciplina) / COUNT(disciplina_id) AS media_geral
+            FROM (
+                SELECT
+                    e.id          AS estudante_id,
+                    m.ano_curso_id AS ano_id,
+                    av.disciplina_id,
+                    (
+                        COALESCE(MAX(CASE WHEN ta.id = 1 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 2 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 3 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 4 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
+                    ) / 2 AS nota_disciplina
+                FROM notas n
+                JOIN avaliacoes av ON n.avaliacao_id = av.id
+                JOIN tipos_avaliacao ta ON av.tipo_avaliacao_id = ta.id
+                JOIN estudantes e ON n.estudante_id = e.id
+                JOIN matriculas m ON m.estudante_id = e.id AND m.status = 'Aprovada'
+                WHERE 1=1 $whereSemestre
+                GROUP BY e.id, m.ano_curso_id, av.disciplina_id
+            ) AS notas_finais
+            GROUP BY estudante_id, ano_id
+            ORDER BY media_geral DESC
+        ";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $all_ranks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Verificar se é o melhor de algum nível
-        foreach ($rankingNivel as $r) {
-            if ((int)$r['estudante_id'] === (int)$estudante_id) {
-                $result['nivel'] = $r;
+        $my_media = 0; $my_ano_id = 0;
+        foreach ($all_ranks as $rank) {
+            if ((int)$rank['estudante_id'] === (int)$estudante_id) {
+                $my_media = $rank['media_geral'];
+                $my_ano_id = $rank['ano_id'];
                 break;
             }
         }
 
-        // Verificar se é o melhor da escola
-        if (!empty($rankingEscola) && (int)$rankingEscola[0]['estudante_id'] === (int)$estudante_id) {
-            $result['escola'] = $rankingEscola[0];
+        if ($my_media == 0) return ['posicao_nivel' => 0, 'total_nivel' => 0, 'posicao_escola' => 0, 'total_escola' => 0, 'media' => '0.0'];
+
+        $count_escola = 1; $count_nivel = 1; $total_nivel = 0;
+        foreach ($all_ranks as $rank) {
+            if ($rank['media_geral'] > $my_media) {
+                $count_escola++;
+                if ((int)$rank['ano_id'] === (int)$my_ano_id) $count_nivel++;
+            }
+            if ((int)$rank['ano_id'] === (int)$my_ano_id) $total_nivel++;
         }
 
-        return ($result['nivel'] || $result['escola']) ? $result : false;
+        return [
+            'posicao_nivel' => $count_nivel, 'total_nivel' => $total_nivel,
+            'posicao_escola'=> $count_escola, 'total_escola' => count($all_ranks),
+            'media' => number_format($my_media, 2)
+        ];
+    }
+
+    public function getStudentRankPosition($estudante_id) {
+        $s1 = $this->getDetailedStudentRank($estudante_id, 1);
+        $s2 = $this->getDetailedStudentRank($estudante_id, 2);
+        $anual = $this->getDetailedStudentRank($estudante_id);
+        
+        $conquistas = [];
+        $periods = ['1º Semestre' => $s1, '2º Semestre' => $s2, 'Anual' => $anual];
+
+        foreach ($periods as $label => $rank) {
+            if ($rank['posicao_escola'] >= 1 && $rank['posicao_escola'] <= 3) {
+                $conquistas[] = [
+                    'tipo' => 'Escola',
+                    'posicao' => $rank['posicao_escola'],
+                    'media' => $rank['media'],
+                    'periodo' => $label
+                ];
+            }
+            if ($rank['posicao_nivel'] === 1) {
+                $sql = "SELECT ac.nome FROM ano_curso ac JOIN matriculas m ON m.ano_curso_id = ac.id WHERE m.estudante_id = :id LIMIT 1";
+                $stmt = $this->db->prepare($sql); $stmt->execute(['id' => $estudante_id]);
+                $nivel = $stmt->fetch(PDO::FETCH_ASSOC);
+                $conquistas[] = [
+                    'tipo' => 'Nível',
+                    'posicao' => 1,
+                    'media' => $rank['media'],
+                    'nivel_nome' => $nivel['nome'] ?? 'Ano Letivo',
+                    'periodo' => $label
+                ];
+            }
+        }
+
+        return !empty($conquistas) ? $conquistas : false;
     }
 }

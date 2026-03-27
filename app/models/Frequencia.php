@@ -16,8 +16,8 @@ class Frequencia {
 
             // 1. Inserir Sumário
             $stmt = $this->db->prepare("
-                INSERT INTO sumarios (professor_id, turma_id, disciplina_id, tempo, data, conteudo)
-                VALUES (:pid, :tid, :did, :tempo, :data, :cont)
+                INSERT INTO sumarios (professor_id, turma_id, disciplina_id, tempo, data, conteudo, assinatura_digital)
+                VALUES (:pid, :tid, :did, :tempo, :data, :cont, :ass)
             ");
             $stmt->execute([
                 ':pid' => $profId,
@@ -25,7 +25,8 @@ class Frequencia {
                 ':did' => $data['disciplina_id'],
                 ':tempo' => $data['tempo'] ?? '1º Tempo',
                 ':data' => $data['data'],
-                ':cont' => $data['conteudo']
+                ':cont' => $data['conteudo'],
+                ':ass' => $data['assinatura'] ?? null
             ]);
             $sumario_id = $this->db->lastInsertId();
 

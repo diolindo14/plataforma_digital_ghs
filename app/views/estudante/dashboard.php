@@ -16,18 +16,42 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #f1f5f9; }
-        .sidebar { background-color: #0F172A; min-height: 100vh; color: white; padding-top: 1.5rem; position: fixed; width: 260px; z-index: 10; }
-        .sidebar .nav-link { color: #cbd5e1; text-decoration: none; padding: 12px 20px; display: flex; align-items: center; gap: 10px; transition: 0.3s; font-weight: 500; cursor: pointer; border-radius:0; border-left: 4px solid transparent;}
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #1E293B; color: #34D399; border-left: 4px solid #34D399; }
-        .content { margin-left: 260px; padding: 40px; }
+        :root {
+            --ghs-primary: #10B981;
+            --ghs-secondary: #3B82F6;
+            --ghs-dark: #0F172A;
+            --ghs-slate: #1E293B;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+        body { font-family: 'Outfit', sans-serif; background: #f8fafc; color: #334155; }
         
-        #calendar { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-top: 1rem; }
-        .fc-event { border: none !important; padding: 2px 4px; border-radius: 4px; font-weight: 600; font-size: 0.8rem; cursor: pointer; color: white !important;}
-        .fc-toolbar-title { font-weight: 700; font-family: 'Outfit'; font-size: 1.25rem !important; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .sidebar { background-color: var(--ghs-dark); min-height: 100vh; color: white; padding-top: 1.5rem; position: fixed; width: 260px; z-index: 100; transition: all 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
+        .sidebar .nav-link { color: #94a3b8; text-decoration: none; padding: 14px 24px; display: flex; align-items: center; gap: 12px; transition: 0.3s; font-weight: 500; border-left: 4px solid transparent; margin-bottom: 4px; }
+        .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .sidebar .nav-link.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent); color: var(--ghs-primary); border-left-color: var(--ghs-primary); font-weight: 600; }
+        .sidebar ion-icon { font-size: 1.2rem; }
         
-        .tab-pane { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .content { margin-left: 260px; padding: 40px; min-height: 100vh; background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 400px); }
+        
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+        
+        .stat-icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px; font-size: 1.5rem; transition: 0.3s; }
+        
+        .badge-premium { padding: 6px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        #calendar { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: none; }
+        .tab-pane { animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .profile-section { background: white; border-radius: 50px; padding: 6px 16px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
     </style>
 </head>
 <body>
@@ -35,12 +59,12 @@
     <!-- Sidebar -->
     <nav class="sidebar shadow-lg d-flex flex-column justify-content-between">
         <div>
-            <div class="text-center mb-4 mt-2">
-                <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #34D399; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
-                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
+            <div class="text-center mb-5 mt-4">
+                <div style="width: 70px; height: 70px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); margin: 0 auto; overflow:hidden; backdrop-filter: blur(5px);">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 80%; height: 80%; object-fit: contain; filter: brightness(1.1);">
                 </div>
-                <h5 class="fw-bold mt-2 text-white">Portal GHS</h5>
-                <span class="badge bg-secondary mb-3">Área do Estudante</span>
+                <h6 class="fw-bold mt-3 text-white letter-spacing-1" style="font-size: 0.9rem; text-transform: uppercase; opacity: 0.9;">Green Hard & Softh</h6>
+                <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25 mt-1" style="font-size: 10px;">Portal Estudante</span>
             </div>
             
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -69,7 +93,7 @@
                     <ion-icon name="time-outline" class="me-3 fs-3 text-warning"></ion-icon>
                     <div>
                         <h6 class="fw-bold mb-1">Prazo de Matrícula Crítico</h6>
-                        <p class="mb-0 small"><?= $data['alerta_matricula'] ?></p>
+                        <p class="mb-0 small"><?= is_array($data['alerta_matricula'] ?? null) ? implode(' ', $data['alerta_matricula']) : (string)($data['alerta_matricula'] ?? '') ?></p>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -82,7 +106,7 @@
                     <ion-icon name="alert-circle" class="me-3 fs-3 text-danger"></ion-icon>
                     <div>
                         <h6 class="fw-bold mb-1">Atraso de Pagamento Detectado</h6>
-                        <p class="mb-0 small">A sua conta encontra-se irregular. Foram detectados <strong><?= $data['smart_delinquency']['missing_months'] ?> meses</strong> de mensalidades em atraso. Por favor, regularize a sua situação na tesouraria.</p>
+                        <p class="mb-0 small">A sua conta encontra-se irregular. Foram detectados <strong><?= (int)($data['smart_delinquency']['missing_months'] ?? 0) ?> meses</strong> de mensalidades em atraso. Por favor, regularize a sua situação na tesouraria.</p>
                     </div>
                 </div>
             </div>
@@ -109,28 +133,33 @@
             </div>
         <?php endif; ?>
         
-        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
-                <h2 class="fw-bold text-dark">Área Autenticada (<?= $this->e($data['estudante']['turma_codigo'] ?? 'S/ Turma') ?>)</h2>
-                <p class="text-muted mb-0"><?= $this->e($data['estudante']['nome_completo']) ?> - <?= $this->e($data['estudante']['ano_curso_id']) ?>º Ano</p>
+                <h2 class="fw-bold text-dark mb-1">Boa tarde, <?= htmlspecialchars(explode(' ', is_array($data['estudante']) ? $data['estudante']['nome_completo'] : $_SESSION['user_name'])[0]) ?> 👋</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-primary fw-medium"><?= $this->e($data['estudante']['turma_codigo'] ?? 'S/ Turma') ?></a></li>
+                        <li class="breadcrumb-item active"><?= $this->e($data['estudante']['ano_curso_id']) ?>º Ano Académico</li>
+                    </ol>
+                </nav>
             </div>
-            <div class="d-flex gap-3 align-items-center">
-                <button class="btn btn-light shadow-sm position-relative rounded-circle p-2 px-3" onclick="document.getElementById('tab-comunicados').click()">
-                    <ion-icon name="notifications-outline" class="fs-4 mt-1"></ion-icon>
-                    <?php if(!empty($data['unread_count'])): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-left:-10px;"><?= (string)$data['unread_count'] ?></span>
-                    <?php endif; ?>
-                </button>
-                <div class="d-flex align-items-center gap-3">
-                    <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm">
-                        <div style="width: 25px; height: 25px; border-radius: 50%; overflow: hidden;">
-                            <img src="<?= $data['estudante']['foto_perfil'] ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                        <span class="fw-bold text-dark"><?= $this->e(explode(' ', $data['estudante']['nome_completo'])[0]) ?></span>
+            <div class="d-flex gap-4 align-items-center">
+                <div class="position-relative" style="cursor: pointer;" onclick="document.getElementById('tab-comunicados').click()">
+                    <div class="bg-white p-2 rounded-circle shadow-sm border">
+                        <ion-icon name="notifications-outline" class="fs-4 text-dark mt-1"></ion-icon>
                     </div>
-                    <a href="<?= URL_ROOT ?>/auth/logout" class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
-                        <ion-icon name="log-out-outline"></ion-icon> Sair
-                    </a>
+                    <?php if(!empty($data['unread_count'])): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border border-white" style="width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px;"><?= (string)$data['unread_count'] ?></span>
+                    <?php endif; ?>
+                </div>
+                <div class="profile-section">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--ghs-primary);">
+                        <img src="<?= $data['estudante']['foto_perfil'] ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <div class="fw-bold small text-dark"><?= htmlspecialchars(explode(' ', is_array($data['estudante']) ? $data['estudante']['nome_completo'] : $_SESSION['user_name'])[0]) ?></div>
+                        <div class="text-muted" style="font-size: 10px;">Estudante Ativo</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -141,61 +170,78 @@
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home" role="tabpanel">
 
-                <!-- 🏆 ALERTA PERSONALIZADO DE MÉRITO ACADÉMICO -->
+                <!-- 🏆 RANKING ACADÉMICO UNIVERSAL (Pilar 7) -->
                 <?php if (!empty($data['meu_ranking'])): ?>
-                    <?php $mr = $data['meu_ranking']; ?>
-                    <?php if (!empty($mr['escola'])): ?>
-                    <!-- MELHOR DA ESCOLA TODA -->
-                    <div style="
-                        background: linear-gradient(135deg, #F59E0B 0%, #EF4444 50%, #EC4899 100%);
-                        border-radius: 20px; padding: 20px 28px; margin-bottom: 20px;
-                        display: flex; align-items: center; gap: 20px;
-                        box-shadow: 0 8px 30px rgba(245,158,11,0.35);
-                        animation: pulse-glow 2.5s infinite;
-                    ">
-                        <span style="font-size: 3rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));">🏆</span>
-                        <div>
-                            <h5 style="color:white; margin:0; font-weight:800; font-size:1.1rem;">
-                                Parabéns, <?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>! Você é o MELHOR ALUNO da escola!
-                            </h5>
-                            <p style="color:rgba(255,255,255,0.85); margin:0; font-size:0.85rem;">
-                                Média geral de <strong><?= number_format((float)($mr['escola']['media_geral'] ?? 0), 1) ?></strong> valores — Continue a brilhar! ⭐
-                            </p>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <div class="glass-card card border-0">
+                                <div class="card-body p-4 d-flex align-items-center gap-4">
+                                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                        <ion-icon name="ribbon"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-muted small fw-bold mb-1 opacity-75">Posição no Nível</h6>
+                                        <h3 class="fw-bold mb-0 text-dark">
+                                            <?= is_array($data['meu_ranking']) ? ($data['meu_ranking']['posicao_nivel'] ?? '-') : '-' ?>º <span class="badge bg-light text-success ms-2 fw-medium" style="font-size:0.75rem;">de <?= is_array($data['meu_ranking']) ? ($data['meu_ranking']['total_nivel'] ?? 0) : 0 ?> Alunos</span>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card card border-0">
+                                <div class="card-body p-4 d-flex align-items-center gap-4">
+                                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                        <ion-icon name="school"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-muted small fw-bold mb-1 opacity-75">Posição na Escola</h6>
+                                        <h3 class="fw-bold mb-0 text-dark">
+                                            <?= is_array($data['meu_ranking']) ? ($data['meu_ranking']['posicao_escola'] ?? '-') : '-' ?>º <span class="badge bg-light text-primary ms-2 fw-medium" style="font-size:0.75rem;">de <?= is_array($data['meu_ranking']) ? ($data['meu_ranking']['total_escola'] ?? 0) : 0 ?> Alunos</span>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <?php elseif (!empty($mr['nivel'])): ?>
-                    <!-- MELHOR DO NÍVEL -->
-                    <div style="
-                        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-                        border-radius: 20px; padding: 20px 28px; margin-bottom: 20px;
-                        display: flex; align-items: center; gap: 20px;
-                        box-shadow: 0 8px 30px rgba(16,185,129,0.3);
-                    ">
-                        <span style="font-size: 2.8rem;">🥇</span>
-                        <div>
-                            <h5 style="color:white; margin:0; font-weight:800; font-size:1.05rem;">
-                                Você é o melhor aluno do <?= htmlspecialchars($mr['nivel']['nivel_nome'] ?? '') ?>!
-                            </h5>
-                            <p style="color:rgba(255,255,255,0.85); margin:0; font-size:0.85rem;">
-                                Média: <strong><?= number_format((float)($mr['nivel']['media_geral'] ?? 0), 1) ?></strong> valores — Excelente desempenho!
-                            </p>
+                <?php endif; ?>
+
+                <!-- 🏆 CONQUISTAS DE MÉRITO ACADÉMICO -->
+                <?php if (!empty($data['meu_merito'])): ?>
+                    <div class="row g-3 mb-4">
+                    <?php foreach ($data['meu_merito'] as $idx => $m): ?>
+                        <div class="col-md-12">
+                            <div style="
+                                background: <?= $m['tipo'] === 'Escola' ? 'linear-gradient(135deg, #F59E0B 0%, #EF4444 100%)' : 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)' ?>;
+                                border-radius: 16px; padding: 18px 24px;
+                                display: flex; align-items: center; gap: 20px;
+                                box-shadow: 0 10px 25px <?= $m['tipo'] === 'Escola' ? 'rgba(245,158,11,0.25)' : 'rgba(16,185,129,0.2)' ?>;
+                                position: relative; overflow: hidden;
+                            ">
+                                <!-- Background Decoration -->
+                                <div style="position: absolute; right: -20px; top: -20px; font-size: 8rem; opacity: 0.1; transform: rotate(15deg); color: white;">
+                                    <ion-icon name="<?= $m['tipo'] === 'Escola' ? 'trophy' : 'medal' ?>"></ion-icon>
+                                </div>
+
+                                <span style="font-size: 2.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));"><?= $m['tipo'] === 'Escola' ? '🏆' : '🥇' ?></span>
+                                <div style="flex-grow: 1; position: relative; z-index: 1;">
+                                    <h5 style="color:white; margin:0; font-weight:800; font-size:1.05rem; letter-spacing: -0.5px;">
+                                        <?= $m['tipo'] === 'Escola' ? "TOP {$m['posicao']} DA INSTITUIÇÃO" : "MELHOR ALUNO DO " . ($m['nivel_nome'] ?? 'NÍVEL') ?>
+                                    </h5>
+                                    <p style="color:rgba(255,255,255,0.9); margin:0; font-size:0.85rem;">
+                                        Período: <strong><?= $m['periodo'] ?></strong> | Média: <strong><?= number_format((float)$m['media'], 1) ?></strong> valores
+                                    </p>
+                                </div>
+                                <a href="<?= URL_ROOT ?>/estudante/certificado?id=<?= $idx ?>" target="_blank" class="btn btn-sm btn-light fw-bold px-4 rounded-pill shadow-sm" style="color: <?= $m['tipo'] === 'Escola' ? '#EF4444' : '#10b981' ?>; white-space: nowrap;">
+                                    <ion-icon name="print-outline" class="me-1"></ion-icon> Certificado
+                                </a>
+                            </div>
                         </div>
+                    <?php endforeach; ?>
                     </div>
-                    <?php endif; ?>
                 <?php endif; ?>
-
-                <!-- Quadro de Mérito (Top 3 da escola) -->
-                <?php if (!empty($data['ranking_escola'])): ?>
-                <div class="mb-4">
-                    <?php
-                        $ranking_escola = $data['ranking_escola'];
-                        $ranking_nivel  = $data['ranking_nivel'] ?? [];
-                        $show_details   = false;
-                        include __DIR__ . '/../partials/merit_board.php';
-                    ?>
-                </div>
-                <?php endif; ?>
-
+                <!-- Ocultação Estrita do Quadro de Mérito Concluída -->
+                
                 <?php if ($data['can_renew'] && $data['next_year']): ?>
                     <div class="card border-0 shadow-sm mb-4 bg-success text-white">
                         <div class="card-body d-flex justify-content-between align-items-center p-4">
@@ -236,43 +282,61 @@
                     <?php endif; ?>
                 <?php endif; ?>
 
-                <div class="row g-4 mb-4">
+                <div class="row g-4 mb-5">
                     <div class="col-md-3">
-                        <div class="card border-0 shadow-sm" style="border-left: 5px solid #10B981 !important;">
-                            <div class="card-body">
-                                <p class="text-muted fw-bold mb-1 text-uppercase small">Média Global</p>
-                                <h3 class="fw-bold mb-0 text-dark"><?= empty($data['media_geral']) ? 'N/A' : number_format((float)$data['media_geral'], 1) ?> <small class="text-muted fs-6">/ 20</small></h3>
+                        <div class="glass-card card border-0 h-100">
+                            <div class="card-body p-4 text-center">
+                                <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-3">
+                                    <ion-icon name="analytics-outline"></ion-icon>
+                                </div>
+                                <h6 class="text-muted small fw-bold mb-2 opacity-75">Média Global</h6>
+                                <h2 class="fw-bold mb-0 text-dark"><?= empty($data['media_geral']) ? 'N/A' : number_format((float)$data['media_geral'], 1) ?></h2>
+                                <div class="progress mt-3" style="height: 6px; border-radius: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: <?= (isset($data['media_geral']) ? ($data['media_geral'] / 20 * 100) : 0) ?>%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-0 shadow-sm" style="border-left: 5px solid #3B82F6 !important;">
-                            <div class="card-body">
-                                <p class="text-muted fw-bold mb-1 text-uppercase small">Desempenho AC</p>
-                                <h3 class="fw-bold mb-0 text-primary"><?= $data['desempenho_ac'] ?? 0 ?>%</h3>
+                        <div class="glass-card card border-0 h-100">
+                            <div class="card-body p-4 text-center">
+                                <div class="stat-icon bg-primary bg-opacity-10 text-primary mx-auto mb-3">
+                                    <ion-icon name="flash-outline"></ion-icon>
+                                </div>
+                                <h6 class="text-muted small fw-bold mb-2 opacity-75">Desempenho AC</h6>
+                                <h2 class="fw-bold mb-0 text-primary"><?= $data['desempenho_ac'] ?? 0 ?>%</h2>
+                                <div class="progress mt-3" style="height: 6px; border-radius: 10px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: <?= $data['desempenho_ac'] ?? 0 ?>%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-0 shadow-sm" style="border-left: 5px solid #F59E0B !important;">
-                            <div class="card-body">
-                                <p class="text-muted fw-bold mb-1 text-uppercase small">Faltas</p>
-                                <h3 class="fw-bold mb-0 text-warning text-dark"><?= $data['faltas_count'] ?? 0 ?> Aulas</h3>
+                        <div class="glass-card card border-0 h-100">
+                            <div class="card-body p-4 text-center">
+                                <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+                                    <ion-icon name="calendar-clear-outline"></ion-icon>
+                                </div>
+                                <h6 class="text-muted small fw-bold mb-2 opacity-75">Faltas Registadas</h6>
+                                <h2 class="fw-bold mb-0 text-dark"><?= $data['faltas_count'] ?? 0 ?></h2>
+                                <small class="text-muted mt-2 d-block">Aulas perdidas</small>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-0 shadow-sm" style="border-left: 5px solid #EF4444 !important;">
-                            <div class="card-body">
-                                <p class="text-muted fw-bold mb-1 text-uppercase small">Situação Financeira</p>
+                        <div class="glass-card card border-0 h-100">
+                            <div class="card-body p-4 text-center">
+                                <div class="stat-icon <?= $data['smart_delinquency']['is_delinquent'] ? 'bg-danger' : 'bg-info' ?> bg-opacity-10 <?= $data['smart_delinquency']['is_delinquent'] ? 'text-danger' : 'text-info' ?> mx-auto mb-3">
+                                    <ion-icon name="wallet-outline"></ion-icon>
+                                </div>
+                                <h6 class="text-muted small fw-bold mb-2 opacity-75">Estivados & Propina</h6>
                                 <?php if ($data['smart_delinquency']['is_delinquent']): ?>
-                                    <h4 class="fw-bold mb-0 text-danger text-uppercase mt-1">Irregular</h4>
-                                    <small class="text-muted"><?= $data['smart_delinquency']['missing_months'] ?> mês(es) em falta</small>
+                                    <div class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill mb-1 p-2 px-3 fw-bold">IRREGULAR</div>
+                                    <div class="text-danger fw-bold" style="font-size: 0.8rem;"><?= $data['smart_delinquency']['missing_months'] ?> meses em falta</div>
                                 <?php elseif (!empty($data['pendencias_count'])): ?>
-                                    <h4 class="fw-bold mb-0 text-warning text-uppercase mt-1">Pendente</h4>
-                                    <small class="text-muted">Aguardando validação</small>
+                                    <div class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill mb-1 p-2 px-3 fw-bold">PENDENTE</div>
                                 <?php else: ?>
-                                    <h4 class="fw-bold mb-0 text-success text-uppercase mt-1">Regularizado</h4>
+                                    <div class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill mb-1 p-2 px-3 fw-bold">REGULAR</div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -281,18 +345,19 @@
 
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-body">
-                                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2"><ion-icon name="megaphone-outline" class="text-warning"></ion-icon> Avisos Recentes</h5>
+                        <div class="glass-card card border-0 h-100">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark"><ion-icon name="megaphone-outline" class="text-warning"></ion-icon> Avisos Recentes</h5>
                                 <?php if (empty($data['comunicados'])): ?>
-                                    <div class="alert bg-light border-start border-primary border-4 shadow-sm">
-                                        <small class="text-muted">Sem avisos recentes.</small>
+                                    <div class="p-4 text-center opacity-50">
+                                        <ion-icon name="notifications-off-outline" class="fs-1 mb-2"></ion-icon>
+                                        <p class="small mb-0">Sem avisos recentes.</p>
                                     </div>
                                 <?php else: ?>
-                                    <?php $count = 0; foreach($data['comunicados'] as $c): if($count++ >= 2) break; ?>
-                                        <div class="alert bg-light border-start border-<?= ($c['tipo'] == 'Geral') ? 'primary' : 'warning' ?> border-4 shadow-sm py-2 mb-2">
-                                            <strong class="text-dark small d-block"><?= $this->e($c['titulo']) ?></strong>
-                                            <div class="extra-small text-muted" style="font-size: 0.75rem;"><?= $this->e(mb_strimwidth($c['conteudo'], 0, 80, "...")) ?></div>
+                                    <?php $count = 0; foreach($data['comunicados'] as $c): if($count++ >= 3) break; ?>
+                                        <div class="p-3 rounded-4 mb-2 border-start border-4 border-<?= ($c['tipo'] == 'Geral') ? 'primary' : 'warning' ?>" style="background: rgba(0,0,0,0.02);">
+                                            <strong class="text-dark small d-block"><?= htmlspecialchars((string)($c['titulo'] ?? 'Aviso')) ?></strong>
+                                            <div class="text-muted mt-1" style="font-size: 0.8rem;"><?= htmlspecialchars(mb_strimwidth((string)($c['conteudo'] ?? ''), 0, 100, "...")) ?></div>
                                         </div>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -300,10 +365,10 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-body">
-                                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2"><ion-icon name="time-outline" class="text-primary"></ion-icon> Próximas Aulas</h5>
-                                <ul class="list-group list-group-flush">
+                        <div class="glass-card card border-0 h-100">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark"><ion-icon name="time-outline" class="text-primary"></ion-icon> Próximas Aulas</h5>
+                                <div class="list-group list-group-flush border-0">
                                     <?php 
                                     $hoje = ['Monday'=>'Segunda', 'Tuesday'=>'Terça', 'Wednesday'=>'Quarta', 'Thursday'=>'Quinta', 'Friday'=>'Sexta','Saturday'=>'Sábado','Sunday'=>'Domingo'][date('l')];
                                     $agora = date('H:i');
@@ -313,18 +378,24 @@
                                             if($h['dia_semana'] == $hoje && substr($h['hora_inicio'], 0, 5) >= $agora):
                                                 $temAulasHoje = true;
                                     ?>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                            <div><span class="badge bg-primary me-2 px-2 py-1"><?= substr($h['hora_inicio'],0,5) ?></span> <?= htmlspecialchars($h['disciplina_nome']) ?></div>
-                                            <small class="text-muted fw-bold">Sala <?= htmlspecialchars($h['sala']) ?></small>
-                                        </li>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 border-bottom px-0 py-3">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3 fw-bold small"><?= substr($h['hora_inicio'],0,5) ?></div>
+                                                <div class="fw-bold text-dark small"><?= htmlspecialchars((string)($h['disciplina_nome'] ?? 'Disciplina')) ?></div>
+                                            </div>
+                                            <span class="badge bg-light text-muted border fw-bold px-3 py-2 rounded-pill">Sala <?= htmlspecialchars((string)($h['sala'] ?? '-')) ?></span>
+                                        </div>
                                     <?php 
                                             endif;
                                         endforeach; 
                                     endif; 
                                     if (!$temAulasHoje): ?>
-                                        <li class="list-group-item px-0 text-muted small">Sem aulas para hoje (<?= $hoje ?>).</li>
+                                        <div class="p-4 text-center opacity-50">
+                                            <ion-icon name="cafe-outline" class="fs-1 mb-2"></ion-icon>
+                                            <p class="small mb-0">Sem aulas pendentes para hoje.</p>
+                                        </div>
                                     <?php endif; ?>
-                                </ul>
+                                </div>
                             </div>
                         </div>
                     </div>

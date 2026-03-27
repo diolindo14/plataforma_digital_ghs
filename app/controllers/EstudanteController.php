@@ -117,49 +117,51 @@ class EstudanteController extends Controller {
             $gridData = $horarioModel->buildWeeklyGrid($turma_id);
         }
 
-        $data = [
-            'estudante' => $estudanteData,
-            'notas' => $notas,
-            'horario' => $turma_id ? $academicoModel->getScheduleByTurma($turma_id) : [],
-            'pagamentos' => $pagamentos,
-            'turma_id' => $turma_id,
-            'media_geral' => $media_geral,
-            'desempenho_ac' => $desempenho_ac,
-            'faltas_count' => $faltas_count,
-            'pendencias_count' => $pendencias,
-            'can_renew' => $can_renew,
-            'detailed_status' => $matriculaModel->getDetailedAcademicStatus($estudanteData['id']),
-            'next_year' => $next_year,
-            'gridData' => $gridData,
-            'materiais' => $this->model('Material')->getByTurma($turma_id),
-            'comunicados' => $comunicados,
-            'unread_count' => $unread_count,
-            'proximas_aulas' => (function($h_list) {
-                $hoje = ['Monday'=>'Segunda', 'Tuesday'=>'Terça', 'Wednesday'=>'Quarta', 'Thursday'=>'Quinta', 'Friday'=>'Sexta','Saturday'=>'Sábado','Sunday'=>'Domingo'][date('l')];
-                $agora = date('H:i');
-                $count = 0;
-                foreach ($h_list as $h) {
-                    if ($h['dia_semana'] == $hoje && substr($h['hora_inicio'], 0, 5) >= $agora) $count++;
-                }
-                return $count;
-            })($data['horario'] ?? []),
-            'smart_delinquency' => $smart_delinquency,
-            'historico_global' => $academicoModel->getGlobalHistory($estudanteData['id']),
-            'tempos_aula' => [
-                '1º' => ['07:20', '08:50'],
-                '2º' => ['08:55', '10:25'],
-                '3º' => ['10:45', '12:15'],
-                '4º' => ['12:20', '13:50']
-            ],
-            'dias_semana' => ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']
+        $data['estudante'] = $estudanteData;
+        $data['notas'] = $notas;
+        $data['horario'] = $turma_id ? $academicoModel->getScheduleByTurma($turma_id) : [];
+        $data['pagamentos'] = $pagamentos;
+        $data['turma_id'] = $turma_id;
+        $data['media_geral'] = $media_geral;
+        $data['desempenho_ac'] = $desempenho_ac;
+        $data['faltas_count'] = $faltas_count;
+        $data['pendencias_count'] = $pendencias;
+        $data['can_renew'] = $can_renew;
+        $data['detailed_status'] = $matriculaModel->getDetailedAcademicStatus($estudanteData['id']);
+        $data['next_year'] = $next_year;
+        $data['gridData'] = $gridData;
+        $data['materiais'] = $this->model('Material')->getByTurma($turma_id);
+        $data['comunicados'] = $comunicados;
+        $data['unread_count'] = $unread_count;
+        $data['proximas_aulas'] = (function($h_list) {
+            $hoje = ['Monday'=>'Segunda', 'Tuesday'=>'Terça', 'Wednesday'=>'Quarta', 'Thursday'=>'Quinta', 'Friday'=>'Sexta','Saturday'=>'Sábado','Sunday'=>'Domingo'][date('l')];
+            $agora = date('H:i');
+            $count = 0;
+            foreach ($h_list as $h) {
+                if ($h['dia_semana'] == $hoje && substr($h['hora_inicio'], 0, 5) >= $agora) $count++;
+            }
+            return $count;
+        })($data['horario'] ?? []);
+        $data['smart_delinquency'] = $smart_delinquency;
+        $data['historico_global'] = $academicoModel->getGlobalHistory($estudanteData['id']);
+        $data['tempos_aula'] = [
+            '1º' => ['07:20', '08:50'],
+            '2º' => ['08:55', '10:25'],
+            '3º' => ['10:45', '12:15'],
+            '4º' => ['12:20', '13:50']
         ];
+        $data['dias_semana'] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
         // --- 🏆 MÉRITO ACADÉMICO: Ranking e Alerta Personalizado ---
-        $acadRank = $academicoModel; // reutiliza o model já carregado
+        $acadRank = $academicoModel;
         $data['ranking_escola']  = $acadRank->getRankingEscola(3);
         $data['ranking_nivel']   = $acadRank->getRankingByNivel();
-        // Verifica se este estudante é o #1 de algum nível ou da escola toda
-        $data['meu_ranking']     = $acadRank->getStudentRankPosition($estudanteData['id']);
+        
+        // Dados de mérito específicos (Se for #1)
+        $data['meu_merito']      = $acadRank->getStudentRankPosition($estudanteData['id']);
+        
+        // Posição exata universal (Para todos os alunos)
+        $data['meu_ranking']     = $acadRank->getDetailedStudentRank($estudanteData['id']);
 
         $this->view('estudante/dashboard', $data);
     }
@@ -479,5 +481,44 @@ class EstudanteController extends Controller {
 
         header('Location: ' . URL_ROOT . '/estudante');
         exit;
+    }
+
+    public function certificado($index = null) {
+        if (!isset($_SESSION['estudante_id'])) {
+            header('Location: ' . URL_ROOT . '/login');
+            exit;
+        }
+
+        $estudanteModel = $this->model('Estudante');
+        $academicoModel = $this->model('Academico');
+        
+        $estudanteData = $estudanteModel->getEstudanteById($_SESSION['estudante_id']);
+        $conquistas = $academicoModel->getStudentRankPosition($estudanteData['id']);
+        
+        if (!$conquistas || !is_array($conquistas) || count($conquistas) === 0) {
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        // Se houver múltiplas conquistas, seleciona pelo índice ou pela mais recente
+        $idx = (int)($index ?? $_GET['id'] ?? 0);
+        $merito = $conquistas[$idx] ?? $conquistas[0];
+        
+        if (!$merito || !is_array($merito)) {
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        $renderData = [
+            'nome'           => (string)($estudanteData['nome_completo'] ?? 'Estudante'),
+            'data_emissao'   => date('d/m/Y'),
+            'assinatura'     => 'Direção do GHS',
+            'winner_type'    => (string)(($merito['tipo'] ?? '') === 'Escola' ? "Melhor Aluno da Instituição (" . ($merito['posicao'] ?? '1') . "º Lugar)" : "Melhor Aluno do Nível"),
+            'media'          => (float)($merito['media'] ?? 0),
+            'nivel_nome'     => (string)($merito['nivel_nome'] ?? $estudanteData['nivel_nome'] ?? 'GHS'),
+            'periodo'        => (string)($merito['periodo'] ?? 'Anual')
+        ];
+
+        $this->view('estudante/certificado', $renderData);
     }
 }

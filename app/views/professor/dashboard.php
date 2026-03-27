@@ -11,6 +11,9 @@
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <!-- FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <style>
         body { font-family: 'Outfit', sans-serif; background-color: #f1f5f9; }
         .sidebar { background-color: #0F172A; min-height: 100vh; color: white; padding-top: 1.5rem; position: fixed; width: 260px; z-index: 10; }
@@ -19,6 +22,36 @@
         .content { margin-left: 260px; padding: 40px; }
         .tab-pane { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Signature Pad Styles */
+        .signature-wrapper {
+            border: 2px solid #10B981;
+            border-radius: 12px;
+            background: #fff;
+            position: relative;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .signature-pad { 
+            width: 100%; 
+            height: 200px; 
+            cursor: crosshair; 
+            background-color: #fafafa; 
+            touch-action: none; 
+        }
+        .signature-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #94a3b8;
+            pointer-events: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .signature-actions { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 5px; }
     </style>
 </head>
 <body>
@@ -436,6 +469,21 @@
                             <label class="form-label fw-bold small">Conteúdo do Sumário (O que foi lecionado hoje?)</label>
                             <textarea id="sumarioConteudo" class="form-control bg-light" rows="3" placeholder="Ex: Introdução às Redes Neurais e Backpropagation..."></textarea>
                         </div>
+
+                        <div class="mt-4">
+                            <label class="form-label fw-bold small text-primary d-flex align-items-center gap-2">
+                                <ion-icon name="pencil-outline"></ion-icon> Assinatura Digital do Docente
+                            </label>
+                            <div class="signature-wrapper shadow-sm">
+                                <div class="signature-placeholder" id="sig-placeholder">Assine Aqui</div>
+                                <canvas id="signature-pad" class="signature-pad"></canvas>
+                                <div class="signature-actions">
+                                    <button type="button" class="btn btn-sm btn-light" id="clear-signature">Limpar</button>
+                                </div>
+                            </div>
+                            <p class="extra-small text-muted mt-n2 italic">Ao assinar, você confirma que as informações de frequência e o conteúdo do sumário são verídicos.</p>
+                        </div>
+
                         <div class="mt-4 text-end">
                             <button onclick="submeterSumario(this)" class="btn btn-primary px-5 fw-bold py-2 shadow-sm">
                                 <ion-icon name="checkmark-done-outline"></ion-icon> Submeter Sumário e Chamada
@@ -552,11 +600,48 @@
 
             <!-- Calendário Acadêmico -->
             <div class="tab-pane fade" id="pane-calendario">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">Gestão de Eventos & Avaliações</h4>
-                    <button class="btn btn-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#profEventoModal">
-                        <ion-icon name="calendar-number-outline"></ion-icon> Agendar Evento
-                    </button>
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div id="calendar-prof" style="min-height: 500px;"></div>
+                    </div>
+                </div>
+                
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h6 class="fw-bold mb-0">Listagem de Agendamentos Próprios</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light text-muted small">
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Título</th>
+                                        <th>Tipo</th>
+                                        <th class="text-end">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if(empty($data['meus_eventos'])): ?>
+                                        <tr><td colspan="4" class="text-center py-4 text-muted">Sem agendamentos futuros.</td></tr>
+                                    <?php else: ?>
+                                        <?php foreach($data['meus_eventos'] as $ev): ?>
+                                            <tr>
+                                                <td class="small fw-bold"><?= date('d/m/Y H:i', strtotime($ev['data_evento'])) ?></td>
+                                                <td class="small"><?= htmlspecialchars($ev['titulo']) ?></td>
+                                                <td><span class="badge bg-primary bg-opacity-10 text-primary small"><?= $ev['tipo'] ?></span></td>
+                                                <td class="text-end">
+                                                    <button onclick="deleteEvento(<?= $ev['id'] ?>)" class="btn btn-sm btn-outline-danger border-0">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card shadow-sm border-0 rounded-4">
@@ -895,7 +980,53 @@
 </div>
 
 <script>
+let signaturePad;
 $(document).ready(function() {
+    // Initialize Signature Pad
+    const canvas = document.getElementById('signature-pad');
+    if (canvas) {
+        signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            penColor: 'rgb(0, 0, 0)', // Tinta preta conforme solicitado
+            minWidth: 1.5,
+            maxWidth: 4.5
+        });
+
+        signaturePad.addEventListener("beginStroke", () => {
+            document.getElementById('sig-placeholder').style.display = 'none';
+        });
+
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+            signaturePad.clear();
+            document.getElementById('sig-placeholder').style.display = 'block';
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        // Garantia extra: redimensionar no primeiro toque/clique se estiver com tamanho zero
+        canvas.addEventListener('pointerdown', function() {
+            if (canvas.width === 0 || canvas.height === 0) {
+                resizeCanvas();
+            }
+        }, { once: true });
+
+        // Limpar Assinatura
+        document.getElementById('clear-signature')?.addEventListener('click', function() {
+            signaturePad.clear();
+            document.getElementById('sig-placeholder').style.display = 'block';
+        });
+
+        // Redimensionar quando mudar de tab (com delay para Bootstrap animation)
+        document.getElementById('tab-chamada')?.addEventListener('shown.bs.tab', () => {
+            setTimeout(resizeCanvas, 200);
+        });
+    }
+});
     // Atualizar disciplina_id ao mudar a turma no upload
     $('#formUploadMaterial select[name="turma_id"]').on('change', function() {
         const discId = $(this).find(':selected').data('disc');
@@ -1012,6 +1143,13 @@ function submeterSumario(btn) {
         return;
     }
 
+    if (typeof signaturePad === 'undefined' || !signaturePad || signaturePad.isEmpty()) {
+        alert('Por favor, assine digitalmente para validar o sumário. (Se não conseguir ver a área de escrita, tente clicar na zona de assinatura)');
+        return;
+    }
+
+    const signatureData = signaturePad.toDataURL();
+
     const presencas = {};
     $('#tabelaChamada tbody tr').each(function() {
         const estId = $(this).data('student-id');
@@ -1025,6 +1163,7 @@ function submeterSumario(btn) {
         disciplina_id: $('#pane-chamada select').first().val().split('|')[1], 
         tempo: $('#tempoAula').val(),
         conteudo: conteudo,
+        assinatura: signatureData,
         presencas: presencas,
         csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     };
@@ -1256,6 +1395,43 @@ function deleteEvento(id) {
         window.location.href = '<?= URL_ROOT ?>/professor/deleteEvento/' + id;
     }
 }
+
+// --- FULLCALENDAR INTERATIVO (Pilar 7) ---
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar-prof');
+    if (calendarEl) {
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'pt-pt',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            buttonText: {
+                today: 'Hoje',
+                month: 'Mês',
+                week: 'Semana',
+                list: 'Agenda'
+            },
+            events: '<?= URL_ROOT ?>/professor/getCalendarEvents',
+            themeSystem: 'bootstrap5',
+            eventClick: function(info) {
+                alert('Evento: ' + info.event.title + '\nDescrição: ' + (info.event.extendedProps.description || 'Consulta da agenda institucional'));
+            }
+        });
+
+        // Re-render when tab is shown
+        $('button[data-bs-target="#pane-calendario"], a.nav-link[data-pane="pane-calendario"]').on('shown.bs.tab', function () {
+            calendar.render();
+        });
+        
+        // Custom trigger for sidebar clicks if needed
+        $('.sidebar a[onclick*="pane-calendario"]').on('click', function() {
+           setTimeout(() => calendar.render(), 200);
+        });
+    }
+});
 </script>
 
 <!-- Modal Resposta Reclamação -->

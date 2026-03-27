@@ -48,9 +48,8 @@ class AdminController extends Controller {
         
         $data['stats'] = $this->model('DashboardModel')->getAdminStats();
         $data['chartData'] = $this->model('DashboardModel')->getAdminChartData();
-        $data['matriculas'] = $this->model('Matricula')->getPendingEnrollments();
-        $data['estudantes'] = $this->model('Estudante')->getAllStudents();
         $data['pendentes'] = $this->model('User')->getPendingUsers();
+        $data['estudantes'] = $this->model('Estudante')->getAllStudents(1, 1000); // Lista completa de alunos (Pilar 7)
         
         // Dados pedagógicos e relatórios
         $frequenciaModel = $this->model('Frequencia');
@@ -841,6 +840,24 @@ class AdminController extends Controller {
             $_SESSION['flash_success'] = "Painel de alertas limpo com sucesso.";
         }
         header('Location: ' . URL_ROOT . '/admin');
+        exit;
+    }
+
+    public function getCalendarEvents() {
+        $events = $this->model('Evento')->getAll();
+        $formatted = [];
+        foreach($events as $e) {
+            $formatted[] = [
+                'id'    => $e['id'],
+                'title' => $e['titulo'],
+                'start' => $e['data_inicio'] . 'T' . ($e['hora_inicio'] ?? '08:00:00'),
+                'end'   => $e['data_fim'] . 'T' . ($e['hora_fim'] ?? '18:00:00'),
+                'color' => $e['cor'] ?? '#10B981',
+                'description' => $e['descricao']
+            ];
+        }
+        header('Content-Type: application/json');
+        echo json_encode($formatted);
         exit;
     }
 }

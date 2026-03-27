@@ -69,3 +69,11 @@
 [2026-03-27 05:25:55] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
 [2026-03-27 05:25:56] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
 [2026-03-27 05:38:24] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 11:43:27] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 11:46:09] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 11:53:37] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 11:53:43] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 11:58:49] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 12:08:47] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 12:12:52] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 12:13:00] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161

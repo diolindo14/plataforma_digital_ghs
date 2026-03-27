@@ -131,13 +131,13 @@
                                             <option>Feminino</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Estado Civil</label>
-                                        <select name="estado_civil" class="form-select">
-                                            <option value="" disabled selected>Selecionar</option>
-                                            <option>Solteiro</option><option>Casado</option><option>Divorciado</option>
-                                        </select>
-                                    </div>
+                                     <div class="col-md-6">
+                                         <label class="form-label">Estado Civil / Género</label>
+                                         <select name="estado_civil" class="form-select">
+                                             <option value="" disabled selected>Selecionar</option>
+                                             <option>Solteiro/a</option><option>Casado/a</option><option>Divorciado/a</option><option>Viúvo/a</option>
+                                         </select>
+                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label class="form-label">Telefone *</label>
@@ -152,16 +152,14 @@
                                         <label class="form-label">Endereço / Morada</label>
                                         <input type="text" name="morada" class="form-control" placeholder="Bairro, cidade">
                                     </div>
-                                    
-                                    <div class="col-12">
-                                        <label class="form-label">Nome do Encarregado de Educação</label>
-                                        <input type="text" name="encarregado_nome" class="form-control" placeholder="Nome completo do encarregado">
-                                    </div>
-                                    
-                                    <div class="col-12">
-                                        <label class="form-label">Telefone do Encarregado</label>
-                                        <input type="text" name="encarregado_telefone" class="form-control" placeholder="+245 9X XXX XX XX">
-                                    </div>
+                                                                        <div class="col-12">
+                                         <label class="form-label">Nome do/a Encarregado/a de Educação</label>
+                                         <input type="text" name="encarregado_nome" class="form-control" placeholder="Nome completo do/a encarregado/a">
+                                     </div>
+                                                                        <div class="col-12">
+                                         <label class="form-label">Telefone do/a Encarregado/a</label>
+                                         <input type="text" name="encarregado_telefone" class="form-control" placeholder="+245 9X XXX XX XX">
+                                     </div>
                                 </div>
                                 
                                 <div class="d-flex justify-content-between mt-5 pt-3 border-top border-light">
