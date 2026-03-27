@@ -484,7 +484,7 @@ class EstudanteController extends Controller {
     }
 
     public function certificado($index = null) {
-        if (!isset($_SESSION['estudante_id'])) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
@@ -492,14 +492,16 @@ class EstudanteController extends Controller {
         $academicoModel = $this->model('Academico');
         $estudanteModel = $this->model('Estudante');
 
-        $estudanteData = $estudanteModel->getEstudanteById($_SESSION['estudante_id']);
+        $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
         if (!$estudanteData) {
             header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
 
+        $estudanteId = $estudanteData['id'];
+
         // Buscar apenas certificados OFICIALMENTE EMITIDOS na tabela (view-only)
-        $certificados = $academicoModel->getCertificadoDoAluno($_SESSION['estudante_id']);
+        $certificados = $academicoModel->getCertificadoDoAluno($estudanteId);
 
         if (empty($certificados)) {
             $_SESSION['flash_info'] = "Ainda não existe nenhum Certificado de Mérito emitido para a sua conta. Os certificados são atribuídos pela Direção no final de cada semestre.";
