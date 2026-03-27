@@ -137,7 +137,7 @@
                 <div style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: #1e293b; height: 35px;">Secretaria Geral</div>
                 <div class="sig-line"></div>
                 <div class="sig-name">Validação Institucional</div>
-                <div class="sig-title">GHS Academy</div>
+                <div class="sig-title">GHS CAMPUS</div>
             </div>
             
             <div class="sig-block">
@@ -160,7 +160,7 @@
         </div>
         
         <div style="position: absolute; bottom: 10mm; left: 15mm; font-size: 0.7rem; color: #94a3b8;">
-            Data de Emissão: <?= (string)($data['data_emissao'] ?? date('d/m/Y')) ?> | GHS Student Portal v2.0
+            Data de Emissão: <?= (string)($data['data_emissao'] ?? date('d/m/Y')) ?> | GHS
         </div>
     </div>
 
