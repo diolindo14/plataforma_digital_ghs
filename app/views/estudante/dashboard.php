@@ -21,40 +21,53 @@
             --ghs-secondary: #3B82F6;
             --ghs-dark: #0F172A;
             --ghs-slate: #1E293B;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
         }
-        body { font-family: 'Outfit', sans-serif; background: #f8fafc; color: #334155; }
+        body { font-family: 'Outfit', sans-serif; background: #f0f2f5; color: #334155; overflow-x: hidden; }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        .sidebar { background-color: var(--ghs-dark); min-height: 100vh; color: white; padding-top: 1.5rem; position: fixed; width: 260px; z-index: 100; transition: all 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
+        .sidebar { background-color: var(--ghs-dark); min-height: 100vh; color: white; padding-top: 1.5rem; position: fixed; width: 260px; z-index: 1050; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 4px 0 25px rgba(0,0,0,0.15); left: 0; }
         .sidebar .nav-link { color: #94a3b8; text-decoration: none; padding: 14px 24px; display: flex; align-items: center; gap: 12px; transition: 0.3s; font-weight: 500; border-left: 4px solid transparent; margin-bottom: 4px; }
         .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
-        .sidebar .nav-link.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent); color: var(--ghs-primary); border-left-color: var(--ghs-primary); font-weight: 600; }
-        .sidebar ion-icon { font-size: 1.2rem; }
+        .sidebar .nav-link.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), transparent); color: var(--ghs-primary); border-left-color: var(--ghs-primary); font-weight: 600; }
         
-        .content { margin-left: 260px; padding: 40px; min-height: 100vh; background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 400px); }
+        .content { margin-left: 260px; padding: 30px; min-height: 100vh; transition: all 0.4s ease; background: radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.03), transparent 600px); }
         
-        .glass-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+        @media (max-width: 991.98px) {
+            .sidebar { left: -260px; }
+            .sidebar.active { left: 0; }
+            .content { margin-left: 0; padding: 20px; padding-top: 80px; }
+            .mobile-toggle { display: flex !important; }
+        }
+
+        .mobile-toggle { position: fixed; top: 20px; left: 20px; z-index: 1100; background: white; width: 45px; height: 45px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; align-items: center; justify-content: center; border: none; font-size: 1.5rem; color: var(--ghs-dark); }
         
-        .stat-icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px; font-size: 1.5rem; transition: 0.3s; }
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); height: 100%; }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 15px 50px rgba(0,0,0,0.1); border-color: rgba(16, 185, 129, 0.2); }
         
-        .badge-premium { padding: 6px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-icon { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 18px; font-size: 1.6rem; transition: 0.3s; }
+        .profile-btn { background: white; border-radius: 15px; padding: 8px 15px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); cursor: pointer; transition: 0.3s; }
+        .profile-btn:hover { background: #f8fafc; border-color: var(--ghs-primary); }
+
+        .tab-pane { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         
-        #calendar { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: none; }
-        .tab-pane { animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-premium { border-radius: 12px; padding: 10px 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-premium-success { background: var(--ghs-primary); color: white; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .btn-premium-success:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
         
-        .profile-section { background: white; border-radius: 50px; padding: 6px 16px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .table-premium { border-radius: 15px; overflow: hidden; border: none !important; }
+        .table-premium thead th { background: #f1f5f9; color: #475569; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; padding: 15px; border: none; }
+        .table-premium tbody td { padding: 15px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        
+        .indicator-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
     </style>
 </head>
 <body>
+<button class="mobile-toggle" id="sidebarToggle">
+    <ion-icon name="menu-outline"></ion-icon>
+</button>
+
 <div class="d-flex">
     <!-- Sidebar -->
     <nav class="sidebar shadow-lg d-flex flex-column justify-content-between">
@@ -152,12 +165,17 @@
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border border-white" style="width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px;"><?= (string)$data['unread_count'] ?></span>
                     <?php endif; ?>
                 </div>
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+                <div class="page-title">
+                    <h2 class="fw-bold text-dark mb-0">Olá, <?= htmlspecialchars(explode(' ', is_array($data['estudante']) ? (string)$data['estudante']['nome_completo'] : (string)($_SESSION['user_name'] ?? 'Aluno'))[0]) ?>! ✨</h2>
+                    <p class="text-muted small mb-0">Bem-vindo ao teu centro académico.</p>
+                </div>
                 <div class="profile-section">
                     <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--ghs-primary);">
-                        <img src="<?= $data['estudante']['foto_perfil'] ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="<?= (is_array($data['estudante']) && !empty($data['estudante']['foto_perfil'])) ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div>
-                        <div class="fw-bold small text-dark"><?= htmlspecialchars(explode(' ', is_array($data['estudante']) ? $data['estudante']['nome_completo'] : $_SESSION['user_name'])[0]) ?></div>
+                        <div class="fw-bold small text-dark"><?= htmlspecialchars(explode(' ', is_array($data['estudante']) ? (string)$data['estudante']['nome_completo'] : (string)($_SESSION['user_name'] ?? 'Aluno'))[0]) ?></div>
                         <div class="text-muted" style="font-size: 10px;">Estudante Ativo</div>
                     </div>
                 </div>
@@ -963,6 +981,18 @@
 
 <script>
 $(document).ready(function() {
+    // Sidebar Toggle
+    $('#sidebarToggle').on('click', function() {
+        $('.sidebar').toggleClass('active');
+    });
+
+    // Close sidebar on link click (mobile)
+    $('.sidebar .nav-link').on('click', function() {
+        if (window.innerWidth < 992) {
+            $('.sidebar').removeClass('active');
+        }
+    });
+
     // DataTables: initialize individually to prevent column-count mismatch errors
     $.fn.dataTable.ext.errMode = 'none';
     $('.datatable-simple').each(function() {
@@ -973,25 +1003,20 @@ $(document).ready(function() {
                     pageLength: 5, bLengthChange: false, info: false, retrieve: true
                 });
             }
-        } catch(e) { /* skip tables with column count issues */ }
+        } catch(e) { console.warn('DataTable init error:', e); }
     });
 
     // Historic Table with DataTables Export PDF/Excel
-    var historicTable = $('#table-historico').DataTable({
-        language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-PT.json' },
-        dom: '<"row"<"col-sm-12 col-md-6"B><"col-sm-12 col-md-6"f>>rtip',
-        buttons: [
-            { extend: 'excelHtml5', className: 'btn btn-success btn-sm', text: '<ion-icon name="grid"></ion-icon> Excel' },
-            { extend: 'pdfHtml5', className: 'btn btn-danger btn-sm', text: '<ion-icon name="document"></ion-icon> PDF' }
-        ]
-    });
-
-    // Subir ao Topo Global
-    $('<button id="backToTop" class="btn btn-dark shadow-lg" style="position:fixed; bottom:30px; right:30px; border-radius:50%; width:50px; height:50px; display:none; z-index:999; display:flex; align-items:center; justify-content:center;"><ion-icon name="arrow-up-outline"></ion-icon></button>').appendTo('body');
-    $(window).scroll(function() {
-        if ($(this).scrollTop() > 100) { $('#backToTop').fadeIn(); } else { $('#backToTop').fadeOut(); }
-    });
-    $('#backToTop').click(function() { $('html, body').animate({scrollTop: 0}, 400); return false; });
+    if ($('#table-historico').length && !$.fn.DataTable.isDataTable('#table-historico')) {
+        $('#table-historico').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-PT.json' },
+            dom: '<"row"<"col-sm-12 col-md-6"B><"col-sm-12 col-md-6"f>>rtip',
+            buttons: [
+                { extend: 'excelHtml5', className: 'btn btn-success btn-sm', text: '<ion-icon name="grid"></ion-icon> Excel' },
+                { extend: 'pdfHtml5', className: 'btn btn-danger btn-sm', text: '<ion-icon name="document"></ion-icon> PDF' }
+            ]
+        });
+    }
 
     // FullCalendar Initialization inside Tabs
     var calendarBuilt = false;
@@ -999,19 +1024,22 @@ $(document).ready(function() {
         if (e.target.id === 'tab-horario' && !calendarBuilt) {
             calendarBuilt = true;
             var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
-                locale: 'pt',
-                hiddenDays: [0], // Domingo escondido, Sabados mostrados
-                slotMinTime: "13:00:00",
-                slotMaxTime: "20:00:00",
-                allDaySlot: false,
-                events: '<?= URL_ROOT ?>/estudante/getCalendarEvents'
-            });
-            calendar.render();
+            if (calendarEl) {
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'timeGridWeek',
+                    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+                    locale: 'pt',
+                    hiddenDays: [0], 
+                    slotMinTime: "13:00:00",
+                    slotMaxTime: "22:00:00",
+                    allDaySlot: false,
+                    events: '<?= URL_ROOT ?>/estudante/getCalendarEvents'
+                });
+                calendar.render();
+            }
         }
     });
+
     // Handle complaint form
     $('#formReclamacao').on('submit', function(e) {
         e.preventDefault();
@@ -1027,7 +1055,10 @@ $(document).ready(function() {
                 alert('Erro ao enviar reclamação.');
                 btn.prop('disabled', false).html('Enviar Reclamação');
             }
-        }, 'json');
+        }, 'json').fail(function() {
+             alert('Erro de rede ao enviar reclamação.');
+             btn.prop('disabled', false).html('Enviar Reclamação');
+        });
     });
 });
 
