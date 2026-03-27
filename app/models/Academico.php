@@ -435,4 +435,176 @@ class Academico {
 
         return !empty($conquistas) ? $conquistas : false;
     }
+
+    /**
+     * Retorna os top alunos elegíveis (Top 10) com melhor média num semestre específico.
+     * Útil para apresentar opções ao Diretor antes de emitir o certificado.
+     * Calcula: média = (soma_AC_todas_disciplinas + soma_Exames) / (num_disciplinas * 2)
+     */
+    /**
+     * Retorna os top alunos elegíveis (Top 10) com melhor média num semestre específico.
+     * Útil para apresentar opções ao Diretor antes de emitir o certificado.
+     * Média = (Soma AC + Exame) / 2 por disciplina, depois média das disciplinas.
+     */
+    public function getTopBySemestre($semestre, $ano_letivo, $limit = 10) {
+        $sql = "
+            SELECT 
+                estudante_id,
+                nome_completo,
+                nivel_nome,
+                ROUND(AVG(media_disciplina), 2) AS media_calculada
+            FROM (
+                SELECT 
+                    n.estudante_id,
+                    u.nome_completo,
+                    a.nome AS nivel_nome,
+                    av.disciplina_id,
+                    (
+                        SUM(CASE WHEN av.tipo_avaliacao_id IN (1,2,3,4) THEN n.nota ELSE 0 END) + 
+                        MAX(CASE WHEN av.tipo_avaliacao_id = 5 THEN n.nota ELSE 0 END)
+                    ) / 2.0 AS media_disciplina
+                FROM notas n
+                JOIN avaliacoes av ON n.avaliacao_id = av.id
+                JOIN estudantes e ON n.estudante_id = e.id
+                JOIN utilizadores u ON e.utilizador_id = u.id AND u.status = 'ativo'
+                JOIN matriculas m ON m.estudante_id = e.id AND m.status = 'Aprovada'
+                JOIN anos a ON m.ano_curso_id = a.id
+                WHERE av.semestre = :semestre 
+                GROUP BY n.estudante_id, u.nome_completo, a.nome, av.disciplina_id
+                HAVING MAX(CASE WHEN av.tipo_avaliacao_id = 5 THEN n.nota ELSE NULL END) IS NOT NULL
+            ) AS t
+            GROUP BY estudante_id, nome_completo, nivel_nome
+            ORDER BY media_calculada DESC
+            LIMIT :limit
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':semestre', $semestre, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Verifica se um aluno tem certificados emitidos (view-only).
+     * Retorna array de certificados ou array vazio.
+     */
+    public function getCertificadoDoAluno($estudante_id) {
+        $sql = "
+            SELECT cm.*, u.nome_completo AS emitido_por_nome
+            FROM certificados_merito cm
+            LEFT JOIN utilizadores u ON u.id = cm.emitido_por
+            WHERE cm.estudante_id = :eid
+            ORDER BY cm.data_emissao DESC
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':eid' => $estudante_id]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Emite os certificados para um array de alunos manualmente selecionados.
+     * Cada item do array $alunos_selecionados deve conter: 
+     * ['estudante_id', 'nome_completo', 'nivel_nome', 'media_calculada', 'posicao']
+     * Retorna o mesmo array de alunos inseridos/atualizados para gerar o comunicado.
+     */
+    public function emitirCertificadosSelecionados($semestre, $ano_letivo, $emitido_por_id, $alunos_selecionados = []) {
+        if (empty($alunos_selecionados)) return [];
+
+        $emitidos = [];
+        foreach ($alunos_selecionados as $aluno) {
+            $posicao = isset($aluno['posicao']) ? (string)$aluno['posicao'] : '1';
+            
+            // Inserir ou atualizar (ON DUPLICATE KEY)
+            $sql = "
+                INSERT INTO certificados_merito 
+                    (estudante_id, semestre, ano_letivo, posicao, media, nivel_nome, emitido_por, data_emissao)
+                VALUES 
+                    (:eid, :semestre, :ano, :posicao, :media, :nivel, :emitido_por, NOW())
+                ON DUPLICATE KEY UPDATE
+                    posicao = VALUES(posicao),
+                    media = VALUES(media),
+                    nivel_nome = VALUES(nivel_nome),
+                    emitido_por = VALUES(emitido_por),
+                    data_emissao = NOW()
+            ";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':eid'        => $aluno['estudante_id'],
+                ':semestre'   => $semestre,
+                ':ano'        => $ano_letivo,
+                ':posicao'    => $posicao,
+                ':media'      => $aluno['media_calculada'],
+                ':nivel'      => $aluno['nivel_nome'],
+                ':emitido_por'=> $emitido_por_id,
+            ]);
+
+            $aluno['posicao'] = $posicao; // assegura a chave para resposta
+            $emitidos[] = $aluno;
+        }
+
+        return $emitidos;
+    }
+
+    /**
+     * Emite certificados para os top 2 alunos de um semestre.
+     * Chamado pelo Admin ou Secretaria.
+     * Retorna array com os alunos que receberam certificado (para enviar notificações).
+     */
+    public function emitirCertificados($semestre, $ano_letivo, $emitido_por_id) {
+        $top2 = $this->getTopBySemestre($semestre, $ano_letivo, 2); // Alterado para usar getTopBySemestre com limit 2
+        if (empty($top2)) return [];
+
+        $emitidos = [];
+        foreach ($top2 as $idx => $aluno) {
+            $posicao = (string)($idx + 1); // '1' ou '2'
+            // Inserir ou atualizar (ON DUPLICATE KEY)
+            $sql = "
+                INSERT INTO certificados_merito 
+                    (estudante_id, semestre, ano_letivo, posicao, media, nivel_nome, emitido_por, data_emissao)
+                VALUES 
+                    (:eid, :semestre, :ano, :posicao, :media, :nivel, :emitido_por, NOW())
+                ON DUPLICATE KEY UPDATE
+                    posicao = VALUES(posicao),
+                    media = VALUES(media),
+                    nivel_nome = VALUES(nivel_nome),
+                    emitido_por = VALUES(emitido_por),
+                    data_emissao = NOW()
+            ";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':eid'        => $aluno['estudante_id'],
+                ':semestre'   => $semestre,
+                ':ano'        => $ano_letivo,
+                ':posicao'    => $posicao,
+                ':media'      => $aluno['media_calculada'],
+                ':nivel'      => $aluno['nivel_nome'],
+                ':emitido_por'=> $emitido_por_id,
+            ]);
+            $emitidos[] = [
+                'estudante_id' => $aluno['estudante_id'],
+                'nome'         => $aluno['nome_completo'],
+                'posicao'      => $posicao,
+                'media'        => $aluno['media_calculada'],
+                'nivel'        => $aluno['nivel_nome'],
+            ];
+        }
+        return $emitidos;
+    }
+
+    /**
+     * Lista todos os certificados emitidos (para o painel do Admin/Secretaria).
+     */
+    public function getAllCertificadosEmitidos() {
+        $sql = "
+            SELECT cm.*, u.nome_completo AS estudante_nome, ua.nome_completo AS emitido_por_nome
+            FROM certificados_merito cm
+            JOIN estudantes e ON e.id = cm.estudante_id
+            JOIN utilizadores u ON u.id = e.utilizador_id
+            LEFT JOIN utilizadores ua ON ua.id = cm.emitido_por
+            ORDER BY cm.ano_letivo DESC, cm.semestre DESC, cm.posicao ASC
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

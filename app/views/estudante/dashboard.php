@@ -26,12 +26,14 @@
         }
         body { font-family: 'Outfit', sans-serif; background: #f0f2f5; color: #334155; overflow-x: hidden; }
         
-        .sidebar { background-color: var(--ghs-dark); min-height: 100vh; color: white; padding-top: 1.5rem; position: fixed; width: 260px; z-index: 1050; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 4px 0 25px rgba(0,0,0,0.15); left: 0; }
+        .sidebar { background-color: var(--ghs-dark); height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; overflow-y: auto; color: white; padding-top: 1.5rem; width: 260px; z-index: 1050; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 4px 0 25px rgba(0,0,0,0.15); }
+        .sidebar::-webkit-scrollbar { width:4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius:4px; }
         .sidebar .nav-link { color: #94a3b8; text-decoration: none; padding: 14px 24px; display: flex; align-items: center; gap: 12px; transition: 0.3s; font-weight: 500; border-left: 4px solid transparent; margin-bottom: 4px; }
         .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
         .sidebar .nav-link.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), transparent); color: var(--ghs-primary); border-left-color: var(--ghs-primary); font-weight: 600; }
         
-        .content { margin-left: 260px; padding: 30px; min-height: 100vh; transition: all 0.4s ease; background: radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.03), transparent 600px); }
+        .content { margin-left: 260px; padding: 30px; min-height: 100vh; transition: all 0.4s ease; background: radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.03), transparent 600px); min-width: 0; }
         
         @media (max-width: 991.98px) {
             .sidebar { left: -260px; }
@@ -68,16 +70,15 @@
     <ion-icon name="menu-outline"></ion-icon>
 </button>
 
-<div class="d-flex">
     <!-- Sidebar -->
     <nav class="sidebar shadow-lg d-flex flex-column justify-content-between">
         <div>
-            <div class="text-center mb-5 mt-4">
-                <div style="width: 70px; height: 70px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); margin: 0 auto; overflow:hidden; backdrop-filter: blur(5px);">
-                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 80%; height: 80%; object-fit: contain; filter: brightness(1.1);">
+            <div class="sidebar-brand text-center mb-4 mt-2 border-bottom border-light border-opacity-10 pb-3">
+                <div style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--ghs-primary); display: flex; align-items: center; justify-content: center; background: #fff; margin: 0 auto; overflow: hidden;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <h6 class="fw-bold mt-3 text-white letter-spacing-1" style="font-size: 0.9rem; text-transform: uppercase; opacity: 0.9;">Green Hard & Softh</h6>
-                <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25 mt-1" style="font-size: 10px;">Portal Estudante</span>
+                <h5 class="fw-bold text-white mb-1 mt-3" style="font-size: .95rem;">Green Hard & Softh</h5>
+                <span class="badge" style="background:rgba(16,185,129,.15); color:var(--ghs-primary); border:1px solid rgba(16,185,129,.3); font-size: .65rem; letter-spacing: .06em;">PORTAL ESTUDANTE</span>
             </div>
             
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -98,7 +99,7 @@
     </nav>
     
     <!-- Main Content -->
-    <main class="content flex-grow-1">
+    <main class="content">
         
         <?php if(isset($data['alerta_matricula'])): ?>
             <div class="alert alert-warning alert-dismissible fade show shadow-sm border-0 border-start border-4 border-warning rounded-3 mb-4" role="alert">
@@ -146,40 +147,58 @@
             </div>
         <?php endif; ?>
         
-        <div class="d-flex justify-content-between align-items-center mb-5">
+        <!-- Header Profile & Global Actions -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
             <div>
-                <h2 class="fw-bold text-dark mb-1">Boa tarde, <?= htmlspecialchars(explode(' ', is_array($data['estudante']) ? $data['estudante']['nome_completo'] : $_SESSION['user_name'])[0]) ?> 👋</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-primary fw-medium"><?= $this->e($data['estudante']['turma_codigo'] ?? 'S/ Turma') ?></a></li>
-                        <li class="breadcrumb-item active"><?= $this->e($data['estudante']['ano_curso_id']) ?>º Ano Académico</li>
-                    </ol>
-                </nav>
+                <?php
+                $hora = (int)date('H');
+                if ($hora >= 5 && $hora < 12) {
+                    $saudacao = 'Bom dia';
+                } elseif ($hora >= 12 && $hora < 19) {
+                    $saudacao = 'Boa tarde';
+                } else {
+                    $saudacao = 'Boa noite';
+                }
+                $primeiro_nome = htmlspecialchars(explode(' ', is_array($data['estudante']) ? (string)$data['estudante']['nome_completo'] : (string)($_SESSION['user_name'] ?? 'Aluno'))[0]);
+                ?>
+                <h2 class="fw-bold text-dark mb-1"><?= $saudacao ?>, <?= $primeiro_nome ?> 👋</h2>
+                <p class="text-muted mb-0 small">
+                    Turma <?= $this->e($data['estudante']['turma_codigo'] ?? 'S/ Turma') ?> • <?= $this->e($data['estudante']['ano_curso_id'] ?? 'Ano') ?>º Ano Académico
+                </p>
             </div>
-            <div class="d-flex gap-4 align-items-center">
-                <div class="position-relative" style="cursor: pointer;" onclick="document.getElementById('tab-comunicados').click()">
-                    <div class="bg-white p-2 rounded-circle shadow-sm border">
-                        <ion-icon name="notifications-outline" class="fs-4 text-dark mt-1"></ion-icon>
+            <div class="d-flex gap-3 align-items-center">
+                <!-- Controle do Menu (Visível Apenas em Desktop, substituindo Toggle Mobile que é Absoluto) -->
+                
+                <div class="position-relative d-none d-sm-block" style="cursor: pointer;" onclick="document.getElementById('tab-comunicados').click()">
+                    <div class="bg-white p-2 text-dark rounded-circle shadow-sm border border-success border-opacity-25 d-flex align-items-center justify-content-center" style="width:42px;height:42px; transition: 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+                        <ion-icon name="notifications-outline" class="fs-5"></ion-icon>
                     </div>
                     <?php if(!empty($data['unread_count'])): ?>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border border-white" style="width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px;"><?= (string)$data['unread_count'] ?></span>
                     <?php endif; ?>
                 </div>
-            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-                <div class="page-title">
-                    <h2 class="fw-bold text-dark mb-0">Olá, <?= htmlspecialchars(explode(' ', is_array($data['estudante']) ? (string)$data['estudante']['nome_completo'] : (string)($_SESSION['user_name'] ?? 'Aluno'))[0]) ?>! ✨</h2>
-                    <p class="text-muted small mb-0">Bem-vindo ao teu centro académico.</p>
-                </div>
-                <div class="profile-section">
+
+                <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm">
                     <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--ghs-primary);">
-                        <img src="<?= (is_array($data['estudante']) && !empty($data['estudante']['foto_perfil'])) ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="<?= (is_array($data['estudante']) && !empty($data['estudante']['foto_perfil'])) ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>" alt="Perfil" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
-                    <div>
-                        <div class="fw-bold small text-dark"><?= htmlspecialchars(explode(' ', is_array($data['estudante']) ? (string)$data['estudante']['nome_completo'] : (string)($_SESSION['user_name'] ?? 'Aluno'))[0]) ?></div>
-                        <div class="text-muted" style="font-size: 10px;">Estudante Ativo</div>
+                    <div class="d-none d-sm-block">
+                        <div class="fw-bold small text-dark lh-1" style="margin-bottom:2px;"><?= $primeiro_nome ?></div>
+                        <div class="text-muted" style="font-size: 10px; line-height: 1;">Estudante Ativo</div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Flash Info (certificado não disponível) -->
+        <?php if(!empty($_SESSION['flash_info'])): ?>
+            <div class="alert alert-info alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4" role="alert">
+                <ion-icon name="information-circle-outline" class="me-2"></ion-icon>
+                <?= htmlspecialchars($_SESSION['flash_info']) ?>
+                <?php unset($_SESSION['flash_info']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
         </div>
         
         <!-- Tab Panes Content -->
@@ -224,34 +243,36 @@
                     </div>
                 <?php endif; ?>
 
-                <!-- 🏆 CONQUISTAS DE MÉRITO ACADÉMICO -->
-                <?php if (!empty($data['meu_merito'])): ?>
+                <!-- 🏆 CERTIFICADOS DE MÉRITO EMITIDOS OFICIALMENTE -->
+                <?php if (!empty($data['certificados_emitidos'])): ?>
                     <div class="row g-3 mb-4">
-                    <?php foreach ($data['meu_merito'] as $idx => $m): ?>
-                        <div class="col-md-12">
-                            <div style="
-                                background: <?= $m['tipo'] === 'Escola' ? 'linear-gradient(135deg, #F59E0B 0%, #EF4444 100%)' : 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)' ?>;
-                                border-radius: 16px; padding: 18px 24px;
-                                display: flex; align-items: center; gap: 20px;
-                                box-shadow: 0 10px 25px <?= $m['tipo'] === 'Escola' ? 'rgba(245,158,11,0.25)' : 'rgba(16,185,129,0.2)' ?>;
-                                position: relative; overflow: hidden;
-                            ">
-                                <!-- Background Decoration -->
-                                <div style="position: absolute; right: -20px; top: -20px; font-size: 8rem; opacity: 0.1; transform: rotate(15deg); color: white;">
-                                    <ion-icon name="<?= $m['tipo'] === 'Escola' ? 'trophy' : 'medal' ?>"></ion-icon>
+                    <?php foreach ($data['certificados_emitidos'] as $idx => $cert): ?>
+                        <?php
+                            $isFst    = $cert['posicao'] === '1';
+                            $semLabel = $cert['semestre'] === '1' ? '1º Semestre' : '2º Semestre';
+                            $anoLabel = $cert['ano_letivo'];
+                            $gradStart= $isFst ? '#F59E0B' : '#10B981';
+                            $gradEnd  = $isFst ? '#EF4444' : '#3B82F6';
+                            $shadowC  = $isFst ? 'rgba(245,158,11,0.3)' : 'rgba(16,185,129,0.25)';
+                            $emoji    = $isFst ? '🥇' : '🥈';
+                            $titulo   = $isFst ? 'MELHOR ALUNO — 1º LUGAR' : 'SEGUNDO MELHOR ALUNO — 2º LUGAR';
+                        ?>
+                        <div class="col-12">
+                            <div style="background: linear-gradient(135deg, <?= $gradStart ?> 0%, <?= $gradEnd ?> 100%); border-radius: 20px; padding: 20px 28px; display: flex; align-items: center; gap: 20px; box-shadow: 0 12px 30px <?= $shadowC ?>; position: relative; overflow: hidden;">
+                                <div style="position:absolute; right:-20px; top:-20px; font-size:8rem; opacity:0.1; transform:rotate(15deg); color:white;">
+                                    <ion-icon name="trophy"></ion-icon>
                                 </div>
-
-                                <span style="font-size: 2.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));"><?= $m['tipo'] === 'Escola' ? '🏆' : '🥇' ?></span>
-                                <div style="flex-grow: 1; position: relative; z-index: 1;">
-                                    <h5 style="color:white; margin:0; font-weight:800; font-size:1.05rem; letter-spacing: -0.5px;">
-                                        <?= $m['tipo'] === 'Escola' ? "TOP {$m['posicao']} DA INSTITUIÇÃO" : "MELHOR ALUNO DO " . ($m['nivel_nome'] ?? 'NÍVEL') ?>
-                                    </h5>
+                                <span style="font-size:2.8rem; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.2));"><?= $emoji ?></span>
+                                <div style="flex-grow:1; position:relative; z-index:1;">
+                                    <h5 style="color:white; margin:0; font-weight:800; font-size:1rem; letter-spacing:-0.5px;"><?= $titulo ?></h5>
                                     <p style="color:rgba(255,255,255,0.9); margin:0; font-size:0.85rem;">
-                                        Período: <strong><?= $m['periodo'] ?></strong> | Média: <strong><?= number_format((float)$m['media'], 1) ?></strong> valores
+                                        <?= $semLabel ?> &bull; <?= $anoLabel ?> &bull; Média: <strong><?= number_format((float)$cert['media'], 1) ?> valores</strong>
                                     </p>
                                 </div>
-                                <a href="<?= URL_ROOT ?>/estudante/certificado?id=<?= $idx ?>" target="_blank" class="btn btn-sm btn-light fw-bold px-4 rounded-pill shadow-sm" style="color: <?= $m['tipo'] === 'Escola' ? '#EF4444' : '#10b981' ?>; white-space: nowrap;">
-                                    <ion-icon name="print-outline" class="me-1"></ion-icon> Certificado
+                                <a href="<?= URL_ROOT ?>/estudante/certificado?id=<?= $idx ?>" target="_blank"
+                                   class="btn btn-light fw-bold rounded-pill px-4 shadow-sm flex-shrink-0"
+                                   style="color: <?= $gradEnd ?>; white-space: nowrap;">
+                                    <ion-icon name="document-text-outline" class="me-1"></ion-icon> Ver &amp; Imprimir
                                 </a>
                             </div>
                         </div>
@@ -981,18 +1002,6 @@
 
 <script>
 $(document).ready(function() {
-    // Sidebar Toggle
-    $('#sidebarToggle').on('click', function() {
-        $('.sidebar').toggleClass('active');
-    });
-
-    // Close sidebar on link click (mobile)
-    $('.sidebar .nav-link').on('click', function() {
-        if (window.innerWidth < 992) {
-            $('.sidebar').removeClass('active');
-        }
-    });
-
     // DataTables: initialize individually to prevent column-count mismatch errors
     $.fn.dataTable.ext.errMode = 'none';
     $('.datatable-simple').each(function() {
@@ -1124,6 +1133,36 @@ $(document).ready(function() {
     forceModal.show();
 });
 <?php endif; ?>
+
+$(document).ready(function() {
+    // Sidebar Mobile Toggle
+    var sidebar = $('.sidebar');
+    var toggleBtn = $('#sidebarToggle');
+    
+    if (toggleBtn.length) {
+        toggleBtn.on('click', function(e) {
+            e.stopPropagation();
+            sidebar.toggleClass('active');
+        });
+    }
+
+    // Close sidebar on click outside
+    $(document).on('click', function(e) {
+        if (window.innerWidth <= 991 && sidebar.hasClass('active')) {
+            if (!sidebar.is(e.target) && sidebar.has(e.target).length === 0 && !toggleBtn.is(e.target) && toggleBtn.has(e.target).length === 0) {
+                sidebar.removeClass('active');
+            }
+        }
+    });
+
+    // Close when clicking a nav-link on mobile
+    $('.sidebar .nav-link').on('click', function() {
+        if (window.innerWidth <= 991) {
+            sidebar.removeClass('active');
+        }
+    });
+});
+
 </script>
 </body>
 </html>

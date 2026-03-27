@@ -77,3 +77,9 @@
 [2026-03-27 12:08:47] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
 [2026-03-27 12:12:52] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
 [2026-03-27 12:13:00] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 21:27:30] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 21:50:24] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 21:50:34] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 21:53:25] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 22:38:40] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 22:38:52] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465

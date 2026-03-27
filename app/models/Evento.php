@@ -22,9 +22,9 @@ class Evento {
     }
 
     public function getAll() {
-        $stmt = $this->db->prepare("SELECT e.*, u.nome_completo as autor_nome 
+        $stmt = $this->db->prepare("SELECT e.*, COALESCE(u.nome_completo, 'Sistema') as autor_nome 
                                      FROM eventos e 
-                                     JOIN utilizadores u ON e.criado_por = u.id 
+                                     LEFT JOIN utilizadores u ON e.criado_por = u.id 
                                      ORDER BY e.data_evento ASC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -56,9 +56,12 @@ class Evento {
         }
         
         $query .= " OR (destinatario_tipo = 'Individual' AND destinatario_id = :user_id) ";
-        $params[':user_id'] = $_SESSION['user_id'];
+        $params[':user_id'] = $_SESSION['user_id'] ?? 0;
 
-        $query .= " ORDER BY data_evento ASC";
+        $query = "SELECT e.*, COALESCE(u.nome_completo, 'Sistema') as autor_nome 
+                  FROM (" . $query . ") e 
+                  LEFT JOIN utilizadores u ON e.criado_por = u.id 
+                  ORDER BY e.data_evento ASC";
         
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);

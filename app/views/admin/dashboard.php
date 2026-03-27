@@ -195,6 +195,9 @@
                 <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro" href="javascript:void(0)" role="tab">
                     <ion-icon name="cash-outline"></ion-icon> Tesouraria
                 </a>
+                <a class="nav-link" id="tab-merito" data-bs-toggle="pill" data-bs-target="#pane-merito" href="javascript:void(0)" role="tab">
+                    <ion-icon name="trophy-outline"></ion-icon> Gestão de Mérito
+                </a>
 
                 <div class="sidebar-section-label mt-3">Ações Institucionais</div>
                 <a class="nav-link" id="tab-notificacoes" data-bs-toggle="pill" data-bs-target="#pane-notificacoes" href="javascript:void(0)" role="tab">
@@ -267,6 +270,111 @@
         
         <div class="tab-content" id="v-pills-tabContent">
             
+            <!-- Gestão de Mérito Escolar -->
+            <div class="tab-pane fade" id="pane-merito" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0 text-dark">Gestão de Mérito Semestral</h2>
+                        <p class="text-muted small">Atribuição oficial de certificados aos 2 melhores alunos por semestre.</p>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4 bg-light border border-success border-opacity-25 rounded-4">
+                        <h5 class="fw-bold text-success mb-3"><ion-icon name="ribbon-outline" class="me-2"></ion-icon> Emitir Certificados de Mérito</h5>
+                        <p class="small text-muted mb-4">Selecione o semestre e o ano letivo para listar os melhores alunos (Top 10). Escolha os premiados e defina o alcance do comunicado.</p>
+                        
+                        <form id="formMeritoPesquisa" onsubmit="event.preventDefault(); carregarTopAlunos();">
+                            <input type="hidden" id="csrf_token_merito" value="<?= $_SESSION['csrf_token'] ?>">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small">Semestre Concluído</label>
+                                    <select id="merito_semestre" class="form-select shadow-sm" required>
+                                        <option value="1">1º Semestre</option>
+                                        <option value="2">2º Semestre</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small">Ano Letivo Base</label>
+                                    <input type="text" id="merito_ano_letivo" class="form-control shadow-sm" value="<?= date('Y') . '/' . (date('Y') + 1) ?>" required>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-warning w-100 fw-bold shadow-sm" id="btnProcurarElegiveis">
+                                        <ion-icon name="search-outline"></ion-icon> Procurar Elegíveis
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Etapa 2: Resultados e Emissão -->
+                        <div id="resultado_merito_container" class="mt-4 pt-4 border-top" style="display:none;">
+                            <h6 class="fw-bold text-dark mb-3">Selecione os Alunos a Premiar</h6>
+                            <form action="<?= URL_ROOT ?>/admin/emitirCertificadosMerito" method="POST" id="formMeritoEmissao" onsubmit="return confirmarEmissaoMerito(this);">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <input type="hidden" name="semestre" id="hdn_semestre">
+                                <input type="hidden" name="ano_letivo" id="hdn_ano_letivo">
+                                
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-sm table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width:50px;" class="text-center">#</th>
+                                                <th>Nome do Aluno</th>
+                                                <th>Nível/Turma</th>
+                                                <th>Média (0-20)</th>
+                                                <th style="width:80px;">Posição</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody_alunos_merito">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-md-7">
+                                        <label class="form-label fw-bold small mt-2">Tipo de Comunicado Institucional</label>
+                                        <select name="tipo_comunicado" class="form-select shadow-sm border-0">
+                                            <option value="Global">Emitir para toda a comunidade (Notificar Todos)</option>
+                                            <option value="Privado">Emitir apenas para o aluno em questão (Discreto)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-5 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-success fw-bold w-100 mt-4 shadow-sm py-2">
+                                            <ion-icon name="flash" class="me-1"></ion-icon> Emitir Selecionados
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h6 class="fw-bold mb-0">Histórico de Certificados Emitidos</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle datatable-simple" id="tabelaCertificadosEmitidos">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Ano Letivo</th>
+                                        <th>Semestre</th>
+                                        <th>Aluno Premiado</th>
+                                        <th>Posição</th>
+                                        <th>Média Final</th>
+                                        <th>Data Emissão</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Carregado via AJAX -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Aprovação de Contas Pendentes -->
             <div class="tab-pane fade" id="pane-pendentes" role="tabpanel">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -329,9 +437,29 @@
                         <h2 class="fw-bold mb-0">Calendário Escolar</h2>
                         <p class="text-muted">Gerencie feriados, exames e eventos globais.</p>
                     </div>
-                    <button class="btn btn-primary shadow-sm fw-bold border-0" style="background: linear-gradient(135deg, #10B981, #059669);" data-bs-toggle="modal" onclick="clearEventoForm()" data-bs-target="#eventoModal">
-                        <ion-icon name="add-circle-outline"></ion-icon> Novo Evento
-                    </button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-dark shadow-sm fw-bold border-1" data-bs-toggle="modal" data-bs-target="#imgCalendarioModal">
+                            <ion-icon name="image-outline"></ion-icon> Ver Calendário Oficial (JPG)
+                        </button>
+                        <button class="btn btn-primary shadow-sm fw-bold border-0" style="background: linear-gradient(135deg, #10B981, #059669);" data-bs-toggle="modal" onclick="clearEventoForm()" data-bs-target="#eventoModal">
+                            <ion-icon name="add-circle-outline"></ion-icon> Novo Evento
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal para Visualizar Imagem do Calendário -->
+                <div class="modal fade" id="imgCalendarioModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg">
+                            <div class="modal-header bg-dark text-white">
+                                <h5 class="modal-title fw-bold">Calendário Académico Oficial GHS</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body p-0 text-center bg-light">
+                                <img src="<?= URL_ROOT ?>/img/calendario.jpg" class="img-fluid rounded" alt="Calendário Oficial">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row g-4">
@@ -3406,6 +3534,132 @@ $('[data-bs-target="#pane-calendario"]').on('shown.bs.tab', function() {
 function prepareAlocacao(estudanteId, nome) {
     document.getElementById('aloc_estudante_id').value = estudanteId;
     document.getElementById('aloc_estudante_nome').textContent = nome;
+}
+
+// Carregar Certificados Emitidos
+function loadCertificadosEmitidos() {
+    const tbody = $('#tabelaCertificadosEmitidos tbody');
+    tbody.html('<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-success"></div></td></tr>');
+    
+    fetch('<?= URL_ROOT ?>/admin/getCertificadosEmitidos')
+        .then(r => r.json())
+        .then(data => {
+            let html = '';
+            if (data.length === 0) {
+                html = '<tr><td colspan="6" class="text-center text-muted py-4">Nenhum certificado de mérito emitido até ao momento.</td></tr>';
+            } else {
+                data.forEach(c => {
+                    const isFst = c.posicao === '1';
+                    const badge = isFst ? '<span class="badge bg-warning text-dark"><ion-icon name="trophy"></ion-icon> 1º Lugar</span>' : '<span class="badge bg-secondary"><ion-icon name="medal"></ion-icon> 2º Lugar</span>';
+                    const dFormatada = new Date(c.data_emissao).toLocaleDateString('pt-PT');
+                    
+                    html += `
+                        <tr>
+                            <td class="fw-bold">${c.ano_letivo}</td>
+                            <td>${c.semestre}º Semestre</td>
+                            <td>
+                                <div class="fw-bold text-dark">${c.estudante_nome}</div>
+                                <div class="small text-muted">${c.nivel_nome || 'N/A'}</div>
+                            </td>
+                            <td>${badge}</td>
+                            <td class="fw-bold text-success">${parseFloat(c.media).toFixed(2)}</td>
+                            <td class="small text-muted">${dFormatada} <br><span style="font-size:10px">Por: ${c.emitido_por_nome || 'Admin'}</span></td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.html(html);
+        })
+        .catch(err => {
+            tbody.html('<tr><td colspan="6" class="text-center text-danger py-4">Erro ao carregar dados.</td></tr>');
+        });
+}
+
+// Disparar carga quando abrir o separador de mérito
+$('[data-bs-target="#pane-merito"]').on('shown.bs.tab', function() {
+    loadCertificadosEmitidos();
+});
+// Carregar Top 10 Alunos pentru Mérito
+function carregarTopAlunos() {
+    const sem = $('#merito_semestre').val();
+    const ano = $('#merito_ano_letivo').val();
+    const btn = $('#btnProcurarElegiveis');
+    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> A procurar...');
+
+    $.ajax({
+        url: '<?= URL_ROOT ?>/admin/getAlunosElegiveisMerito',
+        type: 'POST',
+        data: {
+            semestre: sem,
+            ano_letivo: ano,
+            csrf_token: $('#csrf_token_merito').val()
+        },
+        success: function(data) {
+            btn.prop('disabled', false).html('<ion-icon name="search-outline"></ion-icon> Procurar Elegíveis');
+            $('#tbody_alunos_merito').empty();
+
+            if (!data || data.length === 0) {
+                $('#tbody_alunos_merito').html('<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum aluno atingiu os critérios (exames validados) neste semestre.</td></tr>');
+            } else {
+                let html = '';
+                data.forEach((aluno, index) => {
+                    const mediaPositiva = parseFloat(aluno.media_calculada) >= 10;
+                    html += `
+                    <tr>
+                        <td class="text-center">
+                            <input class="form-check-input merit-check" type="checkbox" name="estudantes_selecionados[]" value="${aluno.estudante_id}" ${index < 2 && mediaPositiva ? 'checked' : ''}>
+                        </td>
+                        <td>
+                            <input type="hidden" name="nomes[]" value="${aluno.nome_completo}" disabled>
+                            ${aluno.nome_completo}
+                        </td>
+                        <td>
+                            <input type="hidden" name="niveis[]" value="${aluno.nivel_nome || 'N/A'}" disabled>
+                            ${aluno.nivel_nome || 'N/A'}
+                        </td>
+                        <td class="fw-bold text-${mediaPositiva ? 'success' : 'danger'}">
+                            <input type="hidden" name="medias[]" value="${aluno.media_calculada}" disabled>
+                            ${aluno.media_calculada}
+                        </td>
+                        <td>
+                            <input type="number" class="form-control form-control-sm text-center" name="posicoes[]" value="${index + 1}" min="1" disabled>
+                        </td>
+                    </tr>`;
+                });
+                $('#tbody_alunos_merito').html(html);
+                
+                // Ativar os inputs desativados apenas quando o checkbox for selecionado, para o POST
+                $('.merit-check').on('change', function() {
+                    const row = $(this).closest('tr');
+                    const inputs = row.find('input[type="hidden"], input[type="number"]');
+                    if (this.checked) {
+                        inputs.removeAttr('disabled');
+                    } else {
+                        inputs.attr('disabled', 'disabled');
+                    }
+                });
+                $('.merit-check').trigger('change');
+            }
+
+            $('#hdn_semestre').val(sem);
+            $('#hdn_ano_letivo').val(ano);
+            $('#resultado_merito_container').slideDown();
+        },
+        error: function(err) {
+            btn.prop('disabled', false).html('<ion-icon name="search-outline"></ion-icon> Procurar Elegíveis');
+            alert('Erro de servidor ao pesquisar os Top Alunos.');
+        }
+    });
+}
+
+function confirmarEmissaoMerito(form) {
+    const selecionados = $(form).find('.merit-check:checked').length;
+    if(selecionados === 0) {
+        alert("Por favor, selecione pelo menos um aluno na lista.");
+        return false;
+    }
+    const txt = selecionados > 2 ? 'Selecionaste mais do que 2 alunos. Tens a certeza que queres prosseguir?' : 'Confirmas a emissão dos certificados para o(s) ' + selecionados + ' aluno(s) com o envio para: ' + $('select[name="tipo_comunicado"]').val() + '?';
+    return confirm(txt);
 }
 </script>
 </body>

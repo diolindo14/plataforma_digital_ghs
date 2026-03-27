@@ -157,8 +157,8 @@ class EstudanteController extends Controller {
         $data['ranking_escola']  = $acadRank->getRankingEscola(3);
         $data['ranking_nivel']   = $acadRank->getRankingByNivel();
         
-        // Dados de mérito específicos (Se for #1)
-        $data['meu_merito']      = $acadRank->getStudentRankPosition($estudanteData['id']);
+        // Buscar apenas certificados oficiais emitidos para o estudante na DB
+        $data['certificados_emitidos'] = $acadRank->getCertificadoDoAluno($estudanteData['id']);
         
         // Posição exata universal (Para todos os alunos)
         $data['meu_ranking']     = $acadRank->getDetailedStudentRank($estudanteData['id']);
@@ -485,40 +485,50 @@ class EstudanteController extends Controller {
 
     public function certificado($index = null) {
         if (!isset($_SESSION['estudante_id'])) {
-            header('Location: ' . URL_ROOT . '/login');
+            header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
 
-        $estudanteModel = $this->model('Estudante');
         $academicoModel = $this->model('Academico');
-        
+        $estudanteModel = $this->model('Estudante');
+
         $estudanteData = $estudanteModel->getEstudanteById($_SESSION['estudante_id']);
-        $conquistas = $academicoModel->getStudentRankPosition($estudanteData['id']);
-        
-        if (!$conquistas || !is_array($conquistas) || count($conquistas) === 0) {
+        if (!$estudanteData) {
             header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
 
-        // Se houver múltiplas conquistas, seleciona pelo índice ou pela mais recente
-        $idx = (int)($index ?? $_GET['id'] ?? 0);
-        $merito = $conquistas[$idx] ?? $conquistas[0];
-        
-        if (!$merito || !is_array($merito)) {
+        // Buscar apenas certificados OFICIALMENTE EMITIDOS na tabela (view-only)
+        $certificados = $academicoModel->getCertificadoDoAluno($_SESSION['estudante_id']);
+
+        if (empty($certificados)) {
+            $_SESSION['flash_info'] = "Ainda não existe nenhum Certificado de Mérito emitido para a sua conta. Os certificados são atribuídos pela Direção no final de cada semestre.";
             header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
+
+        // Selecionar pelo índice se houver múltiplos certificados
+        $idx  = (int)($index ?? $_GET['id'] ?? 0);
+        $cert = $certificados[$idx] ?? $certificados[0];
+
+        $semestreLabel = $cert['semestre'] === '1' ? '1º Semestre' : '2º Semestre';
+        $posicaoLabel  = $cert['posicao'] === '1'
+            ? '🥇 1º Lugar — Melhor Aluno do ' . $semestreLabel
+            : '🥈 2º Lugar — Segundo Melhor Aluno do ' . $semestreLabel;
 
         $renderData = [
-            'nome'           => (string)($estudanteData['nome_completo'] ?? 'Estudante'),
-            'data_emissao'   => date('d/m/Y'),
-            'assinatura'     => 'Direção do GHS',
-            'winner_type'    => (string)(($merito['tipo'] ?? '') === 'Escola' ? "Melhor Aluno da Instituição (" . ($merito['posicao'] ?? '1') . "º Lugar)" : "Melhor Aluno do Nível"),
-            'media'          => (float)($merito['media'] ?? 0),
-            'nivel_nome'     => (string)($merito['nivel_nome'] ?? $estudanteData['nivel_nome'] ?? 'GHS'),
-            'periodo'        => (string)($merito['periodo'] ?? 'Anual')
+            'nome'        => (string)($estudanteData['nome_completo'] ?? 'Estudante'),
+            'data_emissao'=> date('d/m/Y', strtotime($cert['data_emissao'])),
+            'assinatura'  => (string)($cert['emitido_por_nome'] ?? 'Direção do GHS'),
+            'winner_type' => $posicaoLabel,
+            'media'       => (float)$cert['media'],
+            'nivel_nome'  => (string)($cert['nivel_nome'] ?? 'GHS Academy'),
+            'periodo'     => $semestreLabel . ' — ' . $cert['ano_letivo'],
+            'total_certs' => count($certificados),
+            'cert_id'     => (int)$cert['id'],
         ];
 
         $this->view('estudante/certificado', $renderData);
     }
 }
+
