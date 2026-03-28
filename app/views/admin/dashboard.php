@@ -2569,12 +2569,8 @@ function clearAnoForm() {
                 </div>
             </div>
             <div class="modal-footer bg-light border-top-0 controls">
-                <button type="button" class="btn-sig btn-sig-clear btn-clear" id="sig-limpar">
-                    <ion-icon name="trash-outline"></ion-icon> Limpar
-                </button>
-                <button type="button" id="sig-finalizar" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save btn-save">
-                    <ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Assinatura
-                </button>
+                <button type="button" class="btn-clear" id="sig-limpar">Limpar</button>
+                <button type="button" class="btn-save" id="sig-finalizar">Finalizar Assinatura</button>
             </div>
         </div>
     </div>
@@ -3640,7 +3636,7 @@ function loadCertificadosEmitidos() {
 
 let signaturePadCert;
 
-// Inicializar Pad apenas quando o modal for mostrado
+// Lógica de Assinatura do Diretor (Snippet do Utilizador)
 $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
     const canvas = document.getElementById('signature-pad-cert');
     if (canvas) {
@@ -3657,12 +3653,13 @@ $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
         function resizeCanvasCert() {
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = 200 * ratio;
+            canvas.height = canvas.offsetHeight * ratio; // Using offsetHeight as per snippet
             canvas.getContext("2d").scale(ratio, ratio);
             signaturePadCert.clear();
             $('#sig-placeholder-cert').show();
         }
 
+        window.addEventListener("resize", resizeCanvasCert);
         resizeCanvasCert();
         
         canvas.addEventListener('mousedown', () => $('#sig-placeholder-cert').hide());
@@ -3675,6 +3672,10 @@ $(document).on('click', '#sig-limpar', function() {
         signaturePadCert.clear();
         $('#sig-placeholder-cert').show();
     }
+});
+
+$(document).on('click', '#sig-finalizar', function() {
+    salvarAssinaturaCertificado();
 });
 
 function abrirModalAssinaturaCert(id, nome) {

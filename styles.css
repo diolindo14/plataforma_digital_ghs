@@ -205,47 +205,51 @@ select.input-field { appearance: none; }
     transition: opacity 0.2s;
 }
 
-.signature-actions {
+.signature-wrapper {
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+canvas.signature-pad {
+    width: 100%;
+    height: 300px;
+    touch-action: none;
+    border-radius: 8px;
+}
+
+.controls {
+    margin-top: 15px;
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
 }
 
-.btn-sig {
-    padding: 10px 24px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.9rem;
+button.btn-clear, .btn-sig-clear {
+    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
     border: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    border-radius: 5px;
+    color: #fff;
+    transition: opacity 0.2s;
+    background: #e74c3c;
 }
 
-.btn-sig-clear, .btn-clear {
-    background-color: #e74c3c;
-    color: white;
+button.btn-save, .btn-sig-save {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    transition: opacity 0.2s;
+    background: #2ecc71;
 }
 
-.btn-sig-clear:hover, .btn-clear:hover {
-    background-color: #c0392b;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
-}
-
-.btn-sig-save, .btn-save {
-    background-color: #2ecc71;
-    color: white;
-}
-
-.btn-sig-save:hover, .btn-save:hover {
-    background-color: #27ae60;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
-}
-
-.btn-sig:active {
-    transform: translateY(0);
+button.btn-clear:hover, button.btn-save:hover {
+    opacity: 0.8;
 }

@@ -434,12 +434,8 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-top-0 controls">
-                    <button type="button" class="btn-sig btn-sig-clear btn-clear" id="sig-sec-limpar">
-                        <ion-icon name="trash-outline"></ion-icon> Limpar
-                    </button>
-                    <button type="button" id="sig-sec-finalizar" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save btn-save">
-                        <ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Assinatura
-                    </button>
+                    <button type="button" class="btn-clear" id="sig-sec-limpar">Limpar</button>
+                    <button type="button" id="sig-sec-finalizar" class="btn-save">Finalizar Assinatura</button>
                 </div>
             </div>
         </div>
@@ -502,6 +498,7 @@
 
         let signaturePadCert;
 
+        // Lógica de Assinatura da Secretaria (Snippet do Utilizador)
         $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
             const canvas = document.getElementById('signature-pad-cert');
             if (canvas) {
@@ -518,12 +515,13 @@
                 function resizeCanvasSec() {
                     const ratio = Math.max(window.devicePixelRatio || 1, 1);
                     canvas.width = canvas.offsetWidth * ratio;
-                    canvas.height = 200 * ratio;
+                    canvas.height = canvas.offsetHeight * ratio; // Consistent with snippet
                     canvas.getContext("2d").scale(ratio, ratio);
                     signaturePadCert.clear();
                     $('#sig-placeholder-sec').show();
                 }
 
+                window.addEventListener("resize", resizeCanvasSec);
                 resizeCanvasSec();
                 
                 canvas.addEventListener('mousedown', () => $('#sig-placeholder-sec').hide());
@@ -536,6 +534,10 @@
                 signaturePadCert.clear();
                 $('#sig-placeholder-sec').show();
             }
+        });
+
+        $(document).on('click', '#sig-sec-finalizar', function() {
+            salvarAssinaturaCertificado();
         });
 
         function abrirModalAssinaturaCert(id, nome) {

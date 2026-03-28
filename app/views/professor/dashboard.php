@@ -486,30 +486,22 @@
                                 <ion-icon name="pencil-outline"></ion-icon> Assinatura Digital do Docente
                             </label>
                             
-                            <!-- Novo Componente de Assinatura Profissional -->
-                            <div class="signature-component">
-                                <div class="signature-wrapper">
-                                    <div class="signature-placeholder" id="sig-placeholder">
-                                        <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon><br>
-                                        Assine no campo abaixo
-                                    </div>
-                                    <canvas id="signature-pad"></canvas>
+                            <!-- Assinatura Digital do Professor (Snippet Estrito) -->
+                            <div class="signature-wrapper">
+                                <div class="signature-placeholder" id="sig-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #cbd5e1; pointer-events: none; text-align: center;">
+                                    <ion-icon name="create-outline" style="font-size:2rem;"></ion-icon><br>Assine aqui
                                 </div>
-                                <div class="signature-actions controls">
-                                    <button type="button" class="btn-sig btn-sig-clear btn-clear" id="clear">
-                                        <ion-icon name="trash-outline"></ion-icon> Limpar
-                                    </button>
-                                </div>
+                                <canvas id="signature-pad" class="signature-pad"></canvas>
+                            </div>
+                            <div class="controls">
+                                <button type="button" class="btn-clear" id="clear">Limpar</button>
+                                <button type="button" class="btn-save" id="save-signature-btn">Finalizar Assinatura e Submeter</button>
                             </div>
                             
                             <p class="extra-small text-muted mt-2 italic text-center">Ao assinar, você confirma que as informações de frequência e o conteúdo do sumário são verídicos.</p>
                         </div>
 
-                        <div class="mt-4 text-end">
-                            <button onclick="submeterSumario(this)" id="save" class="btn btn-primary px-5 fw-bold py-2 shadow-sm btn-save">
-                                <ion-icon name="checkmark-done-outline"></ion-icon> Finalizar Assinatura e Submeter
-                            </button>
-                        </div>
+
 
                         <hr class="my-5">
 
@@ -1004,10 +996,10 @@
 let signaturePad;
 
 $(document).ready(function() {
-    // --- Implementação Assinatura Profissional (Snippet User) ---
+    // --- Lógica de Assinatura Digital Estrita (Snippet do Utilizador) ---
     const canvas = document.getElementById('signature-pad');
     if (canvas) {
-        signaturePad = new SignaturePad(canvas, {
+        const signaturePad = new SignaturePad(canvas, {
             backgroundColor: 'rgba(255, 255, 255, 0)',
             penColor: 'rgb(0, 0, 0)',
             minWidth: 0.5,
@@ -1030,11 +1022,25 @@ $(document).ready(function() {
         canvas.addEventListener('mousedown', () => $('#sig-placeholder').hide());
         canvas.addEventListener('touchstart', () => $('#sig-placeholder').hide(), {passive: true});
 
-        $('#clear').on('click', function() {
+        document.getElementById('clear').addEventListener('click', () => {
             signaturePad.clear();
             $('#sig-placeholder').show();
         });
+
+        document.getElementById('save-signature-btn').addEventListener('click', function() {
+            if (signaturePad.isEmpty()) {
+                alert("Por favor, forneça uma assinatura primeiro.");
+            } else {
+                const dataURL = signaturePad.toDataURL('image/svg+xml');
+                window.lastSignatureSVG = dataURL;
+                submeterSumario(this);
+            }
+        });
+
+        window.getCurrentSignature = () => signaturePad.toDataURL('image/svg+xml');
+        window.isSignatureEmpty = () => signaturePad.isEmpty();
     }
+});
 
     // Atualizar disciplina_id ao mudar a turma no upload
     $('#formUploadMaterial select[name="turma_id"]').on('change', function() {
@@ -1167,13 +1173,12 @@ function submeterSumario(btn) {
         return;
     }
 
-    if (typeof signaturePad === 'undefined' || !signaturePad || signaturePad.isEmpty()) {
-        alert('Por favor, aplique a sua assinatura digital antes de finalizar.');
+    if (window.isSignatureEmpty()) {
+        alert('Por favor, forneça uma assinatura primeiro.');
         return;
     }
 
-    // Exportar como SVG (Data URL) conforme diretriz
-    const signatureData = signaturePad.toDataURL('image/svg+xml');
+    const signatureData = window.getCurrentSignature();
     console.log("Assinatura Exportada (SVG):", signatureData);
 
     const presencas = {};
