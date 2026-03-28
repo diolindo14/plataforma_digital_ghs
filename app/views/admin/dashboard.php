@@ -2551,20 +2551,30 @@ function clearAnoForm() {
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <p>Assinando certificado de Mérito para: <strong id="cert_sign_nome"></strong></p>
+                <p class="text-muted small mb-4 text-center">Assinando certificado de Mérito para:<br><strong id="cert_sign_nome" class="text-dark fs-5"></strong></p>
                 <input type="hidden" id="cert_sign_id">
                 
-                <div class="signature-wrapper shadow-sm mb-3">
-                    <canvas id="signature-pad-cert" width="450" height="200" style="background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; cursor: crosshair;"></canvas>
+                <div class="signature-component shadow-none border-0 m-0 p-0">
+                    <div class="signature-wrapper border shadow-sm">
+                        <div class="signature-placeholder" id="sig-placeholder-cert">
+                            <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon><br>
+                            Assinatura do Diretor
+                        </div>
+                        <canvas id="signature-pad-cert"></canvas>
+                    </div>
                 </div>
                 
-                <div class="alert alert-info small">
-                    <ion-icon name="information-circle"></ion-icon> Diretor: <strong>Samba Djob</strong>. Use o rato ou ecrã táctil para assinar.
+                <div class="alert alert-info bg-opacity-10 border-info small mt-3">
+                    <ion-icon name="information-circle"></ion-icon> Diretor: <strong>Samba Djob</strong>. Use o rato ou toque para assinar.
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" onclick="signaturePadCert.clear()">Limpar</button>
-                <button type="button" id="btnSalvarAssinaturaCert" onclick="salvarAssinaturaCertificado()" class="btn btn-dark">Confirmar Assinatura</button>
+            <div class="modal-footer bg-light border-top-0">
+                <button type="button" class="btn-sig btn-sig-clear" onclick="signaturePadCert.clear(); $('#sig-placeholder-cert').show();">
+                    <ion-icon name="trash-outline"></ion-icon> Limpar
+                </button>
+                <button type="button" id="btnSalvarAssinaturaCert" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon> Confirmar Assinatura
+                </button>
             </div>
         </div>
     </div>
@@ -3642,22 +3652,37 @@ function abrirModalAssinaturaCert(id, nome) {
             signaturePadCert = new SignaturePad(canvas, {
                 backgroundColor: 'rgba(255, 255, 255, 0)',
                 penColor: 'rgb(0, 0, 0)',
-                minWidth: 1.5,
-                maxWidth: 4.5
+                minWidth: 0.5,
+                maxWidth: 2.5,
+                velocityFilterWeight: 0.7
             });
-            signaturePadCert.clear();
+
+            function resizeCanvasCert() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = 200 * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+                signaturePadCert.clear();
+                $('#sig-placeholder-cert').show();
+            }
+
+            window.addEventListener("resize", resizeCanvasCert);
+            resizeCanvasCert();
+            
+            canvas.addEventListener('mousedown', () => $('#sig-placeholder-cert').hide());
+            canvas.addEventListener('touchstart', () => $('#sig-placeholder-cert').hide(), {passive: true});
         }
     }, 500);
 }
 
 function salvarAssinaturaCertificado() {
     if (!signaturePadCert || signaturePadCert.isEmpty()) {
-        alert('Por favor, aplique a assinatura no painel.');
+        alert('Por favor, aplique a sua assinatura antes de confirmar.');
         return;
     }
     
     const id = $('#cert_sign_id').val();
-    const signatureData = signaturePadCert.toDataURL();
+    const signatureData = signaturePadCert.toDataURL('image/svg+xml');
     const btn = $('#btnSalvarAssinaturaCert');
     
     btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);

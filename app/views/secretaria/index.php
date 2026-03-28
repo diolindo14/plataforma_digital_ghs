@@ -416,20 +416,30 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p>Validando e assinando mérito para: <strong id="cert_sign_nome"></strong></p>
+                    <p class="text-muted small mb-4 text-center">Validando e assinando mérito para:<br><strong id="cert_sign_nome" class="text-dark fs-5"></strong></p>
                     <input type="hidden" id="cert_sign_id">
                     
-                    <div class="signature-wrapper shadow-sm mb-3">
-                        <canvas id="signature-pad-cert" width="450" height="200" style="background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; cursor: crosshair; width: 100%;"></canvas>
+                    <div class="signature-component shadow-none border-0 m-0 p-0">
+                        <div class="signature-wrapper border shadow-sm">
+                            <div class="signature-placeholder" id="sig-placeholder-sec">
+                                <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon><br>
+                                Assinatura da Secretaria
+                            </div>
+                            <canvas id="signature-pad-cert"></canvas>
+                        </div>
                     </div>
                     
-                    <div class="alert alert-success bg-opacity-10 border-success small text-success">
+                    <div class="alert alert-success bg-opacity-10 border-success small text-success mt-3">
                         <ion-icon name="shield-checkmark-outline"></ion-icon> Sua assinatura será vinculada permanentemente a este documento digital.
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" onclick="signaturePadCert.clear()">Limpar</button>
-                    <button type="button" id="btnSalvarAssinaturaCert" onclick="salvarAssinaturaCertificado()" class="btn btn-success fw-bold">Confirmar e Assinar</button>
+                <div class="modal-footer bg-light border-top-0">
+                    <button type="button" class="btn-sig btn-sig-clear" onclick="signaturePadCert.clear(); $('#sig-placeholder-sec').show();">
+                        <ion-icon name="trash-outline"></ion-icon> Limpar
+                    </button>
+                    <button type="button" id="btnSalvarAssinaturaCert" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save">
+                        <ion-icon name="checkmark-circle-outline"></ion-icon> Confirmar e Assinar
+                    </button>
                 </div>
             </div>
         </div>
@@ -499,26 +509,54 @@
             
             setTimeout(() => {
                 const canvas = document.getElementById('signature-pad-cert');
-                signaturePadCert = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)', penColor: 'rgb(0, 0, 0)' });
-                signaturePadCert.clear();
+                if (canvas) {
+                    signaturePadCert = new SignaturePad(canvas, {
+                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                        penColor: 'rgb(0, 0, 0)',
+                        minWidth: 0.5,
+                        maxWidth: 2.5,
+                        velocityFilterWeight: 0.7
+                    });
+
+                    function resizeCanvasSec() {
+                        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        canvas.width = canvas.offsetWidth * ratio;
+                        canvas.height = 200 * ratio;
+                        canvas.getContext("2d").scale(ratio, ratio);
+                        signaturePadCert.clear();
+                        $('#sig-placeholder-sec').show();
+                    }
+
+                    window.addEventListener("resize", resizeCanvasSec);
+                    resizeCanvasSec();
+                    
+                    canvas.addEventListener('mousedown', () => $('#sig-placeholder-sec').hide());
+                    canvas.addEventListener('touchstart', () => $('#sig-placeholder-sec').hide(), {passive: true});
+                }
             }, 500);
         }
 
         function salvarAssinaturaCertificado() {
-            if (signaturePadCert.isEmpty()) return alert('Assine no painel.');
+            if (!signaturePadCert || signaturePadCert.isEmpty()) {
+                alert('Por favor, aplique a sua assinatura antes de confirmar.');
+                return;
+            }
             const btn = $('#btnSalvarAssinaturaCert');
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
             
+            const signatureData = signaturePadCert.toDataURL('image/svg+xml');
+            console.log("Assinatura Secretaria (SVG):", signatureData);
+
             $.post('<?= URL_ROOT ?>/secretaria/assinarCertificado', {
                 id: $('#cert_sign_id').val(),
-                assinatura: signaturePadCert.toDataURL(),
+                assinatura: signatureData,
                 csrf_token: '<?= $_SESSION['csrf_token'] ?>'
             }, function(res) {
                 if(res.success) {
                     bootstrap.Modal.getInstance(document.getElementById('modalAssinaturaCertificado')).hide();
                     loadCertificadosEmitidos();
                 } else alert('Erro ao assinar.');
-            }, 'json').always(() => btn.prop('disabled', false).text('Confirmar e Assinar'));
+            }, 'json').always(() => btn.prop('disabled', false).html('<ion-icon name="checkmark-circle-outline"></ion-icon> Confirmar e Assinar'));
         }
 
         $('[data-bs-target="#pane-merito"]').on('shown.bs.tab', loadCertificadosEmitidos);

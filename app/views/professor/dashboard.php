@@ -485,19 +485,24 @@
                             <label class="form-label fw-bold small text-primary d-flex align-items-center gap-2">
                                 <ion-icon name="pencil-outline"></ion-icon> Assinatura Digital do Docente
                             </label>
-                            <div class="signature-wrapper shadow-sm">
-                                <div class="signature-placeholder" id="sig-placeholder">
-                                    <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon>
-                                    Assine Aqui com Tinta Preta
+                            
+                            <!-- Novo Componente de Assinatura Premium -->
+                            <div class="signature-component">
+                                <div class="signature-wrapper">
+                                    <div class="signature-placeholder" id="sig-placeholder">
+                                        <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon><br>
+                                        Assine aqui
+                                    </div>
+                                    <canvas id="signature-pad"></canvas>
                                 </div>
-                                <canvas id="signature-pad" class="signature-pad"></canvas>
                                 <div class="signature-actions">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" id="clear-signature">
+                                    <button type="button" class="btn-sig btn-sig-clear" id="clear-signature">
                                         <ion-icon name="trash-outline"></ion-icon> Limpar
                                     </button>
                                 </div>
                             </div>
-                            <p class="extra-small text-muted mt-n2 italic">Ao assinar, você confirma que as informações de frequência e o conteúdo do sumário são verídicos.</p>
+                            
+                            <p class="extra-small text-muted mt-2 italic text-center">Ao assinar, você confirma que as informações de frequência e o conteúdo do sumário são verídicos.</p>
                         </div>
 
                         <div class="mt-4 text-end">
@@ -998,48 +1003,38 @@
 <script>
 let signaturePad;
 $(document).ready(function() {
-    // --- Melhoria Signature Pad (Compatibilidade Total e Responsividade) ---
+    // --- Implementação Premium Signature Pad (v4.1.7) ---
     const canvas = document.getElementById('signature-pad');
     if (canvas) {
-        // Inicialização robusta
         signaturePad = new SignaturePad(canvas, {
             backgroundColor: 'rgba(255, 255, 255, 0)',
             penColor: 'rgb(0, 0, 0)',
-            minWidth: 1.5,
-            maxWidth: 4.5,
+            minWidth: 0.5,
+            maxWidth: 2.5,
             velocityFilterWeight: 0.7
         });
 
         function resizeCanvas() {
-            const ratio =  Math.max(window.devicePixelRatio || 1, 1);
-            const container = canvas.closest('.signature-wrapper');
-            if (!container) return;
-            
-            // Definir largura baseada no container real
-            canvas.width = container.offsetWidth * ratio;
-            canvas.height = 200 * ratio; // Altura fixa para consistência
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
-            
-            signaturePad.clear(); // Limpar após redimensionar para evitar glitches
+            signaturePad.clear();
             $('#sig-placeholder').show();
         }
 
-        // Redimensionar em eventos chave
         window.addEventListener("resize", resizeCanvas);
         
-        // Redimensionar quando a tab for mostrada (crucial para Bootstrap)
+        // Ajustar ao carregar e ao mudar de aba
+        setTimeout(resizeCanvas, 500);
         $('button[data-bs-target="#pane-chamada"], a[href="#pane-chamada"]').on('shown.bs.tab', function() {
             setTimeout(resizeCanvas, 350);
         });
 
-        // Primeiro toque força redimensionamento se estiver vazio
-        canvas.addEventListener('mousedown', () => { if(signaturePad.isEmpty()) $('#sig-placeholder').hide(); });
-        canvas.addEventListener('touchstart', () => { if(signaturePad.isEmpty()) $('#sig-placeholder').hide(); });
+        // Eventos para ocultar placeholder
+        canvas.addEventListener('mousedown', () => $('#sig-placeholder').hide());
+        canvas.addEventListener('touchstart', () => $('#sig-placeholder').hide(), {passive: true});
 
-        // Inicializar
-        setTimeout(resizeCanvas, 500);
-
-        // Limpar Assinatura
         $('#clear-signature').on('click', function() {
             signaturePad.clear();
             $('#sig-placeholder').show();
@@ -1167,11 +1162,13 @@ function submeterSumario(btn) {
     }
 
     if (typeof signaturePad === 'undefined' || !signaturePad || signaturePad.isEmpty()) {
-        alert('Por favor, assine digitalmente para validar o sumário. (Se não conseguir ver a área de escrita, tente clicar na zona de assinatura)');
+        alert('Por favor, aplique a sua assinatura digital antes de finalizar.');
         return;
     }
 
-    const signatureData = signaturePad.toDataURL();
+    // Exportar como SVG (Data URL) conforme diretriz
+    const signatureData = signaturePad.toDataURL('image/svg+xml');
+    console.log("Assinatura Exportada (SVG):", signatureData);
 
     const presencas = {};
     $('#tabelaChamada tbody tr').each(function() {
