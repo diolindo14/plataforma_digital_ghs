@@ -3774,5 +3774,9 @@ function confirmarEmissaoMerito(form) {
     return confirm(txt);
 }
 </script>
+<!-- Core Assinaturas GHS -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+<script src="<?= URL_ROOT ?>/public/js/signatures_core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
