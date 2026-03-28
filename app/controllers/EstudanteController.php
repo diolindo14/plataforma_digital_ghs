@@ -521,7 +521,9 @@ class EstudanteController extends Controller {
         $renderData = [
             'nome'        => (string)($estudanteData['nome_completo'] ?? 'Estudante'),
             'data_emissao'=> date('d/m/Y', strtotime($cert['data_emissao'])),
-            'assinatura'  => (string)($cert['emitido_por_nome'] ?? 'Direção do GHS'),
+            'assinatura'  => 'Samba Djob',
+            'assinatura_diretor' => $cert['assinatura_diretor'] ?? null,
+            'assinatura_secretaria' => $cert['assinatura_secretaria'] ?? null,
             'winner_type' => $posicaoLabel,
             'media'       => (float)$cert['media'],
             'nivel_nome'  => (string)($cert['nivel_nome'] ?? 'GHS CAMPUS'),
