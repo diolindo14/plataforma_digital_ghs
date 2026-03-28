@@ -23,46 +23,7 @@
         .tab-pane { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Signature Pad Styles */
-        .signature-wrapper {
-            border: 2px solid #10B981;
-            border-radius: 12px;
-            background: #fff;
-            position: relative;
-            margin-bottom: 20px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(16,185,129,0.1);
-        }
-        .signature-wrapper:hover, .signature-wrapper:focus-within {
-            border-color: #059669;
-            box-shadow: 0 4px 20px rgba(16,185,129,0.25);
-        }
-        .signature-pad { 
-            width: 100%; 
-            height: 220px; 
-            cursor: crosshair; 
-            background-color: #FDFDFD; 
-            touch-action: none;
-            display: block;
-        }
-        .signature-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #CBD5E1;
-            pointer-events: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-        .signature-actions { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 5px; }
+
     </style>
 </head>
 <body>
@@ -486,14 +447,24 @@
                                 <ion-icon name="pencil-outline"></ion-icon> Assinatura Digital do Docente
                             </label>
                             
-                            <!-- Assinatura Digital do Professor (Snippet Estrito) -->
-                            <h2 class="text-center fw-bold mb-4" style="font-size: 1.25rem;">Assine no campo abaixo</h2>
+                            <!-- Snippet Original do Utilizador (Fidelidade Total) -->
+                            <style>
+                                .signature-wrapper { background: #fff; border: 2px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                                canvas#signature-pad { width: 100%; height: 300px; touch-action: none; border-radius: 8px; }
+                                .controls { margin-top: 15px; display: flex; gap: 10px; }
+                                button.btn-clear { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #e74c3c; color: white; }
+                                button.btn-save { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #2ecc71; color: white; }
+                            </style>
+
+                            <h2 class="text-center fw-bold mb-3">Assine no campo abaixo</h2>
+                            
                             <div class="signature-wrapper">
                                 <canvas id="signature-pad"></canvas>
                             </div>
-                            <div class="controls">
+
+                            <div class="controls justify-content-center">
                                 <button type="button" class="btn-clear" id="clear">Limpar</button>
-                                <button type="button" class="btn-save" id="save-attendance">Finalizar Assinatura</button>
+                                <button type="button" class="btn-save" id="save">Finalizar Assinatura</button>
                             </div>
                             
                             <p class="extra-small text-muted mt-2 italic text-center">Ao assinar, você confirma que as informações de frequência e o conteúdo do sumário são verídicos.</p>
@@ -994,51 +965,57 @@
 let signaturePad;
 
 $(document).ready(function() {
+    // Lógica de Assinatura (User Snippet com Proteção)
     const canvas = document.getElementById("signature-pad");
     const clearButton = document.getElementById("clear");
-    const saveButton = document.getElementById("save-attendance");
+    const saveButton = document.getElementById("save");
 
-    // 1. Ajuste de Resolução (User Snippet)
-    function resizeCanvas() {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-        signaturePad.clear();
+    if (canvas && clearButton && saveButton) {
+        // 1. Ajuste de Resolução
+        const resizeCanvas = () => {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+            if (signaturePad) signaturePad.clear();
+        }
+
+        // 2. Inicialização (Usando a variável de escopo superior)
+        signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            penColor: 'rgb(0, 0, 0)',
+            minWidth: 0.5,
+            maxWidth: 2.5,
+            velocityFilterWeight: 0.7
+        });
+
+        window.addEventListener("resize", resizeCanvas);
+        
+        // Sincronizar com Tabs e Modais
+        $('button[data-bs-target="#pane-chamada"], a.nav-link[data-bs-target="#pane-chamada"]').on('shown.bs.tab', function() {
+            setTimeout(resizeCanvas, 200);
+        });
+        
+        if ($('#pane-chamada').hasClass('active')) {
+            setTimeout(resizeCanvas, 500);
+        }
+
+        // 3. Botões
+        clearButton.addEventListener("click", () => signaturePad.clear());
+        saveButton.addEventListener("click", () => {
+            if (signaturePad.isEmpty()) {
+                alert("Por favor, forneça uma assinatura primeiro.");
+            } else {
+                const dataDataUrl = signaturePad.toDataURL('image/svg+xml');
+                console.log("Assinatura Capturada:", dataDataUrl);
+                window.lastSignatureSVG = dataDataUrl;
+                submeterSumario(saveButton);
+            }
+        });
     }
 
-    // 2. Inicialização (User Snippet)
-    const signaturePad = new SignaturePad(canvas, {
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        penColor: 'rgb(0, 0, 0)',
-        minWidth: 0.5,
-        maxWidth: 2.5,
-        velocityFilterWeight: 0.7
-    });
-
-    window.addEventListener("resize", resizeCanvas);
-    setTimeout(resizeCanvas, 500); // Aguardar renderização do tab
-
-    // 3. Lógica dos Botões (User Snippet)
-    clearButton.addEventListener("click", () => {
-        signaturePad.clear();
-    });
-
-    saveButton.addEventListener("click", () => {
-        if (signaturePad.isEmpty()) {
-            alert("Por favor, forneça uma assinatura primeiro.");
-        } else {
-            const dataDataUrl = signaturePad.toDataURL('image/svg+xml');
-            console.log("Assinatura Capturada (SVG Base64):", dataDataUrl);
-            window.lastSignatureSVG = dataDataUrl;
-            submeterSumario(saveButton);
-        }
-    });
-
-    // Helper para validação externa
-    window.isSignatureEmpty = () => signaturePad.isEmpty();
-    window.getCurrentSignature = () => signaturePad.toDataURL('image/svg+xml');
-});
+    window.getCurrentSignature = () => (signaturePad && !signaturePad.isEmpty()) ? signaturePad.toDataURL('image/svg+xml') : '';
+    window.isSignatureEmpty = () => !signaturePad || signaturePad.isEmpty();
 
     // Atualizar disciplina_id ao mudar a turma no upload
     $('#formUploadMaterial select[name="turma_id"]').on('change', function() {
@@ -1132,36 +1109,34 @@ function excluirComunicado(id) {
 }
 
 function setPresenca(btn, status) {
-    const row = $(btn).closest('tr');
+    const el = $(btn);
+    const row = el.closest('tr');
     const badge = row.find('.status-badge');
     const group = row.find('.btn-group-presenca');
     
-    // Atualizar estado visual e textos expandidos conforme pedido
-    const siblings = $(btn).siblings();
-    $(btn).addClass('active');
-    siblings.removeClass('active');
-    
-    // Resetar textos originais CURTOS nos irmãos de forma mais robusta usando dataset
-    siblings.each(function() {
-        if ($(this).hasClass('btn-outline-success')) $(this).text('P');
-        if ($(this).hasClass('btn-outline-danger')) $(this).text('F');
-        if ($(this).hasClass('btn-outline-warning')) $(this).text('J');
+    // 1. Resetar irmãos
+    el.siblings('button').removeClass('active btn-success btn-danger btn-warning').addClass('btn-outline-secondary');
+    el.siblings('button').each(function() {
+        const s = $(this).attr('onclick');
+        if (s.includes("'P'")) $(this).text('P').addClass('btn-outline-success').removeClass('btn-outline-secondary');
+        if (s.includes("'F'")) $(this).text('F').addClass('btn-outline-danger').removeClass('btn-outline-secondary');
+        if (s.includes("'J'")) $(this).text('J').addClass('btn-outline-warning').removeClass('btn-outline-secondary');
     });
 
-    // Expandir texto do botão selecionado
+    // 2. Ativar este botão
+    el.addClass('active').removeClass('btn-outline-success btn-outline-danger btn-outline-warning btn-outline-secondary');
     if (status === 'P') {
-        $(btn).text('PRESENTE');
+        el.text('PRESENTE').addClass('btn-success');
         badge.text('Presente').removeClass('bg-danger bg-warning text-danger text-warning').addClass('bg-success text-success');
     } else if (status === 'F') {
-        $(btn).text('FALTA');
+        el.text('FALTA').addClass('btn-danger');
         badge.text('Falta').removeClass('bg-success bg-warning text-success text-warning').addClass('bg-danger text-danger');
     } else if (status === 'J') {
-        $(btn).text('JUSTIFICADA');
+        el.text('JUSTIFICADA').addClass('btn-warning');
         badge.text('Justificada').removeClass('bg-success bg-danger text-success text-danger').addClass('bg-warning text-warning');
     }
     
     group.attr('data-status', status);
-    group.data('status', status);
 }
 
 function submeterSumario(btn) {

@@ -57,7 +57,6 @@
         .content { margin-left: 270px; padding: 36px 40px; }
         .tab-pane { animation: fadeIn 0.35s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        canvas { max-height: 300px; }
         .hover-scale { transition: transform .2s; }
         .hover-scale:hover { transform: scale(1.05); }
     </style>
@@ -2551,7 +2550,15 @@ function clearAnoForm() {
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4 text-center">
-                <h2 class="fw-bold mb-4" style="font-size: 1.25rem;">Assine no campo abaixo</h2>
+                <style>
+                    .signature-wrapper { background: #fff; border: 2px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                    canvas#signature-pad-cert { width: 100%; height: 300px; touch-action: none; border-radius: 8px; }
+                    .controls { margin-top: 15px; display: flex; gap: 10px; }
+                    button.btn-clear { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #e74c3c; color: white; }
+                    button.btn-save { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #2ecc71; color: white; }
+                </style>
+
+                <h2 class="fw-bold mb-4">Assine no campo abaixo</h2>
                 <div class="signature-wrapper">
                     <canvas id="signature-pad-cert"></canvas>
                 </div>
@@ -2559,9 +2566,9 @@ function clearAnoForm() {
                     Diretor: <strong>Samba Djob</strong>. Use o rato ou toque para assinar.
                 </div>
             </div>
-            <div class="modal-footer bg-light border-top-0 controls">
-                <button type="button" class="btn-clear" id="sig-limpar">Limpar</button>
-                <button type="button" class="btn-save" id="sig-finalizar">Finalizar Assinatura</button>
+            <div class="modal-footer bg-light border-top-0 controls justify-content-center">
+                <button type="button" class="btn-clear" id="clear">Limpar</button>
+                <button type="button" class="btn-save" id="save">Finalizar Assinatura</button>
             </div>
         </div>
     </div>
@@ -3627,7 +3634,7 @@ function loadCertificadosEmitidos() {
 
 let signaturePadCert;
 
-// Lógica de Assinatura Digital Estrita (User Snippet)
+// Lógica de Assinatura Digital Estrita (Snippet Original do Utilizador)
 $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
     const canvas = document.getElementById('signature-pad-cert');
     if (canvas) {
@@ -3650,15 +3657,15 @@ $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
         }
 
         window.addEventListener("resize", resizeCanvas);
-        resizeCanvas();
+        setTimeout(resizeCanvas, 100);
     }
 });
 
-$(document).on('click', '#sig-limpar', function() {
+$(document).on('click', '#clear', function() {
     if (signaturePadCert) signaturePadCert.clear();
 });
 
-$(document).on('click', '#sig-finalizar', function() {
+$(document).on('click', '#save', function() {
     if (!signaturePadCert || signaturePadCert.isEmpty()) {
         alert("Por favor, forneça uma assinatura primeiro.");
     } else {
@@ -3676,7 +3683,7 @@ function abrirModalAssinaturaCert(id, nome) {
 function salvarAssinaturaCertificado() {
     const id = $('#cert_sign_id').val();
     const signatureData = signaturePadCert.toDataURL('image/svg+xml');
-    const btn = $('#sig-finalizar');
+    const btn = $('#save');
     
     btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
     

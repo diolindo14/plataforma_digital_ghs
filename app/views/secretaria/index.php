@@ -416,7 +416,15 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4 text-center">
-                    <h2 class="fw-bold mb-4" style="font-size: 1.25rem;">Assine no campo abaixo</h2>
+                    <style>
+                        .signature-wrapper { background: #fff; border: 2px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                        canvas#signature-pad-cert { width: 100%; height: 300px; touch-action: none; border-radius: 8px; }
+                        .controls { margin-top: 15px; display: flex; gap: 10px; }
+                        button.btn-clear { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #e74c3c; color: white; }
+                        button.btn-save { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #2ecc71; color: white; }
+                    </style>
+
+                    <h2 class="fw-bold mb-4">Assine no campo abaixo</h2>
                     <div class="signature-wrapper">
                         <canvas id="signature-pad-cert"></canvas>
                     </div>
@@ -424,9 +432,9 @@
                         Secretaria: Use o rato ou toque para assinar.
                     </div>
                 </div>
-                <div class="modal-footer bg-light border-top-0 controls">
-                    <button type="button" class="btn-clear" id="sig-sec-limpar">Limpar</button>
-                    <button type="button" id="sig-sec-finalizar" class="btn-save">Finalizar Assinatura</button>
+                <div class="modal-footer bg-light border-top-0 controls justify-content-center">
+                    <button type="button" class="btn-clear" id="clear">Limpar</button>
+                    <button type="button" id="save" class="btn-save">Finalizar Assinatura</button>
                 </div>
             </div>
         </div>
@@ -489,7 +497,7 @@
 
         let signaturePadCert;
 
-        // Lógica de Assinatura Digital Estrita (User Snippet)
+        // Lógica de Assinatura Digital Estrita (Snippet Original do Utilizador)
         $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
             const canvas = document.getElementById('signature-pad-cert');
             if (canvas) {
@@ -512,15 +520,15 @@
                 }
 
                 window.addEventListener("resize", resizeCanvas);
-                resizeCanvas();
+                setTimeout(resizeCanvas, 100);
             }
         });
 
-        $(document).on('click', '#sig-sec-limpar', function() {
+        $(document).on('click', '#clear', function() {
             if (signaturePadCert) signaturePadCert.clear();
         });
 
-        $(document).on('click', '#sig-sec-finalizar', function() {
+        $(document).on('click', '#save', function() {
             if (!signaturePadCert || signaturePadCert.isEmpty()) {
                 alert("Por favor, forneça uma assinatura primeiro.");
             } else {
@@ -536,7 +544,7 @@
         }
 
         function salvarAssinaturaCertificado() {
-            const btn = $('#sig-sec-finalizar');
+            const btn = $('#save');
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
             
             const signatureData = signaturePadCert.toDataURL('image/svg+xml');
