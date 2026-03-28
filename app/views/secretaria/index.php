@@ -434,10 +434,10 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-top-0 controls">
-                    <button type="button" class="btn-sig btn-sig-clear btn-clear" onclick="signaturePadCert.clear(); $('#sig-placeholder-sec').show();">
+                    <button type="button" class="btn-sig btn-sig-clear btn-clear" id="sig-sec-limpar">
                         <ion-icon name="trash-outline"></ion-icon> Limpar
                     </button>
-                    <button type="button" id="save" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save btn-save">
+                    <button type="button" id="sig-sec-finalizar" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save btn-save">
                         <ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Assinatura
                     </button>
                 </div>
@@ -501,15 +501,11 @@
         }
 
         let signaturePadCert;
-        function abrirModalAssinaturaCert(id, nome) {
-            $('#cert_sign_id').val(id);
-            $('#cert_sign_nome').text(nome);
-            const modal = new bootstrap.Modal(document.getElementById('modalAssinaturaCertificado'));
-            modal.show();
-            
-            setTimeout(() => {
-                const canvas = document.getElementById('signature-pad-cert');
-                if (canvas) {
+
+        $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
+            const canvas = document.getElementById('signature-pad-cert');
+            if (canvas) {
+                if (!signaturePadCert) {
                     signaturePadCert = new SignaturePad(canvas, {
                         backgroundColor: 'rgba(255, 255, 255, 0)',
                         penColor: 'rgb(0, 0, 0)',
@@ -517,23 +513,36 @@
                         maxWidth: 2.5,
                         velocityFilterWeight: 0.7
                     });
-
-                    function resizeCanvasSec() {
-                        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                        canvas.width = canvas.offsetWidth * ratio;
-                        canvas.height = 200 * ratio;
-                        canvas.getContext("2d").scale(ratio, ratio);
-                        signaturePadCert.clear();
-                        $('#sig-placeholder-sec').show();
-                    }
-
-                    window.addEventListener("resize", resizeCanvasSec);
-                    resizeCanvasSec();
-                    
-                    canvas.addEventListener('mousedown', () => $('#sig-placeholder-sec').hide());
-                    canvas.addEventListener('touchstart', () => $('#sig-placeholder-sec').hide(), {passive: true});
                 }
-            }, 500);
+
+                function resizeCanvasSec() {
+                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width = canvas.offsetWidth * ratio;
+                    canvas.height = 200 * ratio;
+                    canvas.getContext("2d").scale(ratio, ratio);
+                    signaturePadCert.clear();
+                    $('#sig-placeholder-sec').show();
+                }
+
+                resizeCanvasSec();
+                
+                canvas.addEventListener('mousedown', () => $('#sig-placeholder-sec').hide());
+                canvas.addEventListener('touchstart', () => $('#sig-placeholder-sec').hide(), {passive: true});
+            }
+        });
+
+        $(document).on('click', '#sig-sec-limpar', function() {
+            if (signaturePadCert) {
+                signaturePadCert.clear();
+                $('#sig-placeholder-sec').show();
+            }
+        });
+
+        function abrirModalAssinaturaCert(id, nome) {
+            $('#cert_sign_id').val(id);
+            $('#cert_sign_nome').text(nome);
+            const modal = new bootstrap.Modal(document.getElementById('modalAssinaturaCertificado'));
+            modal.show();
         }
 
         function salvarAssinaturaCertificado() {
@@ -541,7 +550,7 @@
                 alert('Por favor, forneça uma assinatura primeiro.');
                 return;
             }
-            const btn = $('#save');
+            const btn = $('#sig-sec-finalizar');
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
             
             const signatureData = signaturePadCert.toDataURL('image/svg+xml');

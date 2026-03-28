@@ -2569,10 +2569,10 @@ function clearAnoForm() {
                 </div>
             </div>
             <div class="modal-footer bg-light border-top-0 controls">
-                <button type="button" class="btn-sig btn-sig-clear btn-clear" onclick="signaturePadCert.clear(); $('#sig-placeholder-cert').show();">
+                <button type="button" class="btn-sig btn-sig-clear btn-clear" id="sig-limpar">
                     <ion-icon name="trash-outline"></ion-icon> Limpar
                 </button>
-                <button type="button" id="save" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save btn-save">
+                <button type="button" id="sig-finalizar" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save btn-save">
                     <ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Assinatura
                 </button>
             </div>
@@ -3639,16 +3639,12 @@ function loadCertificadosEmitidos() {
 }
 
 let signaturePadCert;
-function abrirModalAssinaturaCert(id, nome) {
-    $('#cert_sign_id').val(id);
-    $('#cert_sign_nome').text(nome);
-    const modal = new bootstrap.Modal(document.getElementById('modalAssinaturaCertificado'));
-    modal.show();
-    
-    // Inicializar Pad após modal abrir
-    setTimeout(() => {
-        const canvas = document.getElementById('signature-pad-cert');
-        if (canvas) {
+
+// Inicializar Pad apenas quando o modal for mostrado
+$(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
+    const canvas = document.getElementById('signature-pad-cert');
+    if (canvas) {
+        if (!signaturePadCert) {
             signaturePadCert = new SignaturePad(canvas, {
                 backgroundColor: 'rgba(255, 255, 255, 0)',
                 penColor: 'rgb(0, 0, 0)',
@@ -3656,23 +3652,36 @@ function abrirModalAssinaturaCert(id, nome) {
                 maxWidth: 2.5,
                 velocityFilterWeight: 0.7
             });
-
-            function resizeCanvasCert() {
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                canvas.width = canvas.offsetWidth * ratio;
-                canvas.height = 200 * ratio;
-                canvas.getContext("2d").scale(ratio, ratio);
-                signaturePadCert.clear();
-                $('#sig-placeholder-cert').show();
-            }
-
-            window.addEventListener("resize", resizeCanvasCert);
-            resizeCanvasCert();
-            
-            canvas.addEventListener('mousedown', () => $('#sig-placeholder-cert').hide());
-            canvas.addEventListener('touchstart', () => $('#sig-placeholder-cert').hide(), {passive: true});
         }
-    }, 500);
+
+        function resizeCanvasCert() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = 200 * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+            signaturePadCert.clear();
+            $('#sig-placeholder-cert').show();
+        }
+
+        resizeCanvasCert();
+        
+        canvas.addEventListener('mousedown', () => $('#sig-placeholder-cert').hide());
+        canvas.addEventListener('touchstart', () => $('#sig-placeholder-cert').hide(), {passive: true});
+    }
+});
+
+$(document).on('click', '#sig-limpar', function() {
+    if (signaturePadCert) {
+        signaturePadCert.clear();
+        $('#sig-placeholder-cert').show();
+    }
+});
+
+function abrirModalAssinaturaCert(id, nome) {
+    $('#cert_sign_id').val(id);
+    $('#cert_sign_nome').text(nome);
+    const modal = new bootstrap.Modal(document.getElementById('modalAssinaturaCertificado'));
+    modal.show();
 }
 
 function salvarAssinaturaCertificado() {
@@ -3683,7 +3692,7 @@ function salvarAssinaturaCertificado() {
     
     const id = $('#cert_sign_id').val();
     const signatureData = signaturePadCert.toDataURL('image/svg+xml');
-    const btn = $('#save');
+    const btn = $('#sig-finalizar');
     
     btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
     

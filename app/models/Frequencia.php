@@ -209,11 +209,47 @@ class Frequencia {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getDetailedAttendanceForProfessor($professor_id) {
+        $stmt = $this->db->prepare("
+            SELECT 
+                ap.id, ap.professor_id, ap.turma_id, ap.disciplina_id, ap.data, ap.tempo, ap.status, 
+                ap.justificacao, u_admin.nome_completo as marcado_por_nome, t.codigo as turma_codigo, d.nome as disciplina_nome
+            FROM assiduidade_professores ap
+            LEFT JOIN turmas t ON ap.turma_id = t.id
+            LEFT JOIN disciplinas d ON ap.disciplina_id = d.id
+            LEFT JOIN utilizadores u_admin ON ap.marcado_por = u_admin.id
+            WHERE ap.professor_id = :pid
+
+            UNION ALL
+
+            SELECT 
+                s.id, s.professor_id, s.turma_id, s.disciplina_id, s.data, s.tempo, 
+                'Presença' as status, 
+                CONCAT('Sumário: ', SUBSTRING(s.conteudo, 1, 50), '...') as justificacao,
+                'Sistema (Auto)' as marcado_por_nome,
+                t.codigo as turma_codigo, d.nome as disciplina_nome
+            FROM sumarios s
+            LEFT JOIN turmas t ON s.turma_id = t.id
+            LEFT JOIN disciplinas d ON s.disciplina_id = d.id
+            WHERE s.professor_id = :pid2
+            AND NOT EXISTS (
+                SELECT 1 FROM assiduidade_professores ap2 
+                WHERE ap2.professor_id = s.professor_id 
+                AND ap2.data = s.data 
+                AND ap2.tempo = s.tempo
+            )
+
+            ORDER BY data DESC, tempo DESC
+        ");
+        $stmt->execute([':pid' => $professor_id, ':pid2' => $professor_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getSummariesByStudent($student_id) {
         $stmt = $this->db->prepare("
             SELECT s.*, u.nome_completo as professor_nome, d.nome as disciplina_nome, t.codigo as turma_codigo
             FROM sumarios s
-            JOIN matriculas m ON s.turma_id = m.ano_curso_id OR s.turma_id IN (SELECT id FROM turmas WHERE id = m.id) -- Ajuste conforme o modelo de matrícula
+            JOIN matriculas m ON s.turma_id = m.ano_curso_id OR s.turma_id IN (SELECT id FROM turmas WHERE id = m.id)
             JOIN disciplinas d ON s.disciplina_id = d.id
             JOIN professores p ON s.professor_id = p.id
             JOIN utilizadores u ON p.utilizador_id = u.id

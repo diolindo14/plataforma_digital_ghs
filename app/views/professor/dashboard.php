@@ -1002,6 +1002,8 @@
 
 <script>
 let signaturePad;
+
+$(document).ready(function() {
     // --- Implementação Assinatura Profissional (Snippet User) ---
     const canvas = document.getElementById('signature-pad');
     if (canvas) {
@@ -1028,7 +1030,7 @@ let signaturePad;
         canvas.addEventListener('mousedown', () => $('#sig-placeholder').hide());
         canvas.addEventListener('touchstart', () => $('#sig-placeholder').hide(), {passive: true});
 
-        document.getElementById('clear').addEventListener('click', () => {
+        $('#clear').on('click', function() {
             signaturePad.clear();
             $('#sig-placeholder').show();
         });
@@ -1135,10 +1137,11 @@ function setPresenca(btn, status) {
     $(btn).addClass('active');
     siblings.removeClass('active');
     
-    // Resetar textos originais CURTOS nos irmãos
+    // Resetar textos originais CURTOS nos irmãos de forma mais robusta usando dataset
     siblings.each(function() {
-        const sibStatus = $(this).attr('onclick').match(/'(.*?)'/)[1];
-        $(this).text(sibStatus); 
+        if ($(this).hasClass('btn-outline-success')) $(this).text('P');
+        if ($(this).hasClass('btn-outline-danger')) $(this).text('F');
+        if ($(this).hasClass('btn-outline-warning')) $(this).text('J');
     });
 
     // Expandir texto do botão selecionado
