@@ -1035,7 +1035,7 @@ $(document).ready(function() {
             $('#sig-placeholder').show();
         });
     }
-});
+
     // Atualizar disciplina_id ao mudar a turma no upload
     $('#formUploadMaterial select[name="turma_id"]').on('change', function() {
         const discId = $(this).find(':selected').data('disc');
