@@ -465,13 +465,6 @@
                 <div class="row g-4">
                     <div class="col-lg-12">
                         <div class="card border-0 shadow-sm rounded-4">
-                            <div class="card-body p-4">
-                                <div id="calendar-admin" style="min-height: 600px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mt-4">
-                        <div class="card border-0 shadow-sm rounded-4">
                             <div class="card-header bg-white py-3 border-bottom border-light">
                                 <h6 class="fw-bold mb-0">Lista de Eventos Registados</h6>
                             </div>
@@ -493,6 +486,16 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mt-4">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-header bg-white py-3 border-bottom border-light">
+                                <h6 class="fw-bold mb-0">Calendário Interativo</h6>
+                            </div>
+                            <div class="card-body p-4">
+                                <div id="calendar-admin" style="min-height: 600px;"></div>
                             </div>
                         </div>
                     </div>
