@@ -41,6 +41,9 @@
                         <span class="badge bg-primary ms-auto"><?= count($data['mensagens_painel']) ?></span>
                     <?php endif; ?>
                 </a>
+                <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-merito" role="tab">
+                    <ion-icon name="ribbon-outline" class="me-2"></ion-icon> Mérito & Certificados
+                </a>
             </nav>
 
             <hr class="border-secondary my-4">
@@ -364,6 +367,38 @@
                                         <?php endforeach; ?>
                                     <?php endif; ?>
                                 </div>
+                    </div>
+                </div>
+
+                <!-- Painel de Mérito e Certificados (Secretaria) -->
+                <div class="tab-pane fade" id="pane-merito" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="fw-bold mb-0 text-dark">Gestão de Certificados de Mérito</h2>
+                        <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">Validação & Assinatura Secretaria</span>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-header bg-white py-3 border-bottom border-light">
+                            <h6 class="fw-bold mb-0">Certificados Aguardando Assinatura / Publicados</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle" id="tabelaCertificadosEmitidos">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Ano Letivo</th>
+                                            <th>Semestre</th>
+                                            <th>Aluno Premiado</th>
+                                            <th>Posição</th>
+                                            <th>Média Final</th>
+                                            <th>Status/Assinaturas</th>
+                                            <th class="text-end">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Carregado via AJAX -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -372,6 +407,121 @@
         </div>
     </div>
     
+    <!-- Modal Assinatura Digital Secretaria -->
+    <div class="modal fade" id="modalAssinaturaCertificado" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><ion-icon name="pencil-outline" class="me-2"></ion-icon> Assinatura da Secretaria</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p>Validando e assinando mérito para: <strong id="cert_sign_nome"></strong></p>
+                    <input type="hidden" id="cert_sign_id">
+                    
+                    <div class="signature-wrapper shadow-sm mb-3">
+                        <canvas id="signature-pad-cert" width="450" height="200" style="background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; cursor: crosshair; width: 100%;"></canvas>
+                    </div>
+                    
+                    <div class="alert alert-success bg-opacity-10 border-success small text-success">
+                        <ion-icon name="shield-checkmark-outline"></ion-icon> Sua assinatura será vinculada permanentemente a este documento digital.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" onclick="signaturePadCert.clear()">Limpar</button>
+                    <button type="button" id="btnSalvarAssinaturaCert" onclick="salvarAssinaturaCertificado()" class="btn btn-success fw-bold">Confirmar e Assinar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script>
+        // JS para Certificados na Secretaria
+        function loadCertificadosEmitidos() {
+            const tbody = $('#tabelaCertificadosEmitidos tbody');
+            tbody.html('<tr><td colspan="7" class="text-center py-4"><div class="spinner-border text-success"></div></td></tr>');
+            
+            fetch('<?= URL_ROOT ?>/secretaria/getCertificadosEmitidos')
+                .then(r => r.json())
+                .then(data => {
+                    let html = '';
+                    if (data.length === 0) {
+                        html = '<tr><td colspan="7" class="text-center text-muted py-4">Nenhum certificado disponível para validação.</td></tr>';
+                    } else {
+                        data.forEach(c => {
+                            const isFst = c.posicao === '1';
+                            const badge = isFst ? '<span class="badge bg-warning text-dark">1º Lugar</span>' : '<span class="badge bg-secondary">2º Lugar</span>';
+                            
+                            let statusHtml = '';
+                            let actionHtml = '';
+                            
+                            if (c.status === 'Publicado') {
+                                statusHtml = '<span class="badge bg-success">Publicado</span>';
+                                actionHtml = `<button class="btn btn-sm btn-outline-primary" onclick="window.open('<?= URL_ROOT ?>/estudante/certificado/${c.id}', '_blank')"><ion-icon name="eye"></ion-icon></button>`;
+                            } else {
+                                const assDir = c.assinatura_diretor ? '<span class="text-success small">Diretor ✓</span>' : '<span class="text-muted small">Diretor ✗</span>';
+                                const assSec = c.assinatura_secretaria ? '<span class="text-success small">Secretaria ✓</span>' : '<span class="text-muted small">Secretaria ✗</span>';
+                                statusHtml = `<div class="d-flex flex-column gap-1">${assDir}${assSec}</div>`;
+                                
+                                if (!c.assinatura_secretaria) {
+                                    actionHtml = `<button class="btn btn-sm btn-success" onclick="abrirModalAssinaturaCert(${c.id}, '${c.estudante_nome}')"><ion-icon name="pencil"></ion-icon> Assinar</button>`;
+                                } else {
+                                    actionHtml = `<span class="badge bg-light text-dark border">Aguardando Diretor</span>`;
+                                }
+                            }
+
+                            html += `
+                                <tr>
+                                    <td>${c.ano_letivo}</td>
+                                    <td>${c.semestre}º</td>
+                                    <td><div class="fw-bold">${c.estudante_nome}</div></td>
+                                    <td>${badge}</td>
+                                    <td class="fw-bold text-success">${parseFloat(c.media).toFixed(2)}</td>
+                                    <td>${statusHtml}</td>
+                                    <td class="text-end">${actionHtml}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+                    tbody.html(html);
+                });
+        }
+
+        let signaturePadCert;
+        function abrirModalAssinaturaCert(id, nome) {
+            $('#cert_sign_id').val(id);
+            $('#cert_sign_nome').text(nome);
+            const modal = new bootstrap.Modal(document.getElementById('modalAssinaturaCertificado'));
+            modal.show();
+            
+            setTimeout(() => {
+                const canvas = document.getElementById('signature-pad-cert');
+                signaturePadCert = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)', penColor: 'rgb(0, 0, 0)' });
+                signaturePadCert.clear();
+            }, 500);
+        }
+
+        function salvarAssinaturaCertificado() {
+            if (signaturePadCert.isEmpty()) return alert('Assine no painel.');
+            const btn = $('#btnSalvarAssinaturaCert');
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+            
+            $.post('<?= URL_ROOT ?>/secretaria/assinarCertificado', {
+                id: $('#cert_sign_id').val(),
+                assinatura: signaturePadCert.toDataURL(),
+                csrf_token: '<?= $_SESSION['csrf_token'] ?>'
+            }, function(res) {
+                if(res.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalAssinaturaCertificado')).hide();
+                    loadCertificadosEmitidos();
+                } else alert('Erro ao assinar.');
+            }, 'json').always(() => btn.prop('disabled', false).text('Confirmar e Assinar'));
+        }
+
+        $('[data-bs-target="#pane-merito"]').on('shown.bs.tab', loadCertificadosEmitidos);
+    </script>
 </body>
 </html>

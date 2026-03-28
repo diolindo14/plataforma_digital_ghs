@@ -166,4 +166,54 @@ class SecretariaController extends Controller {
         header('Location: ' . URL_ROOT . '/secretaria');
         exit;
     }
+
+    /**
+     * Lista certificados emitidos via AJAX para o painel secretaria.
+     */
+    public function getCertificadosEmitidos() {
+        header('Content-Type: application/json');
+        
+        $db = Database::getInstance();
+        $sql = "
+            SELECT cm.*, u.nome_completo AS estudante_nome, ua.nome_completo AS emitido_por_nome
+            FROM certificados_merito cm
+            JOIN estudantes e ON e.id = cm.estudante_id
+            JOIN utilizadores u ON u.id = e.utilizador_id
+            LEFT JOIN utilizadores ua ON ua.id = cm.emitido_por
+            ORDER BY cm.ano_letivo DESC, cm.semestre DESC, cm.posicao ASC
+        ";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $certs = $stmt->fetchAll();
+        
+        echo json_encode($certs ?: []);
+        exit;
+    }
+
+    /**
+     * Salva a assinatura digital da Secretaria no certificado.
+     */
+    public function assinarCertificado() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') exit;
+        
+        $this->verifyCsrfToken();
+        
+        $id = $_POST['id'] ?? null;
+        $assinatura = $_POST['assinatura'] ?? null;
+        
+        if (!$id || !$assinatura) {
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos.']);
+            exit;
+        }
+
+        $academicoModel = $this->model('Academico');
+        // Assina como secretaria
+        $res = $academicoModel->assinarCertificado($id, $assinatura, 'secretaria');
+        
+        if ($res) $this->logActivity('Assinar Certificado (Secretaria)', ['id' => $id]);
+        
+        echo json_encode(['success' => $res]);
+        exit;
+    }
 }

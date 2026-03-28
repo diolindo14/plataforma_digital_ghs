@@ -152,7 +152,11 @@
 
         <div class="footer">
             <div class="sig-block">
-                <div style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: #1e293b; height: 35px;">Secretaria Geral</div>
+                <?php if (!empty($data['assinatura_secretaria'])): ?>
+                    <img src="<?= $data['assinatura_secretaria'] ?>" alt="Assinatura Secretaria" style="height: 60px; margin-bottom: -20px; position: relative; z-index: 2;">
+                <?php else: ?>
+                    <div style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: #1e293b; height: 35px;">Secretaria Geral</div>
+                <?php endif; ?>
                 <div class="sig-line"></div>
                 <div class="sig-name">Validação Institucional</div>
                 <div class="sig-title">GHS CAMPUS</div>
@@ -160,7 +164,11 @@
             
             <div class="sig-block">
                 <img src="<?= URL_ROOT ?>/img/carimbo_ghs.png" alt="" style="width: 80px; opacity: 0.15; position: absolute; margin-top: -50px; margin-left: -40px;">
-                <div style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: #1e293b; height: 35px;">Direção Geral</div>
+                <?php if (!empty($data['assinatura_diretor'])): ?>
+                    <img src="<?= $data['assinatura_diretor'] ?>" alt="Assinatura Diretor" style="height: 60px; margin-bottom: -20px; position: relative; z-index: 2;">
+                <?php else: ?>
+                    <div style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: #1e293b; height: 35px;">Direção Geral</div>
+                <?php endif; ?>
                 <div class="sig-line"></div>
                 <div class="sig-name"><?= htmlspecialchars((string)($data['assinatura'] ?? 'Direção GHS')) ?></div>
                 <div class="sig-title">Assinatura Certificada</div>
@@ -169,8 +177,9 @@
         
         <div class="qr-section">
             <?php 
-                $qrData = "GHS MERITO: " . ($data['nome'] ?? '') . " | Media: " . ($data['media'] ?? '') . " | Periodo: " . ($data['periodo'] ?? '') . " | Autenticidade: Aprovada";
-                $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrData);
+                $justificativa = "PREMIADO POR EXCELENCIA ACADEMICA: " . ($data['nome'] ?? '') . " atingiu a media de " . number_format((float)($data['media'] ?? 0), 2) . " no " . ($data['periodo'] ?? '') . ", situando-se no Top Elegivel (Lugar " . ($data['posicao_num'] ?? '1') . ") do GHS CAMPUS.";
+                $qrData = "GHS MERITO | " . ($data['nome'] ?? '') . " | Media: " . ($data['media'] ?? '') . " | " . ($data['periodo'] ?? '') . " | Justificativa: " . $justificativa;
+                $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($qrData);
             ?>
             <img src="<?= $qrUrl ?>" class="qr-code" alt="QR Code Autenticidade">
             <div class="auth-code">REF: <?= strtoupper(bin2hex(random_bytes(4))) ?></div>

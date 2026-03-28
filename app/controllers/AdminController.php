@@ -970,8 +970,48 @@ class AdminController extends Controller {
      */
     public function getCertificadosEmitidos() {
         header('Content-Type: application/json');
-        $certs = $this->model('Academico')->getAllCertificadosEmitidos();
-        echo json_encode($certs);
+        
+        $db = Database::getInstance();
+        $sql = "
+            SELECT cm.*, u.nome_completo AS estudante_nome, ua.nome_completo AS emitido_por_nome
+            FROM certificados_merito cm
+            JOIN estudantes e ON e.id = cm.estudante_id
+            JOIN utilizadores u ON u.id = e.utilizador_id
+            LEFT JOIN utilizadores ua ON ua.id = cm.emitido_por
+            ORDER BY cm.ano_letivo DESC, cm.semestre DESC, cm.posicao ASC
+        ";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $certs = $stmt->fetchAll();
+        
+        echo json_encode($certs ?: []);
+        exit;
+    }
+
+    /**
+     * Salva a assinatura digital do Diretor (Admin) no certificado.
+     */
+    public function assinarCertificado() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') exit;
+        
+        $this->verifyCsrfToken();
+        
+        $id = $_POST['id'] ?? null;
+        $assinatura = $_POST['assinatura'] ?? null;
+        
+        if (!$id || !$assinatura) {
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos.']);
+            exit;
+        }
+
+        $academicoModel = $this->model('Academico');
+        // Admin assina como Diretor
+        $res = $academicoModel->assinarCertificado($id, $assinatura, 'diretor');
+        
+        if ($res) $this->logActivity('Assinar Certificado (Diretor)', ['id' => $id]);
+        
+        echo json_encode(['success' => $res]);
         exit;
     }
 }
