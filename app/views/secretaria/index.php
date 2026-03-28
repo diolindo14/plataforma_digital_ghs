@@ -415,22 +415,13 @@
                     <h5 class="modal-title fw-bold"><ion-icon name="pencil-outline" class="me-2"></ion-icon> Assinatura da Secretaria</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted small mb-4 text-center">Validando e assinando mérito para:<br><strong id="cert_sign_nome" class="text-dark fs-5"></strong></p>
-                    <input type="hidden" id="cert_sign_id">
-                    
-                    <div class="signature-component shadow-none border-0 m-0 p-0">
-                        <div class="signature-wrapper border shadow-sm">
-                            <div class="signature-placeholder" id="sig-placeholder-sec">
-                                <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon><br>
-                                Assinatura da Secretaria
-                            </div>
-                            <canvas id="signature-pad-cert"></canvas>
-                        </div>
+                <div class="modal-body p-4 text-center">
+                    <h2 class="fw-bold mb-4" style="font-size: 1.25rem;">Assine no campo abaixo</h2>
+                    <div class="signature-wrapper">
+                        <canvas id="signature-pad-cert"></canvas>
                     </div>
-                    
-                    <div class="alert alert-success bg-opacity-10 border-success small text-success mt-3">
-                        <ion-icon name="shield-checkmark-outline"></ion-icon> Sua assinatura será vinculada permanentemente a este documento digital.
+                    <div class="mt-3 text-muted small">
+                        Secretaria: Use o rato ou toque para assinar.
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-top-0 controls">
@@ -498,7 +489,7 @@
 
         let signaturePadCert;
 
-        // Lógica de Assinatura da Secretaria (Snippet do Utilizador)
+        // Lógica de Assinatura Digital Estrita (User Snippet)
         $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
             const canvas = document.getElementById('signature-pad-cert');
             if (canvas) {
@@ -512,32 +503,29 @@
                     });
                 }
 
-                function resizeCanvasSec() {
+                function resizeCanvas() {
                     const ratio = Math.max(window.devicePixelRatio || 1, 1);
                     canvas.width = canvas.offsetWidth * ratio;
-                    canvas.height = canvas.offsetHeight * ratio; // Consistent with snippet
+                    canvas.height = canvas.offsetHeight * ratio;
                     canvas.getContext("2d").scale(ratio, ratio);
                     signaturePadCert.clear();
-                    $('#sig-placeholder-sec').show();
                 }
 
-                window.addEventListener("resize", resizeCanvasSec);
-                resizeCanvasSec();
-                
-                canvas.addEventListener('mousedown', () => $('#sig-placeholder-sec').hide());
-                canvas.addEventListener('touchstart', () => $('#sig-placeholder-sec').hide(), {passive: true});
+                window.addEventListener("resize", resizeCanvas);
+                resizeCanvas();
             }
         });
 
         $(document).on('click', '#sig-sec-limpar', function() {
-            if (signaturePadCert) {
-                signaturePadCert.clear();
-                $('#sig-placeholder-sec').show();
-            }
+            if (signaturePadCert) signaturePadCert.clear();
         });
 
         $(document).on('click', '#sig-sec-finalizar', function() {
-            salvarAssinaturaCertificado();
+            if (!signaturePadCert || signaturePadCert.isEmpty()) {
+                alert("Por favor, forneça uma assinatura primeiro.");
+            } else {
+                salvarAssinaturaCertificado();
+            }
         });
 
         function abrirModalAssinaturaCert(id, nome) {
@@ -548,10 +536,6 @@
         }
 
         function salvarAssinaturaCertificado() {
-            if (!signaturePadCert || signaturePadCert.isEmpty()) {
-                alert('Por favor, forneça uma assinatura primeiro.');
-                return;
-            }
             const btn = $('#sig-sec-finalizar');
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
             

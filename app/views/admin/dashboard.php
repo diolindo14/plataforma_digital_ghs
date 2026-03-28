@@ -2550,22 +2550,13 @@ function clearAnoForm() {
                 <h5 class="modal-title fw-bold"><ion-icon name="pencil-outline"></ion-icon> Assinatura do Diretor</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body p-4">
-                <p class="text-muted small mb-4 text-center">Assinando certificado de Mérito para:<br><strong id="cert_sign_nome" class="text-dark fs-5"></strong></p>
-                <input type="hidden" id="cert_sign_id">
-                
-                <div class="signature-component shadow-none border-0 m-0 p-0">
-                    <div class="signature-wrapper border shadow-sm">
-                        <div class="signature-placeholder" id="sig-placeholder-cert">
-                            <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon><br>
-                            Assinatura do Diretor
-                        </div>
-                        <canvas id="signature-pad-cert"></canvas>
-                    </div>
+            <div class="modal-body p-4 text-center">
+                <h2 class="fw-bold mb-4" style="font-size: 1.25rem;">Assine no campo abaixo</h2>
+                <div class="signature-wrapper">
+                    <canvas id="signature-pad-cert"></canvas>
                 </div>
-                
-                <div class="alert alert-info bg-opacity-10 border-info small mt-3">
-                    <ion-icon name="information-circle"></ion-icon> Diretor: <strong>Samba Djob</strong>. Use o rato ou toque para assinar.
+                <div class="mt-3 text-muted small">
+                    Diretor: <strong>Samba Djob</strong>. Use o rato ou toque para assinar.
                 </div>
             </div>
             <div class="modal-footer bg-light border-top-0 controls">
@@ -3636,7 +3627,7 @@ function loadCertificadosEmitidos() {
 
 let signaturePadCert;
 
-// Lógica de Assinatura do Diretor (Snippet do Utilizador)
+// Lógica de Assinatura Digital Estrita (User Snippet)
 $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
     const canvas = document.getElementById('signature-pad-cert');
     if (canvas) {
@@ -3650,32 +3641,29 @@ $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
             });
         }
 
-        function resizeCanvasCert() {
+        function resizeCanvas() {
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio; // Using offsetHeight as per snippet
+            canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
             signaturePadCert.clear();
-            $('#sig-placeholder-cert').show();
         }
 
-        window.addEventListener("resize", resizeCanvasCert);
-        resizeCanvasCert();
-        
-        canvas.addEventListener('mousedown', () => $('#sig-placeholder-cert').hide());
-        canvas.addEventListener('touchstart', () => $('#sig-placeholder-cert').hide(), {passive: true});
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
     }
 });
 
 $(document).on('click', '#sig-limpar', function() {
-    if (signaturePadCert) {
-        signaturePadCert.clear();
-        $('#sig-placeholder-cert').show();
-    }
+    if (signaturePadCert) signaturePadCert.clear();
 });
 
 $(document).on('click', '#sig-finalizar', function() {
-    salvarAssinaturaCertificado();
+    if (!signaturePadCert || signaturePadCert.isEmpty()) {
+        alert("Por favor, forneça uma assinatura primeiro.");
+    } else {
+        salvarAssinaturaCertificado();
+    }
 });
 
 function abrirModalAssinaturaCert(id, nome) {
@@ -3686,11 +3674,6 @@ function abrirModalAssinaturaCert(id, nome) {
 }
 
 function salvarAssinaturaCertificado() {
-    if (!signaturePadCert || signaturePadCert.isEmpty()) {
-        alert('Por favor, forneça uma assinatura primeiro.');
-        return;
-    }
-    
     const id = $('#cert_sign_id').val();
     const signatureData = signaturePadCert.toDataURL('image/svg+xml');
     const btn = $('#sig-finalizar');

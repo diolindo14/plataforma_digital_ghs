@@ -487,15 +487,13 @@
                             </label>
                             
                             <!-- Assinatura Digital do Professor (Snippet Estrito) -->
+                            <h2 class="text-center fw-bold mb-4" style="font-size: 1.25rem;">Assine no campo abaixo</h2>
                             <div class="signature-wrapper">
-                                <div class="signature-placeholder" id="sig-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #cbd5e1; pointer-events: none; text-align: center;">
-                                    <ion-icon name="create-outline" style="font-size:2rem;"></ion-icon><br>Assine aqui
-                                </div>
-                                <canvas id="signature-pad" class="signature-pad"></canvas>
+                                <canvas id="signature-pad"></canvas>
                             </div>
                             <div class="controls">
                                 <button type="button" class="btn-clear" id="clear">Limpar</button>
-                                <button type="button" class="btn-save" id="save-signature-btn">Finalizar Assinatura e Submeter</button>
+                                <button type="button" class="btn-save" id="save-attendance">Finalizar Assinatura</button>
                             </div>
                             
                             <p class="extra-small text-muted mt-2 italic text-center">Ao assinar, você confirma que as informações de frequência e o conteúdo do sumário são verídicos.</p>
@@ -996,50 +994,50 @@
 let signaturePad;
 
 $(document).ready(function() {
-    // --- Lógica de Assinatura Digital Estrita (Snippet do Utilizador) ---
-    const canvas = document.getElementById('signature-pad');
-    if (canvas) {
-        const signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgba(255, 255, 255, 0)',
-            penColor: 'rgb(0, 0, 0)',
-            minWidth: 0.5,
-            maxWidth: 2.5,
-            velocityFilterWeight: 0.7
-        });
+    const canvas = document.getElementById("signature-pad");
+    const clearButton = document.getElementById("clear");
+    const saveButton = document.getElementById("save-attendance");
 
-        function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-            signaturePad.clear();
-            $('#sig-placeholder').show();
-        }
-
-        window.addEventListener("resize", resizeCanvas);
-        setTimeout(resizeCanvas, 500);
-
-        canvas.addEventListener('mousedown', () => $('#sig-placeholder').hide());
-        canvas.addEventListener('touchstart', () => $('#sig-placeholder').hide(), {passive: true});
-
-        document.getElementById('clear').addEventListener('click', () => {
-            signaturePad.clear();
-            $('#sig-placeholder').show();
-        });
-
-        document.getElementById('save-signature-btn').addEventListener('click', function() {
-            if (signaturePad.isEmpty()) {
-                alert("Por favor, forneça uma assinatura primeiro.");
-            } else {
-                const dataURL = signaturePad.toDataURL('image/svg+xml');
-                window.lastSignatureSVG = dataURL;
-                submeterSumario(this);
-            }
-        });
-
-        window.getCurrentSignature = () => signaturePad.toDataURL('image/svg+xml');
-        window.isSignatureEmpty = () => signaturePad.isEmpty();
+    // 1. Ajuste de Resolução (User Snippet)
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
     }
+
+    // 2. Inicialização (User Snippet)
+    const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        penColor: 'rgb(0, 0, 0)',
+        minWidth: 0.5,
+        maxWidth: 2.5,
+        velocityFilterWeight: 0.7
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    setTimeout(resizeCanvas, 500); // Aguardar renderização do tab
+
+    // 3. Lógica dos Botões (User Snippet)
+    clearButton.addEventListener("click", () => {
+        signaturePad.clear();
+    });
+
+    saveButton.addEventListener("click", () => {
+        if (signaturePad.isEmpty()) {
+            alert("Por favor, forneça uma assinatura primeiro.");
+        } else {
+            const dataDataUrl = signaturePad.toDataURL('image/svg+xml');
+            console.log("Assinatura Capturada (SVG Base64):", dataDataUrl);
+            window.lastSignatureSVG = dataDataUrl;
+            submeterSumario(saveButton);
+        }
+    });
+
+    // Helper para validação externa
+    window.isSignatureEmpty = () => signaturePad.isEmpty();
+    window.getCurrentSignature = () => signaturePad.toDataURL('image/svg+xml');
 });
 
     // Atualizar disciplina_id ao mudar a turma no upload
