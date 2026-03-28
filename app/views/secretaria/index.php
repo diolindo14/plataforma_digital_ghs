@@ -433,12 +433,12 @@
                         <ion-icon name="shield-checkmark-outline"></ion-icon> Sua assinatura será vinculada permanentemente a este documento digital.
                     </div>
                 </div>
-                <div class="modal-footer bg-light border-top-0">
-                    <button type="button" class="btn-sig btn-sig-clear" onclick="signaturePadCert.clear(); $('#sig-placeholder-sec').show();">
+                <div class="modal-footer bg-light border-top-0 controls">
+                    <button type="button" class="btn-sig btn-sig-clear btn-clear" onclick="signaturePadCert.clear(); $('#sig-placeholder-sec').show();">
                         <ion-icon name="trash-outline"></ion-icon> Limpar
                     </button>
-                    <button type="button" id="btnSalvarAssinaturaCert" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save">
-                        <ion-icon name="checkmark-circle-outline"></ion-icon> Confirmar e Assinar
+                    <button type="button" id="save" onclick="salvarAssinaturaCertificado()" class="btn-sig btn-sig-save btn-save">
+                        <ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Assinatura
                     </button>
                 </div>
             </div>
@@ -538,10 +538,10 @@
 
         function salvarAssinaturaCertificado() {
             if (!signaturePadCert || signaturePadCert.isEmpty()) {
-                alert('Por favor, aplique a sua assinatura antes de confirmar.');
+                alert('Por favor, forneça uma assinatura primeiro.');
                 return;
             }
-            const btn = $('#btnSalvarAssinaturaCert');
+            const btn = $('#save');
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
             
             const signatureData = signaturePadCert.toDataURL('image/svg+xml');
@@ -556,7 +556,7 @@
                     bootstrap.Modal.getInstance(document.getElementById('modalAssinaturaCertificado')).hide();
                     loadCertificadosEmitidos();
                 } else alert('Erro ao assinar.');
-            }, 'json').always(() => btn.prop('disabled', false).html('<ion-icon name="checkmark-circle-outline"></ion-icon> Confirmar e Assinar'));
+            }, 'json').always(() => btn.prop('disabled', false).html('<ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Assinatura'));
         }
 
         $('[data-bs-target="#pane-merito"]').on('shown.bs.tab', loadCertificadosEmitidos);

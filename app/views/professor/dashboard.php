@@ -465,9 +465,9 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="btn-group btn-group-sm btn-group-presenca" data-status="P">
-                                                        <button class="btn btn-outline-success active" onclick="setPresenca(this, 'P')">P</button>
-                                                        <button class="btn btn-outline-danger" onclick="setPresenca(this, 'F')">F</button>
-                                                        <button class="btn btn-outline-warning" onclick="setPresenca(this, 'J')">J</button>
+                                                        <button class="btn btn-outline-success active" onclick="setPresenca(this, 'P')" title="Marcar Presença">PRESENTE</button>
+                                                        <button class="btn btn-outline-danger" onclick="setPresenca(this, 'F')" title="Marcar Falta">F</button>
+                                                        <button class="btn btn-outline-warning" onclick="setPresenca(this, 'J')" title="Justificar Falta">J</button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -486,17 +486,17 @@
                                 <ion-icon name="pencil-outline"></ion-icon> Assinatura Digital do Docente
                             </label>
                             
-                            <!-- Novo Componente de Assinatura Premium -->
+                            <!-- Novo Componente de Assinatura Profissional -->
                             <div class="signature-component">
                                 <div class="signature-wrapper">
                                     <div class="signature-placeholder" id="sig-placeholder">
                                         <ion-icon name="create-outline" style="font-size:1.5rem; opacity:0.5;"></ion-icon><br>
-                                        Assine aqui
+                                        Assine no campo abaixo
                                     </div>
                                     <canvas id="signature-pad"></canvas>
                                 </div>
-                                <div class="signature-actions">
-                                    <button type="button" class="btn-sig btn-sig-clear" id="clear-signature">
+                                <div class="signature-actions controls">
+                                    <button type="button" class="btn-sig btn-sig-clear btn-clear" id="clear">
                                         <ion-icon name="trash-outline"></ion-icon> Limpar
                                     </button>
                                 </div>
@@ -506,8 +506,8 @@
                         </div>
 
                         <div class="mt-4 text-end">
-                            <button onclick="submeterSumario(this)" class="btn btn-primary px-5 fw-bold py-2 shadow-sm">
-                                <ion-icon name="checkmark-done-outline"></ion-icon> Submeter Sumário e Chamada
+                            <button onclick="submeterSumario(this)" id="save" class="btn btn-primary px-5 fw-bold py-2 shadow-sm btn-save">
+                                <ion-icon name="checkmark-done-outline"></ion-icon> Finalizar Assinatura e Submeter
                             </button>
                         </div>
 
@@ -1002,8 +1002,7 @@
 
 <script>
 let signaturePad;
-$(document).ready(function() {
-    // --- Implementação Premium Signature Pad (v4.1.7) ---
+    // --- Implementação Assinatura Profissional (Snippet User) ---
     const canvas = document.getElementById('signature-pad');
     if (canvas) {
         signaturePad = new SignaturePad(canvas, {
@@ -1024,18 +1023,12 @@ $(document).ready(function() {
         }
 
         window.addEventListener("resize", resizeCanvas);
-        
-        // Ajustar ao carregar e ao mudar de aba
         setTimeout(resizeCanvas, 500);
-        $('button[data-bs-target="#pane-chamada"], a[href="#pane-chamada"]').on('shown.bs.tab', function() {
-            setTimeout(resizeCanvas, 350);
-        });
 
-        // Eventos para ocultar placeholder
         canvas.addEventListener('mousedown', () => $('#sig-placeholder').hide());
         canvas.addEventListener('touchstart', () => $('#sig-placeholder').hide(), {passive: true});
 
-        $('#clear-signature').on('click', function() {
+        document.getElementById('clear').addEventListener('click', () => {
             signaturePad.clear();
             $('#sig-placeholder').show();
         });
@@ -1137,21 +1130,31 @@ function setPresenca(btn, status) {
     const badge = row.find('.status-badge');
     const group = row.find('.btn-group-presenca');
     
-    // Update the visual active state correctly
-    $(btn).siblings().removeClass('active');
+    // Atualizar estado visual e textos expandidos conforme pedido
+    const siblings = $(btn).siblings();
     $(btn).addClass('active');
+    siblings.removeClass('active');
     
-    // Set the data-status attribute so submeterSumario picks it up
-    group.attr('data-status', status);
-    group.data('status', status);
+    // Resetar textos originais CURTOS nos irmãos
+    siblings.each(function() {
+        const sibStatus = $(this).attr('onclick').match(/'(.*?)'/)[1];
+        $(this).text(sibStatus); 
+    });
 
+    // Expandir texto do botão selecionado
     if (status === 'P') {
+        $(btn).text('PRESENTE');
         badge.text('Presente').removeClass('bg-danger bg-warning text-danger text-warning').addClass('bg-success text-success');
     } else if (status === 'F') {
+        $(btn).text('FALTA');
         badge.text('Falta').removeClass('bg-success bg-warning text-success text-warning').addClass('bg-danger text-danger');
     } else if (status === 'J') {
+        $(btn).text('JUSTIFICADA');
         badge.text('Justificada').removeClass('bg-success bg-danger text-success text-danger').addClass('bg-warning text-warning');
     }
+    
+    group.attr('data-status', status);
+    group.data('status', status);
 }
 
 function submeterSumario(btn) {

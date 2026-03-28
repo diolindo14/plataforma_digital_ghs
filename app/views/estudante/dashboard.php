@@ -87,6 +87,7 @@
                 <a class="nav-link" id="tab-notas" data-bs-toggle="pill" data-bs-target="#pane-notas" role="tab"><ion-icon name="pie-chart-outline"></ion-icon> Avaliação Contínua</a>
                 <a class="nav-link" id="tab-historico" data-bs-toggle="pill" data-bs-target="#pane-historico" role="tab"><ion-icon name="document-text-outline"></ion-icon> Histórico Académico</a>
                 <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" data-bs-target="#pane-materiais" role="tab"><ion-icon name="folder-open-outline"></ion-icon> Materiais Didáticos</a>
+                <a class="nav-link" id="tab-sumarios" data-bs-toggle="pill" data-bs-target="#pane-sumarios" role="tab"><ion-icon name="reader-outline"></ion-icon> Sumários de Aula</a>
                 <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro" role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados" role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
             </div>
@@ -644,6 +645,54 @@
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Sumários de Aula -->
+            <div class="tab-pane fade" id="pane-sumarios" role="tabpanel">
+                <div class="glass-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-1">Sumários de Aula</h4>
+                            <p class="text-muted small mb-0">Confira o que foi lecionado em cada aula pelos seus professores.</p>
+                        </div>
+                        <div class="badge bg-primary bg-opacity-10 text-primary p-2 px-3 rounded-pill">
+                            <ion-icon name="reader" class="me-1"></ion-icon> <?= count($data['sumarios'] ?? []) ?> Registos
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-premium datatable-simple">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Disciplina</th>
+                                    <th>Professor</th>
+                                    <th>Tempo</th>
+                                    <th>Conteúdo Lecionado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if(empty($data['sumarios'])): ?>
+                                    <tr><td colspan="5" class="text-center py-5 text-muted">Ainda não há sumários registados para as suas turmas.</td></tr>
+                                <?php else: ?>
+                                    <?php foreach($data['sumarios'] as $s): ?>
+                                        <tr>
+                                            <td class="fw-bold"><?= date('d/m/Y', strtotime($s['data'])) ?></td>
+                                            <td>
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary"><?= $this->e($s['disciplina_nome']) ?></span>
+                                            </td>
+                                            <td><?= $this->e($s['professor_nome']) ?></td>
+                                            <td><span class="text-muted small"><?= $this->e($s['tempo']) ?></span></td>
+                                            <td style="max-width: 400px;">
+                                                <div class="text-dark small"><?= nl2br($this->e($s['conteudo'])) ?></div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

@@ -98,8 +98,10 @@ class EstudanteController extends Controller {
         }
 
         $comunicadoModel = $this->model('Comunicado');
+        $frequenciaModel = $this->model('Frequencia');
         $comunicados = $comunicadoModel->getComunicadosParaUtilizador($_SESSION['user_id'], 'aluno', $turma_id);
         $unread_count = $comunicadoModel->getNotificacoesNaoLidas($_SESSION['user_id'], 'aluno', $turma_id);
+        $sumarios = $frequenciaModel->getSummariesByStudent($estudanteData['id']);
 
         $matriculaModel = $this->model('Matricula');
         $can_renew = $matriculaModel->isEligibleForRenewal($estudanteData['id']);
@@ -133,6 +135,7 @@ class EstudanteController extends Controller {
         $data['materiais'] = $this->model('Material')->getByTurma($turma_id);
         $data['comunicados'] = $comunicados;
         $data['unread_count'] = $unread_count;
+        $data['sumarios'] = $sumarios;
         $data['proximas_aulas'] = (function($h_list) {
             $hoje = ['Monday'=>'Segunda', 'Tuesday'=>'Terça', 'Wednesday'=>'Quarta', 'Thursday'=>'Quinta', 'Friday'=>'Sexta','Saturday'=>'Sábado','Sunday'=>'Domingo'][date('l')];
             $agora = date('H:i');
