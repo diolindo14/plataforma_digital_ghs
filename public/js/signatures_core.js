@@ -9,12 +9,29 @@ let signaturePadCert = null;
  */
 function setupCanvas(canvas, padInstance) {
     if (!canvas || !padInstance) return;
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = canvas.offsetHeight * ratio;
-    canvas.getContext("2d").scale(ratio, ratio);
-    padInstance.clear(); 
+    
+    // Pequeno atraso para garantir que o elemento está 100% visível (especialmente em modais)
+    setTimeout(() => {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform antes de escalar
+        ctx.scale(ratio, ratio);
+        padInstance.clear(); 
+    }, 100);
 }
+
+/**
+ * OPÇÕES DE SUAVIZAÇÃO (Assinatura Amigável)
+ */
+const signatureOptions = {
+    backgroundColor: 'rgba(255, 255, 255, 0)',
+    penColor: 'rgb(0, 0, 0)',
+    minWidth: 0.5,
+    maxWidth: 2.0, // Reduzido de 2.5 para um traço mais fino e elegante
+    velocityFilterWeight: 0.7
+};
 
 /**
  * FUNÇÃO DE ENVIO AJAX (Persistência no Banco de Dados)

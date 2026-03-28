@@ -85,3 +85,4 @@
 [2026-03-27 22:38:52] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
 [2026-03-28 18:02:10] CRITICAL ERROR: Call to undefined method Frequencia::getDetailedAttendanceForProfessor() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 42
 [2026-03-28 18:02:12] CRITICAL ERROR: Call to undefined method Frequencia::getDetailedAttendanceForProfessor() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 42
+[2026-03-28 19:16:27] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499

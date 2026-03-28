@@ -13,6 +13,8 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="<?= URL_ROOT ?>/public/js/signatures_core.js"></script>
     <script>
         const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
         if (pdfjsLib) {
@@ -3638,7 +3640,7 @@ $(document).ready(function() {
         const canvasCert = document.getElementById('signature-pad-cert');
         if (canvasCert) {
             if (!signaturePadCert) {
-                signaturePadCert = new SignaturePad(canvasCert, { backgroundColor: 'rgba(255,255,255,0)' });
+                signaturePadCert = new SignaturePad(canvasCert, signatureOptions);
             }
             setupCanvas(canvasCert, signaturePadCert);
         }
@@ -3774,9 +3776,5 @@ function confirmarEmissaoMerito(form) {
     return confirm(txt);
 }
 </script>
-<!-- Core Assinaturas GHS -->
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
-<script src="<?= URL_ROOT ?>/public/js/signatures_core.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

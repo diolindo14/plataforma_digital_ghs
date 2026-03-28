@@ -969,7 +969,7 @@ $(document).ready(function() {
     // --- LÓGICA PAINEL PROFESSOR (Snippet Profissional) ---
     const canvasProf = document.getElementById("signature-pad");
     if (canvasProf) {
-        signaturePadProfessor = new SignaturePad(canvasProf, { backgroundColor: 'rgba(255,255,255,0)' });
+        signaturePadProfessor = new SignaturePad(canvasProf, signatureOptions);
         
         // Sincronizar com a Tab do Bootstrap (Essencial!)
         $('button[data-bs-target="#pane-chamada"], a.nav-link[data-bs-target="#pane-chamada"]').on('shown.bs.tab', function() {
