@@ -24,7 +24,10 @@
         }
 
         /* A4 Landscape Dimensions */
-        @page { size: A4 landscape; margin: 0; }
+        @page { 
+            size: A4 landscape; 
+            margin: 0; 
+        }
         
         .certificate-container {
             width: 297mm;
@@ -32,7 +35,7 @@
             background: #fff;
             position: relative;
             padding: 15mm;
-            border: 12mm solid var(--ghs-dark);
+            border: 10mm solid var(--ghs-dark);
             box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             background-image: 
                 radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
@@ -40,6 +43,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         /* Inner border ornament */
@@ -90,9 +95,22 @@
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
         @media print {
-            .btn-print { display: none; }
-            body { background: white; }
-            .certificate-container { box-shadow: none; border-width: 8mm; margin: 0; width: 100%; height: 100%; }
+            html, body { 
+                height: 100%; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                overflow: hidden;
+            }
+            .btn-print { display: none !important; }
+            .certificate-container { 
+                box-shadow: none !important; 
+                margin: 0 !important; 
+                border-width: 10mm !important; 
+                width: 297mm !important; 
+                height: 210mm !important;
+                page-break-after: avoid;
+                page-break-before: avoid;
+            }
         }
     </style>
 </head>
