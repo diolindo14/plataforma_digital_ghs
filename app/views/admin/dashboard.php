@@ -363,7 +363,8 @@
                                         <th>Aluno Premiado</th>
                                         <th>Posição</th>
                                         <th>Média Final</th>
-                                        <th>Data Emissão</th>
+                                        <th>Status/Assinaturas</th>
+                                        <th class="text-end">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -2541,6 +2542,34 @@ function clearAnoForm() {
     </div>
 </div>
 
+<!-- Modal Assinatura Digital Certificado -->
+<div class="modal fade" id="modalAssinaturaCertificado" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title fw-bold"><ion-icon name="pencil-outline"></ion-icon> Assinatura do Diretor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p>Assinando certificado de Mérito para: <strong id="cert_sign_nome"></strong></p>
+                <input type="hidden" id="cert_sign_id">
+                
+                <div class="signature-wrapper shadow-sm mb-3">
+                    <canvas id="signature-pad-cert" width="450" height="200" style="background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; cursor: crosshair;"></canvas>
+                </div>
+                
+                <div class="alert alert-info small">
+                    <ion-icon name="information-circle"></ion-icon> Diretor: <strong>Samba Djob</strong>. Use o rato ou ecrã táctil para assinar.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" onclick="signaturePadCert.clear()">Limpar</button>
+                <button type="button" id="btnSalvarAssinaturaCert" onclick="salvarAssinaturaCertificado()" class="btn btn-dark">Confirmar Assinatura</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Secretaria -->
 <div class="modal fade" id="secretariaModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -3542,20 +3571,40 @@ function prepareAlocacao(estudanteId, nome) {
 // Carregar Certificados Emitidos
 function loadCertificadosEmitidos() {
     const tbody = $('#tabelaCertificadosEmitidos tbody');
-    tbody.html('<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-success"></div></td></tr>');
+    tbody.html('<tr><td colspan="7" class="text-center py-4"><div class="spinner-border text-success"></div></td></tr>');
     
     fetch('<?= URL_ROOT ?>/admin/getCertificadosEmitidos')
         .then(r => r.json())
         .then(data => {
             let html = '';
             if (data.length === 0) {
-                html = '<tr><td colspan="6" class="text-center text-muted py-4">Nenhum certificado de mérito emitido até ao momento.</td></tr>';
+                html = '<tr><td colspan="7" class="text-center text-muted py-4">Nenhum certificado de mérito emitido até ao momento.</td></tr>';
             } else {
                 data.forEach(c => {
                     const isFst = c.posicao === '1';
                     const badge = isFst ? '<span class="badge bg-warning text-dark"><ion-icon name="trophy"></ion-icon> 1º Lugar</span>' : '<span class="badge bg-secondary"><ion-icon name="medal"></ion-icon> 2º Lugar</span>';
                     const dFormatada = new Date(c.data_emissao).toLocaleDateString('pt-PT');
                     
+                    // Lógica de Status e Assinatura
+                    let statusHtml = '';
+                    let actionHtml = '';
+                    
+                    if (c.status === 'Publicado') {
+                        statusHtml = '<span class="badge bg-success"><ion-icon name="checkmark-done-circle"></ion-icon> Publicado</span>';
+                        actionHtml = `<button class="btn btn-sm btn-outline-primary" onclick="window.open('<?= URL_ROOT ?>/estudante/certificado/${c.id}', '_blank')"><ion-icon name="eye"></ion-icon></button>`;
+                    } else {
+                        const assDir = c.assinatura_diretor ? '<span class="text-success small">Diretor ✓</span>' : '<span class="text-muted small">Diretor ✗</span>';
+                        const assSec = c.assinatura_secretaria ? '<span class="text-success small">Secretaria ✓</span>' : '<span class="text-muted small">Secretaria ✗</span>';
+                        statusHtml = `<div class="d-flex flex-column gap-1">${assDir}${assSec}</div>`;
+                        
+                        // Botão de assinar conforme papel (Admin assume Diretor)
+                        if (!c.assinatura_diretor) {
+                            actionHtml = `<button class="btn btn-sm btn-dark" onclick="abrirModalAssinaturaCert(${c.id}, '${c.estudante_nome}')"><ion-icon name="pencil"></ion-icon> Assinar</button>`;
+                        } else {
+                            actionHtml = `<span class="badge bg-light text-dark border">Aguardando Sec.</span>`;
+                        }
+                    }
+
                     html += `
                         <tr>
                             <td class="fw-bold">${c.ano_letivo}</td>
@@ -3566,7 +3615,8 @@ function loadCertificadosEmitidos() {
                             </td>
                             <td>${badge}</td>
                             <td class="fw-bold text-success">${parseFloat(c.media).toFixed(2)}</td>
-                            <td class="small text-muted">${dFormatada} <br><span style="font-size:10px">Por: ${c.emitido_por_nome || 'Admin'}</span></td>
+                            <td>${statusHtml}</td>
+                            <td class="text-end">${actionHtml}</td>
                         </tr>
                     `;
                 });
@@ -3574,8 +3624,59 @@ function loadCertificadosEmitidos() {
             tbody.html(html);
         })
         .catch(err => {
-            tbody.html('<tr><td colspan="6" class="text-center text-danger py-4">Erro ao carregar dados.</td></tr>');
+            tbody.html('<tr><td colspan="7" class="text-center text-danger py-4">Erro ao carregar dados.</td></tr>');
         });
+}
+
+let signaturePadCert;
+function abrirModalAssinaturaCert(id, nome) {
+    $('#cert_sign_id').val(id);
+    $('#cert_sign_nome').text(nome);
+    const modal = new bootstrap.Modal(document.getElementById('modalAssinaturaCertificado'));
+    modal.show();
+    
+    // Inicializar Pad após modal abrir
+    setTimeout(() => {
+        const canvas = document.getElementById('signature-pad-cert');
+        if (canvas) {
+            signaturePadCert = new SignaturePad(canvas, {
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                penColor: 'rgb(0, 0, 0)',
+                minWidth: 1.5,
+                maxWidth: 4.5
+            });
+            signaturePadCert.clear();
+        }
+    }, 500);
+}
+
+function salvarAssinaturaCertificado() {
+    if (!signaturePadCert || signaturePadCert.isEmpty()) {
+        alert('Por favor, aplique a assinatura no painel.');
+        return;
+    }
+    
+    const id = $('#cert_sign_id').val();
+    const signatureData = signaturePadCert.toDataURL();
+    const btn = $('#btnSalvarAssinaturaCert');
+    
+    btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
+    
+    $.post('<?= URL_ROOT ?>/admin/assinarCertificado', {
+        id: id,
+        assinatura: signatureData,
+        csrf_token: '<?= $_SESSION['csrf_token'] ?>'
+    }, function(res) {
+        if (res.success) {
+            alert('Certificado assinado com sucesso!');
+            bootstrap.Modal.getInstance(document.getElementById('modalAssinaturaCertificado')).hide();
+            loadCertificadosEmitidos();
+        } else {
+            alert('Erro: ' + (res.message || 'Falha ao salvar assinatura.'));
+        }
+    }, 'json').always(() => {
+        btn.text('Confirmar Assinatura').prop('disabled', false);
+    });
 }
 
 // Disparar carga quando abrir o separador de mérito

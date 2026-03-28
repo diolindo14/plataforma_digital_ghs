@@ -998,53 +998,51 @@
 <script>
 let signaturePad;
 $(document).ready(function() {
-    // Initialize Signature Pad
+    // --- Melhoria Signature Pad (Compatibilidade Total e Responsividade) ---
     const canvas = document.getElementById('signature-pad');
     if (canvas) {
+        // Inicialização robusta
         signaturePad = new SignaturePad(canvas, {
             backgroundColor: 'rgba(255, 255, 255, 0)',
-            penColor: 'rgb(0, 0, 0)', // Tinta preta conforme solicitado
+            penColor: 'rgb(0, 0, 0)',
             minWidth: 1.5,
-            maxWidth: 4.5
-        });
-
-        signaturePad.addEventListener("beginStroke", () => {
-            document.getElementById('sig-placeholder').style.display = 'none';
+            maxWidth: 4.5,
+            velocityFilterWeight: 0.7
         });
 
         function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
+            const ratio =  Math.max(window.devicePixelRatio || 1, 1);
+            const container = canvas.closest('.signature-wrapper');
+            if (!container) return;
+            
+            // Definir largura baseada no container real
+            canvas.width = container.offsetWidth * ratio;
+            canvas.height = 200 * ratio; // Altura fixa para consistência
             canvas.getContext("2d").scale(ratio, ratio);
-            signaturePad.clear();
-            document.getElementById('sig-placeholder').style.display = 'block';
+            
+            signaturePad.clear(); // Limpar após redimensionar para evitar glitches
+            $('#sig-placeholder').show();
         }
 
+        // Redimensionar em eventos chave
         window.addEventListener("resize", resizeCanvas);
-        resizeCanvas();
-
-        // Garantia extra: redimensionar no primeiro toque/clique se estiver com tamanho zero
-        canvas.addEventListener('pointerdown', function() {
-            if (canvas.width === 0 || canvas.height === 0) {
-                resizeCanvas();
-            }
-        }, { once: true });
-
-        // Limpar Assinatura
-        document.getElementById('clear-signature')?.addEventListener('click', function() {
-            signaturePad.clear();
-            document.getElementById('sig-placeholder').style.display = 'block';
+        
+        // Redimensionar quando a tab for mostrada (crucial para Bootstrap)
+        $('button[data-bs-target="#pane-chamada"], a[href="#pane-chamada"]').on('shown.bs.tab', function() {
+            setTimeout(resizeCanvas, 350);
         });
 
-        // Redimensionar quando mudar de tab (com delay para Bootstrap animation)
-        // Usar o ID correto do tab de chamadas
-        document.querySelectorAll('[data-bs-toggle="pill"]').forEach(function(tabEl) {
-            tabEl.addEventListener('shown.bs.tab', function(event) {
-                if (event.target.id === 'tab-chamada') {
-                    setTimeout(resizeCanvas, 300);
-                }
-            });
+        // Primeiro toque força redimensionamento se estiver vazio
+        canvas.addEventListener('mousedown', () => { if(signaturePad.isEmpty()) $('#sig-placeholder').hide(); });
+        canvas.addEventListener('touchstart', () => { if(signaturePad.isEmpty()) $('#sig-placeholder').hide(); });
+
+        // Inicializar
+        setTimeout(resizeCanvas, 500);
+
+        // Limpar Assinatura
+        $('#clear-signature').on('click', function() {
+            signaturePad.clear();
+            $('#sig-placeholder').show();
         });
     }
 });
@@ -1144,9 +1142,13 @@ function setPresenca(btn, status) {
     const badge = row.find('.status-badge');
     const group = row.find('.btn-group-presenca');
     
-    group.data('status', status);
-    group.find('.btn').removeClass('active');
+    // Update the visual active state correctly
+    $(btn).siblings().removeClass('active');
     $(btn).addClass('active');
+    
+    // Set the data-status attribute so submeterSumario picks it up
+    group.attr('data-status', status);
+    group.data('status', status);
 
     if (status === 'P') {
         badge.text('Presente').removeClass('bg-danger bg-warning text-danger text-warning').addClass('bg-success text-success');
