@@ -433,8 +433,8 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-top-0 controls justify-content-center">
-                    <button type="button" class="btn-clear" id="clear">Limpar</button>
-                    <button type="button" id="save" class="btn-save">Finalizar Assinatura</button>
+                    <button type="button" class="btn-clear btn-clear-cert">Limpar</button>
+                    <button type="button" class="btn-save btn-save-cert">Finalizar Assinatura</button>
                 </div>
             </div>
         </div>
@@ -497,43 +497,28 @@
 
         let signaturePadCert;
 
-        // Lógica de Assinatura Digital Estrita (Snippet Original do Utilizador)
-        $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
-            const canvas = document.getElementById('signature-pad-cert');
-            if (canvas) {
-                if (!signaturePadCert) {
-                    signaturePadCert = new SignaturePad(canvas, {
-                        backgroundColor: 'rgba(255, 255, 255, 0)',
-                        penColor: 'rgb(0, 0, 0)',
-                        minWidth: 0.5,
-                        maxWidth: 2.5,
-                        velocityFilterWeight: 0.7
-                    });
+        $(document).ready(function() {
+            // --- LÓGICA MODAL SECRETARIA (Snippet Profissional) ---
+            $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
+                const canvasCert = document.getElementById('signature-pad-cert');
+                if (canvasCert) {
+                    if (!signaturePadCert) {
+                        signaturePadCert = new SignaturePad(canvasCert, { backgroundColor: 'rgba(255,255,255,0)' });
+                    }
+                    setupCanvas(canvasCert, signaturePadCert);
                 }
+            });
 
-                function resizeCanvas() {
-                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                    canvas.width = canvas.offsetWidth * ratio;
-                    canvas.height = canvas.offsetHeight * ratio;
-                    canvas.getContext("2d").scale(ratio, ratio);
-                    signaturePadCert.clear();
-                }
+            // --- BOTÕES DE SALVAMENTO ---
+            $(document).on('click', '.btn-save-cert', function() {
+                enviarAssinatura(signaturePadCert, 'secretaria', <?= $_SESSION['user_id'] ?>);
+                salvarAssinaturaCertificado(); // Executa lógica de emissão local
+            });
 
-                window.addEventListener("resize", resizeCanvas);
-                setTimeout(resizeCanvas, 100);
-            }
-        });
-
-        $(document).on('click', '#clear', function() {
-            if (signaturePadCert) signaturePadCert.clear();
-        });
-
-        $(document).on('click', '#save', function() {
-            if (!signaturePadCert || signaturePadCert.isEmpty()) {
-                alert("Por favor, forneça uma assinatura primeiro.");
-            } else {
-                salvarAssinaturaCertificado();
-            }
+            // Botão de Limpar
+            $(document).on('click', '.btn-clear-cert', function() {
+                if (signaturePadCert) signaturePadCert.clear();
+            });
         });
 
         function abrirModalAssinaturaCert(id, nome) {
@@ -544,7 +529,7 @@
         }
 
         function salvarAssinaturaCertificado() {
-            const btn = $('#save');
+            const btn = $('.btn-save-cert');
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
             
             const signatureData = signaturePadCert.toDataURL('image/svg+xml');
@@ -564,5 +549,9 @@
 
         $('[data-bs-target="#pane-merito"]').on('shown.bs.tab', loadCertificadosEmitidos);
     </script>
+    <!-- Core Assinaturas GHS -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="<?= URL_ROOT ?>/public/js/signatures_core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

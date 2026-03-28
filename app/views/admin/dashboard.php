@@ -2567,8 +2567,8 @@ function clearAnoForm() {
                 </div>
             </div>
             <div class="modal-footer bg-light border-top-0 controls justify-content-center">
-                <button type="button" class="btn-clear" id="clear">Limpar</button>
-                <button type="button" class="btn-save" id="save">Finalizar Assinatura</button>
+                <button type="button" class="btn-clear btn-clear-cert">Limpar</button>
+                <button type="button" class="btn-save btn-save-cert">Finalizar Assinatura</button>
             </div>
         </div>
     </div>
@@ -3632,45 +3632,28 @@ function loadCertificadosEmitidos() {
         });
 }
 
-let signaturePadCert;
-
-// Lógica de Assinatura Digital Estrita (Snippet Original do Utilizador)
-$(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
-    const canvas = document.getElementById('signature-pad-cert');
-    if (canvas) {
-        if (!signaturePadCert) {
-            signaturePadCert = new SignaturePad(canvas, {
-                backgroundColor: 'rgba(255, 255, 255, 0)',
-                penColor: 'rgb(0, 0, 0)',
-                minWidth: 0.5,
-                maxWidth: 2.5,
-                velocityFilterWeight: 0.7
-            });
+$(document).ready(function() {
+    // --- LÓGICA MODAL ADMIN (Snippet Profissional) ---
+    $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
+        const canvasCert = document.getElementById('signature-pad-cert');
+        if (canvasCert) {
+            if (!signaturePadCert) {
+                signaturePadCert = new SignaturePad(canvasCert, { backgroundColor: 'rgba(255,255,255,0)' });
+            }
+            setupCanvas(canvasCert, signaturePadCert);
         }
+    });
 
-        function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-            signaturePadCert.clear();
-        }
+    // --- BOTÕES DE SALVAMENTO ---
+    $(document).on('click', '.btn-save-cert', function() {
+        enviarAssinatura(signaturePadCert, 'admin', <?= $_SESSION['user_id'] ?>);
+        salvarAssinaturaCertificado(); // Mantém a lógica institucional de emissão
+    });
 
-        window.addEventListener("resize", resizeCanvas);
-        setTimeout(resizeCanvas, 100);
-    }
-});
-
-$(document).on('click', '#clear', function() {
-    if (signaturePadCert) signaturePadCert.clear();
-});
-
-$(document).on('click', '#save', function() {
-    if (!signaturePadCert || signaturePadCert.isEmpty()) {
-        alert("Por favor, forneça uma assinatura primeiro.");
-    } else {
-        salvarAssinaturaCertificado();
-    }
+    // Botão de Limpar
+    $(document).on('click', '.btn-clear-cert', function() {
+        if (signaturePadCert) signaturePadCert.clear();
+    });
 });
 
 function abrirModalAssinaturaCert(id, nome) {
@@ -3683,7 +3666,7 @@ function abrirModalAssinaturaCert(id, nome) {
 function salvarAssinaturaCertificado() {
     const id = $('#cert_sign_id').val();
     const signatureData = signaturePadCert.toDataURL('image/svg+xml');
-    const btn = $('#save');
+    const btn = $('.btn-save-cert');
     
     btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
     

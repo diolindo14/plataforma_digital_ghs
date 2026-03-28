@@ -12,6 +12,7 @@
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="<?= URL_ROOT ?>/public/js/signatures_core.js"></script>
     <!-- FullCalendar -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <style>
@@ -965,57 +966,35 @@
 let signaturePad;
 
 $(document).ready(function() {
-    // Lógica de Assinatura (User Snippet com Proteção)
-    const canvas = document.getElementById("signature-pad");
-    const clearButton = document.getElementById("clear");
-    const saveButton = document.getElementById("save");
-
-    if (canvas && clearButton && saveButton) {
-        // 1. Ajuste de Resolução
-        const resizeCanvas = () => {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-            if (signaturePad) signaturePad.clear();
-        }
-
-        // 2. Inicialização (Usando a variável de escopo superior)
-        signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgba(255, 255, 255, 0)',
-            penColor: 'rgb(0, 0, 0)',
-            minWidth: 0.5,
-            maxWidth: 2.5,
-            velocityFilterWeight: 0.7
-        });
-
-        window.addEventListener("resize", resizeCanvas);
+    // --- LÓGICA PAINEL PROFESSOR (Snippet Profissional) ---
+    const canvasProf = document.getElementById("signature-pad");
+    if (canvasProf) {
+        signaturePadProfessor = new SignaturePad(canvasProf, { backgroundColor: 'rgba(255,255,255,0)' });
         
-        // Sincronizar com Tabs e Modais
+        // Sincronizar com a Tab do Bootstrap (Essencial!)
         $('button[data-bs-target="#pane-chamada"], a.nav-link[data-bs-target="#pane-chamada"]').on('shown.bs.tab', function() {
-            setTimeout(resizeCanvas, 200);
+            setupCanvas(canvasProf, signaturePadProfessor);
         });
-        
-        if ($('#pane-chamada').hasClass('active')) {
-            setTimeout(resizeCanvas, 500);
-        }
 
-        // 3. Botões
-        clearButton.addEventListener("click", () => signaturePad.clear());
-        saveButton.addEventListener("click", () => {
-            if (signaturePad.isEmpty()) {
-                alert("Por favor, forneça uma assinatura primeiro.");
-            } else {
-                const dataDataUrl = signaturePad.toDataURL('image/svg+xml');
-                console.log("Assinatura Capturada:", dataDataUrl);
-                window.lastSignatureSVG = dataDataUrl;
-                submeterSumario(saveButton);
-            }
-        });
+        if ($('#pane-chamada').hasClass('active')) {
+            setTimeout(() => setupCanvas(canvasProf, signaturePadProfessor), 500);
+        }
     }
 
-    window.getCurrentSignature = () => (signaturePad && !signaturePad.isEmpty()) ? signaturePad.toDataURL('image/svg+xml') : '';
-    window.isSignatureEmpty = () => !signaturePad || signaturePad.isEmpty();
+    // --- BOTÕES DE SALVAMENTO ---
+    $("#save").on("click", function() {
+        // Enviar para a nova tabela assinaturas_ghs
+        enviarAssinatura(signaturePadProfessor, 'professor', <?= $_SESSION['user_id'] ?>);
+        // Também submeter o sumário institucional
+        submeterSumario(this);
+    });
+
+    $("#clear").on("click", () => {
+        if (signaturePadProfessor) signaturePadProfessor.clear();
+    });
+
+    window.getCurrentSignature = () => (signaturePadProfessor && !signaturePadProfessor.isEmpty()) ? signaturePadProfessor.toDataURL('image/svg+xml') : '';
+    window.isSignatureEmpty = () => !signaturePadProfessor || signaturePadProfessor.isEmpty();
 
     // Atualizar disciplina_id ao mudar a turma no upload
     $('#formUploadMaterial select[name="turma_id"]').on('change', function() {
