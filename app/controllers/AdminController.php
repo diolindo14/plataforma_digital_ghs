@@ -108,25 +108,27 @@ class AdminController extends Controller {
      * Esta ação libera o acesso básico mas exige matrícula para estudantes.
      */
     public function approveAccount($id) {
-        $this->verifyCsrfToken(); // Valida o token CSRF para segurança na submissão
-        $db = Database::getInstance(); // Instancia o objeto de base de dados via Singleton
+        $this->verifyCsrfToken();
+        $db = Database::getInstance();
         
-        // Define o status como 'ativo' e marca a data atual como data de aprovação
         $stmt = $db->prepare("UPDATE utilizadores SET status = 'ativo', data_aprovacao = NOW() WHERE id = :id");
         if ($stmt->execute([':id' => $id])) {
-            // Regista a atividade no log do sistema para auditoria
             $this->logActivity('Aprovar Conta Utilizador', ['user_id' => $id]);
             
-            // Notifica a Secretaria sobre a nova aprovação efetuada pelo Administrador
-            $user = $this->model('User')->findById($id); // Busca dados do utilizador aprovado
-            $notif = "O Administrador aprovou a conta de " . ($user['nome_completo'] ?? 'Utilizador') . "."; // Cria corpo da mensagem
-            $this->model('Mensagem')->notifyGroup('secretaria', $notif, $_SESSION['user_id']); // Envia para o grupo secretaria
+            $user = $this->model('User')->findById($id);
+            $notif = "O Administrador aprovou a conta de " . ($user['nome_completo'] ?? 'Utilizador') . ".";
+            $this->model('Mensagem')->notifyGroup('secretaria', $notif, $_SESSION['user_id']);
             
-            $_SESSION['flash_success'] = "Conta aprovada com sucesso! O prazo de 48h para matrícula iniciou.";
+            // 📧 Notificação por Email ao utilizador aprovado
+            if (!empty($user['email'])) {
+                Mailer::sendWelcome($user['email'], $user['nome_completo'] ?? 'Estudante');
+            }
+            
+            $_SESSION['flash_success'] = "Conta aprovada com sucesso! Email enviado ao utilizador.";
         } else {
             $_SESSION['flash_error'] = "Erro ao aprovar conta.";
         }
-        header('Location: ' . URL_ROOT . '/admin'); // Redireciona de volta para o dashboard
+        header('Location: ' . URL_ROOT . '/admin');
         exit;
     }
 
@@ -163,19 +165,20 @@ class AdminController extends Controller {
         $matriculaModel = $this->model('Matricula'); 
         $db = Database::getInstance(); 
         
-        $stmt = $db->prepare("SELECT m.*, u.nome_completo, u.email, u.id as user_id, u.status as user_status 
-                              FROM matriculas m 
-                              JOIN estudantes e ON m.estudante_id = e.id 
-                              JOIN utilizadores u ON e.utilizador_id = u.id 
-                              WHERE m.id = :id");
+        $stmt = $db->prepare("
+            SELECT m.*, u.nome_completo, u.email, u.id as user_id, u.status as user_status,
+                   a.nome as ano_nome
+            FROM matriculas m 
+            JOIN estudantes e ON m.estudante_id = e.id 
+            JOIN utilizadores u ON e.utilizador_id = u.id 
+            LEFT JOIN anos a ON m.ano_curso_id = a.id
+            WHERE m.id = :id");
         $stmt->execute([':id' => $id]);
         $m = $stmt->fetch(); 
 
         if ($matriculaModel->updateStatus($id, 'Aprovada', $_SESSION['user_id'])) {
             $this->logActivity('Aprovar Matrícula', ['matricula_id' => $id, 'aluno' => $m['email'] ?? 'N/A']);
             
-            // Garante que a conta está ativa (segurança: cobre casos de registo via login screen)
-            // Para matrículas online, a conta já nasce 'ativa', este UPDATE é idempotente.
             $db->prepare("UPDATE utilizadores SET status = 'ativo', data_aprovacao = NOW() WHERE id = :uid")
                ->execute([':uid' => $m['user_id']]);
 
@@ -188,11 +191,16 @@ class AdminController extends Controller {
                 $matriculaModel->assignToTurma($id, $t['id']);
                 $_SESSION['flash_success'] = "Matrícula de <strong>{$m['nome_completo']}</strong> aprovada! Aluno alocado automaticamente à turma compatível.";
             } else {
-                $_SESSION['flash_success'] = "Matrícula de <strong>{$m['nome_completo']}</strong> aprovada! Não foi encontrada turma com vagas — alocação manual necessária.";
+                $_SESSION['flash_success'] = "Matrícula de <strong>{$m['nome_completo']}</strong> aprovada! Alocação manual necessária.";
             }
             
-            // Notificação bidirecional para a Secretaria
-            $notif = "Matrícula validada: {$m['nome_completo']} ({$m['email']}).";
+            // 📧 Notificação por Email ao aluno
+            if (!empty($m['email'])) {
+                Mailer::sendMatriculaAprovada($m['email'], $m['nome_completo'] ?? 'Estudante', $m['ano_nome'] ?? '');
+            }
+
+            // Notificação interna para a Secretaria
+            $notif = "Matrícula validada pelo Admin: {$m['nome_completo']} ({$m['email']}).";
             $this->model('Mensagem')->notifyGroup('secretaria', $notif, $_SESSION['user_id']); 
             
         } else {
@@ -206,9 +214,22 @@ class AdminController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();
             $motivo = $_POST['motivo'] ?? '';
+            
+            // Busca dados do aluno para notificação
+            $db = Database::getInstance();
+            $stmt = $db->prepare("SELECT u.email, u.nome_completo FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+            $stmt->execute([':id' => $id]);
+            $aluno = $stmt->fetch();
+
             if ($this->model('Matricula')->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo)) {
                 $this->logActivity('Rejeitar Matrícula', ['matricula_id' => $id, 'motivo' => $motivo]);
-                $_SESSION['flash_success'] = "Matrícula rejeitada com sucesso.";
+                
+                // 📧 Notificação por Email ao aluno
+                if (!empty($aluno['email'])) {
+                    Mailer::sendMatriculaRejeitada($aluno['email'], $aluno['nome_completo'] ?? 'Estudante', $motivo);
+                }
+                
+                $_SESSION['flash_success'] = "Matrícula rejeitada. Email enviado ao aluno.";
             } else {
                 $_SESSION['flash_error'] = "Erro ao rejeitar matrícula.";
             }
