@@ -394,9 +394,16 @@ class EstudanteController extends Controller {
                 exit;
             }
 
-            // 3. Verificar tipo MIME real (via finfo – não confia no navegador)
-            $finfo = new finfo(FILEINFO_MIME_TYPE);
-            $realMime = $finfo->file($_FILES['comprovativo']['tmp_name']);
+            // 3. Verificar tipo MIME real (via finfo ou fallback)
+            $realMime = 'application/octet-stream';
+            if (class_exists('finfo')) {
+                $finfo = new finfo(FILEINFO_MIME_TYPE);
+                $realMime = $finfo->file($_FILES['comprovativo']['tmp_name']);
+            } else {
+                // Fallback básico para quando fileinfo está desativado no PHP
+                $realMime = $_FILES['comprovativo']['type'] ?? 'application/octet-stream';
+            }
+
             if (!in_array($realMime, $allowedMimes, true)) {
                 header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&error=mime');
                 exit;
@@ -430,6 +437,7 @@ class EstudanteController extends Controller {
             ]);
             header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&success=1');
         } catch (\Exception $e) {
+            error_log("Erro no pagamento (registarPagamento): " . $e->getMessage());
             header('Location: ' . URL_ROOT . '/estudante?tab=financeiro&error=1');
         }
         exit;
@@ -524,10 +532,15 @@ class EstudanteController extends Controller {
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
             
             if (isset($_FILES['comprovativo']) && $_FILES['comprovativo']['error'] == 0) {
-                $finfo = new finfo(FILEINFO_MIME_TYPE);
-                $realMime = $finfo->file($_FILES['comprovativo']['tmp_name']);
-                $allowedMimes = ['application/pdf', 'image/jpeg', 'image/png'];
+                $realMime = 'application/octet-stream';
+                if (class_exists('finfo')) {
+                    $finfo = new finfo(FILEINFO_MIME_TYPE);
+                    $realMime = $finfo->file($_FILES['comprovativo']['tmp_name']);
+                } else {
+                    $realMime = $_FILES['comprovativo']['type'] ?? 'application/octet-stream';
+                }
                 
+                $allowedMimes = ['application/pdf', 'image/jpeg', 'image/png'];
                 if (in_array($realMime, $allowedMimes)) {
                     $ext = pathinfo($_FILES['comprovativo']['name'], PATHINFO_EXTENSION);
                     $new_name = $matricula_id . '_renovacao_' . bin2hex(random_bytes(4)) . '.' . $ext;

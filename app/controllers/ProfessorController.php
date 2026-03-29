@@ -83,8 +83,12 @@ class ProfessorController extends Controller {
             $this->verifyCsrfToken();
             $notaModel = $this->model('Nota');
             $res = $notaModel->saveNotasRow($_POST);
-            if ($res) $this->logActivity('Lançar Nota', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
-            echo json_encode(['success' => $res]);
+            if ($res) {
+                $this->logActivity('Lançar Nota', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erro ao guardar notas na base de dados.']);
+            }
             exit;
         }
     }
@@ -134,8 +138,12 @@ class ProfessorController extends Controller {
             $this->verifyCsrfToken();
             $model = $this->model('Frequencia');
             $res = $model->saveSummary($_POST);
-            if ($res) $this->logActivity('Lançar Sumário', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
-            echo json_encode(['success' => $res]);
+            if ($res) {
+                $this->logActivity('Lançar Sumário', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erro ao salvar o sumário institucional.']);
+            }
             exit;
         }
     }
@@ -178,8 +186,14 @@ class ProfessorController extends Controller {
             exit;
         }
 
-        $finfo    = new finfo(FILEINFO_MIME_TYPE);
-        $realMime = $finfo->file($_FILES['ficheiro']['tmp_name']);
+        $realMime = 'application/octet-stream';
+        if (class_exists('finfo')) {
+            $finfo    = new finfo(FILEINFO_MIME_TYPE);
+            $realMime = $finfo->file($_FILES['ficheiro']['tmp_name']);
+        } else {
+            $realMime = $_FILES['ficheiro']['type'] ?? 'application/octet-stream';
+        }
+
         if (!in_array($realMime, $allowedMimes, true)) {
             echo json_encode(['success' => false, 'message' => 'Tipo MIME inválido.']);
             exit;
@@ -210,6 +224,7 @@ class ProfessorController extends Controller {
 
     public function saveRespostaReclamacao() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            header('Content-Type: application/json');
             $this->verifyCsrfToken();
             $estudante_id = $_POST['estudante_id'] ?? null;
             $turma_id = $_POST['turma_id'] ?? null;
@@ -217,30 +232,26 @@ class ProfessorController extends Controller {
             $resposta = $_POST['resposta_professor'] ?? null;
             
             if ($estudante_id && $turma_id && $disciplina_id && $resposta) {
-                $db = Database::getInstance();
-                $stmt = $db->prepare("UPDATE concordancia_notas SET status = 'Respondido', resposta_professor = :resp, data_resposta = NOW() WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'");
-                $res = $stmt->execute([':resp' => $resposta, ':eid' => $estudante_id, ':tid' => $turma_id, ':did' => $disciplina_id]);
+                $notaModel = $this->model('Nota');
+                $res = $notaModel->responderReclamacao($estudante_id, $turma_id, $disciplina_id, $resposta);
                 
                 if ($res) {
                     $this->logActivity('Resposta à Reclamação', ['estudante_id' => $estudante_id]);
                     
-                    // Enviar mensagem oficial ao aluno
-                    $stmtE = $db->prepare("SELECT utilizador_id FROM estudantes WHERE id = :id LIMIT 1");
-                    $stmtE->execute([':id' => $estudante_id]);
-                    $est = $stmtE->fetch();
+                    // Notificação automática ao aluno via MensagemModel
+                    $estudanteModel = $this->model('Estudante');
+                    $est = $estudanteModel->findById($estudante_id);
                     
-                    if ($est) {
+                    if ($est && !empty($est['utilizador_id'])) {
                         $msgModel = $this->model('Mensagem');
                         $conteudo = "O Professor respondeu à sua reclamação de nota: \"" . $resposta . "\"";
                         $msgModel->send($_SESSION['user_id'], $est['utilizador_id'], "Resposta a Reclamação de Nota", $conteudo);
                     }
                     
-                    header('Content-Type: application/json');
                     echo json_encode(['success' => true]);
                     exit;
                 }
             }
-            header('Content-Type: application/json');
             echo json_encode(['success' => false]);
             exit;
         }

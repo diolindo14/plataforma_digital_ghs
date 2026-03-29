@@ -1314,15 +1314,24 @@ function salvarRespostaReclamacao() {
     }
 
     btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
-
-    $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
+    
+    // CORREÇÃO: Apontar para o método correto de resposta à reclamação
+    $.post('<?= URL_ROOT ?>/professor/saveRespostaReclamacao', {
+        estudante_id: data.estudante_id,
+        turma_id: data.turma_id,
+        disciplina_id: data.disciplina_id,
+        resposta_professor: data.resposta_professor,
+        csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+    }, function(res) {
         if (res.success) {
             alert('Resposta enviada com sucesso! O estado foi alterado para "Respondido" e aguarda concordância do aluno.');
             location.reload();
         } else {
-            alert('Erro ao enviar resposta.');
+            alert('Erro ao enviar resposta: ' + (res.message || 'Falha técnica.'));
         }
-    }, 'json').always(function() {
+    }, 'json').fail(function() {
+        alert('Erro crítico ao comunicar com o servidor.');
+    }).always(function() {
         btn.text('Enviar Resposta').prop('disabled', false);
     });
 }

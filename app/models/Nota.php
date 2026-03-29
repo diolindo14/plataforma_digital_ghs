@@ -283,4 +283,20 @@ class Nota {
         $stmt->execute([':eid' => $estudante_id, ':did' => $disciplina_id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function responderReclamacao($estudante_id, $turma_id, $disciplina_id, $resposta) {
+        $stmt = $this->db->prepare("
+            UPDATE concordancia_notas 
+            SET status = 'Respondido', 
+                resposta_professor = :resp, 
+                data_resposta = NOW() 
+            WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'
+        ");
+        return $stmt->execute([
+            ':resp' => $resposta, 
+            ':eid' => $estudante_id, 
+            ':tid' => $turma_id, 
+            ':did' => $disciplina_id
+        ]);
+    }
 }
