@@ -521,10 +521,6 @@
                             <p class="text-muted">Gerencie feriados, exames e eventos globais.</p>
                         </div>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-dark shadow-sm fw-bold border-1" data-bs-toggle="modal"
-                                data-bs-target="#imgCalendarioModal">
-                                <ion-icon name="image-outline"></ion-icon> Ver Calendário Oficial (JPG)
-                            </button>
                             <button class="btn btn-primary shadow-sm fw-bold border-0"
                                 style="background: linear-gradient(135deg, #10B981, #059669);" data-bs-toggle="modal"
                                 onclick="clearEventoForm()" data-bs-target="#eventoModal">
@@ -2262,22 +2258,7 @@
         </div>
     </div>
 
-    <!-- Modal Visualizar Calendário -->
-    <div class="modal fade" id="imgCalendarioModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold">Calendário Académico Oficial</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-0 text-center bg-light">
-                    <!-- Swap semesters: 1st left, 2nd right. Since we only have one image, 
-                         we fix the orientation (remove vertical flip) and ensure standard display. -->
-                    <img src="<?= URL_ROOT ?>/img/calendario.jpg" class="img-fluid shadow-sm" style="max-height: 85vh;">
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Modal Alocar Aluno -->
     <div class="modal fade" id="alocarAlunoModal" tabindex="-1" aria-hidden="true">
