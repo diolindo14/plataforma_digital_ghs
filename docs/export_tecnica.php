@@ -76,7 +76,7 @@
 
     <div class="cover">
         <div class="cover-left">
-            <div class="logo">GREEN HARD &amp; <span>SOFTH</span></div>
+            <img src="../img/logo.jpg" alt="GREEN HARD &amp; SOFTH" style="height: 60px; border-radius: 6px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             <h1>README Técnico da Plataforma</h1>
             <p>Arquitetura, Instalação, Segurança e Motores de Lógica de Negócio</p>
         </div>
