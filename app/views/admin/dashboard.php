@@ -3655,8 +3655,7 @@
 <!-- ═══════════════════════════════════════════════════════
      DEPENDÊNCIAS JAVASCRIPT (ORDEM CORRECTA)
 ═══════════════════════════════════════════════════════ -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery e Bootstrap já foram carregados no head. -->
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -3811,6 +3810,122 @@ $(document).ready(function () {
         $('#espModalTitle').text('Editar Especialidade');
         new bootstrap.Modal(document.getElementById('especialidadeModal')).show();
     });
+
+    // ── Estudantes (Edição e Visualização) ────────────────
+    $(document).on('click', '.btn-edit-student', function (e) {
+        e.preventDefault();
+        const d = $(this).data();
+        $('#student_id').val(d.id);
+        $('#student_nome').val(d.nome);
+        $('#student_email').val(d.email);
+        $('#student_bi').val(d.bi);
+        $('#student_nascimento').val(d.nascimento);
+        $('#student_telefone').val(d.telefone);
+        $('#student_telefone_alt').val(d.telefone_alt);
+        $('#student_estado_civil').val(d.estado_civil);
+        $('#student_cidade').val(d.cidade);
+        $('#student_bairro').val(d.bairro);
+        $('#student_morada').val(d.morada);
+        $('#student_escola').val(d.escola);
+        $('#student_ano_conclusao').val(d.ano_conclusao);
+        $('#student_media').val(d.media);
+        $('#student_encarregado_nome').val(d.encarregado_nome);
+        $('#student_encarregado_telefone').val(d.encarregado_telefone);
+        
+        if (d.sexo) {
+            $('#student_sexo').val(d.sexo);
+        }
+
+        $('#modalTitle').text('Editar Estudante Interno');
+        $('#btnSubmit').text('Salvar Alterações');
+        
+        // Modal is triggered automatically by data-bs-target as defined in HTML,
+        // but if we needed to trigger it manually:
+        // new bootstrap.Modal(document.getElementById('studentModal')).show();
+    });
+
+    $('#studentModal').on('hidden.bs.modal', function () {
+        $(this).find('form')[0].reset();
+        $('#student_id').val('');
+        $('#modalTitle').text('Novo Aluno Interno');
+        $('#btnSubmit').text('Criar Aluno');
+    });
+
+window.viewStudent = function(id) {
+    const content = $('#viewStudentContent');
+    content.html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
+    new bootstrap.Modal(document.getElementById('viewStudentModal')).show();
+    
+    $.ajax({
+        url: '<?= URL_ROOT ?>/admin/getStudentDetails/' + id,
+        type: 'GET',
+        success: function(data) {
+            if(!data || data.error) {
+                content.html('<div class="alert alert-danger py-2">Não foi possível carregar os detalhes do aluno.</div>');
+                return;
+            }
+            let html = `
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px; font-size: 24px;">
+                        <ion-icon name="person"></ion-icon>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0">${data.nome_completo}</h5>
+                        <span class="badge bg-${data.user_status == 'ativo' ? 'success' : 'warning'} mt-1">${(data.user_status||'').toUpperCase()}</span>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6 border-end">
+                        <p class="mb-1 small text-muted">Email Profissional/Pessoal</p>
+                        <p class="fw-bold mb-0">${data.email || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1 small text-muted">B.I. / Passaporte</p>
+                        <p class="fw-bold mb-0">${data.bi || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-6 border-end">
+                        <p class="mb-1 small text-muted">Telefone Principal</p>
+                        <p class="fw-bold mb-0">${data.telefone || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1 small text-muted">Telefone Alternativo</p>
+                        <p class="fw-bold mb-0">${data.telefone_alternativo || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-6 border-end mt-3 border-top pt-3">
+                        <p class="mb-1 small text-muted">Género</p>
+                        <p class="fw-bold mb-0">${data.sexo || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-6 mt-3 border-top pt-3">
+                        <p class="mb-1 small text-muted">Data de Nascimento</p>
+                        <p class="fw-bold mb-0">${data.data_nascimento ? new Date(data.data_nascimento).toLocaleDateString('pt-PT') : 'N/A'}</p>
+                    </div>
+                    <div class="col-12 mt-3 border-top pt-3">
+                        <p class="mb-1 small text-muted">Morada Completa</p>
+                        <p class="fw-bold mb-0">${data.morada || ''} ${data.bairro ? '- ' + data.bairro : ''} ${data.cidade ? '(' + data.cidade + ')' : ''}</p>
+                    </div>
+                    <div class="col-12 mt-3 border-top pt-3">
+                        <h6 class="fw-bold text-dark">Informação Académica Anterior</h6>
+                        <div class="row mt-2">
+                             <div class="col-6">Escola: <strong>${data.escola || 'N/A'}</strong></div>
+                             <div class="col-6">Média Final: <strong>${data.media || 'N/A'}</strong></div>
+                        </div>
+                    </div>
+                     <div class="col-12 mt-3 border-top pt-3">
+                        <h6 class="fw-bold text-dark">Encarregado de Educação</h6>
+                        <div class="row mt-2">
+                             <div class="col-6">Nome: <strong>${data.encarregado_nome || 'N/A'}</strong></div>
+                             <div class="col-6">Telefone: <strong>${data.encarregado_telefone || 'N/A'}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            content.html(html);
+        },
+        error: function() {
+            content.html('<div class="alert alert-danger py-2">Erro ao conectar com o servidor.</div>');
+        }
+    });
+};
 
     // ── Botão flutuante scroll-to-top ─────────────────────
     const topBtn = $('<button id="scrollTop" class="btn" style="position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:#10B981;color:#fff;display:none;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.2);"><i>↑</i></button>');
