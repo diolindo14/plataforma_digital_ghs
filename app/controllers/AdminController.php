@@ -310,6 +310,19 @@ class AdminController extends Controller {
             if ($id) {
                 // // Identificação de Pontos Cegos: Se o email for alterado aqui, 
                 // // não há verificação de duplicidade para o novo email.
+                
+                // --- Correção de Bug: Verificação de duplicidade de email na edição ---
+                $currentUser = $userModel->findById($id);
+                if ($currentUser && $currentUser['email'] !== $email) {
+                    $existingUser = $userModel->findByEmail($email);
+                    if ($existingUser) {
+                        $_SESSION['flash_error'] = "O email '{$email}' já está em uso por outro utilizador.";
+                        header('Location: ' . URL_ROOT . '/admin');
+                        exit;
+                    }
+                }
+                // ------------------------------------------------------------------
+
                 $userData = ['nome_completo' => $nome, 'email' => $email];
                 if (!empty($senha)) $userData['senha'] = $senha;
                 

@@ -99,3 +99,4 @@
 [2026-03-29 03:34:40] CRITICAL ERROR: in_array(): Argument #2 ($haystack) must be of type array, int given em C:\xampp\htdocs\green\app\helpers\FileHelper.php na linha 19
 [2026-03-29 13:19:44] CRITICAL ERROR: Too few arguments to function AdminController::rejectMatricula(), 0 passed in C:\xampp\htdocs\green\core\App.php on line 62 and exactly 1 expected em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 205
 [2026-03-29 23:43:27] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'juliana@gmail.com' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 204
+[2026-03-29 23:45:04] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'juliana@gmail.com' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 204
