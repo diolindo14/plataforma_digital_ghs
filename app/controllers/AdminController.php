@@ -162,38 +162,42 @@ class AdminController extends Controller {
         $matriculaModel = $this->model('Matricula'); 
         $db = Database::getInstance(); 
         
-        // // Refatoração: Consultas diretas ao PDO no controlador devem ser evitadas.
-        // // Sugestão: Mover esta lógica de JOIN para um método no MatriculaModel.
-        $stmt = $db->prepare("SELECT m.*, u.nome_completo, u.email, u.id as user_id FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+        $stmt = $db->prepare("SELECT m.*, u.nome_completo, u.email, u.id as user_id, u.status as user_status 
+                              FROM matriculas m 
+                              JOIN estudantes e ON m.estudante_id = e.id 
+                              JOIN utilizadores u ON e.utilizador_id = u.id 
+                              WHERE m.id = :id");
         $stmt->execute([':id' => $id]);
         $m = $stmt->fetch(); 
 
         if ($matriculaModel->updateStatus($id, 'Aprovada', $_SESSION['user_id'])) {
             $this->logActivity('Aprovar Matrícula', ['matricula_id' => $id, 'aluno' => $m['email'] ?? 'N/A']);
             
-            // Ativa o utilizador na tabela core
-            $db->prepare("UPDATE utilizadores SET status = 'ativo' WHERE id = :uid")->execute([':uid' => $m['user_id']]);
+            // Garante que a conta está ativa (segurança: cobre casos de registo via login screen)
+            // Para matrículas online, a conta já nasce 'ativa', este UPDATE é idempotente.
+            $db->prepare("UPDATE utilizadores SET status = 'ativo', data_aprovacao = NOW() WHERE id = :uid")
+               ->execute([':uid' => $m['user_id']]);
 
-            // // Lógica de Negócio: Alocação automática inteligente baseada em vagas e turno.
+            // Alocação automática inteligente baseada em vagas e turno
             $stmtT = $db->prepare("SELECT id FROM turmas WHERE ano_id = :ano AND turno = :turno AND vagas > (SELECT COUNT(*) FROM matriculas WHERE turma_id = turmas.id) LIMIT 1");
             $stmtT->execute([':ano' => $m['ano_curso_id'], ':turno' => $m['turno']]);
             $t = $stmtT->fetch(); 
             
             if ($t) {
                 $matriculaModel->assignToTurma($id, $t['id']);
-                $_SESSION['flash_success'] = "Matrícula aprovada! O aluno foi ativado e alocado automaticamente à turma compatível.";
+                $_SESSION['flash_success'] = "Matrícula de <strong>{$m['nome_completo']}</strong> aprovada! Aluno alocado automaticamente à turma compatível.";
             } else {
-                $_SESSION['flash_success'] = "Matrícula aprovada e aluno ativado! No entanto, não foi encontrada turma com vagas. Alocação manual necessária.";
+                $_SESSION['flash_success'] = "Matrícula de <strong>{$m['nome_completo']}</strong> aprovada! Não foi encontrada turma com vagas — alocação manual necessária.";
             }
             
-            // // Integração: Sistema de Mensagens Bidirecional (GHS Message System)
-            $notif = "Matrícula confirmada pelo Administrador: " . ($m['nome_completo'] ?? 'N/A') . " (" . ($m['email'] ?? '') . ").";
+            // Notificação bidirecional para a Secretaria
+            $notif = "Matrícula validada: {$m['nome_completo']} ({$m['email']}).";
             $this->model('Mensagem')->notifyGroup('secretaria', $notif, $_SESSION['user_id']); 
             
         } else {
             $_SESSION['flash_error'] = "Erro ao aprovar matrícula.";
         }
-        header('Location: ' . URL_ROOT . '/admin'); 
+        header('Location: ' . URL_ROOT . '/admin#pane-matriculas'); 
         exit;
     }
 

@@ -24,7 +24,10 @@ class MatriculaController extends Controller {
             }
 
             $senha_provisoria = 'ghs' . substr($bi, -4);
-            $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'pendente');
+            // Matrícula online: conta fica ATIVA imediatamente.
+            // O aluno pode fazer login e acompanhar o estado da sua matrícula.
+            // Só a MATRÍCULA (documentos) ficará 'Pendente' para validação pela Secretaria.
+            $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'ativo');
 
             if (!$user_id) {
                 $_SESSION['flash_error'] = "Erro ao criar utilizador. Verifique se o email já existe.";
@@ -78,6 +81,9 @@ class MatriculaController extends Controller {
                 }
             }
 
+            // Sucesso total: armazenar dados na sessão flash para exibir na página de sucesso
+            $_SESSION['matricula_senha_provisoria'] = $senha_provisoria;
+            $_SESSION['matricula_email'] = $email;
             header('Location: ' . URL_ROOT . '/matricula/sucesso');
             exit;
         }
