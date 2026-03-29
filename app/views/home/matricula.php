@@ -204,9 +204,9 @@
                                         <input type="text" name="media" class="form-control" placeholder="Ex: 14">
                                     </div>
                                     <div class="col-12">
-                                        <label class="form-label">Especialização de Interesse (5º ano)</label>
+                                        <label class="form-label">Especialização de Interesse <span class="text-muted fw-normal">(Opcional - Apenas para o 5º ano)</span></label>
                                         <select name="especializacao" class="form-select">
-                                            <option value="" disabled selected>Selecionar especialização</option>
+                                            <option value="" selected>Sem especialização definida</option>
                                             <option>Hardware & Robótica</option>
                                             <option>Programação</option>
                                             <option>Banco de Dados</option>

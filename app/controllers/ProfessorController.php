@@ -304,8 +304,8 @@ class ProfessorController extends Controller {
             $formatted[] = [
                 'id'    => $e['id'],
                 'title' => $e['titulo'],
-                'start' => $e['data_inicio'] . 'T' . ($e['hora_inicio'] ?? '08:00:00'),
-                'end'   => $e['data_fim'] . 'T' . ($e['hora_fim'] ?? '18:00:00'),
+                'start' => $e['data_evento'] . 'T08:00:00',
+                'end'   => $e['data_evento'] . 'T18:00:00',
                 'color' => $e['cor'] ?? '#6366f1',
                 'description' => $e['descricao']
             ];
