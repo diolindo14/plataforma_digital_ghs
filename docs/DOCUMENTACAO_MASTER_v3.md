@@ -1,64 +1,41 @@
-# Documentação Completa: GHS Educational Platform v3.0
+# Documentação Completa: GHS Educational Platform v5.0
 
 ## 1. Visão Geral
-A plataforma GHS é uma solução integrada de gestão académica e financeira, desenhada sob o padrão MVC em PHP nativo. Oferece portais dedicados para quatro perfis distintos, garantindo segurança, rastreabilidade e eficiência nos processos escolares.
+A plataforma GHS é uma solução robusta de gestão académica e financeira. Na versão 5.0, consolidamos o motor de regras pedagógicas e reforçamos as camadas de proteção de dados, oferecendo uma experiência fluida para administradores, professores e alunos.
 
 ---
 
-## 2. Manuais de Utilizador
+## 2. Componentes Estratégicos
 
-### 2.1 Portal do Administrador
-O Administrador tem controlo total sobre a infraestrutura da escola.
-- **Gestão de Alunos**: Ativação, desativação e reset de passwords.
-- **Gestão de Equipa**: Cadastro e monitorização de Professores e Secretários.
-- **Configuração Académica**: Definição de Anos Letivos, Turmas e Disciplinas.
-- **Auditoria**: Visualização de logs em tempo real de todas as ações críticas do sistema.
+### 2.1 Resumo Executivo (Gestão)
+Focado no controle institucional e saúde financeira.
+- **Dashboards Visual**: Gráficos de densidade estudantil e distribuição por turnos.
+- **Gestão de Tesouraria**: Conciliação de pagamentos manuais e automáticos.
+- **Audit Logs**: Rastreabilidade total de ações administrativas.
 
-### 2.2 Portal da Secretaria
-Focado na operacionalização financeira e documental.
-- **Validação de Matrículas**: Análise de documentos (B.I., Certificados) e aprovação/rejeição de pedidos.
-- **Controlo de Pagamentos**: Validação de comprovativos de transferência e emissão de recibos digitais.
-- **Comunicados**: Emissão de avisos para toda a comunidade escolar.
+### 2.2 Manual do Utilizador (Funcional)
+Experiência de auto-serviço e pedagogia digital.
+- **Horários e Calendário**: Visualização dinâmica e exportação.
+- **Histórico Global**: Registro vitalício de desempenho académico.
+- **Integrador PDF.js**: Visualização segura de documentos sensíveis.
 
-### 2.3 Portal do Professor
-Interface pedagógica para gestão de sala de aula.
-- **Sumários**: Lançamento de temas das aulas e registo de faltas.
-- **Notas**: Lançamento e edição de avaliações por disciplina e turma.
-- **Feedback**: Acompanhamento do desempenho dos alunos.
-
-### 2.4 Portal do Estudante
-Auto-serviço para alunos e encarregados.
-- **Inscrição**: Processo de matrícula simplificado com upload de documentos.
-- **Financeiro**: Consulta de propinas e submissão de comprovativos de pagamento.
-- **Académico**: Consulta de notas, faltas e histórico escolar completo.
+### 2.3 README Técnico (Desenvolvedor)
+Infraestrutura e segurança de nível bancário.
+- **Security Hardening**: Proteção ativa contra CSRF, XSS, SQLi e IDOR.
+- **Motor Académico**: Algoritmos complexos de progressão (Regra das 3 negativas).
+- **Validação de Registro**: CAPTCHA nativo e verificação de integridade documental (finfo).
 
 ---
 
-## 3. Especificações Técnicas e Segurança
-
-### 3.1 Arquitetura MVC
-- **Modelos (Models)**: Centralizam toda a lógica de negócio e consultas SQL.
-- **Controladores (Controllers)**: Gerem as requisições e a lógica de fluxo.
-- **Vistas (Views)**: Interfaces dinâmicas em PHP/HTML com estilização CSS moderna.
-
-### 3.2 Camadas de Segurança (Hardening)
-1. **Proteção CSRF**: Implementada em todos os formulários e chamadas AJAX.
-2. **Logs de Auditoria**: Registo de IP, Utilizador e Ação em tempo real.
-3. **Validação MIME**: Verificação real de ficheiros (anti-malware) em todos os uploads.
-4. **CAPTCHA Nativo**: Prevenção de bots no registo de novos utilizadores.
-5. **Passwords**: Política de alteração obrigatória no primeiro acesso.
-
----
-
-## 4. Guia de Manutenção
-- **Base de Dados**: MariaDB/MySQL. O ficheiro de dump seguro encontra-se em `/docs/backups/database.sql`.
-- **Logs de Erro**: Localizados em `app/logs/error.log`.
-- **Scripts de Desenvolvimento**: Localizados em `/docs/dev/`.
+## 3. Manutenção e Suporte
+- **Base de Dados**: MariaDB/MySQL (Dump em `/docs/backups/`).
+- **Logs**: Centralizados em `app/logs/error.log`.
+- **Exportação**: Utilize as ferramentas em `/docs/export_*.php` para gerar manuais em PDF.
 
 ---
 
 > [!TIP]
-> **COMO EXPORTAR PARA PDF**:
-> 1. Abra este ficheiro no **VS Code**.
-> 2. Pressione `Ctrl+Shift+P` e procure por "Markdown: Export as PDF" (necessário extensão *Markdown PDF*).
-> 3. Alternativamente, copie este conteúdo para o **Google Docs** ou **Word** e selecione "Guardar como PDF". Ceramica Ceramica Ceramica Ceramica Ceramica Ceramica Ceramica Ceramica Ceramica Ceramica
+> **COMO GERAR OS MANUAIS EM PDF**:
+> 1. Aceda via browser aos ficheiros `export_admin.php`, `export_funcional.php` ou `export_tecnica.php`.
+> 2. Pressione `Ctrl + P`.
+> 3. Selecione "Guardar como PDF" para obter os documentos oficiais com a formatação profissional.
