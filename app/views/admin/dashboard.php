@@ -14,11 +14,15 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-        const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+        // PDF.js Engine Initializer
+        var pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
         if (pdfjsLib) {
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         } else {
-            console.error('Falha ao carregar a biblioteca PDF.js');
+            document.addEventListener('DOMContentLoaded', function() {
+                var viewer = document.getElementById('pdfViewer');
+                if (viewer) viewer.innerHTML = '<div class="alert alert-danger m-3">Erro: Biblioteca PDF.js não carregada. Verifique sua conexão.</div>';
+            });
         }
     </script>
     <style>
@@ -2918,7 +2922,7 @@
             $(`#btn-${type}`).removeClass('btn-outline-light').addClass('btn-light');
 
             if (!file) {
-                $('#pdfViewer').html('<div class="text-center py-5 text-white opacity-50"><ion-icon name="warning-outline" style="font-size: 3rem;"></ion-icon><p>Este documento não foi anexado por este estudante.</p></div>');
+                $('#pdfViewer').html('<div class="text-center py-5 text-white opacity-50"><ion-icon name="warning-outline" style="font-size: 3rem;"></ion-icon><p>Este documento não foi anexado.</p></div>');
                 $('#pdfControls').addClass('d-none');
                 return;
             }
@@ -2929,13 +2933,12 @@
             if (ext === 'pdf') {
                 $('#pdfViewer').html('<div class="text-center py-5"><div class="spinner-border text-light"></div><p class="text-white mt-2">Processando PDF...</p></div>');
 
-                if (typeof pdfjsLib === 'undefined') {
-                    $('#pdfViewer').html('<div class="alert alert-danger m-3">A biblioteca PDF.js não foi carregada. Verifique se tem internet ou se a CDN está acessível.</div>');
+                if (typeof pdfjsLib === 'undefined' || !pdfjsLib) {
+                    $('#pdfViewer').html('<div class="alert alert-danger m-3">A biblioteca PDF.js não carregou corretamente. Verifique sua internet.</div>');
                     return;
                 }
 
-                const loadingTask = pdfjsLib.getDocument(url);
-                loadingTask.promise.then((pdf) => {
+                pdfjsLib.getDocument(url).promise.then((pdf) => {
                     currentPdf = pdf;
                     pageNum = 1;
                     $('#pdfViewer').html('<canvas id="pdf-canvas" class="mx-auto shadow-lg bg-white my-3 d-block"></canvas>');
@@ -2944,7 +2947,7 @@
                     renderPage(pageNum);
                 }).catch(err => {
                     console.error('Erro ao abrir PDF:', err);
-                    $('#pdfViewer').html(`<div class="alert alert-danger m-3">Erro ao abrir o ficheiro PDF. <br><small>${err.message}</small><br><a href="${url}" target="_blank" class="btn btn-sm btn-light mt-2">Tentar abrir no navegador</a></div>`);
+                    $('#pdfViewer').html(`<div class="alert alert-danger m-3">Erro ao abrir PDF: ${err.message}<br><a href="${url}" target="_blank" class="btn btn-sm btn-light mt-2">Download Direto</a></div>`);
                 });
             } else {
                 $('#pdfControls').addClass('d-none');

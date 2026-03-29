@@ -251,15 +251,22 @@ class Frequencia {
 
     public function getSummariesByStudent($student_id) {
         $stmt = $this->db->prepare("
-            SELECT s.*, u.nome_completo as professor_nome, d.nome as disciplina_nome, t.codigo as turma_codigo
+            SELECT s.*, 
+                   u.nome_completo as professor_nome, 
+                   d.nome as disciplina_nome, 
+                   t.codigo as turma_codigo
             FROM sumarios s
-            JOIN matriculas m ON s.turma_id = m.ano_curso_id OR s.turma_id IN (SELECT id FROM turmas WHERE id = m.id)
+            JOIN turmas t ON s.turma_id = t.id
             JOIN disciplinas d ON s.disciplina_id = d.id
             JOIN professores p ON s.professor_id = p.id
             JOIN utilizadores u ON p.utilizador_id = u.id
-            JOIN turmas t ON s.turma_id = t.id
-            WHERE s.turma_id IN (SELECT turma_id FROM matriculas WHERE estudante_id = :sid AND (status = 'Aprovada' OR status = 'Pendente'))
-            ORDER BY s.data DESC, s.tempo ASC
+            WHERE s.turma_id IN (
+                SELECT turma_id 
+                FROM matriculas 
+                WHERE estudante_id = :sid 
+                AND (status = 'Aprovada' OR status = 'Pendente' OR status = 'ativo')
+            )
+            ORDER BY s.data DESC, s.tempo DESC
         ");
         $stmt->execute([':sid' => $student_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

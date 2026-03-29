@@ -60,8 +60,9 @@
                         <ion-icon name="checkmark-circle"></ion-icon> <?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?>
                     </p>
                 <?php endif; ?>
-                <div class="view-header">
-                    <h2>Bem-vindo de volta</h2>
+                <div class="view-header" style="margin-bottom: 2rem;">
+                    <h2 style="font-size: 1.5rem; color: var(--primary-hex); font-weight: 700;">Portal Institucional</h2>
+                    <p class="text-muted small">Introduza as suas credenciais para aceder ao sistema.</p>
                 </div>
 
                 <div class="input-group">
@@ -197,6 +198,17 @@
     <!-- Notification Toast -->
     <div id="toast" class="toast"></div>
 
-    <script src="<?= URL_ROOT ?>/script.js"></script>
+    <script>
+        function switchView(viewId) {
+            document.querySelectorAll('.auth-view').forEach(v => {
+                v.classList.remove('active');
+                v.style.display = 'none';
+            });
+            const activeView = document.getElementById(viewId);
+            activeView.style.display = 'block';
+            setTimeout(() => activeView.classList.add('active'), 10);
+        }
+    </script>
+    <script src="<?= URL_ROOT ?>/js/script.js"></script>
 </body>
 </html>
