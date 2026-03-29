@@ -1,24 +1,41 @@
 # Manual do Utilizador: Green Hard & Softh (GHS)
 
-Bem-vindo à plataforma escolar GHS! Abaixo encontra-se o guia passo-a-passo para cada perfil de acesso na instituição:
+Bem-vindo à plataforma escolar GHS! Abaixo encontra-se o guia passo-a-passo detalhado — e visualmente guiado — para cada perfil de acesso na instituição:
 
 ## 1. Para o Administrador Escolar (`/admin`)
-- **Dashboard Principal**: Visualize estatísticas gerais sobre as receitas e matrículas atuais. Utilize gráficos em anel e linhas para métricas diárias.
-- **Gestão de Estudantes**: No painel de estudantes, ative ou desative matrículas (com a justificação apropriada). Pode também reiniciar as palavras-passe ("Reset") de quem tenha esquecido o acesso, com base em credenciais enviadas por e-mail ou default admin.
-- **Secretaria e Tesouraria**: Todos os pagamentos pendentes podem ser validados clicando em "Ver Recibo" (PDF/JPG) e "Validar". Isto atualiza a área privada do aluno libertando a sua restrição. Pagamentos manuais podem ser registados na mesma janela.
-- **Calendário Letivo**: Emita Feridos "Globais" escolhendo Cor e Destinatários. Estes aparecerão nos ecrãs de todos os utilizadores (agrupados consoante as suas datas) como avisos "Somente Leitura" ou "Eventos Globais e Feriados".
+
+O painel de Administrador é a torre de controlo do seu sistema escolar. Toda a gestão estratégica, matrículas e validações cruciais acontecem aqui.
+
+![Painel do Administrador (Mockup)](admin_dashboard.png)
+
+- **Dashboard Principal**: Visualize num relance estatísticas rápidas — total de matrículas atuais, relatórios de caixa diários, etc. Utilize gráficos em anel e linhas para métricas de progresso com uma estética limpa.
+- **Gestão de Estudantes**: No separador de gerir estudantes, ative ou desative matrículas usando a tabela de ações. O Administrador pode também forçar redefinição de palavras-passe para alunos sem acesso, definindo a password padrão `123456` temporariamente.
+- **Secretaria/Tesouraria Integrada**: Confirme os pagamentos submetidos. Analise o documento de pagamento, comprove o valor no extrato e clique em "Validar Receção" para remover as restrições bloqueantes do aluno no sistema online do mesmo.
+- **Calendário Letivo e Feriados**: Adicione Eventos Globais. Basta escolher a cor do indicador visual, as **Datas de e até** e o Público-Alvo (Apenas Professores ou Total). O evento irá refletir automaticamente sem spam duplicado nas pautas de todos.
+
+---
 
 ## 2. Para o Professor (`/professor`)
-- **Aulas e Turmas**: No seu painel lateral tem acesso às turmas alocadas a si.
-- **Lançamento de Notas**: Escolhendo a Disciplina, a tabela expandirá permitindo inserir a avaliação (Ex: Nota 1, Nota 2). O sistema calcula a nota final e define "Aprovado" ou "Reprovado/Recurso". Tudo se passa em fundo sem precisar de trocar de janela.
-- **Sumários e Assiduidade**: Pode registar o Ponto da Turma confirmando a presença de alunos (caixa de seleção) e anexar o tema ensinado.
-- **Gestão de Ficheiros**: Pode enviar PDFs/PowerPoints limitados a (20MB) aos seus discentes. A ferramenta está totalmente adaptada de forma dinâmica aos tipos de formatação (.doc, .ppt).
-- **Tratamento de Reclamações**: Caso os estudantes contestem uma falta ou nota, receberá o alerta interativo. Pode responder e finalizar o caso.
+
+O portal do professor foi concebido sem barreiras tecnológicas, desenhado com *glassmorphism* e estética relaxante para reduzir a fadiga do trabalho de rotina e introdução de pautas.
+
+![Painel do Professor (Mockup)](professor_portal.png)
+
+- **Lista de Turmas e Disciplinas**: No seu painel lateral tem acesso às turmas pelas quais é responsável pedagógico (ex: Física-10ºA, TIC-5ºB).
+- **Lançamento Rápido de Notas**: Ao abrir uma disciplina, a grelha apresenta listas nominais de alunos. Insira a "Nota 1" e "Nota 2" diretamente. O cálculo "Aprovado" vs. "Recurso" é matemático, dinâmico e salva instantaneamente (através de tecnologia AJAX, prevenindo a recarga constante da janela).
+- **Gestão de Ficheiros Eletrónicos**: Precisa de enviar um PowerPoint ou PDF a uma Turma? Dirija-se ao separador de Anexos, introduza o Titulo, selecione um ficheiro de até 20MB, e faça "Upload". Tudo rastreado por sistema "MIME" para a segurança cibernética global.
+- **Calendário Pessoal**: Eventos letivos (Testes ou Projetos da sua responsabilidade) misturam-se gentilmente com os Feriados Oficiais que bloqueiam avaliações nessas datas.
+
+---
 
 ## 3. Para o Aluno (`/estudante`)
-- **Pagamentos**: A submissão do recibo é encriptada por token anti-fraude. Selecione o talão do banco (PDF/Imagens), a disciplina/mes e envie para o departamento Escolar aprovar!
-- **Plataforma Académica (Notas)**: Veja as notas diárias e recorra da pontuação perante os seus responsáveis, utilizando a ferramenta "Reclamações" sempre a partir das grelhas disciplinais.
-- **Histórico Global Académico**: Exibido dinamicamente no "Tab Histórico Académico", mostrando-lhe no longo termo de forma oficial a transição entre todos os anos e semestres, apenas de dados oficiais finalizados!
-- **Comunicados e Calendário Oficial**: Fique sempre a saber dos Exames/Férias previstos consultando o visualizador de Eventos.
 
-*Notas de Recuperação e Manutenção Técnica*: Se ocorrer "Erro 500" a submeter Ficheiros, assegure que não passa dos megabytes de Limite do seu Perfil (20MB) e evite espaços/caracteres especiais no Titulo.
+Pensado e otimizado para utilizadores maioritariamente nativos da plataforma móvel ou computadores dinâmicos, o portal do Aluno é um ecrã intuitivo.
+
+![Portal do Estudante (Mockup)](student_portal.png)
+
+- **Painel de Pagamentos**: Acabaram as filas à chuva fora da Tesouraria. Tem em mãos um formulário encriptado antifraude e rápido. Fotografe ou anexe o talão do seu Banco, escolha o serviço pago e faça *"Submeter"*. Acompanhe ali mesmo o sinal "Em Análise" até que o tesoureiro aprove a transação (em poucas horas).
+- **Consultas Pedagógicas Célere**: A sua tabela de aproveitamento emite "Distinções Verdes" (Positiva) ou Alertas Vermelhos (Negativa). Encontrou algum erro na pauta? Prima o botão de interrogação "Recorrer" perante a diretoria, o Professor receberá um alerta oficial.
+- **Histórico Global Académico**: A novidade de 2026! Um rastreador completo — semelhante ao seu currículo de aptidões finais. O sistema aglutina todos os anos que operou na Green Hard & Softh para prova final perante qualquer entidade oficial em exames de certificação.
+
+*Notas de Recuperação e Manutenção*: A plataforma é altamente resiliente. Se ocorrer um "Erro 500", verifique primariamente se não anexou fotografias maiores que **20MB** no seu perfil, uma das regras máximas do Servidor Central GHS.
