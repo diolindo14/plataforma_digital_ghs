@@ -444,7 +444,6 @@
                             <label class="form-label fw-bold small">Conteúdo do Sumário (O que foi lecionado hoje?)</label>
                             <textarea id="sumarioConteudo" class="form-control bg-light" rows="3" placeholder="Ex: Introdução às Redes Neurais e Backpropagation..."></textarea>
                         </div>
-
                         <div class="mt-4 text-center">
                             <button type="button" class="btn btn-success btn-lg px-5 shadow-sm" onclick="submeterSumario(this)">
                                 <ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Sumário e Presenças
@@ -952,7 +951,6 @@
 </div>
 
 <script>
-let signaturePad;
 
 $(document).ready(function() {
     // Atualizar disciplina_id ao mudar a turma no upload
@@ -1084,14 +1082,6 @@ function submeterSumario(btn) {
         return;
     }
 
-    if (window.isSignatureEmpty()) {
-        alert('Por favor, forneça uma assinatura primeiro.');
-        return;
-    }
-
-    const signatureData = window.getCurrentSignature();
-    console.log("Assinatura Exportada (SVG):", signatureData);
-
     const presencas = {};
     $('#tabelaChamada tbody tr').each(function() {
         const estId = $(this).data('student-id');
@@ -1105,7 +1095,6 @@ function submeterSumario(btn) {
         disciplina_id: $('#pane-chamada select').first().val().split('|')[1], 
         tempo: $('#tempoAula').val(),
         conteudo: conteudo,
-        assinatura: signatureData,
         presencas: presencas,
         csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     };
