@@ -513,7 +513,7 @@ green/
         <pre>
 <span class="comment">// core/Database.php — Configuração da Conexão</span>
 <span class="key">private</span> $host   = <span class="val">'localhost'</span>;
-<span class="key">private</span> $dbname = <span class="val">'ghs_db'</span>;
+<span class="key">private</span> $dbname = <span class="val">'ghsespf_db'</span>;
 <span class="key">private</span> $user   = <span class="val">'root'</span>;
 <span class="key">private</span> $pass   = <span class="val">''</span>;
 </pre>
