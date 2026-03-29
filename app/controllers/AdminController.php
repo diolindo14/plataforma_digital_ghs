@@ -203,12 +203,15 @@ class AdminController extends Controller {
     }
 
     public function rejectMatricula($id) {
-        $this->verifyCsrfToken();
-        if ($this->model('Matricula')->updateStatus($id, 'Rejeitada', $_SESSION['user_id'])) {
-            $this->logActivity('Rejeitar Matrícula', ['matricula_id' => $id]);
-            $_SESSION['flash_success'] = "Matrícula rejeitada com sucesso.";
-        } else {
-            $_SESSION['flash_error'] = "Erro ao rejeitar matrícula.";
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->verifyCsrfToken();
+            $motivo = $_POST['motivo'] ?? '';
+            if ($this->model('Matricula')->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo)) {
+                $this->logActivity('Rejeitar Matrícula', ['matricula_id' => $id, 'motivo' => $motivo]);
+                $_SESSION['flash_success'] = "Matrícula rejeitada com sucesso.";
+            } else {
+                $_SESSION['flash_error'] = "Erro ao rejeitar matrícula.";
+            }
         }
         header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
         exit;

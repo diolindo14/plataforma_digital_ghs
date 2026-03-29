@@ -10,21 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- Scripts Base -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- FullCalendar -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        // PDF.js Engine Initializer
-        var pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
-        if (pdfjsLib) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        } else {
-            document.addEventListener('DOMContentLoaded', function() {
-                var viewer = document.getElementById('pdfViewer');
-                if (viewer) viewer.innerHTML = '<div class="alert alert-danger m-3">Erro: Biblioteca PDF.js não carregada. Verifique sua conexão.</div>';
-            });
-        }
-    </script>
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -1169,89 +1159,69 @@
 
 
 
-                <!-- Matrículas & PDF Validator -->
+                <!-- Matrículas & Document Viewer -->
                 <div class="tab-pane fade" id="pane-matriculas">
-                    <div class="row g-4">
-                        <div class="col-md-5">
-                            <div class="card shadow-sm border-0 h-100">
-                                <div class="card-body">
-                                    <h5 class="fw-bold mb-4">Fila de Triagem (Matrículas Pendentes)</h5>
-
-                                    <div class="list-group list-group-flush mb-4">
-                                        <?php if (empty($data['matriculas'])): ?>
-                                            <div class="p-3 text-center text-muted">Sem matrículas pendentes.</div>
-                                        <?php else: ?>
-                                            <?php foreach ($data['matriculas'] as $m): ?>
-                                                <button
-                                                    class="list-group-item list-group-item-action border-start border-4 border-warning btn-view-docs"
-                                                    data-id="<?= $m['id'] ?>" data-nome="<?= htmlspecialchars($m['nome']) ?>"
-                                                    data-bi="<?= $m['bi_arquivo'] ?? '' ?>"
-                                                    data-cert="<?= $m['certificado_arquivo'] ?? '' ?>"
-                                                    data-comp="<?= $m['comprovativo_arquivo'] ?? '' ?>">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h6 class="mb-0 fw-bold"><?= htmlspecialchars($m['nome']) ?></h6>
-                                                        <div class="d-flex flex-column align-items-end">
-                                                            <span
-                                                                class="badge bg-warning text-dark mb-1"><?= htmlspecialchars($m['status']) ?></span>
-                                                            <span
-                                                                class="badge bg-<?= ($m['tipo'] == 'Renovação') ? 'info' : 'secondary px-2' ?> small"
-                                                                style="font-size: 0.6rem;"><?= htmlspecialchars($m['tipo'] ?? 'Novo') ?></span>
-                                                        </div>
-                                                    </div>
-                                                    <small class="text-muted">Proc: #<?= $m['id'] ?>
-                                                        (<?= htmlspecialchars($m['ano_letivo']) ?>) -
-                                                        <?= htmlspecialchars($m['ano_nome'] ?? 'Ano n/d') ?></small>
-                                                </button>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-success fw-bold p-2 btn-approve-matricula"
-                                            data-id="<?= $m['id'] ?>"><ion-icon name="checkmark-circle"></ion-icon>
-                                            Aprovar Matrícula</button>
-                                        <button class="btn btn-outline-danger fw-bold p-2 btn-reject-matricula"
-                                            data-id="<?= $m['id'] ?>"><ion-icon name="close-circle"></ion-icon> Rejeitar
-                                            Matrícula (Irregular)</button>
-                                    </div>
+                    <div class="row">
+                        <div class="col-md-10 mx-auto">
+                            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                                <div class="card-header bg-white py-4 border-0 d-flex justify-content-between align-items-center">
+                                    <h4 class="fw-bold mb-0">Fila de Triagem (Matrículas Pendentes)</h4>
+                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
+                                        <?= count($data['matriculas'] ?? []) ?> Processos Pendentes
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- View PDF Lateral -->
-                        <div class="col-md-7">
-                            <div class="card shadow-sm border-0 h-100 bg-dark">
-                                <div
-                                    class="card-header border-0 bg-dark text-white d-flex justify-content-between align-items-center py-3">
-                                    <h6 class="mb-0"><ion-icon name="eye"></ion-icon> Integrador Visual Documental
-                                        (PDF.js Engine)</h6>
-                                    <div class="btn-group btn-group-sm" id="docSelector">
-                                        <button class="btn btn-outline-light" onclick="loadSpecialDoc('bi')"
-                                            id="btn-bi">B.I.</button>
-                                        <button class="btn btn-outline-light" onclick="loadSpecialDoc('cert')"
-                                            id="btn-cert">Certificado</button>
-                                        <button class="btn btn-outline-light" onclick="loadSpecialDoc('comp')"
-                                            id="btn-comp">Recibo</button>
-                                    </div>
-                                </div>
-                                <div class="card-body p-0 d-flex justify-content-center align-items-start"
-                                    style="min-height: 500px; background-color: #1E293B; overflow: auto;"
-                                    id="pdfViewer">
-                                    <div class="text-center py-5 w-100">
-                                        <ion-icon name="document-text"
-                                            style="font-size: 6rem; opacity:0.3; color: white;"></ion-icon>
-                                        <h5 class="mt-3 opacity-50 text-white">Selecione um estudante para visualizar
-                                            documentos</h5>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-dark border-0 py-2 d-none" id="pdfControls">
-                                    <div class="d-flex justify-content-between align-items-center text-white small">
-                                        <span>Página: <span id="page_num">0</span> / <span
-                                                id="page_count">0</span></span>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-xs btn-outline-light" onclick="prevPage()"><ion-icon
-                                                    name="chevron-back-outline"></ion-icon></button>
-                                            <button class="btn btn-xs btn-outline-light" onclick="nextPage()"><ion-icon
-                                                    name="chevron-forward-outline"></ion-icon></button>
-                                        </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th class="ps-4 py-3">Estudante</th>
+                                                    <th class="py-3">Ano / Curso</th>
+                                                    <th class="py-3 text-center">Tipo</th>
+                                                    <th class="py-3 text-center">Documentos</th>
+                                                    <th class="text-end pe-4 py-3">Ação</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($data['matriculas'])): ?>
+                                                    <tr><td colspan="5" class="p-5 text-center text-muted">Sem matrículas pendentes.</td></tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($data['matriculas'] as $m): ?>
+                                                        <tr>
+                                                            <td class="ps-4">
+                                                                <div class="fw-bold text-dark"><?= htmlspecialchars($m['nome']) ?></div>
+                                                                <small class="text-muted">Proc: #<?= $m['id'] ?></small>
+                                                            </td>
+                                                            <td>
+                                                                <div class="small fw-medium"><?= htmlspecialchars($m['ano_letivo']) ?></div>
+                                                                <div class="text-muted" style="font-size: 0.75rem;"><?= htmlspecialchars($m['ano_nome'] ?? 'Ano n/d') ?></div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-<?= ($m['tipo'] == 'Renovação') ? 'info' : 'secondary px-2' ?> small" style="font-size: 0.7rem;">
+                                                                    <?= htmlspecialchars($m['tipo'] ?? 'Novo') ?>
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3 btn-view-docs"
+                                                                    data-bs-toggle="modal" data-bs-target="#documentViewerModal"
+                                                                    data-id="<?= $m['id'] ?>" data-nome="<?= htmlspecialchars($m['nome']) ?>"
+                                                                    data-bi="<?= $m['bi_arquivo'] ?? '' ?>"
+                                                                    data-cert="<?= $m['certificado_arquivo'] ?? '' ?>"
+                                                                    data-comp="<?= $m['comprovativo_arquivo'] ?? '' ?>">
+                                                                    <ion-icon name="documents-outline" class="me-1"></ion-icon> Ficheiros
+                                                                </button>
+                                                            </td>
+                                                            <td class="text-end pe-4">
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <button class="btn btn-success fw-bold btn-approve-matricula" data-id="<?= $m['id'] ?>">Aprovar</button>
+                                                                    <button class="btn btn-danger fw-bold btn-reject-matricula" data-id="<?= $m['id'] ?>">Rejeitar</button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -2889,93 +2859,45 @@
     </script>
 
     <script>
-        // ─── PDF.js Module Integration ───
-        let currentPdf = null;
         let currentDocData = null;
-        let pageNum = 1;
-        let pageRendering = false;
-        let pageNumPending = null;
-        const scale = 1.3;
-
-        function renderPage(num) {
-            pageRendering = true;
-            currentPdf.getPage(num).then((page) => {
-                const viewport = page.getViewport({ scale: scale });
-                const canvas = document.getElementById('pdf-canvas');
-                if (!canvas) return;
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderContext = { canvasContext: context, viewport: viewport };
-                const renderTask = page.render(renderContext);
-
-                renderTask.promise.then(() => {
-                    pageRendering = false;
-                    if (pageNumPending !== null) { renderPage(pageNumPending); pageNumPending = null; }
-                });
-            });
-            document.getElementById('page_num').textContent = num;
-        }
-
-        function queueRenderPage(num) {
-            if (pageRendering) { pageNumPending = num; } else { renderPage(num); }
-        }
-
-        function prevPage() { if (pageNum <= 1) return; pageNum--; queueRenderPage(pageNum); }
-        function nextPage() { if (pageNum >= currentPdf.numPages) return; pageNum++; queueRenderPage(pageNum); }
 
         function loadSpecialDoc(type) {
             if (!currentDocData) return;
             const file = currentDocData[type];
+            const modalLabel = document.getElementById('viewerModalLabel');
 
             $('#docSelector .btn').removeClass('btn-light').addClass('btn-outline-light');
             $(`#btn-${type}`).removeClass('btn-outline-light').addClass('btn-light');
 
             if (!file) {
-                $('#pdfViewer').html('<div class="text-center py-5 text-white opacity-50"><ion-icon name="warning-outline" style="font-size: 3rem;"></ion-icon><p>Este documento não foi anexado.</p></div>');
-                $('#pdfControls').addClass('d-none');
+                $('#viewerContent').html('<div class="text-center py-5 text-white opacity-50"><ion-icon name="warning-outline" style="font-size: 5rem;"></ion-icon><h4 class="mt-3">Ficheiro não anexado.</h4></div>');
+                modalLabel.textContent = 'Documento Indisponível';
                 return;
             }
 
             const url = '<?= URL_ROOT ?>/public/uploads/matriculas/' + file;
             const ext = file.split('.').pop().toLowerCase();
+            
+            const titles = { 'bi': 'Bilhete de Identidade / ID', 'cert': 'Certificado Escolar / Disciplinas', 'comp': 'Comprovativo de Depósito / Recibo' };
+            modalLabel.textContent = titles[type] || 'Visualização';
 
             if (ext === 'pdf') {
-                $('#pdfViewer').html('<div class="text-center py-5"><div class="spinner-border text-light"></div><p class="text-white mt-2">Processando PDF...</p></div>');
-
-                if (typeof pdfjsLib === 'undefined' || !pdfjsLib) {
-                    $('#pdfViewer').html('<div class="alert alert-danger m-3">A biblioteca PDF.js não carregou corretamente. Verifique sua internet.</div>');
-                    return;
-                }
-
-                pdfjsLib.getDocument(url).promise.then((pdf) => {
-                    currentPdf = pdf;
-                    pageNum = 1;
-                    $('#pdfViewer').html('<canvas id="pdf-canvas" class="mx-auto shadow-lg bg-white my-3 d-block"></canvas>');
-                    $('#pdfControls').removeClass('d-none');
-                    document.getElementById('page_count').textContent = pdf.numPages;
-                    renderPage(pageNum);
-                }).catch(err => {
-                    console.error('Erro ao abrir PDF:', err);
-                    $('#pdfViewer').html(`<div class="alert alert-danger m-3">Erro ao abrir PDF: ${err.message}<br><a href="${url}" target="_blank" class="btn btn-sm btn-light mt-2">Download Direto</a></div>`);
-                });
+                $('#viewerContent').html(`<iframe src="${url}#toolbar=1" style="width:100%; height:80vh; border:none;"></iframe>`);
             } else {
-                $('#pdfControls').addClass('d-none');
-                $('#pdfViewer').html(`<div class="p-3 w-100"><img src="${url}" class="img-fluid rounded shadow-lg mx-auto d-block" style="max-height: 80vh;"></div>`);
+                $('#viewerContent').html(`<div class="p-4 text-center"><img src="${url}" class="img-fluid rounded shadow-lg" style="max-height: 75vh;"></div>`);
             }
         }
 
-        $('.btn-view-docs').click(function () {
-            $('.btn-view-docs').removeClass('active');
-            $(this).addClass('active');
-
-            currentDocData = $(this).data();
-            loadSpecialDoc('bi'); // Load BI as default
-
-            $('.btn-approve-matricula').data('id', currentDocData.id).attr('disabled', false);
-            $('.btn-reject-matricula').attr('disabled', false);
-            $('#reject_matricula_id').val(currentDocData.id);
+        $(document).ready(function () {
+            // Document Viewer Trigger logic
+            const docViewerModal = document.getElementById('documentViewerModal');
+            if (docViewerModal) {
+                docViewerModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    currentDocData = $(button).data();
+                    loadSpecialDoc('bi');
+                });
+            }
         });
 
         $(document).on('click', '.btn-approve-matricula', function () {
@@ -3847,7 +3769,7 @@ $(document).ready(function () {
     $(document).on('click', '.btn-reject-matricula', function () {
         const id = $(this).data('id');
         if (id) {
-            $('#reject_matricula_id').val(id);
+            $('#rejectForm').attr('action', '<?= URL_ROOT ?>/admin/rejectMatricula/' + id);
             new bootstrap.Modal(document.getElementById('rejectModal')).show();
         }
     });
@@ -3899,6 +3821,7 @@ $(document).ready(function () {
     topBtn.on('click', () => $('html,body').animate({ scrollTop: 0 }, 400));
 
 });
+
 function convocarComMotivo(eid, did) {
     const motivo = prompt("Por favor, indique o motivo da convocatória (Este texto será enviado ao Aluno e ao Professor):", "Convocatória oficial para resolução de conflito de notas.");
     if (motivo !== null) {
@@ -3924,6 +3847,52 @@ function convocarComMotivo(eid, did) {
 }
 </script>
 
-</body>
+    <!-- Modal de Rejeição de Matrícula -->
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true" style="z-index: 9999;">
+        <div class="modal-dialog modal-dialog-centered">
+            <form id="rejectForm" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <div class="modal-header bg-danger text-white border-0 py-3">
+                    <h5 class="modal-title fw-bold"><ion-icon name="alert-circle-outline" class="me-2"></ion-icon> Rejeitar Matrícula</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">Indique o motivo da rejeição. Esta informação será enviada ao estudante.</p>
+                    <div class="form-floating">
+                        <textarea class="form-control" name="motivo" placeholder="Motivo da Rejeição" id="rejection_motivo" style="height: 120px" required></textarea>
+                        <label for="rejection_motivo">Motivo detalhado...</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pb-4">
+                    <button type="button" class="btn btn-light px-4 rounded-pill fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold shadow-sm">Confirmar Rejeição</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <!-- Modal de Visualização de Documentos -->
+    <div class="modal fade" id="documentViewerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="background: #1e293b;">
+                <div class="modal-header border-0 bg-dark text-white px-4 py-3">
+                    <div class="d-flex align-items-center gap-2">
+                         <ion-icon name="document-attach-outline" class="fs-4 text-primary"></ion-icon>
+                         <h5 class="modal-title fw-bold mb-0" id="viewerModalLabel">Visualizador de Ficheiros</h5>
+                    </div>
+                    <div class="btn-group btn-group-sm ms-auto me-3" id="docSelector">
+                        <button class="btn btn-outline-light" onclick="loadSpecialDoc('bi')" id="btn-bi">BI</button>
+                        <button class="btn btn-outline-light" onclick="loadSpecialDoc('cert')" id="btn-cert">Certificado</button>
+                        <button class="btn btn-outline-light" onclick="loadSpecialDoc('comp')" id="btn-comp">Recibo</button>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0" id="viewerContent" style="min-height: 80vh; background: #0f172a;">
+                     <!-- Injeto Iframe ou Img aqui via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
 </html>
