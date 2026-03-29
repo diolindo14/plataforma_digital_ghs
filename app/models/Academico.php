@@ -521,14 +521,15 @@ class Academico {
             // Inserir ou atualizar (ON DUPLICATE KEY)
             $sql = "
                 INSERT INTO certificados_merito 
-                    (estudante_id, semestre, ano_letivo, posicao, media, nivel_nome, emitido_por, data_emissao)
+                    (estudante_id, semestre, ano_letivo, posicao, media, nivel_nome, emitido_por, data_emissao, status)
                 VALUES 
-                    (:eid, :semestre, :ano, :posicao, :media, :nivel, :emitido_por, NOW())
+                    (:eid, :semestre, :ano, :posicao, :media, :nivel, :emitido_por, NOW(), 'Publicado')
                 ON DUPLICATE KEY UPDATE
                     posicao = VALUES(posicao),
                     media = VALUES(media),
                     nivel_nome = VALUES(nivel_nome),
                     emitido_por = VALUES(emitido_por),
+                    status = 'Publicado',
                     data_emissao = NOW()
             ";
             $stmt = $this->db->prepare($sql);
@@ -564,14 +565,15 @@ class Academico {
             // Inserir ou atualizar (ON DUPLICATE KEY)
             $sql = "
                 INSERT INTO certificados_merito 
-                    (estudante_id, semestre, ano_letivo, posicao, media, nivel_nome, emitido_por, data_emissao)
+                    (estudante_id, semestre, ano_letivo, posicao, media, nivel_nome, emitido_por, data_emissao, status)
                 VALUES 
-                    (:eid, :semestre, :ano, :posicao, :media, :nivel, :emitido_por, NOW())
+                    (:eid, :semestre, :ano, :posicao, :media, :nivel, :emitido_por, NOW(), 'Publicado')
                 ON DUPLICATE KEY UPDATE
                     posicao = VALUES(posicao),
                     media = VALUES(media),
                     nivel_nome = VALUES(nivel_nome),
                     emitido_por = VALUES(emitido_por),
+                    status = 'Publicado',
                     data_emissao = NOW()
             ";
             $stmt = $this->db->prepare($sql);

@@ -88,6 +88,7 @@
                 <a class="nav-link" id="tab-historico" data-bs-toggle="pill" data-bs-target="#pane-historico" role="tab"><ion-icon name="document-text-outline"></ion-icon> Histórico Académico</a>
                 <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" data-bs-target="#pane-materiais" role="tab"><ion-icon name="folder-open-outline"></ion-icon> Materiais Didáticos</a>
                 <a class="nav-link" id="tab-sumarios" data-bs-toggle="pill" data-bs-target="#pane-sumarios" role="tab"><ion-icon name="reader-outline"></ion-icon> Sumários de Aula</a>
+                <a class="nav-link" id="tab-merito" data-bs-toggle="pill" data-bs-target="#pane-merito" role="tab"><ion-icon name="ribbon-outline" class="text-warning"></ion-icon> Mérito & Diplomas</a>
                 <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro" role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados" role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
             </div>
@@ -634,6 +635,53 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Mérito & Diplomas -->
+            <div class="tab-pane fade" id="pane-merito" role="tabpanel">
+                <div class="card shadow-sm border-0 bg-white rounded-4 overflow-hidden">
+                    <div class="card-header bg-warning bg-opacity-10 py-3 border-0">
+                        <div class="d-flex align-items-center">
+                            <ion-icon name="ribbon" class="fs-3 text-warning me-2"></ion-icon>
+                            <h5 class="fw-bold mb-0 text-dark">Galeria de Mérito e Reconhecimento</h5>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <?php if (empty($data['certificados_merito'])): ?>
+                            <div class="text-center py-5">
+                                <ion-icon name="sparkles-outline" style="font-size: 4rem;" class="text-muted opacity-25 mb-3"></ion-icon>
+                                <h5 class="text-muted">Ainda não possui certificados registados.</h5>
+                                <p class="text-muted small">Os certificados de mérito são atribuídos semestralmente aos alunos com melhor desempenho académico em cada nível.</p>
+                            </div>
+                        <?php else: ?>
+                            <div class="row g-4">
+                                <?php foreach ($data['certificados_merito'] as $cert): ?>
+                                    <div class="col-md-6">
+                                        <div class="card border-warning border-opacity-25 h-100 shadow-sm" style="background: linear-gradient(135deg, #fff 0%, #fff9f0 100%);">
+                                            <div class="card-body p-4">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <span class="badge bg-warning text-dark mb-2"><?= $cert['semestre'] ?>º Semestre - <?= $cert['ano_letivo'] ?></span>
+                                                        <h5 class="fw-bold mb-1">Certificado de Mérito: <?= $cert['posicao'] ?>º Lugar</h5>
+                                                        <p class="text-muted small mb-3">Média Final: <strong class="text-success"><?= number_format($cert['media'], 2) ?></strong> valores</p>
+                                                    </div>
+                                                    <ion-icon name="medal" class="fs-1 text-warning"></ion-icon>
+                                                </div>
+                                                <hr class="opacity-10">
+                                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                                    <small class="text-muted">Emitido em: <?= date('d/m/Y', strtotime($cert['data_emissao'])) ?></small>
+                                                    <a href="<?= URL_ROOT ?>/estudante/certificado?id=<?= $cert['id'] ?>" target="_blank" class="btn btn-warning btn-sm fw-bold px-3 rounded-pill shadow-sm">
+                                                        <ion-icon name="eye"></ion-icon> Visualizar Diploma
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

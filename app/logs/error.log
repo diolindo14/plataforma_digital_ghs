@@ -96,3 +96,4 @@
 [2026-03-29 02:33:28] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`ghsespf_db`.`mensagens`, CONSTRAINT `mensagens_ibfk_1` FOREIGN KEY (`remetente_id`) REFERENCES `utilizadores` (`id`) ON DELETE CASCADE) em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 35
 [2026-03-29 03:13:03] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 81
 [2026-03-29 03:13:16] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 81
+[2026-03-29 03:34:40] CRITICAL ERROR: in_array(): Argument #2 ($haystack) must be of type array, int given em C:\xampp\htdocs\green\app\helpers\FileHelper.php na linha 19

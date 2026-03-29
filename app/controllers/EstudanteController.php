@@ -136,6 +136,7 @@ class EstudanteController extends Controller {
         $data['comunicados'] = $comunicados;
         $data['unread_count'] = $unread_count;
         $data['sumarios'] = $sumarios;
+        $data['certificados_merito'] = $academicoModel->getCertificadoDoAluno($estudanteData['id']);
         $data['proximas_aulas'] = (function($h_list) {
             $hoje = ['Monday'=>'Segunda', 'Tuesday'=>'Terça', 'Wednesday'=>'Quarta', 'Thursday'=>'Quinta', 'Friday'=>'Sexta','Saturday'=>'Sábado','Sunday'=>'Domingo'][date('l')];
             $agora = date('H:i');
