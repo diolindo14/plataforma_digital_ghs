@@ -407,42 +407,10 @@
         </div>
     </div>
     
-    <!-- Modal Assinatura Digital Secretaria -->
-    <div class="modal fade" id="modalAssinaturaCertificado" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title fw-bold"><ion-icon name="pencil-outline" class="me-2"></ion-icon> Assinatura da Secretaria</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4 text-center">
-                    <style>
-                        .signature-wrapper { background: #fff; border: 2px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-                        canvas#signature-pad-cert { width: 100%; height: 300px; touch-action: none; border-radius: 8px; }
-                        .controls { margin-top: 15px; display: flex; gap: 10px; }
-                        button.btn-clear { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #e74c3c; color: white; }
-                        button.btn-save { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #2ecc71; color: white; }
-                    </style>
 
-                    <h2 class="fw-bold mb-4">Assine no campo abaixo</h2>
-                    <div class="signature-wrapper">
-                        <canvas id="signature-pad-cert"></canvas>
-                    </div>
-                    <div class="mt-3 text-muted small">
-                        Secretaria: Use o rato ou toque para assinar.
-                    </div>
-                </div>
-                <div class="modal-footer bg-light border-top-0 controls justify-content-center">
-                    <button type="button" class="btn-clear btn-clear-cert">Limpar</button>
-                    <button type="button" class="btn-save btn-save-cert">Finalizar Assinatura</button>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
         // JS para Certificados na Secretaria
         function loadCertificadosEmitidos() {
@@ -495,56 +463,22 @@
                 });
         }
 
-        let signaturePadCert;
-
         $(document).ready(function() {
-            // --- LÓGICA MODAL SECRETARIA (Snippet Profissional) ---
-            $(document).on('shown.bs.modal', '#modalAssinaturaCertificado', function () {
-                const canvasCert = document.getElementById('signature-pad-cert');
-                if (canvasCert) {
-                    if (!signaturePadCert) {
-                        signaturePadCert = new SignaturePad(canvasCert, { backgroundColor: 'rgba(255,255,255,0)' });
-                    }
-                    setupCanvas(canvasCert, signaturePadCert);
-                }
-            });
-
-            // --- BOTÕES DE SALVAMENTO ---
-            $(document).on('click', '.btn-save-cert', function() {
-                enviarAssinatura(signaturePadCert, 'secretaria', <?= $_SESSION['user_id'] ?>);
-                salvarAssinaturaCertificado(); // Executa lógica de emissão local
-            });
-
-            // Botão de Limpar
-            $(document).on('click', '.btn-clear-cert', function() {
-                if (signaturePadCert) signaturePadCert.clear();
-            });
+            // Lógica de Assinatura Digital Removida
         });
 
         function abrirModalAssinaturaCert(id, nome) {
-            $('#cert_sign_id').val(id);
-            $('#cert_sign_nome').text(nome);
-            const modal = new bootstrap.Modal(document.getElementById('modalAssinaturaCertificado'));
-            modal.show();
-        }
-
-        function salvarAssinaturaCertificado() {
-            const btn = $('.btn-save-cert');
-            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
-            
-            const signatureData = signaturePadCert.toDataURL('image/svg+xml');
-            console.log("Assinatura Secretaria (SVG):", signatureData);
-
-            $.post('<?= URL_ROOT ?>/secretaria/assinarCertificado', {
-                id: $('#cert_sign_id').val(),
-                assinatura: signatureData,
-                csrf_token: '<?= $_SESSION['csrf_token'] ?>'
-            }, function(res) {
-                if(res.success) {
-                    bootstrap.Modal.getInstance(document.getElementById('modalAssinaturaCertificado')).hide();
-                    loadCertificadosEmitidos();
-                } else alert('Erro ao assinar.');
-            }, 'json').always(() => btn.prop('disabled', false).html('<ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Assinatura'));
+            if (confirm("Deseja marcar o certificado de " + nome + " como assinado pela Secretaria?")) {
+                $.post('<?= URL_ROOT ?>/secretaria/assinarCertificado', {
+                    id: id,
+                    assinatura: 'assinatura_presencial'
+                }, function(res) {
+                    if (res.success) {
+                        alert("Certificado marcado como assinado.");
+                        loadCertificadosEmitidos();
+                    } else alert('Erro ao validar assinatura.');
+                }, 'json');
+            }
         }
 
         $('[data-bs-target="#pane-merito"]').on('shown.bs.tab', loadCertificadosEmitidos);

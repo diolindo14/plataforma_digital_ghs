@@ -12,8 +12,6 @@
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
-    <script src="<?= URL_ROOT ?>/public/js/signatures_core.js"></script>
-    <!-- FullCalendar -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <style>
         body { font-family: 'Outfit', sans-serif; background-color: #f1f5f9; }
@@ -443,32 +441,10 @@
                             <textarea id="sumarioConteudo" class="form-control bg-light" rows="3" placeholder="Ex: Introdução às Redes Neurais e Backpropagation..."></textarea>
                         </div>
 
-                        <div class="mt-4">
-                            <label class="form-label fw-bold small text-primary d-flex align-items-center gap-2">
-                                <ion-icon name="pencil-outline"></ion-icon> Assinatura Digital do Docente
-                            </label>
-                            
-                            <!-- Snippet Original do Utilizador (Fidelidade Total) -->
-                            <style>
-                                .signature-wrapper { background: #fff; border: 2px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-                                canvas#signature-pad { width: 100%; height: 300px; touch-action: none; border-radius: 8px; }
-                                .controls { margin-top: 15px; display: flex; gap: 10px; }
-                                button.btn-clear { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #e74c3c; color: white; }
-                                button.btn-save { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; background: #2ecc71; color: white; }
-                            </style>
-
-                            <h2 class="text-center fw-bold mb-3">Assine no campo abaixo</h2>
-                            
-                            <div class="signature-wrapper">
-                                <canvas id="signature-pad"></canvas>
-                            </div>
-
-                            <div class="controls justify-content-center">
-                                <button type="button" class="btn-clear" id="clear">Limpar</button>
-                                <button type="button" class="btn-save" id="save">Finalizar Assinatura</button>
-                            </div>
-                            
-                            <p class="extra-small text-muted mt-2 italic text-center">Ao assinar, você confirma que as informações de frequência e o conteúdo do sumário são verídicos.</p>
+                        <div class="mt-4 text-center">
+                            <button type="button" class="btn btn-success btn-lg px-5 shadow-sm" onclick="submeterSumario(this)">
+                                <ion-icon name="checkmark-circle-outline"></ion-icon> Finalizar Sumário e Presenças
+                            </button>
                         </div>
 
 
@@ -966,36 +942,6 @@
 let signaturePad;
 
 $(document).ready(function() {
-    // --- LÓGICA PAINEL PROFESSOR (Snippet Profissional) ---
-    const canvasProf = document.getElementById("signature-pad");
-    if (canvasProf) {
-        signaturePadProfessor = new SignaturePad(canvasProf, signatureOptions);
-        
-        // Sincronizar com a Tab do Bootstrap (Essencial!)
-        $('button[data-bs-target="#pane-chamada"], a.nav-link[data-bs-target="#pane-chamada"]').on('shown.bs.tab', function() {
-            setupCanvas(canvasProf, signaturePadProfessor);
-        });
-
-        if ($('#pane-chamada').hasClass('active')) {
-            setTimeout(() => setupCanvas(canvasProf, signaturePadProfessor), 500);
-        }
-    }
-
-    // --- BOTÕES DE SALVAMENTO ---
-    $("#save").on("click", function() {
-        // Enviar para a nova tabela assinaturas_ghs
-        enviarAssinatura(signaturePadProfessor, 'professor', <?= $_SESSION['user_id'] ?>);
-        // Também submeter o sumário institucional
-        submeterSumario(this);
-    });
-
-    $("#clear").on("click", () => {
-        if (signaturePadProfessor) signaturePadProfessor.clear();
-    });
-
-    window.getCurrentSignature = () => (signaturePadProfessor && !signaturePadProfessor.isEmpty()) ? signaturePadProfessor.toDataURL('image/svg+xml') : '';
-    window.isSignatureEmpty = () => !signaturePadProfessor || signaturePadProfessor.isEmpty();
-
     // Atualizar disciplina_id ao mudar a turma no upload
     $('#formUploadMaterial select[name="turma_id"]').on('change', function() {
         const discId = $(this).find(':selected').data('disc');

@@ -86,3 +86,10 @@
 [2026-03-28 18:02:10] CRITICAL ERROR: Call to undefined method Frequencia::getDetailedAttendanceForProfessor() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 42
 [2026-03-28 18:02:12] CRITICAL ERROR: Call to undefined method Frequencia::getDetailedAttendanceForProfessor() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 42
 [2026-03-28 19:16:27] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 19:20:12] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 20:18:18] CRITICAL ERROR: in_array(): Argument #2 ($haystack) must be of type array, int given em C:\xampp\htdocs\green\app\helpers\FileHelper.php na linha 19
+[2026-03-28 20:21:18] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 20:21:27] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 20:21:37] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 20:21:40] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 21:46:35] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499

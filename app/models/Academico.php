@@ -607,23 +607,4 @@ class Academico {
         $stmt->execute();
         return $stmt->fetchAll();
     }
-    /**
-     * Registra a assinatura digital de um responsável e atualiza o status se necessário.
-     */
-    public function assinarCertificado($id, $assinatura, $papel) {
-        $campo = ($papel === 'diretor') ? 'assinatura_diretor' : 'assinatura_secretaria';
-        
-        $sql = "UPDATE certificados_merito SET {$campo} = :sig WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $res = $stmt->execute([':sig' => $assinatura, ':id' => $id]);
-        
-        if ($res) {
-            // Se já tiver as duas assinaturas, marcar como Publicado
-            $sqlCheck = "UPDATE certificados_merito SET status = 'Publicado' 
-                         WHERE id = :id AND assinatura_diretor IS NOT NULL AND assinatura_secretaria IS NOT NULL";
-            $this->db->prepare($sqlCheck)->execute([':id' => $id]);
-        }
-        
-        return $res;
-    }
 }
