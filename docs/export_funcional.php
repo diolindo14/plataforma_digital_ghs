@@ -707,17 +707,13 @@
         <ol class="steps">
             <li>
                 <div><strong>Aceda ao Endereço Institucional</strong> Abra o browser e navegue para o endereço fornecido
-                    pela secretaria (ex: <code>https://ghs.escola.ao/auth</code>).</div>
+                    pela secretaria (ex: <code>http://localhost/green/auth</code>).</div>
             </li>
             <li>
                 <div><strong>Introduza as Suas Credenciais</strong> Preencha o campo de Email e Password com os dados
                     recebidos no momento da matrícula ou contratação.</div>
             </li>
-            <li>
-                <div><strong>Resolva o Desafio de Segurança</strong> Se solicitado, introduza o código CAPTCHA
-                    apresentado
-                    na imagem. Este passo protege a sua conta contra acessos automáticos.</div>
-            </li>
+
             <li>
                 <div><strong>Será Redirecionado Automaticamente</strong> O sistema identifica o seu perfil (Estudante,
                     Professor, Secretaria ou Administrador) e abre o portal correspondente.</div>

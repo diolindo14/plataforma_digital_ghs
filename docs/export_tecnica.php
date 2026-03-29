@@ -12,300 +12,137 @@
         rel="stylesheet">
     <style>
         :root {
-            --primary: #1e293b;
+            --primary: #0f172a;
             --accent: #ef4444;
             --accent-blue: #3b82f6;
             --accent-green: #10b981;
             --light: #f8fafc;
             --border: #e2e8f0;
-            --text: #334155;
+            --text: #1e293b;
             --muted: #64748b;
+            --surface: #ffffff;
             --code-bg: #1e293b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text);
             background: #fff;
-            padding: 50px 60px;
-            line-height: 1.7;
+            padding: 0;
+            line-height: 1.75;
             font-size: 14px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
-        /* Cabeçalho */
+        /* ── CAPA PREMIUM ────────────────────────────────── */
         .cover {
+            background: linear-gradient(135deg, #0f172a 0%, #2f1010 60%, #1a0808 100%);
+            color: #fff;
+            padding: 50px 60px 45px;
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            border-bottom: 3px solid var(--accent);
-            padding-bottom: 25px;
-            margin-bottom: 35px;
+            position: relative;
+            overflow: hidden;
         }
-
-        .cover-left .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary);
+        .cover::before {
+            content: '';
+            position: absolute; top: -60px; right: -60px;
+            width: 260px; height: 260px; border-radius: 50%;
+            background: rgba(239, 68, 68, 0.12);
         }
-
-        .cover-left .logo span {
-            color: var(--accent);
+        .cover::after {
+            content: '';
+            position: absolute; bottom: -40px; left: 30%;
+            width: 180px; height: 180px; border-radius: 50%;
+            background: rgba(59, 130, 246, 0.05);
         }
+        .cover-left .logo { font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+        .cover-left h1 { font-size: 30px; font-weight: 700; color: #fff; line-height: 1.25; margin-bottom: 10px; letter-spacing: -0.5px; }
+        .cover-left p { font-size: 13px; color: rgba(255,255,255,0.6); }
+        .cover-right { text-align: right; font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.9; padding-top: 4px; }
+        .cover-right .version { display: inline-block; background: var(--accent); color: #fff; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; }
 
-        .cover-left h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-top: 8px;
+        .cover-bar { height: 4px; background: linear-gradient(90deg, var(--accent) 0%, #b91c1c 100%); margin-bottom: 45px; }
+        .content { padding: 0 60px; }
+
+        /* ── TÍTULOS ────────────────────────────────────── */
+        h2 {
+            font-size: 11px; font-weight: 700; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 2px;
+            margin: 40px 0 16px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 10px;
         }
+        h2::before { content: ''; display: inline-block; width: 14px; height: 3px; background: linear-gradient(90deg, var(--accent), #b91c1c); border-radius: 2px; flex-shrink: 0; }
+        h3 { font-size: 14px; font-weight: 600; color: var(--primary); margin: 24px 0 8px; }
+        h4 { font-size: 13px; font-weight: 600; color: var(--primary); margin: 15px 0 6px; }
+        p { margin-bottom: 12px; text-align: justify; color: #334155; }
+        ul, ol { padding-left: 22px; margin-bottom: 14px; }
+        li { margin-bottom: 6px; color: #334155; }
 
-        .cover-left p {
-            color: var(--muted);
-            font-size: 13px;
-            margin-top: 4px;
-        }
+        /* ── CÓDIGO E PRE ────────────────────────────────── */
+        code { font-family: 'JetBrains Mono', monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #dc2626; border: 1px solid #e2e8f0; }
+        pre { font-family: 'JetBrains Mono', monospace; background: var(--code-bg); color: #e2e8f0; padding: 20px; border-radius: 10px; font-size: 12px; line-height: 1.6; margin: 16px 0 24px; overflow-x: auto; white-space: pre; border: 1px solid #0f172a; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+        pre .comment { color: #64748b; }
+        pre .key { color: #7dd3fc; }
+        pre .val { color: #86efac; }
 
-        .cover-right {
-            text-align: right;
-            font-size: 12px;
-            color: var(--muted);
-        }
+        /* ── TABELAS ───────────────────────────────────── */
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0 28px; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06); }
+        thead th { background: var(--primary); color: rgba(255,255,255,0.9); padding: 12px 16px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; }
+        tbody td { border-bottom: 1px solid var(--border); padding: 11px 16px; vertical-align: top; background: #fff; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:nth-child(even) td { background: #fafbfc; }
 
-        .cover-right .version {
-            display: inline-block;
-            background: var(--accent);
-            color: #fff;
-            padding: 4px 12px;
+        /* ── BADGES ───────────────────────────────────── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
-            margin-bottom: 6px;
+            letter-spacing: 0.3px;
         }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .badge-green { background: #dcfce7; color: #15803d; }
+        .badge-blue { background: #dbeafe; color: #1d4ed8; }
+        .badge-orange { background: #ffedd5; color: #9a3412; }
 
-        h2 {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
-            border-left: 4px solid var(--accent);
-            padding-left: 12px;
-            margin: 35px 0 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        /* ── CAIXAS ──────────────────────────────────────── */
+        .info-box { background: linear-gradient(135deg,#eff6ff,#f8faff); border: 1px solid #bfdbfe; border-left: 4px solid var(--accent-blue); border-radius: 8px; padding: 16px 20px; margin: 14px 0 22px; }
+        .warning-box { background: linear-gradient(135deg,#fff7ed,#fff9f2); border: 1px solid #fed7aa; border-left: 4px solid #f97316; border-radius: 8px; padding: 16px 20px; margin: 14px 0 22px; }
+        .danger-box { background: linear-gradient(135deg,#fef2f2,#fffcfc); border: 1px solid #fecaca; border-left: 4px solid var(--accent); border-radius: 8px; padding: 16px 20px; margin: 14px 0 22px; }
+        .success-box { background: linear-gradient(135deg,#f0fdf4,#f7fef9); border: 1px solid #bbf7d0; border-left: 4px solid var(--accent-green); border-radius: 8px; padding: 16px 20px; margin: 14px 0 22px; }
+        
+        .info-box strong, .warning-box strong, .danger-box strong, .success-box strong { display: block; margin-bottom: 4px; color: var(--primary); }
 
-        h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent);
-            margin: 22px 0 8px;
-        }
-
-        h4 {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--primary);
-            margin: 14px 0 6px;
-        }
-
-        p {
-            margin-bottom: 10px;
-            text-align: justify;
-        }
-
-        ul,
-        ol {
-            padding-left: 20px;
-            margin-bottom: 12px;
-        }
-
-        li {
-            margin-bottom: 6px;
-        }
-
-        /* Código */
-        code {
-            font-family: 'JetBrains Mono', monospace;
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #dc2626;
-        }
-
-        pre {
-            font-family: 'JetBrains Mono', monospace;
-            background: var(--code-bg);
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 8px;
-            font-size: 12px;
-            line-height: 1.6;
-            margin: 15px 0 20px;
-            overflow-x: auto;
-            white-space: pre;
-        }
-
-        pre .comment {
-            color: #64748b;
-        }
-
-        pre .key {
-            color: #7dd3fc;
-        }
-
-        pre .val {
-            color: #86efac;
-        }
-
-        /* Tabelas */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0 25px;
-            font-size: 13px;
-        }
-
-        thead th {
-            background: var(--primary);
-            color: #fff;
-            padding: 11px 14px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-
-        tbody td {
-            border: 1px solid var(--border);
-            padding: 10px 14px;
-            vertical-align: top;
-        }
-
-        tbody tr:nth-child(even) td {
-            background: var(--light);
-        }
-
-        /* Caixas */
-        .info-box {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-left: 4px solid var(--accent-blue);
-            border-radius: 6px;
-            padding: 14px 18px;
-            margin: 12px 0 20px;
-        }
-
-        .warning-box {
-            background: #fff7ed;
-            border: 1px solid #fed7aa;
-            border-left: 4px solid #f97316;
-            border-radius: 6px;
-            padding: 14px 18px;
-            margin: 12px 0 20px;
-        }
-
-        .danger-box {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-left: 4px solid var(--accent);
-            border-radius: 6px;
-            padding: 14px 18px;
-            margin: 12px 0 20px;
-        }
-
-        .success-box {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-left: 4px solid var(--accent-green);
-            border-radius: 6px;
-            padding: 14px 18px;
-            margin: 12px 0 20px;
-        }
-
-        .info-box strong,
-        .warning-box strong,
-        .danger-box strong,
-        .success-box strong {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        /* Badge */
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .badge-red {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-green {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-blue {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .badge-orange {
-            background: #ffedd5;
-            color: #9a3412;
-        }
-
-        /* Rodapé */
-        .footer {
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-            font-size: 11px;
-            color: var(--muted);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .no-print {
-            background: #fefce8;
-            border: 1px solid #fde047;
-            border-radius: 6px;
-            padding: 10px 20px;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 13px;
-        }
+        /* ── RODAPÉ E IMPRESSÃO ───────────────────────────── */
+        .footer { margin: 50px 0 0; padding: 18px 60px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; background: var(--light); position: relative; }
+        .footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent) 0%, #b91c1c 100%); }
+        .no-print { background: #fefce8; border-bottom: 2px solid #fde047; padding: 12px 60px; text-align: center; font-size: 13px; color: #78350f; }
 
         @media print {
-            body {
-                padding: 30px 40px;
-            }
-
-            .no-print {
-                display: none;
-            }
-
-            pre {
-                break-inside: avoid;
-            }
+            .no-print { display: none; }
+            .content { padding: 0 40px; }
+            .cover { padding: 40px; }
+            .footer { padding: 18px 40px; }
+            pre { break-inside: avoid; border: none; }
+            table { box-shadow: none; border: 1px solid var(--border); }
         }
     </style>
 </head>
 
 <body>
 
-
+<div class="no-print">
+    📄 Para exportar: <strong>Ctrl + P</strong> → Guardar como PDF
+</div>
 
     <div class="cover">
         <div class="cover-left">
@@ -320,6 +157,9 @@
             <strong>Autor:</strong> Diosives Crobute
         </div>
     </div>
+
+<div class="cover-bar"></div>
+<div class="content">
 
     <h2>1. Stack Tecnológica</h2>
     <table>
@@ -664,9 +504,11 @@ AVG(nota_disciplina) AS media_geral
         legal.
     </div>
 
+    </div>
+</div>
+
     <div class="footer">
-        <span>&copy; 2026 Green Hard &amp; Softh — Segurança de Nível Profissional. <strong>By Diosives
-                Crobute</strong></span>
+        <span>&copy; 2026 Green Hard &amp; Softh — Segurança de Nível Profissional. <strong>By Diosives Crobute</strong></span>
         <span>README Técnico v5.0</span>
     </div>
 
