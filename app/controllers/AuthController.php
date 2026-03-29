@@ -170,7 +170,7 @@ class AuthController extends Controller {
                     'media' => 10.0
                 ]);
 
-                $_SESSION['flash_success'] = "Conta criada com sucesso! Faça login.";
+                $_SESSION['flash_success'] = "Conta criada com sucesso! Aguarde aprovação de um Administrador para iniciar sessão.";
                 $_SESSION['active_view'] = 'view-login';
             } else {
                 $_SESSION['flash_error'] = "O email fornecido já se encontra registado.";
