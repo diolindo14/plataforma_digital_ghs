@@ -70,6 +70,9 @@ class AdminController extends Controller {
         $academicoRankingModel = $this->model('Academico');
         $data['ranking_escola'] = $academicoRankingModel->getRankingEscola(3);
         $data['ranking_nivel']  = $academicoRankingModel->getRankingByNivel();
+        
+        // --- 🚨 MONITORIZAÇÃO DE RECLAMAÇÕES DE NOTAS ---
+        $data['conflitos_notas'] = $this->model('Nota')->getConflitosNotas();
 
         $this->view('admin/dashboard', $data);
     }
@@ -625,6 +628,18 @@ class AdminController extends Controller {
         $student = $model->getDetailsByUserId($id);
         header('Content-Type: application/json');
         echo json_encode($student);
+        exit;
+    }
+
+    public function convocarPartes($estudante_id, $disciplina_id) {
+        $this->verifyCsrfToken();
+        $this->model('Nota')->resolverConflito($estudante_id, $disciplina_id);
+        
+        // Notificar o grupo (opcional)
+        $this->model('Mensagem')->notifyGroup('secretaria', "O Administrador convocou as partes para a resolução de conflito de nota (Aluno ID: $estudante_id).", $_SESSION['user_id']);
+
+        $_SESSION['flash_success'] = "Convocatória registada! O bloqueio da nota foi removido para mediação administrativa.";
+        header('Location: ' . URL_ROOT . '/admin');
         exit;
     }
     public function confirmSummary($id) {

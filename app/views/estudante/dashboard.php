@@ -511,10 +511,12 @@
                                         <td class="text-start fw-bold">
                                             <?= htmlspecialchars($n['disciplina']) ?>
                                             <div class="mt-1">
-                                                <?php if($n['feedback_status'] == 'Concordado'): ?>
+                                                <?php if($n['bloqueado_admin']): ?>
+                                                    <span class="badge bg-danger text-white border border-danger small"><ion-icon name="alert-circle"></ion-icon> Bloqueado: Mediação Admin Pendente</span>
+                                                <?php elseif($n['feedback_status'] == 'Concordado'): ?>
                                                     <span class="badge bg-success-subtle text-success border border-success border-opacity-25 small"><ion-icon name="checkmark-circle"></ion-icon> Concordou</span>
                                                 <?php elseif($n['feedback_status'] == 'Reclamado'): ?>
-                                                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 small" title="<?= htmlspecialchars($n['feedback_comentario']) ?>"><ion-icon name="warning"></ion-icon> Reclamação Enviada</span>
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 small" title="<?= htmlspecialchars($n['feedback_comentario']) ?>"><ion-icon name="warning"></ion-icon> Reclamação Enviada (<?= $n['contador_reclamacoes'] ?>)</span>
                                                 <?php elseif($n['feedback_status'] == 'Resolvido'): ?>
                                                     <div>
                                                         <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25 small"><ion-icon name="sync-outline"></ion-icon> Nota Corrigida pelo Professor</span>
@@ -539,7 +541,9 @@
                                             <small class="text-muted d-block" style="font-size: 0.7rem;">Média: <?= $n['nota_final'] ? number_format($n['nota_final'], 1) : '-' ?></small>
                                         </td>
                                         <td class="text-end">
-                                            <?php if($n['feedback_status'] == 'Pendente' || $n['feedback_status'] == 'Resolvido'): ?>
+                                            <?php if($n['bloqueado_admin']): ?>
+                                                <small class="text-danger fw-bold">Direção Notificada</small>
+                                            <?php elseif($n['feedback_status'] == 'Pendente' || $n['feedback_status'] == 'Resolvido'): ?>
                                                 <div class="btn-group btn-group-sm">
                                                     <button onclick="responderNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>, 'Concordado')" class="btn btn-success" title="Aceitar Novos Valores / Concordar"><ion-icon name="checkmark-done"></ion-icon> Aceitar</button>
                                                     <button onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)" class="btn btn-outline-danger" title="Ainda tenho Reclamação"><ion-icon name="chatbubble-ellipses"></ion-icon></button>

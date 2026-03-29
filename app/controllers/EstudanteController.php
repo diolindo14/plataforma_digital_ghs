@@ -278,16 +278,41 @@ class EstudanteController extends Controller {
             
             if ($estudanteData) {
                 $notaModel = $this->model('Nota');
-                $res = $notaModel->registrarFeedback(
+                $result = $notaModel->registrarFeedback(
                     $estudanteData['id'],
                     $_POST['turma_id'],
                     $_POST['disciplina_id'],
                     $_POST['status'],
                     $_POST['comentario'] ?? null
                 );
-                if ($res) $this->logActivity('Estudante Feedback de Nota', ['status' => $_POST['status']]);
+                
+                if ($result['success'] && $result['bloqueado']) {
+                    $this->logActivity('Estudante Feedback de Nota - BLOQUEADO', ['status' => $_POST['status']]);
+                    
+                    // Enviar alertas oficiais de sistema
+                    $msgModel = $this->model('Mensagem');
+                    $alerta = "ALERTA CRÍTICO: Registada 2ª reclamação para a mesma nota. Por favor, compareça na Administração ou Secretaria para resolver o problema.";
+                    
+                    // 1. Notificar Aluno
+                    $msgModel->send(0, $_SESSION['user_id'], "Aviso de Conflito Crítico", $alerta);
+                    
+                    // 2. Notificar Professor
+                    $db = Database::getInstance();
+                    $stmtP = $db->prepare("SELECT p.utilizador_id FROM professor_disciplina pd JOIN professores p ON pd.professor_id = p.id WHERE pd.turma_id = :tid AND pd.disciplina_id = :did LIMIT 1");
+                    $stmtP->execute([':tid' => $_POST['turma_id'], ':did' => $_POST['disciplina_id']]);
+                    $prof = $stmtP->fetch();
+                    if ($prof) {
+                        $msgModel->send(0, $prof['utilizador_id'], "Alerta de Conflito de Nota", $alerta . " (Aluno: ".$estudanteData['nome_completo'].")");
+                    }
+                    
+                    // 3. Notificar Administração/Secretaria via grupo
+                    $msgModel->notifyGroup('admin', "Bloqueio Anti-Fraude Ativado: Aluno ".$estudanteData['nome_completo']." reclamou 2 vezes da mesma nota.");
+                } elseif ($result['success']) {
+                    $this->logActivity('Estudante Feedback de Nota', ['status' => $_POST['status']]);
+                }
+                
                 header('Content-Type: application/json');
-                echo json_encode(['success' => $res]);
+                echo json_encode($result);
                 exit;
             }
         }

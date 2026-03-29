@@ -101,12 +101,14 @@ class Frequencia {
                 f.status,
                 COUNT(*) as total,
                 f.turma_id,
-                f.disciplina_id
+                f.disciplina_id,
+                m.grupo
             FROM frequencias f
             JOIN estudantes e ON f.estudante_id = e.id
             JOIN utilizadores u ON e.utilizador_id = u.id
             JOIN turmas t ON f.turma_id = t.id
             JOIN disciplinas d ON f.disciplina_id = d.id
+            LEFT JOIN matriculas m ON e.id = m.estudante_id AND m.turma_id = f.turma_id
             GROUP BY f.estudante_id, f.turma_id, f.disciplina_id, f.status
         ");
         $stmt->execute();
@@ -119,6 +121,7 @@ class Frequencia {
                 $report[$key] = [
                     'estudante' => $r['estudante_nome'],
                     'turma' => $r['turma_codigo'],
+                    'grupo' => $r['grupo'] ?? 'G1',
                     'turma_id' => $r['turma_id'],
                     'disciplina_id' => $r['disciplina_id'],
                     'P' => 0, 'F' => 0, 'J' => 0
@@ -159,7 +162,7 @@ class Frequencia {
         $stmt = $this->db->prepare("
             SELECT f.data, u_est.nome_completo as estudante_nome, d.nome as disciplina_nome, 
                    s.tempo, u_prof.nome_completo as professor_nome, f.status, f.confirmado_admin,
-                   s.turma_id, s.disciplina_id
+                   s.turma_id, s.disciplina_id, m.grupo
             FROM frequencias f
             JOIN sumarios s ON f.sumario_id = s.id
             JOIN estudantes e ON f.estudante_id = e.id
@@ -167,6 +170,7 @@ class Frequencia {
             JOIN disciplinas d ON f.disciplina_id = d.id
             JOIN professores p ON s.professor_id = p.id
             JOIN utilizadores u_prof ON p.utilizador_id = u_prof.id
+            LEFT JOIN matriculas m ON e.id = m.estudante_id AND m.turma_id = s.turma_id
             ORDER BY f.data DESC, s.tempo ASC, u_est.nome_completo ASC
         ");
         $stmt->execute();

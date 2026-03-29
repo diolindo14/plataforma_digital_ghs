@@ -399,6 +399,7 @@
                                 <thead class="bg-light">
                                     <tr>
                                         <th class="border-0">Estudante</th>
+                                        <th class="border-0 text-center">Grupo</th>
                                         <th class="border-0 text-center">Status</th>
                                         <th class="border-0 text-center">Ações</th>
                                     </tr>
@@ -419,6 +420,9 @@
                                                             <div class="text-muted" style="font-size: 0.75rem;">BI: <?= $this->e($s['bi']) ?></div>
                                                         </div>
                                                     </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-light text-dark border fw-bold"><?= $this->e($s['grupo'] ?? 'G1') ?></span>
                                                 </td>
                                                 <td class="text-center">
                                                     <span class="badge status-badge bg-success bg-opacity-10 text-success rounded-pill px-3">Presente</span>

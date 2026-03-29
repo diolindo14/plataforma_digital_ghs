@@ -161,20 +161,60 @@ class Nota {
         return $report;
     }
     public function registrarFeedback($estudante_id, $turma_id, $disciplina_id, $status, $comentario = null) {
-        $stmt = $this->db->prepare("
-            INSERT INTO concordancia_notas (estudante_id, turma_id, disciplina_id, status, comentario, data_resposta)
-            VALUES (:eid, :tid, :did, :status_ins, :com_ins, NOW())
-            ON DUPLICATE KEY UPDATE status = :status_upd, comentario = :com_upd, data_resposta = NOW()
-        ");
-        return $stmt->execute([
-            ':eid' => $estudante_id,
-            ':tid' => $turma_id,
-            ':did' => $disciplina_id,
-            ':status_ins' => $status,
-            ':com_ins' => $comentario,
-            ':status_upd' => $status,
-            ':com_upd' => $comentario
-        ]);
+        // Primeiro, verificar se já existe um feedback
+        $stmtCheck = $this->db->prepare("SELECT status, contador_reclamacoes FROM concordancia_notas WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did");
+        $stmtCheck->execute([':eid' => $estudante_id, ':tid' => $turma_id, ':did' => $disciplina_id]);
+        $exist = $stmtCheck->fetch();
+
+        if ($exist) {
+            $novoStatus = $status;
+            $novoContador = $exist['contador_reclamacoes'];
+            $bloqueado = 0;
+
+            // Se o aluno está a reclamar novamente após uma resolução/concordância
+            if ($status === 'Reclamado' && ($exist['status'] === 'Resolvido' || $exist['status'] === 'Concordado' || $exist['status'] === 'Reclamado')) {
+                // Apenas incrementa se o status anterior era de resolução ou se estamos forçando o fluxo
+                // O requisito diz: se houver 2 reclamações para a mesma nota.
+                $novoContador++;
+                if ($novoContador >= 2) {
+                    $bloqueado = 1;
+                }
+            }
+
+            $stmt = $this->db->prepare("
+                UPDATE concordancia_notas 
+                SET status = :status, 
+                    comentario = :com, 
+                    contador_reclamacoes = :cont, 
+                    bloqueado_admin = :bloq,
+                    data_resposta = NOW()
+                WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did
+            ");
+            $success = $stmt->execute([
+                ':status' => $novoStatus,
+                ':com' => $comentario,
+                ':cont' => $novoContador,
+                ':bloq' => $bloqueado,
+                ':eid' => $estudante_id,
+                ':tid' => $turma_id,
+                ':did' => $disciplina_id
+            ]);
+            return ['success' => $success, 'contador' => $novoContador, 'bloqueado' => (bool)$bloqueado];
+        } else {
+            // Primeiro registo
+            $stmt = $this->db->prepare("
+                INSERT INTO concordancia_notas (estudante_id, turma_id, disciplina_id, status, comentario, contador_reclamacoes, data_resposta)
+                VALUES (:eid, :tid, :did, :status, :com, 1, NOW())
+            ");
+            $success = $stmt->execute([
+                ':eid' => $estudante_id,
+                ':tid' => $turma_id,
+                ':did' => $disciplina_id,
+                ':status' => $status,
+                ':com' => $comentario
+            ]);
+            return ['success' => $success, 'contador' => 1, 'bloqueado' => false];
+        }
     }
 
     public function getFeedbacksParaProfessor($professor_id) {
@@ -191,5 +231,38 @@ class Nota {
         ");
         $stmt->execute([':pid' => $professor_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getConflitosNotas() {
+        $stmt = $this->db->prepare("
+            SELECT cn.*, u_est.nome_completo as estudante_nome, t.codigo as turma_codigo, d.nome as disciplina_nome,
+                   u_prof.nome_completo as professor_nome
+            FROM concordancia_notas cn
+            JOIN estudantes e ON cn.estudante_id = e.id
+            JOIN utilizadores u_est ON e.utilizador_id = u_est.id
+            JOIN turmas t ON cn.turma_id = t.id
+            JOIN disciplinas d ON cn.disciplina_id = d.id
+            JOIN professor_disciplina pd ON d.id = pd.disciplina_id AND t.id = pd.turma_id
+            JOIN professores p ON pd.professor_id = p.id
+            JOIN utilizadores u_prof ON p.utilizador_id = u_prof.id
+            WHERE cn.bloqueado_admin = 1
+            ORDER BY cn.data_resposta DESC
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function resolverConflito($estudante_id, $disciplina_id) {
+        $stmt = $this->db->prepare("
+            UPDATE concordancia_notas 
+            SET contador_reclamacoes = 0, 
+                bloqueado_admin = 0, 
+                status = 'Resolvido' 
+            WHERE estudante_id = :eid AND disciplina_id = :did
+        ");
+        return $stmt->execute([
+            ':eid' => $estudante_id,
+            ':did' => $disciplina_id
+        ]);
     }
 }

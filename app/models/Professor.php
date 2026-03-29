@@ -223,7 +223,7 @@ class Professor {
      */
     public function getStudentsByTurma($turma_id) {
         $stmt = $this->db->prepare("
-            SELECT e.*, u.nome_completo 
+            SELECT e.*, u.nome_completo, m.grupo 
             FROM estudantes e
             JOIN utilizadores u ON e.utilizador_id = u.id
             JOIN matriculas m ON e.id = m.estudante_id

@@ -220,8 +220,21 @@ class ProfessorController extends Controller {
                 $db = Database::getInstance();
                 $stmt = $db->prepare("UPDATE concordancia_notas SET status = 'Resolvido', resposta_professor = :resp, data_resposta = NOW() WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'");
                 $res = $stmt->execute([':resp' => $resposta, ':eid' => $estudante_id, ':tid' => $turma_id, ':did' => $disciplina_id]);
+                
                 if ($res) {
                     $this->logActivity('Resposta à Reclamação', ['estudante_id' => $estudante_id]);
+                    
+                    // Enviar mensagem oficial ao aluno
+                    $stmtE = $db->prepare("SELECT utilizador_id FROM estudantes WHERE id = :id LIMIT 1");
+                    $stmtE->execute([':id' => $estudante_id]);
+                    $est = $stmtE->fetch();
+                    
+                    if ($est) {
+                        $msgModel = $this->model('Mensagem');
+                        $conteudo = "O Professor respondeu à sua reclamação de nota: \"" . $resposta . "\"";
+                        $msgModel->send($_SESSION['user_id'], $est['utilizador_id'], "Resposta a Reclamação de Nota", $conteudo);
+                    }
+                    
                     header('Content-Type: application/json');
                     echo json_encode(['success' => true]);
                     exit;

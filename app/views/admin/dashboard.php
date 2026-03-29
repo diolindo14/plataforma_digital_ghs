@@ -424,7 +424,7 @@
                         </div>
                         <div class="card-body p-4">
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle datatable-simple"
+                                <table class="table table-hover align-middle"
                                     id="tabelaCertificadosEmitidos">
                                     <thead class="table-light">
                                         <tr>
@@ -748,6 +748,71 @@
                         </div>
                     </div>
 
+                    <!-- ── SECÇÃO DE CONFLITOS DE NOTAS (Anti-Fraude) ── -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden border-start border-4 border-danger">
+                                <div class="card-header bg-white py-3 border-bottom border-light">
+                                    <h6 class="fw-bold mb-0 d-flex align-items-center gap-2 text-danger">
+                                        <ion-icon name="shield-checkmark-outline" class="fs-4"></ion-icon>
+                                        Monitorização Anti-Fraude: Reclamações de Notas Críticas
+                                    </h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Estudante</th>
+                                                    <th>Disciplina / Turma</th>
+                                                    <th>Professor</th>
+                                                    <th>Nº Reclamações</th>
+                                                    <th>Última Resposta Prof.</th>
+                                                    <th class="text-end">Ação</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($data['conflitos_notas'])): ?>
+                                                    <tr>
+                                                        <td colspan="6" class="text-center py-4 text-muted">
+                                                            <ion-icon name="checkmark-done-circle-outline" class="fs-2 opacity-25 d-block mx-auto mb-2"></ion-icon>
+                                                            Nenhuma irregularidade detetada. Todas as notas estão em conformidade.
+                                                        </td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($data['conflitos_notas'] as $c): ?>
+                                                        <tr>
+                                                            <td class="fw-bold"><?= htmlspecialchars($c['estudante_nome']) ?></td>
+                                                            <td>
+                                                                <div class="small fw-semibold"><?= htmlspecialchars($c['disciplina_nome']) ?></div>
+                                                                <div class="text-muted small"><?= htmlspecialchars($c['turma_codigo']) ?></div>
+                                                            </td>
+                                                            <td class="small"><?= htmlspecialchars($c['professor_nome']) ?></td>
+                                                            <td>
+                                                                <span class="badge bg-danger rounded-pill px-3"><?= $c['contador_reclamacoes'] ?></span>
+                                                            </td>
+                                                            <td class="small italic text-muted">
+                                                                "<?= htmlspecialchars(substr($c['resposta_professor'] ?? 'Nenhuma', 0, 50)) ?>..."
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <form action="<?= URL_ROOT ?>/admin/convocarPartes/<?= $c['estudante_id'] ?>/<?= $c['disciplina_id'] ?>" method="POST" class="d-inline">
+                                                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                                                    <button type="submit" class="btn btn-sm btn-danger shadow-sm" onclick="return confirm('Confirmar convocação oficial das partes para resolução de conflito?')">
+                                                                        <ion-icon name="megaphone-outline"></ion-icon> Convocar Partes
+                                                                    </button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
 
                     <!-- 🏆 QUADRO DE MÉRITO (Ranking Global) -->
@@ -776,7 +841,9 @@
                             <div class="card border-0 shadow-sm h-100">
                                 <div class="card-body">
                                     <h5 class="fw-bold mb-4">Estatística: Distribuição por Turno</h5>
-                                    <canvas id="pieChart"></canvas>
+                                    <div style="max-width: 300px; margin: 0 auto;">
+                                        <canvas id="pieChart"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1765,6 +1832,7 @@
                                                 <tr>
                                                     <th>Data</th>
                                                     <th>Estudante</th>
+                                                    <th>Grupo</th>
                                                     <th>Disciplina / Tempo</th>
                                                     <th>Professor</th>
                                                     <th class="text-center">Status</th>
@@ -1777,6 +1845,7 @@
                                                         <td><?= date('d/m/Y', strtotime($da['data'])) ?></td>
                                                         <td class="fw-bold"><?= htmlspecialchars($da['estudante_nome']) ?>
                                                         </td>
+                                                        <td><span class="badge bg-light text-dark border fw-bold"><?= htmlspecialchars($da['grupo'] ?? 'G1') ?></span></td>
                                                         <td>
                                                             <div class="small fw-bold text-dark">
                                                                 <?= htmlspecialchars($da['disciplina_nome']) ?></div>
@@ -3569,6 +3638,176 @@
             return confirm(txt);
         }
     </script>
+
+<!-- ═══════════════════════════════════════════════════════
+     DEPENDÊNCIAS JAVASCRIPT (ORDEM CORRECTA)
+═══════════════════════════════════════════════════════ -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<script>
+$(document).ready(function () {
+
+    // ── DataTables (inicialização robusta individual) ────
+    const dtConfig = {
+        language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-PT.json' },
+        pageLength: 10,
+        bLengthChange: false,
+        destroy: true,
+        order: []
+    };
+    $('.datatable-simple').each(function () {
+        const $tbl = $(this);
+        // Só inicializar se a tabela tem colunas definidas no thead
+        if ($tbl.find('thead tr th').length > 0) {
+            try { $tbl.DataTable(dtConfig); }
+            catch (e) { console.warn('DataTable init failed for #' + ($tbl.attr('id') || '?'), e.message); }
+        }
+    });
+
+    // ── Gráfico de Barras: Alunos por Ano Letivo ─────────
+    const barCtx = document.getElementById('barChart');
+    if (barCtx) {
+        const chartDataAnos = <?= json_encode(array_values($data['chartData']['anos'] ?? [0,0,0,0,0])) ?>;
+
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['1º Ano', '2º Ano', '3º Ano', '4º Ano', '5º Ano'],
+                datasets: [{
+                    label: 'Alunos Matriculados',
+                    data: chartDataAnos,
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.85)',
+                        'rgba(59, 130, 246, 0.85)',
+                        'rgba(245, 158, 11, 0.85)',
+                        'rgba(239, 68, 68, 0.85)',
+                        'rgba(139, 92, 246, 0.85)'
+                    ],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.parsed.y} aluno(s)`
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { precision: 0 } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // ── Gráfico de Pizza: Distribuição por Turno ─────────
+    const pieCtx = document.getElementById('pieChart');
+    if (pieCtx) {
+        const chartTurnos = <?= json_encode($data['chartData']['turnos'] ?? ['Manhã'=>0,'Tarde'=>0,'Noite'=>0]) ?>;
+
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(chartTurnos),
+                datasets: [{
+                    data: Object.values(chartTurnos),
+                    backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '60%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 16, font: { size: 13 } } },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.parsed} aluno(s) – ${ctx.label}`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ── Aprovação / Rejeição de Matrículas ────────────────
+    $(document).on('click', '.btn-approve-matricula', function () {
+        const id = $(this).data('id');
+        if (id && confirm('Confirmar aprovação desta matrícula e criação de conta de aluno?')) {
+            window.location.href = '<?= URL_ROOT ?>/admin/approveMatricula/' + id;
+        }
+    });
+
+    $(document).on('click', '.btn-reject-matricula', function () {
+        const id = $(this).data('id');
+        if (id) {
+            $('#reject_matricula_id').val(id);
+            new bootstrap.Modal(document.getElementById('rejectModal')).show();
+        }
+    });
+
+    // ── Edição de Itens via data-atributos ────────────────
+    $(document).on('click', '.btn-edit-ano', function () {
+        const d = $(this).data();
+        $('#ano_id').val(d.id);
+        $('#ano_numero').val(d.numero);
+        $('#ano_nome').val(d.nome);
+        $('#ano_descricao').val(d.desc);
+        $('#ano_mensalidade').val(d.valor);
+        $('#ano_ordem').val(d.ordem);
+        $('#anoModalTitle').text('Editar Ano Curricular');
+        new bootstrap.Modal(document.getElementById('anoModal')).show();
+    });
+
+    $(document).on('click', '.btn-edit-disciplina', function () {
+        const d = $(this).data();
+        $('#disc_id').val(d.id);
+        $('#disc_codigo').val(d.codigo);
+        $('#disc_nome').val(d.nome);
+        $('#disc_ano').val(d.ano);
+        $('#disc_carga').val(d.carga);
+        $('#disc_credito').val(d.credito);
+        $('#disc_desc').val(d.desc);
+        $('#disciplinaModalTitle').text('Editar Disciplina');
+        new bootstrap.Modal(document.getElementById('disciplinaModal')).show();
+    });
+
+    $(document).on('click', '.btn-edit-esp', function () {
+        const d = $(this).data();
+        $('#esp_id').val(d.id);
+        $('#esp_codigo').val(d.codigo);
+        $('#esp_nome').val(d.nome);
+        $('#esp_descricao').val(d.desc);
+        $('#esp_vagas').val(d.vagas);
+        $('#esp_ativa').prop('checked', d.ativa == 1);
+        $('#espModalTitle').text('Editar Especialidade');
+        new bootstrap.Modal(document.getElementById('especialidadeModal')).show();
+    });
+
+    // ── Botão flutuante scroll-to-top ─────────────────────
+    const topBtn = $('<button id="scrollTop" class="btn" style="position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:#10B981;color:#fff;display:none;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.2);"><i>↑</i></button>');
+    topBtn.appendTo('body');
+    $(window).on('scroll', () => {
+        if ($(this).scrollTop() > 300) topBtn.fadeIn(); else topBtn.fadeOut();
+    });
+    topBtn.on('click', () => $('html,body').animate({ scrollTop: 0 }, 400));
+
+});
+</script>
+
 </body>
 
 </html>
