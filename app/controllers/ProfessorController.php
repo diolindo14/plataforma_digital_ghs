@@ -28,6 +28,34 @@ class ProfessorController extends Controller {
         $notaModel = $this->model('Nota');
         $frequenciaModel = $this->model('Frequencia');
 
+        $todos_eventos = $this->model('Evento')->getForProfessor($profData['id']);
+        $agendamentos_proprios = [];
+        $eventos_globais_raw = [];
+        
+        foreach($todos_eventos as $ev) {
+            if ($ev['criado_por'] == $_SESSION['user_id']) {
+                $agendamentos_proprios[] = $ev;
+            } else {
+                $eventos_globais_raw[] = $ev;
+            }
+        }
+
+        $eventos_globais = [];
+        foreach($eventos_globais_raw as $ev) {
+            $key = $ev['titulo'] . '_' . $ev['tipo'];
+            if (!isset($eventos_globais[$key])) {
+                $ev['data_fim'] = $ev['data_evento'];
+                $eventos_globais[$key] = $ev;
+            } else {
+                if (strtotime($ev['data_evento']) > strtotime($eventos_globais[$key]['data_fim'])) {
+                    $eventos_globais[$key]['data_fim'] = $ev['data_evento'];
+                }
+                if (strtotime($ev['data_evento']) < strtotime($eventos_globais[$key]['data_evento'])) {
+                    $eventos_globais[$key]['data_evento'] = $ev['data_evento'];
+                }
+            }
+        }
+
         $data = [
             'professor' => $profData,
             'classes' => $classes,
@@ -37,7 +65,9 @@ class ProfessorController extends Controller {
             'notas' => ($selected_turma && $selected_disciplina) ? $notaModel->getNotasByTurma($selected_turma, $selected_disciplina) : [],
             'meus_sumarios' => $frequenciaModel->getSummariesByProfessor($profData['id']),
             'meus_materiais' => $this->model('Material')->getByProfessor($profData['id']),
-            'meus_eventos' => $this->model('Evento')->getForProfessor($profData['id']),
+            'meus_eventos' => $todos_eventos,
+            'agendamentos_proprios' => $agendamentos_proprios,
+            'eventos_globais' => array_values($eventos_globais),
             'reclamacoes' => $notaModel->getFeedbacksParaProfessor($profData['id']),
             'minha_assiduidade' => $frequenciaModel->getDetailedAttendanceForProfessor($profData['id']),
             'selected_turma' => $selected_turma,

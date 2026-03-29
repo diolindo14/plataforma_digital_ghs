@@ -3455,10 +3455,10 @@
                         html = '<tr><td colspan="6" class="text-center text-muted py-4">Nenhum evento registado.</td></tr>';
                     } else {
                         data.forEach(e => {
-                            const dataFormatada = new Date(e.data_evento).toLocaleString('pt-PT');
+                            const dataFormatada = e.data_evento_display;
                             html += `
                         <tr>
-                            <td><span class="fw-bold">${dataFormatada}</span></td>
+                            <td><span class="fw-bold" style="white-space:nowrap;">${dataFormatada}</span></td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div style="width:12px; height:12px; border-radius:3px; background:${e.cor}"></div>

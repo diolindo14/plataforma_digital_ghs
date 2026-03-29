@@ -772,7 +772,36 @@ class AdminController extends Controller {
     public function getEventosAjax() {
         header('Content-Type: application/json');
         $model = $this->model('Evento');
-        echo json_encode($model->getAll());
+        
+        $raw = $model->getAll();
+        $grouped = [];
+        foreach($raw as $ev) {
+            $key = $ev['titulo'] . '_' . $ev['tipo'];
+            if (!isset($grouped[$key])) {
+                $ev['data_fim'] = $ev['data_evento'];
+                $grouped[$key] = $ev;
+            } else {
+                if (strtotime($ev['data_evento']) > strtotime($grouped[$key]['data_fim'])) {
+                    $grouped[$key]['data_fim'] = $ev['data_evento'];
+                }
+                if (strtotime($ev['data_evento']) < strtotime($grouped[$key]['data_evento'])) {
+                    $grouped[$key]['data_evento'] = $ev['data_evento'];
+                }
+            }
+        }
+        
+        $result = array_values($grouped);
+        
+        // Add visual text for data range for the UI
+        foreach ($result as &$e) {
+            if ($e['data_evento'] != $e['data_fim']) {
+                $e['data_evento_display'] = date('d/m/Y', strtotime($e['data_evento'])) . ' a ' . date('d/m/Y', strtotime($e['data_fim']));
+            } else {
+                $e['data_evento_display'] = date('d/m/Y', strtotime($e['data_evento']));
+            }
+        }
+        
+        echo json_encode($result);
         exit;
     }
 

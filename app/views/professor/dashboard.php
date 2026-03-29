@@ -585,10 +585,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if(empty($data['meus_eventos'])): ?>
+                                    <?php if(empty($data['agendamentos_proprios'])): ?>
                                         <tr><td colspan="4" class="text-center py-4 text-muted">Sem agendamentos futuros.</td></tr>
                                     <?php else: ?>
-                                        <?php foreach($data['meus_eventos'] as $ev): ?>
+                                        <?php foreach($data['agendamentos_proprios'] as $ev): ?>
                                             <tr>
                                                 <td class="small fw-bold"><?= date('d/m/Y H:i', strtotime($ev['data_evento'])) ?></td>
                                                 <td class="small"><?= htmlspecialchars($ev['titulo']) ?></td>
@@ -607,7 +607,10 @@
                     </div>
                 </div>
 
-                <div class="card shadow-sm border-0 rounded-4">
+                <div class="card shadow-sm border-0 rounded-4 mt-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h6 class="fw-bold mb-0">Eventos Globais e Feriados</h6>
+                    </div>
                     <div class="card-body p-4">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
@@ -616,30 +619,33 @@
                                         <th>Data</th>
                                         <th>Evento</th>
                                         <th>Tipo</th>
-                                        <th>Turma / Alvo</th>
-                                        <th class="text-end">Ação</th>
+                                        <th>Alcance</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if(empty($data['meus_eventos'])): ?>
-                                        <tr><td colspan="5" class="text-center py-4 text-muted">Nenhum evento agendado por si.</td></tr>
+                                    <?php if(empty($data['eventos_globais'])): ?>
+                                        <tr><td colspan="4" class="text-center py-4 text-muted">Nenhum evento global registado.</td></tr>
                                     <?php else: ?>
-                                        <?php foreach($data['meus_eventos'] as $e): ?>
+                                        <?php foreach($data['eventos_globais'] as $e): ?>
                                             <tr>
-                                                <td class="fw-bold"><?= date('d/m/Y H:i', strtotime($e['data_evento'])) ?></td>
-                                                <td><?= htmlspecialchars($e['titulo']) ?></td>
+                                                <td class="fw-bold" style="white-space: nowrap;">
+                                                    <?php if ($e['data_evento'] != $e['data_fim']): ?>
+                                                        <?= date('d/m/Y', strtotime($e['data_evento'])) ?> a <?= date('d/m/Y', strtotime($e['data_fim'])) ?>
+                                                    <?php else: ?>
+                                                        <?= date('d/m/Y', strtotime($e['data_evento'])) ?>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div style="width:12px; height:12px; border-radius:3px; background:<?= $e['cor'] ?>"></div>
+                                                        <?= htmlspecialchars($e['titulo']) ?>
+                                                    </div>
+                                                </td>
                                                 <td><span class="badge bg-light text-dark border"><?= $e['tipo'] ?></span></td>
                                                 <td>
                                                     <span class="badge bg-secondary">
-                                                        <?= ($e['destinatario_tipo'] == 'Global') ? 'Público: Todos' : $e['destinatario_tipo'] . ': ' . ($e['destinatario_id'] ?? 'Geral') ?>
+                                                        <?= ($e['destinatario_tipo'] == 'Global') ? 'Público: Todos' : htmlspecialchars($e['destinatario_tipo']) ?>
                                                     </span>
-                                                </td>
-                                                <td class="text-end">
-                                                    <?php if($e['criado_por'] == $_SESSION['user_id']): ?>
-                                                        <button class="btn btn-sm btn-light text-danger" onclick="deleteEvento(<?= $e['id'] ?>)" title="Excluir"><ion-icon name="trash-outline"></ion-icon></button>
-                                                    <?php else: ?>
-                                                        <span class="badge bg-light text-muted small border">Somente Leitura</span>
-                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

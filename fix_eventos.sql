@@ -1,0 +1,26 @@
+SET NAMES utf8mb4;
+
+UPDATE eventos SET titulo = 'Início do Ano Lectivo' WHERE titulo LIKE 'In%cio do Ano Lectivo';
+UPDATE eventos SET titulo = 'Férias de Natal' WHERE titulo LIKE '%NATAL%';
+UPDATE eventos SET titulo = 'Férias Letivas' WHERE titulo LIKE 'F%rias Letivas%';
+UPDATE eventos SET titulo = 'Dia dos Heróis Nacionais' WHERE titulo LIKE 'HER%IS%' OR titulo LIKE 'Dia dos Her%is%';
+UPDATE eventos SET titulo = 'Prova de Recurso' WHERE titulo LIKE 'Prova de recorco';
+UPDATE eventos SET titulo = 'Ano Novo' WHERE titulo LIKE 'ANO NOVO%' OR titulo LIKE 'Dia do Novo Avo%';
+UPDATE eventos SET titulo = 'Dia da Mulher' WHERE titulo LIKE 'Dia da Mulher%';
+UPDATE eventos SET titulo = 'Dia dos Professores' WHERE titulo LIKE 'Dia dos Professores%';
+UPDATE eventos SET titulo = 'Semana Transitória' WHERE titulo LIKE 'Semana Transitoria%';
+UPDATE eventos SET titulo = 'Carnaval' WHERE titulo LIKE 'CARNAVAL%';
+UPDATE eventos SET titulo = 'Feriado Nacional' WHERE titulo LIKE 'Feriado Nacional%';
+UPDATE eventos SET titulo = 'Fim do 1º Semestre' WHERE titulo LIKE 'Fim do 1% Semestre%';
+UPDATE eventos SET titulo = 'Ramadão' WHERE titulo LIKE 'Ramad%o%';
+UPDATE eventos SET titulo = 'Fim do 2º Semestre / Ano Letivo' WHERE titulo LIKE 'Fim do 2% Semestre/Ano Letivo';
+UPDATE eventos SET titulo = 'Fim do 2º Semestre' WHERE titulo LIKE 'Fim do 2% Semestre' AND titulo NOT LIKE '%Ano Letivo%';
+UPDATE eventos SET titulo = 'Páscoa' WHERE titulo LIKE 'P%SCOA%' OR titulo LIKE 'P%scoa%';
+UPDATE eventos SET titulo = 'Dia dos Trabalhadores' WHERE titulo LIKE 'Dia dos Trabalhadores%';
+UPDATE eventos SET titulo = 'Tabaski' WHERE titulo LIKE 'Tabaski%';
+UPDATE eventos SET titulo = 'Fim do Ano Letivo' WHERE titulo LIKE 'FIM DO ANO LECTIVO%';
+UPDATE eventos SET titulo = 'Torneio da AAEGHS' WHERE titulo LIKE 'Torneio de AAEGHS%';
+UPDATE eventos SET titulo = 'Torneio de Futebol AAEGHS' WHERE titulo LIKE 'Torneio de futebol AAEGHS%';
+UPDATE eventos SET titulo = 'Admintaria Geral AAEGHS' WHERE titulo LIKE 'Admintaria Geral AAEGHS%';
+UPDATE eventos SET titulo = 'Exames Semestrais' WHERE titulo LIKE 'Exames Semestrais%';
+UPDATE eventos SET titulo = 'Fim do Ano / Março' WHERE titulo LIKE 'Fim do Ano/Marco%';
