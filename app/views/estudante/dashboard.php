@@ -396,6 +396,16 @@
                                 <?php else: ?>
                                     <?php $count = 0; foreach($data['comunicados'] as $c): if($count++ >= 3) break; ?>
                                         <div class="p-3 rounded-4 mb-2 border-start border-4 border-<?= ($c['tipo'] == 'Geral') ? 'primary' : 'warning' ?>" style="background: rgba(0,0,0,0.02);">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="badge bg-primary bg-opacity-10 text-primary small rounded-pill border border-primary border-opacity-10 py-1 px-3">
+                                                    <?= htmlspecialchars((string)($c['titulo'] ?? 'Comunicado')) ?>
+                                                </span>
+                                                <?php if($c['lido']): ?>
+                                                    <button onclick="removerComunicado(<?= $c['id'] ?>)" class="btn btn-sm btn-link text-danger p-0" title="Eliminar da lista">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </div>
                                             <strong class="text-dark small d-block"><?= htmlspecialchars((string)($c['titulo'] ?? 'Aviso')) ?></strong>
                                             <div class="text-muted mt-1" style="font-size: 0.8rem;"><?= htmlspecialchars(mb_strimwidth((string)($c['conteudo'] ?? ''), 0, 100, "...")) ?></div>
                                         </div>
@@ -512,17 +522,17 @@
                                             <?= htmlspecialchars($n['disciplina']) ?>
                                             <div class="mt-1">
                                                 <?php if($n['bloqueado_admin']): ?>
-                                                    <span class="badge bg-danger text-white border border-danger small"><ion-icon name="alert-circle"></ion-icon> Bloqueado: Mediação Admin Pendente</span>
-                                                <?php elseif($n['feedback_status'] == 'Concordado'): ?>
-                                                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25 small"><ion-icon name="checkmark-circle"></ion-icon> Concordou</span>
+                                                    <span class="badge bg-danger text-white border border-danger small"><ion-icon name="alert-circle"></ion-icon> Bloqueio Anti-Fraude: Mediação Admin Pendente</span>
+                                                <?php elseif($n['feedback_status'] == 'Concordado' || $n['feedback_status'] == 'Resolvido'): ?>
+                                                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25 small"><ion-icon name="checkmark-circle"></ion-icon> Nota Finalizada/Concordada</span>
                                                 <?php elseif($n['feedback_status'] == 'Reclamado'): ?>
-                                                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 small" title="<?= htmlspecialchars($n['feedback_comentario']) ?>"><ion-icon name="warning"></ion-icon> Reclamação Enviada (<?= $n['contador_reclamacoes'] ?>)</span>
-                                                <?php elseif($n['feedback_status'] == 'Resolvido'): ?>
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 small" title="<?= htmlspecialchars($n['feedback_comentario'] ?? '') ?>"><ion-icon name="warning"></ion-icon> Reclamação Enviada (<?= $n['contador_reclamacoes'] ?>)</span>
+                                                <?php elseif($n['feedback_status'] == 'Respondido'): ?>
                                                     <div>
-                                                        <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25 small"><ion-icon name="sync-outline"></ion-icon> Nota Corrigida pelo Professor</span>
+                                                        <span class="badge bg-info-subtle text-info border border-info border-opacity-25 small"><ion-icon name="chatbubble-outline"></ion-icon> Resposta do Professor Disponível</span>
                                                         <?php if (!empty($n['resposta_professor'])): ?>
-                                                            <div class="mt-1 p-2 bg-light rounded small text-muted border-start border-3 border-warning">
-                                                                <ion-icon name="chatbubble-outline" class="me-1"></ion-icon><?= htmlspecialchars($n['resposta_professor']) ?>
+                                                            <div class="mt-1 p-2 bg-light rounded small text-muted border-start border-3 border-info">
+                                                                <ion-icon name="return-down-forward-outline" class="me-1"></ion-icon><?= htmlspecialchars($n['resposta_professor']) ?>
                                                             </div>
                                                         <?php endif; ?>
                                                     </div>
@@ -542,14 +552,19 @@
                                         </td>
                                         <td class="text-end">
                                             <?php if($n['bloqueado_admin']): ?>
-                                                <small class="text-danger fw-bold">Direção Notificada</small>
-                                            <?php elseif($n['feedback_status'] == 'Pendente' || $n['feedback_status'] == 'Resolvido'): ?>
-                                                <div class="btn-group btn-group-sm">
-                                                    <button onclick="responderNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>, 'Concordado')" class="btn btn-success" title="Aceitar Novos Valores / Concordar"><ion-icon name="checkmark-done"></ion-icon> Aceitar</button>
-                                                    <button onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)" class="btn btn-outline-danger" title="Ainda tenho Reclamação"><ion-icon name="chatbubble-ellipses"></ion-icon></button>
+                                                <small class="text-danger fw-bold">Pendente Admin</small>
+                                            <?php elseif($n['feedback_status'] == 'Pendente'): ?>
+                                                <div class="btn-group btn-group-sm shadow-sm">
+                                                    <button onclick="responderNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>, 'Concordado')" class="btn btn-success" title="Concordar com a Nota"><ion-icon name="checkmark-done"></ion-icon></button>
+                                                    <button onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)" class="btn btn-danger" title="Reclamar"><ion-icon name="chatbubble-ellipses"></ion-icon></button>
+                                                </div>
+                                            <?php elseif($n['feedback_status'] == 'Respondido'): ?>
+                                                <div class="d-grid gap-1">
+                                                    <button onclick="concordarResposta(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)" class="btn btn-sm btn-success fw-bold py-1 shadow-sm"><ion-icon name="checkmark-circle"></ion-icon> Confirmar e Encerrar</button>
+                                                    <button onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)" class="btn btn-sm btn-outline-danger fw-bold py-1">Reclamar de Novo</button>
                                                 </div>
                                             <?php else: ?>
-                                                <ion-icon name="lock-closed-outline" class="text-muted"></ion-icon>
+                                                <ion-icon name="lock-closed-outline" class="text-muted opacity-50"></ion-icon>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -1141,6 +1156,22 @@ function responderNotas(tid, did, status) {
     }
 }
 
+function concordarResposta(tid, did) {
+    if (confirm('Ao confirmar, você declara que concorda com a resposta do professor e com a nota final. Deseja encerrar este processo?')) {
+        $.post('<?= URL_ROOT ?>/estudante/concordarNota', {
+            turma_id: tid,
+            disciplina_id: did,
+            csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+        }, function(res) {
+            if (res.success) {
+                location.reload();
+            } else {
+                alert('Erro ao registar concordância.');
+            }
+        }, 'json');
+    }
+}
+
 function reclamarNotas(tid, did) {
     $('#rec_turma_id').val(tid);
     $('#rec_disciplina_id').val(did);
@@ -1177,6 +1208,21 @@ function marcarComoLido(id, btn) {
             $(btn).html('<ion-icon name="checkmark-done-outline" class="me-1"></ion-icon> Marcar como Lido').prop('disabled', false);
         }
     }, 'json');
+}
+
+function removerComunicado(id) {
+    if (confirm('Deseja remover este comunicado da sua lista? Esta ação não pode ser desfeita.')) {
+        $.post('<?= URL_ROOT ?>/estudante/removerComunicado', {
+            comunicado_id: id,
+            csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+        }, function(res) {
+            if (res.success) {
+                location.reload();
+            } else {
+                alert('Erro ao remover comunicado.');
+            }
+        }, 'json');
+    }
 }
 
 // Check for mandatory password change

@@ -59,7 +59,7 @@ class Nota {
             // Mark pending complaints as resolved for this student/turma/discipline
             $stmtRes = $this->db->prepare("
                 UPDATE concordancia_notas 
-                SET status = 'Resolvido', 
+                SET status = 'Respondido', 
                     resposta_professor = :resp,
                     data_resposta = NOW() 
                 WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'
@@ -264,5 +264,23 @@ class Nota {
             ':eid' => $estudante_id,
             ':did' => $disciplina_id
         ]);
+    }
+
+    public function getConflitoDetalhes($estudante_id, $disciplina_id) {
+        $stmt = $this->db->prepare("
+            SELECT u_est.id as estudante_user_id, u_prof.id as professor_user_id, d.nome as disciplina_nome
+            FROM concordancia_notas cn
+            JOIN estudantes e ON cn.estudante_id = e.id
+            JOIN utilizadores u_est ON e.utilizador_id = u_est.id
+            JOIN turmas t ON cn.turma_id = t.id
+            JOIN disciplinas d ON cn.disciplina_id = d.id
+            JOIN professor_disciplina pd ON d.id = pd.disciplina_id AND t.id = pd.turma_id
+            JOIN professores p ON pd.professor_id = p.id
+            JOIN utilizadores u_prof ON p.utilizador_id = u_prof.id
+            WHERE cn.estudante_id = :eid AND cn.disciplina_id = :did
+            LIMIT 1
+        ");
+        $stmt->execute([':eid' => $estudante_id, ':did' => $disciplina_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

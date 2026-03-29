@@ -224,6 +224,37 @@ class EstudanteController extends Controller {
         exit;
     }
 
+    public function concordarNota() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrfToken();
+            $db = Database::getInstance();
+            $stmt = $db->prepare("UPDATE concordancia_notas SET status = 'Resolvido', data_resposta = NOW() WHERE estudante_id = (SELECT id FROM estudantes WHERE utilizador_id = :uid) AND turma_id = :tid AND disciplina_id = :did");
+            $res = $stmt->execute([
+                ':uid' => $_SESSION['user_id'],
+                ':tid' => $_POST['turma_id'],
+                ':did' => $_POST['disciplina_id']
+            ]);
+            
+            header('Content-Type: application/json');
+            echo json_encode(['success' => $res]);
+            exit;
+        }
+    }
+
+    public function removerComunicado() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrfToken();
+            $comunicadoId = $_POST['comunicado_id'] ?? null;
+            if ($comunicadoId) {
+                $compModel = $this->model('Comunicado');
+                $res = $compModel->excluirParaUtilizador($_SESSION['user_id'], $comunicadoId);
+                header('Content-Type: application/json');
+                echo json_encode(['success' => $res]);
+                exit;
+            }
+        }
+    }
+
     public function marcarLido() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comunicado_id'])) {
             $this->verifyCsrfToken();
@@ -287,26 +318,30 @@ class EstudanteController extends Controller {
                 );
                 
                 if ($result['success'] && $result['bloqueado']) {
-                    $this->logActivity('Estudante Feedback de Nota - BLOQUEADO', ['status' => $_POST['status']]);
-                    
-                    // Enviar alertas oficiais de sistema
-                    $msgModel = $this->model('Mensagem');
-                    $alerta = "ALERTA CRÍTICO: Registada 2ª reclamação para a mesma nota. Por favor, compareça na Administração ou Secretaria para resolver o problema.";
-                    
-                    // 1. Notificar Aluno
-                    $msgModel->send(0, $_SESSION['user_id'], "Aviso de Conflito Crítico", $alerta);
-                    
-                    // 2. Notificar Professor
-                    $db = Database::getInstance();
-                    $stmtP = $db->prepare("SELECT p.utilizador_id FROM professor_disciplina pd JOIN professores p ON pd.professor_id = p.id WHERE pd.turma_id = :tid AND pd.disciplina_id = :did LIMIT 1");
-                    $stmtP->execute([':tid' => $_POST['turma_id'], ':did' => $_POST['disciplina_id']]);
-                    $prof = $stmtP->fetch();
-                    if ($prof) {
-                        $msgModel->send(0, $prof['utilizador_id'], "Alerta de Conflito de Nota", $alerta . " (Aluno: ".$estudanteData['nome_completo'].")");
+                    try {
+                        $this->logActivity('Estudante Feedback de Nota - BLOQUEADO', ['status' => $_POST['status']]);
+                        
+                        $msgModel = $this->model('Mensagem');
+                        $alerta = "ALERTA CRÍTICO: Registada 2ª reclamação para a mesma nota. Por favor, compareça na Administração ou Secretaria para resolver o problema.";
+                        
+                        // 1. Notificar Aluno
+                        $msgModel->send(0, $_SESSION['user_id'], "Aviso de Conflito Crítico", $alerta);
+                        
+                        // 2. Notificar Professor
+                        $db = Database::getInstance();
+                        $stmtP = $db->prepare("SELECT p.utilizador_id FROM professor_disciplina pd JOIN professores p ON pd.professor_id = p.id WHERE pd.turma_id = :tid AND pd.disciplina_id = :did LIMIT 1");
+                        $stmtP->execute([':tid' => $_POST['turma_id'], ':did' => $_POST['disciplina_id']]);
+                        $prof = $stmtP->fetch();
+                        if ($prof && !empty($prof['utilizador_id'])) {
+                            $msgModel->send(0, $prof['utilizador_id'], "Alerta de Conflito de Nota", $alerta . " (Aluno: ".$estudanteData['nome_completo'].")");
+                        }
+                        
+                        // 3. Notificar Administração/Secretaria via grupo
+                        $msgModel->notifyGroup('admin', "Bloqueio Anti-Fraude Ativado: Aluno ".$estudanteData['nome_completo']." reclamou 2 vezes da mesma nota.");
+                    } catch (Exception $e) {
+                        // Log o erro mas não trava a resposta JSON
+                        error_log("Erro nas notificações de bloqueio: " . $e->getMessage());
                     }
-                    
-                    // 3. Notificar Administração/Secretaria via grupo
-                    $msgModel->notifyGroup('admin', "Bloqueio Anti-Fraude Ativado: Aluno ".$estudanteData['nome_completo']." reclamou 2 vezes da mesma nota.");
                 } elseif ($result['success']) {
                     $this->logActivity('Estudante Feedback de Nota', ['status' => $_POST['status']]);
                 }

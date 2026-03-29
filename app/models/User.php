@@ -229,6 +229,36 @@ class User {
     }
 
     /**
+     * Regista um acesso (login) na tabela de auditoria.
+     */
+    public function registrarAcesso($userId) {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'Desconhecido';
+        
+        $stmt = $this->db->prepare("INSERT INTO log_acessos (utilizador_id, ip_address, user_agent, data_acesso) VALUES (:uid, :ip, :ua, NOW())");
+        $stmt->bindValue(':uid', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':ip', $ip);
+        $stmt->bindValue(':ua', $ua);
+        return $stmt->execute();
+    }
+
+    /**
+     * Recupera os logs de acesso recentes para o painel admin.
+     */
+    public function getRecentAccesses($limit = 50) {
+        $stmt = $this->db->prepare("
+            SELECT la.*, u.nome_completo, u.tipo 
+            FROM log_acessos la
+            JOIN utilizadores u ON la.utilizador_id = u.id
+            ORDER BY la.data_acesso DESC
+            LIMIT :limit
+        ");
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Lista novos registos aguardando aprovação.
      */
     public function getPendingUsers() {

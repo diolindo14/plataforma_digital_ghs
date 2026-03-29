@@ -765,7 +765,10 @@
                                                                 </button>
                                                             </div>
                                                         <?php else: ?>
-                                                            <div class="text-end">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <button onclick="removerComunicado(<?= $c['id'] ?>)" class="btn btn-sm btn-link text-danger p-0" title="Eliminar da lista">
+                                                                    <ion-icon name="trash-outline"></ion-icon> Remover
+                                                                </button>
                                                                 <span class="text-success small fw-bold">
                                                                     <ion-icon name="checkmark-circle-outline" class="me-1"></ion-icon> Lido
                                                                 </span>
@@ -1177,6 +1180,7 @@ function publicarMaterial() {
 
     // Restore Tab and Live Grades
     $(document).ready(function() {
+        $.fn.dataTable.ext.errMode = 'none';
         const urlParams = new URLSearchParams(window.location.search);
         const tab = urlParams.get('tab');
         if (tab) {
@@ -1313,7 +1317,7 @@ function salvarRespostaReclamacao() {
 
     $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
         if (res.success) {
-            alert('Resposta enviada com sucesso! A reclamação foi marcada como resolvida.');
+            alert('Resposta enviada com sucesso! O estado foi alterado para "Respondido" e aguarda concordância do aluno.');
             location.reload();
         } else {
             alert('Erro ao enviar resposta.');
@@ -1321,6 +1325,21 @@ function salvarRespostaReclamacao() {
     }, 'json').always(function() {
         btn.text('Enviar Resposta').prop('disabled', false);
     });
+}
+
+function removerComunicado(id) {
+    if (confirm('Deseja remover este comunicado da sua lista? Esta ação não pode ser desfeita.')) {
+        $.post('<?= URL_ROOT ?>/professor/removerComunicado', {
+            comunicado_id: id,
+            csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+        }, function(res) {
+            if (res.success) {
+                location.reload();
+            } else {
+                alert('Erro ao remover comunicado.');
+            }
+        }, 'json');
+    }
 }
 
 function deleteEvento(id) {
@@ -1386,7 +1405,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <textarea id="textoResposta" class="form-control" rows="4" placeholder="Explique a nota ou informe que já foi corrigida..."></textarea>
                 </div>
                 <div class="alert alert-info small">
-                    <ion-icon name="information-circle"></ion-icon> Ao enviar, a reclamação será marcada como <strong>Resolvida</strong> no portal do aluno.
+                    <ion-icon name="information-circle"></ion-icon> Ao enviar, o aluno receberá a sua resposta e poderá decidir se <strong>concorda</strong> com a nota final ou se mantém a reclamação.
                 </div>
             </div>
             <div class="modal-footer bg-light">

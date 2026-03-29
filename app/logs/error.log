@@ -93,3 +93,6 @@
 [2026-03-28 20:21:37] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
 [2026-03-28 20:21:40] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
 [2026-03-28 21:46:35] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-29 02:33:28] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`ghsespf_db`.`mensagens`, CONSTRAINT `mensagens_ibfk_1` FOREIGN KEY (`remetente_id`) REFERENCES `utilizadores` (`id`) ON DELETE CASCADE) em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 35
+[2026-03-29 03:13:03] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 81
+[2026-03-29 03:13:16] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 81

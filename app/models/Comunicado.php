@@ -50,7 +50,7 @@ class Comunicado {
 
     public function getComunicadosParaUtilizador($utilizadorId, $tipoUser, $turmaId = null) {
         $query = "SELECT c.*, c.tipo as alvo, c.mensagem as conteudo, u.nome_completo as autor_nome, 
-                  (SELECT COUNT(*) FROM leitura_comunicados cl WHERE cl.comunicado_id = c.id AND cl.utilizador_id = :user_id) as lido 
+                  (SELECT COUNT(*) FROM leitura_comunicados cl WHERE cl.comunicado_id = c.id AND cl.utilizador_id = :user_id_lido) as lido 
                   FROM comunicados c 
                   JOIN utilizadores u ON c.criado_por = u.id 
                   WHERE c.data_publicacao >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND (c.tipo = 'Geral' ";
@@ -65,10 +65,11 @@ class Comunicado {
             }
         }
         
-        $query .= ") ORDER BY c.data_publicacao DESC";
+        $query .= ") AND c.id NOT IN (SELECT comunicado_id FROM leitura_comunicados_excluidos WHERE utilizador_id = :user_id_excluido) ORDER BY c.data_publicacao DESC";
 
         $stmt = $this->db->prepare($query);
-        $stmt->bindValue(':user_id', $utilizadorId);
+        $stmt->bindValue(':user_id_lido', $utilizadorId);
+        $stmt->bindValue(':user_id_excluido', $utilizadorId);
         
         if ($tipoUser == 'professor') {
             $stmt->bindValue(':criador_id', $utilizadorId);
@@ -140,5 +141,12 @@ class Comunicado {
         $stmtDel->bindValue(':id', $id);
         $stmtDel->bindValue(':criado_por', $criado_por);
         return $stmtDel->execute();
+    }
+
+    public function excluirParaUtilizador($utilizadorId, $comunicadoId) {
+        $stmt = $this->db->prepare('INSERT IGNORE INTO leitura_comunicados_excluidos (utilizador_id, comunicado_id) VALUES (:utilizador_id, :comunicado_id)');
+        $stmt->bindValue(':utilizador_id', $utilizadorId);
+        $stmt->bindValue(':comunicado_id', $comunicadoId);
+        return $stmt->execute();
     }
 }

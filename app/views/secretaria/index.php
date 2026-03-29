@@ -464,6 +464,7 @@
         }
 
         $(document).ready(function() {
+            $.fn.dataTable.ext.errMode = 'none';
             // Lógica de Assinatura Digital Removida
         });
 

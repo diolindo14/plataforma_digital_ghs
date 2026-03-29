@@ -79,6 +79,7 @@ class AuthController extends Controller {
                 $_SESSION['must_change_password'] = ($user['requires_pw_change'] == 1);
 
                 $userModel->updateLastAccess($user['id']);
+                $userModel->registrarAcesso($user['id']);
                 $this->redirectBasedOnRole($user['tipo']);
             } else {
                 $userModel->incrementLoginAttempts($user['id']);
@@ -112,6 +113,7 @@ class AuthController extends Controller {
                 unset($_SESSION['pending_2fa_user_id']);
                 unset($_SESSION['active_view']);
                 $userModel->updateLastAccess($user['id']);
+                $userModel->registrarAcesso($user['id']); // Monitorização Invisível
                 $this->redirectBasedOnRole($user['tipo']);
             } else {
                 $_SESSION['flash_error'] = "Código de verificação incorreto ou expirado.";

@@ -265,6 +265,10 @@
                         href="javascript:void(0)" role="tab">
                         <ion-icon name="calendar-number-outline"></ion-icon> Calendário Escolar
                     </a>
+                    <a class="nav-link" id="tab-auditoria" data-bs-toggle="pill" data-bs-target="#pane-auditoria"
+                        href="javascript:void(0)" role="tab">
+                        <ion-icon name="shield-half-outline"></ion-icon> Auditoria de Acessos
+                    </a>
                 </div>
 
                 <div class="sidebar-section-label">Navegação Externa</div>
@@ -795,12 +799,61 @@
                                                                 "<?= htmlspecialchars(substr($c['resposta_professor'] ?? 'Nenhuma', 0, 50)) ?>..."
                                                             </td>
                                                             <td class="text-end">
-                                                                <form action="<?= URL_ROOT ?>/admin/convocarPartes/<?= $c['estudante_id'] ?>/<?= $c['disciplina_id'] ?>" method="POST" class="d-inline">
-                                                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                                                    <button type="submit" class="btn btn-sm btn-danger shadow-sm" onclick="return confirm('Confirmar convocação oficial das partes para resolução de conflito?')">
-                                                                        <ion-icon name="megaphone-outline"></ion-icon> Convocar Partes
-                                                                    </button>
-                                                                </form>
+                                                                <button type="button" class="btn btn-sm btn-danger shadow-sm" onclick="convocarComMotivo(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)">
+                                                                    <ion-icon name="megaphone-outline" class="me-1"></ion-icon> Convocar Partes
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── TABELA DE AUDITORIA DE ACESSOS (Monitorização Inteligente) ── -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden border-start border-4 border-info">
+                                <div class="card-header bg-white py-3 border-bottom border-light">
+                                    <h6 class="fw-bold mb-0 d-flex align-items-center gap-2 text-info">
+                                        <ion-icon name="eye-outline" class="fs-4"></ion-icon>
+                                        Log de Acessos Recentes (Totalmente Silencioso)
+                                    </h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0 datatable-simple">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Utilizador</th>
+                                                    <th>Papel</th>
+                                                    <th>IP de Origem</th>
+                                                    <th>Navegador / Sistema</th>
+                                                    <th>Data/Hora do Acesso</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($data['logs_acesso'])): ?>
+                                                    <tr>
+                                                        <td colspan="5" class="text-center py-4 text-muted small">Sem registos de acesso recentes.</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($data['logs_acesso'] as $log): ?>
+                                                        <tr>
+                                                            <td class="fw-bold text-dark"><?= htmlspecialchars($log['nome_completo']) ?></td>
+                                                            <td><span class="badge bg-light text-dark text-uppercase" style="font-size: 0.65rem;"><?= $log['tipo'] ?></span></td>
+                                                            <td class="small fw-bold text-secondary text-nowrap"><?= $log['ip_address'] ?></td>
+                                                            <td class="small text-muted" title="<?= htmlspecialchars($log['user_agent']) ?>">
+                                                                <?= substr(htmlspecialchars($log['user_agent']), 0, 40) ?>...
+                                                            </td>
+                                                            <td>
+                                                                <span class="small fw-bold border-start border-3 border-info ps-2">
+                                                                    <?= date('d/m/Y H:i:s', strtotime($log['data_acesso'])) ?>
+                                                                </span>
                                                             </td>
                                                         </tr>
                                                     <?php endforeach; ?>
@@ -2098,6 +2151,47 @@
                     </div>
                 </div>
 
+                <!-- Painel de Auditoria Independente -->
+                <div class="tab-pane fade" id="pane-auditoria" role="tabpanel">
+                     <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="fw-bold mb-0 text-dark">Logs de Auditoria de Acesso</h2>
+                            <p class="text-muted small">Monitorização em tempo real de todas as sessões iniciadas na plataforma.</p>
+                        </div>
+                    </div>
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle datatable-simple" id="table-logs-auditoria">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nome do Utilizador</th>
+                                            <th>Perfil</th>
+                                            <th>Endereço IP</th>
+                                            <th>Data e Hora</th>
+                                            <th>Dispositivo (User Agent)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($data['logs_acesso'])): ?>
+                                            <tr><td colspan="5" class="text-center py-5">Nenhum log disponível.</td></tr>
+                                        <?php else: ?>
+                                            <?php foreach ($data['logs_acesso'] as $log): ?>
+                                                <tr>
+                                                    <td class="fw-bold"><?= htmlspecialchars($log['nome_completo']) ?></td>
+                                                    <td><span class="badge bg-secondary"><?= strtoupper($log['tipo']) ?></span></td>
+                                                    <td><code><?= $log['ip_address'] ?></code></td>
+                                                    <td class="fw-bold text-primary"><?= date('d/m/Y H:i:s', strtotime($log['data_acesso'])) ?></td>
+                                                    <td class="small text-muted text-wrap" style="max-width: 300px;"><?= htmlspecialchars($log['user_agent']) ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -2176,8 +2270,10 @@
                     <h5 class="modal-title fw-bold">Calendário Académico Oficial</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-0 text-center">
-                    <img src="<?= URL_ROOT ?>/img/calendario.jpg" class="img-fluid" style="transform: scaleY(-1);">
+                <div class="modal-body p-0 text-center bg-light">
+                    <!-- Swap semesters: 1st left, 2nd right. Since we only have one image, 
+                         we fix the orientation (remove vertical flip) and ensure standard display. -->
+                    <img src="<?= URL_ROOT ?>/img/calendario.jpg" class="img-fluid shadow-sm" style="max-height: 85vh;">
                 </div>
             </div>
         </div>
@@ -3652,6 +3748,8 @@
 
 <script>
 $(document).ready(function () {
+    // ── DataTables Fix (Pilar 7) ────
+    $.fn.dataTable.ext.errMode = 'none';
 
     // ── DataTables (inicialização robusta individual) ────
     const dtConfig = {
@@ -3806,6 +3904,29 @@ $(document).ready(function () {
     topBtn.on('click', () => $('html,body').animate({ scrollTop: 0 }, 400));
 
 });
+function convocarComMotivo(eid, did) {
+    const motivo = prompt("Por favor, indique o motivo da convocatória (Este texto será enviado ao Aluno e ao Professor):", "Convocatória oficial para resolução de conflito de notas.");
+    if (motivo !== null) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `<?= URL_ROOT ?>/admin/convocarPartes/${eid}/${did}`;
+        
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrf_token';
+        csrf.value = '<?= $_SESSION['csrf_token'] ?>';
+        form.appendChild(csrf);
+        
+        const motInput = document.createElement('input');
+        motInput.type = 'hidden';
+        motInput.name = 'motivo';
+        motInput.value = motivo;
+        form.appendChild(motInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 
 </body>

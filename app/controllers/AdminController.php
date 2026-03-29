@@ -73,6 +73,9 @@ class AdminController extends Controller {
         
         // --- 🚨 MONITORIZAÇÃO DE RECLAMAÇÕES DE NOTAS ---
         $data['conflitos_notas'] = $this->model('Nota')->getConflitosNotas();
+        
+        // --- 📊 LOGS DE ACESSO (Auditoria de Segurança) ---
+        $data['logs_acesso'] = $this->model('User')->getRecentAccesses(20);
 
         $this->view('admin/dashboard', $data);
     }
@@ -633,12 +636,29 @@ class AdminController extends Controller {
 
     public function convocarPartes($estudante_id, $disciplina_id) {
         $this->verifyCsrfToken();
-        $this->model('Nota')->resolverConflito($estudante_id, $disciplina_id);
+        $motivo = $_POST['motivo'] ?? 'Convocatória oficial para resolução de conflito de notas.';
         
-        // Notificar o grupo (opcional)
-        $this->model('Mensagem')->notifyGroup('secretaria', "O Administrador convocou as partes para a resolução de conflito de nota (Aluno ID: $estudante_id).", $_SESSION['user_id']);
+        $notaModel = $this->model('Nota');
+        $detalhes = $notaModel->getConflitoDetalhes($estudante_id, $disciplina_id);
+        
+        if ($detalhes) {
+            $msgModel = $this->model('Mensagem');
+            $msgCorpo = "O Diretor convocou as partes para a resolução de conflito de nota na disciplina: " . $detalhes['disciplina_nome'] . ".\n\nMotivo: " . $motivo . "\n\nPor favor, compareça à sala da Direção/Secretaria no próximo horário disponível.";
+            
+            // Notificar Aluno
+            $msgModel->send($_SESSION['user_id'], $detalhes['estudante_user_id'], "CONVOCATÓRIA: Conflito de Nota", $msgCorpo);
+            
+            // Notificar Professor
+            if ($detalhes['professor_user_id']) {
+                $msgModel->send($_SESSION['user_id'], $detalhes['professor_user_id'], "CONVOCATÓRIA: Conflito de Nota", $msgCorpo);
+            }
+        }
 
-        $_SESSION['flash_success'] = "Convocatória registada! O bloqueio da nota foi removido para mediação administrativa.";
+        $notaModel->resolverConflito($estudante_id, $disciplina_id);
+        
+        $this->model('Mensagem')->notifyGroup('secretaria', "O Administrador convocou as partes para a resolução de conflito de nota (Aluno ID: $estudante_id). Motivo: $motivo", $_SESSION['user_id']);
+
+        $_SESSION['flash_success'] = "Convocatória enviada com sucesso ao Professor e ao Aluno!";
         header('Location: ' . URL_ROOT . '/admin');
         exit;
     }

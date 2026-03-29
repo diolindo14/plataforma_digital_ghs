@@ -218,7 +218,7 @@ class ProfessorController extends Controller {
             
             if ($estudante_id && $turma_id && $disciplina_id && $resposta) {
                 $db = Database::getInstance();
-                $stmt = $db->prepare("UPDATE concordancia_notas SET status = 'Resolvido', resposta_professor = :resp, data_resposta = NOW() WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'");
+                $stmt = $db->prepare("UPDATE concordancia_notas SET status = 'Respondido', resposta_professor = :resp, data_resposta = NOW() WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'");
                 $res = $stmt->execute([':resp' => $resposta, ':eid' => $estudante_id, ':tid' => $turma_id, ':did' => $disciplina_id]);
                 
                 if ($res) {
@@ -243,6 +243,20 @@ class ProfessorController extends Controller {
             header('Content-Type: application/json');
             echo json_encode(['success' => false]);
             exit;
+        }
+    }
+
+    public function removerComunicado() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrfToken();
+            $comunicadoId = $_POST['comunicado_id'] ?? null;
+            if ($comunicadoId) {
+                $compModel = $this->model('Comunicado');
+                $res = $compModel->excluirParaUtilizador($_SESSION['user_id'], $comunicadoId);
+                header('Content-Type: application/json');
+                echo json_encode(['success' => $res]);
+                exit;
+            }
         }
     }
 
