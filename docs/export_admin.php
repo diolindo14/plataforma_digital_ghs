@@ -8,324 +8,62 @@
     <meta charset="UTF-8">
     <title>GHS — Resumo Executivo v5.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1e293b;
-            --accent: #10b981;
-            --accent-blue: #3b82f6;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --text: #334155;
-            --muted: #64748b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            color: var(--text);
-            background: #fff;
-            padding: 50px 60px;
-            line-height: 1.7;
-            font-size: 14px;
-        }
-
-        /* Cabeçalho */
-        .cover {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            border-bottom: 3px solid var(--accent);
-            padding-bottom: 25px;
-            margin-bottom: 35px;
-        }
-
-        .cover-left .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary);
-            letter-spacing: -0.5px;
-        }
-
-        .cover-left .logo span {
-            color: var(--accent);
-        }
-
-        .cover-left h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-top: 8px;
-        }
-
-        .cover-left p {
-            color: var(--muted);
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        .cover-right {
-            text-align: right;
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .cover-right .version {
-            display: inline-block;
-            background: var(--primary);
-            color: #fff;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        /* Conteúdo */
-        h2 {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
-            border-left: 4px solid var(--accent);
-            padding-left: 12px;
-            margin: 35px 0 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent-blue);
-            margin: 20px 0 8px;
-        }
-
-        p {
-            margin-bottom: 10px;
-            text-align: justify;
-        }
-
-        ul,
-        ol {
-            padding-left: 20px;
-            margin-bottom: 10px;
-        }
-
-        li {
-            margin-bottom: 5px;
-        }
-
-        /* Tabelas */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0 25px;
-            font-size: 13px;
-        }
-
-        thead th {
-            background: var(--primary);
-            color: #fff;
-            padding: 11px 14px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-
-        tbody td {
-            border: 1px solid var(--border);
-            padding: 10px 14px;
-            vertical-align: top;
-        }
-
-        tbody tr:nth-child(even) td {
-            background: var(--light);
-        }
-
-        tbody tr:hover td {
-            background: #f1f5f9;
-        }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 3px 9px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .badge-green {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-blue {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .badge-yellow {
-            background: #fef9c3;
-            color: #854d0e;
-        }
-
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        }
-
-        .badge-green {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .badge-blue {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .badge-yellow {
-            background: #fef9c3;
-            color: #92400e;
-        }
-
-        .badge-red {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        /* ── CAIXAS DE DESTAQUE ───────────────────────── */
-        .info-box {
-            background: linear-gradient(135deg, #eff6ff 0%, #f8faff 100%);
-            border: 1px solid #bfdbfe;
-            border-left: 4px solid var(--accent-blue);
-            border-radius: 8px;
-            padding: 16px 20px;
-            margin: 14px 0 22px;
-        }
-
-        .alert-box {
-            background: linear-gradient(135deg, #f0fdf4 0%, #f7fef9 100%);
-            border: 1px solid #bbf7d0;
-            border-left: 4px solid var(--accent);
-            border-radius: 8px;
-            padding: 16px 20px;
-            margin: 14px 0 22px;
-        }
-
-        .info-box strong {
-            color: #1d4ed8;
-        }
-
-        .alert-box strong {
-            color: #166534;
-        }
-
-        /* ── GRID DE MÉTRICAS ─────────────────────────── */
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin: 18px 0 28px;
-        }
-
-        .metric-card {
-            background: linear-gradient(135deg, var(--primary) 0%, #1e3a5f 100%);
-            border-radius: 10px;
-            padding: 22px;
-            text-align: center;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
-        }
-
-        .metric-card .number {
-            font-size: 34px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .metric-card .label {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        /* ── RODAPÉ ───────────────────────────────────── */
-        .footer {
-            margin: 50px 0 0;
-            padding: 18px 60px;
-            border-top: none;
-            font-size: 11px;
-            color: var(--muted);
-            display: flex;
-            justify-content: space-between;
-            background: var(--light);
-            position: relative;
-        }
-
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-blue) 100%);
-        }
-
-        /* ── AVISO IMPRESSÃO ──────────────────────────── */
-        .no-print {
-            background: #fefce8;
-            border-bottom: 2px solid #fde047;
-            padding: 12px 60px;
-            text-align: center;
-            font-size: 13px;
-            color: #78350f;
-        }
-
-        /* ── MEDIA PRINT ──────────────────────────────── */
+        <style>
+        :root { --primary: #111827; --accent: #2563eb; --accent-green: #059669; --light: #f9fafb; --border: #e2e8f0; --text: #374151; --muted: #6b7280; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; color: var(--text); background: #fff; padding: 40px 60px; line-height: 1.6; font-size: 13px; }
+        /* CAPA */
+        .cover { display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 2px solid var(--border); padding-bottom: 25px; margin-bottom: 35px; }
+        .cover-left .logo { font-size: 16px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
+        .cover-left .logo span { color: var(--accent); }
+        .cover-left h1 { font-size: 26px; font-weight: 700; color: var(--primary); margin: 6px 0; }
+        .cover-left p { color: var(--muted); font-size: 13px; }
+        .cover-right { text-align: right; font-size: 12px; color: var(--muted); }
+        .cover-right .version { display: inline-block; background: var(--light); border: 1px solid var(--border); color: var(--primary); padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-bottom: 6px; }
+        h2 { font-size: 15px; font-weight: 700; color: var(--primary); margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+        h3 { font-size: 14px; font-weight: 600; color: var(--primary); margin: 18px 0 8px; }
+        h4 { font-size: 13px; font-weight: 600; color: var(--primary); margin: 12px 0 6px; }
+        p { margin-bottom: 10px; text-align: justify; }
+        ul, ol { padding-left: 20px; margin-bottom: 12px; }
+        li { margin-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0 25px; font-size: 12px; border: 1px solid var(--border); }
+        thead th { background: var(--light); color: var(--primary); padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 1px solid var(--border); }
+        tbody td { border-bottom: 1px solid var(--border); padding: 8px 12px; vertical-align: top; }
+        tbody tr:nth-child(even) td { background: #fafbfc; }
+        .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 500; border: 1px solid transparent; }
+        .badge-green { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+        .badge-blue { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+        .badge-yellow { background: #fefce8; color: #854d0e; border-color: #fef08a; }
+        .badge-red { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+        .badge-orange { background: #fff7ed; color: #c2410c; border-color: #ffedd5; }
+        /* CONTAINERS */
+        .info-box { background: #eff6ff; border: 1px solid #bfdbfe; border-left: 3px solid var(--accent); border-radius: 4px; padding: 12px 16px; margin: 12px 0; }
+        .warning-box { background: #fefce8; border: 1px solid #fef08a; border-left: 3px solid #eab308; border-radius: 4px; padding: 12px 16px; margin: 12px 0; }
+        .success-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 3px solid var(--accent-green); border-radius: 4px; padding: 12px 16px; margin: 12px 0; }
+        .danger-box { background: #fef2f2; border: 1px solid #fecaca; border-left: 3px solid #ef4444; border-radius: 4px; padding: 12px 16px; margin: 12px 0; }
+        .info-box strong, .warning-box strong, .success-box strong, .danger-box strong { display: block; margin-bottom: 4px; color: var(--primary); }
+        .steps { counter-reset: step; list-style: none; padding: 0; }
+        .steps li { counter-increment: step; display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+        .steps li::before { content: counter(step); display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; min-width: 22px; background: var(--light); color: var(--primary); border: 1px solid var(--border); border-radius: 50%; font-weight: 600; font-size: 11px; margin-top: 2px; }
+        .steps li strong { color: var(--primary); display: block; }
+        code { font-family: 'JetBrains Mono', monospace; background: var(--light); padding: 2px 4px; border-radius: 3px; font-size: 11px; color: #b91c1c; border: 1px solid var(--border); }
+        pre { font-family: 'JetBrains Mono', monospace; background: var(--light); color: var(--primary); padding: 12px; border-radius: 4px; font-size: 11px; line-height: 1.4; margin: 12px 0; overflow-x: auto; border: 1px solid var(--border); }
+        pre .comment { color: var(--muted); }
+        pre .key { color: var(--accent); }
+        pre .val { color: var(--accent-green); }
+        .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0 25px; }
+        .metric-card { border: 1px solid var(--border); border-radius: 6px; padding: 16px; text-align: center; background: var(--light); }
+        .metric-card .number { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .metric-card .label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+        .faq-item { border: 1px solid var(--border); border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
+        .faq-q { background: var(--light); padding: 10px 14px; font-weight: 600; color: var(--primary); font-size: 12px; }
+        .faq-a { padding: 10px 14px; font-size: 12px; border-top: 1px solid var(--border); }
+        .footer { margin-top: 40px; padding-top: 15px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; border-top: 1px solid var(--border); }
         @media print {
-            .no-print {
-                display: none;
-            }
-
-            .content {
-                padding: 0 40px;
-            }
-
-            .cover {
-                padding: 40px;
-            }
-
-            .footer {
-                padding: 18px 40px;
-            }
-
-            .metrics {
-                break-inside: avoid;
-            }
-
-            .table-wrap {
-                box-shadow: none;
-                border: 1px solid var(--border);
-            }
-
-            h2 {
-                break-before: auto;
-            }
+            body { padding: 30px 40px; }
+            .cover-bar { display: none; }
+            .cover { border-bottom: 2px solid #ccc; padding-bottom: 15px; margin-bottom: 20px; }
+            table, pre, .info-box, .warning-box, .success-box, .metric-card { box-shadow: none; border: 1px solid #ccc; }
         }
     </style>
 </head>
@@ -348,8 +86,8 @@
         </div>
     </div>
 
-    <div class="cover-bar"></div>
-    <div class="content">
+    
+    
 
         <h2>1. Visão Geral do Projeto</h2>
         <p>O <strong>GHS (Green Hard &amp; Softh)</strong> é uma plataforma de gestão académica e financeira
@@ -571,8 +309,6 @@
                 </tr>
             </tbody>
         </table>
-
-    </div>
 
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Escola Superior de Informática. Documento de Uso Interno.</span>
