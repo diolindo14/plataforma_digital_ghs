@@ -50,6 +50,7 @@ class AdminController extends Controller {
         $data['chartData'] = $this->model('DashboardModel')->getAdminChartData();
         $data['pendentes'] = $this->model('User')->getPendingUsers();
         $data['estudantes'] = $this->model('Estudante')->getAllStudents(1, 1000); // Lista completa de alunos (Pilar 7)
+        $data['matriculas'] = $this->model('Matricula')->getPendingEnrollments();
         
         // Dados pedagógicos e relatórios
         $frequenciaModel = $this->model('Frequencia');

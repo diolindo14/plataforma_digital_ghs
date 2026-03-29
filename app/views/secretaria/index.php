@@ -68,10 +68,15 @@
             <?php endif; ?>
 
             <!-- 🏆 QUADRO DE MÉRITO (só aparece quando há dados disponíveis) -->
-            <?php if (!empty($ranking_escola)): ?>
+            <?php if (!empty($data['ranking_escola'])): ?>
             <div class="row mb-4">
                 <div class="col-12 col-xl-4">
-                    <?php $show_details = true; include __DIR__ . '/../partials/merit_board.php'; ?>
+                    <?php 
+                        $ranking_escola = $data['ranking_escola'];
+                        $ranking_nivel = $data['ranking_nivel'];
+                        $show_details = true; 
+                        include __DIR__ . '/../partials/merit_board.php'; 
+                    ?>
                 </div>
             </div>
             <?php endif; ?>
@@ -222,6 +227,11 @@
                                                 <td class="ps-4">
                                                     <div class="fw-bold"><?= $this->e($m['nome']) ?></div>
                                                     <div class="text-muted small">Proc: #<?= $m['id'] ?></div>
+                                                    <div class="mt-1">
+                                                        <?php if(!empty($m['bi_arquivo'])): ?><a href="<?= URL_ROOT ?>/<?= $m['bi_arquivo'] ?>" target="_blank" class="badge bg-light text-primary border text-decoration-none">BI</a><?php endif; ?>
+                                                        <?php if(!empty($m['certificado_arquivo'])): ?><a href="<?= URL_ROOT ?>/<?= $m['certificado_arquivo'] ?>" target="_blank" class="badge bg-light text-primary border text-decoration-none">Certificado</a><?php endif; ?>
+                                                        <?php if(!empty($m['comprovativo_arquivo'])): ?><a href="<?= URL_ROOT ?>/<?= $m['comprovativo_arquivo'] ?>" target="_blank" class="badge bg-light text-primary border text-decoration-none">Comprovativo</a><?php endif; ?>
+                                                    </div>
                                                 </td>
                                                 <td><?= htmlspecialchars($m['ano_letivo']) ?></td>
                                                 <td><span class="badge bg-warning text-dark px-3"><?= $this->e($m['status']) ?></span></td>
@@ -234,32 +244,39 @@
                                                 </td>
                                             </tr>
 
-                                            <!-- Modal Rejeitar -->
-                                            <div class="modal fade" id="rejectModal<?= $m['id'] ?>" tabindex="-1">
-                                                <div class="modal-dialog">
-                                                    <form action="<?= URL_ROOT ?>/secretaria/rejectMatricula/<?= $m['id'] ?>" method="POST" class="modal-content border-0 shadow-lg">
-                                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                                        <div class="modal-header bg-danger text-white">
-                                                            <h5 class="modal-title fw-bold">Rejeitar Matrícula</h5>
-                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                        </div>
-                                                        <div class="modal-body p-4">
-                                                            <label class="form-label fw-bold small">Motivo da Rejeição</label>
-                                                            <textarea name="motivo" class="form-control" rows="3" required placeholder="Ex: Documentação de BI ilegível..."></textarea>
-                                                        </div>
-                                                        <div class="modal-footer border-0">
-                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Voltar</button>
-                                                            <button type="submit" class="btn btn-danger fw-bold">Confirmar Rejeição</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
+                                            <!-- Modal removed to be appended outside table (safe structure) -->
                                         <?php endforeach; ?>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
+                        </div>
                     </div>
+
+                    <!-- Modais de Rejeição -> fora da tabela -->
+                    <?php if(!empty($data['matriculas_pendentes'])): ?>
+                        <?php foreach($data['matriculas_pendentes'] as $m): ?>
+                            <div class="modal fade" id="rejectModal<?= $m['id'] ?>" tabindex="-1" style="z-index: 9999;">
+                                <div class="modal-dialog">
+                                    <form action="<?= URL_ROOT ?>/secretaria/rejectMatricula/<?= $m['id'] ?>" method="POST" class="modal-content border-0 shadow-lg">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title fw-bold">Rejeitar Matrícula</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body p-4">
+                                            <label class="form-label fw-bold small">Motivo da Rejeição</label>
+                                            <textarea name="motivo" class="form-control" rows="3" required placeholder="Ex: Documentação de BI ilegível..."></textarea>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Voltar</button>
+                                            <button type="submit" class="btn btn-danger fw-bold">Confirmar Rejeição</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Pagamentos Pane -->
