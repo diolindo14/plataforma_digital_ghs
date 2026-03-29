@@ -41,13 +41,23 @@
             
             <nav class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                 <a class="nav-link active" data-bs-toggle="pill" data-bs-target="#pane-dashboard" role="tab"><ion-icon name="grid-outline" class="me-2"></ion-icon> Dashboard</a>
-                <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-matriculas" role="tab"><ion-icon name="people-outline" class="me-2"></ion-icon> Matrículas</a>
-                <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-pagamentos" role="tab"><ion-icon name="card-outline" class="me-2"></ion-icon> Pagamentos</a>
+                <a class="nav-link d-flex align-items-center" id="tab-matriculas" data-bs-toggle="pill" data-bs-target="#pane-matriculas" href="javascript:void(0)" role="tab">
+                    <ion-icon name="people-outline" class="me-2"></ion-icon> Matrículas
+                    <?php if(!empty($data['matriculas_pendentes'])): ?>
+                        <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.65rem; padding: 0.35em 0.65em;"><?= count($data['matriculas_pendentes']) ?></span>
+                    <?php endif; ?>
+                </a>
+                <a class="nav-link d-flex align-items-center" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-pagamentos" href="javascript:void(0)" role="tab">
+                    <ion-icon name="card-outline" class="me-2"></ion-icon> Pagamentos
+                    <?php if(!empty($data['pagamentos_validar'])): ?>
+                        <span class="badge bg-primary rounded-pill ms-auto" style="font-size: 0.65rem; padding: 0.35em 0.65em;"><?= count($data['pagamentos_validar']) ?></span>
+                    <?php endif; ?>
+                </a>
                 <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-comunicados" role="tab"><ion-icon name="megaphone-outline" class="me-2"></ion-icon> Comunicados</a>
-                <a class="nav-link" id="tab-notificacoes" data-bs-toggle="pill" data-bs-target="#pane-notificacoes" role="tab">
+                <a class="nav-link d-flex align-items-center" id="tab-notificacoes" data-bs-toggle="pill" data-bs-target="#pane-notificacoes" role="tab">
                     <ion-icon name="notifications-outline" class="me-2"></ion-icon> Alertas
                     <?php if(!empty($data['mensagens_painel'])): ?>
-                        <span class="badge bg-primary ms-auto"><?= count($data['mensagens_painel']) ?></span>
+                        <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.65rem; padding: 0.35em 0.65em;"><?= count($data['mensagens_painel']) ?></span>
                     <?php endif; ?>
                 </a>
                 <a class="nav-link" data-bs-toggle="pill" data-bs-target="#pane-merito" role="tab">
@@ -164,12 +174,16 @@
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
-                        <div class="mt-3 text-center border-top pt-3 d-flex justify-content-between align-items-center">
+                        <div class="mt-4 border-top pt-3 d-flex justify-content-between">
                             <form action="<?= URL_ROOT ?>/secretaria/clearNotifications" method="POST" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                <button type="submit" class="btn btn-sm btn-link text-decoration-none text-muted small p-0">Limpar lidas</button>
+                                <button type="submit" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                                    <ion-icon name="trash-outline" class="me-1"></ion-icon> Limpar alertas lidos
+                                </button>
                             </form>
-                            <button onclick="document.getElementById('tab-notificacoes').click()" class="btn btn-sm btn-link text-decoration-none text-primary fw-bold p-0">Ver histórico completo</button>
+                            <button onclick="document.getElementById('tab-notificacoes').click()" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                                <ion-icon name="list-outline" class="me-1"></ion-icon> Ver histórico completo
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -210,7 +224,11 @@
                                 </div>
                             <?php endif; ?>
                         </div>
-                                <div class="tab-pane fade" id="pane-matriculas" role="tabpanel">
+                    </div>
+                </div>
+
+                <!-- Painel de Matrículas (Side-by-side Visual Document Integrator) -->
+                <div class="tab-pane fade" id="pane-matriculas" role="tabpanel">
                     <div class="row g-4">
                         <div class="col-md-5">
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">

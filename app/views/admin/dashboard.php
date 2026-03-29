@@ -231,9 +231,12 @@
                         href="javascript:void(0)" role="tab">
                         <ion-icon name="business-outline"></ion-icon> Turmas e Cursos
                     </a>
-                    <a class="nav-link" id="tab-matriculas" data-bs-toggle="pill" data-bs-target="#pane-matriculas"
+                    <a class="nav-link d-flex align-items-center" id="tab-matriculas" data-bs-toggle="pill" data-bs-target="#pane-matriculas"
                         href="javascript:void(0)" role="tab">
-                        <ion-icon name="document-text-outline"></ion-icon> Validação de Matrículas
+                        <ion-icon name="document-text-outline" class="me-2"></ion-icon> Validação de Matrículas
+                        <?php if (!empty($data['matriculas'])): ?>
+                            <span class="badge bg-warning text-dark ms-auto" style="font-size: 0.65rem; padding: 0.35em 0.65em;"><?= count($data['matriculas']) ?></span>
+                        <?php endif; ?>
                     </a>
                     <a class="nav-link" id="tab-pendentes" data-bs-toggle="pill" data-bs-target="#pane-pendentes"
                         href="javascript:void(0)" role="tab">
@@ -248,9 +251,17 @@
                         href="javascript:void(0)" role="tab">
                         <ion-icon name="journal-outline"></ion-icon> Acompanhamento Pedagógico
                     </a>
-                    <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro"
+                    <a class="nav-link d-flex align-items-center" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro"
                         href="javascript:void(0)" role="tab">
-                        <ion-icon name="cash-outline"></ion-icon> Tesouraria
+                        <ion-icon name="cash-outline" class="me-2"></ion-icon> Tesouraria
+                        <?php 
+                            $pendingFin = array_filter($data['pagamentos'] ?? [], function($p) {
+                                return $p['status'] === 'Pendente' && !empty($p['comprovativo_arquivo']);
+                            });
+                            if (!empty($pendingFin)): 
+                        ?>
+                            <span class="badge bg-primary ms-auto" style="font-size: 0.65rem; padding: 0.35em 0.65em;"><?= count($pendingFin) ?></span>
+                        <?php endif; ?>
                     </a>
                     <a class="nav-link" id="tab-merito" data-bs-toggle="pill" data-bs-target="#pane-merito"
                         href="javascript:void(0)" role="tab">
