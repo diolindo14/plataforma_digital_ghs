@@ -1,12 +1,12 @@
 <?php
-// Manual do Utilizador GHS v5.0
+// Manual do Utilizador GHS v1.0
 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
 
 <head>
     <meta charset="UTF-8">
-    <title>GHS — Manual do Utilizador v5.0</title>
+    <title>GHS — Manual do Utilizador v1.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
         :root { --primary: #111827; --accent: #2563eb; --accent-green: #059669; --light: #f9fafb; --border: #e2e8f0; --text: #374151; --muted: #6b7280; }
@@ -60,6 +60,10 @@
         .faq-a { padding: 10px 14px; font-size: 12px; border-top: 1px solid var(--border); }
         .footer { margin-top: 40px; padding-top: 15px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; border-top: 1px solid var(--border); }
         @media print {
+            @page {
+                margin: 0.5cm;
+            }
+
             body { padding: 30px 40px; }
             .cover-bar { display: none; }
             .cover { border-bottom: 2px solid #ccc; padding-bottom: 15px; margin-bottom: 20px; }
@@ -79,7 +83,7 @@
             <p>Guia completo de uso para Estudantes, Professores e Secretaria</p>
         </div>
         <div class="cover-right">
-            <div class="version">v5.0</div><br>
+            <div class="version">v1.0</div><br>
             <strong>Data:</strong> Março 2026<br>
             <strong>Público-Alvo:</strong> Todos os Utilizadores<br>
             <strong>Autor:</strong> Diosives Crobute
@@ -339,7 +343,7 @@
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Escola Superior de Informática. <strong>By Diosives
                 Crobute</strong></span>
-        <span>Manual do Utilizador v5.0</span>
+        <span>Manual do Utilizador v1.0</span>
     </div>
 
 </body>

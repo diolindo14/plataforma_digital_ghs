@@ -1,12 +1,12 @@
 <?php
-// README Técnico GHS v5.0
+// README Técnico GHS v1.0
 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
 
 <head>
     <meta charset="UTF-8">
-    <title>GHS — README Técnico v5.0</title>
+    <title>GHS — README Técnico v1.0</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
         rel="stylesheet">
@@ -62,6 +62,10 @@
         .faq-a { padding: 10px 14px; font-size: 12px; border-top: 1px solid var(--border); }
         .footer { margin-top: 40px; padding-top: 15px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; border-top: 1px solid var(--border); }
         @media print {
+            @page {
+                margin: 0.5cm;
+            }
+
             body { padding: 30px 40px; }
             .cover-bar { display: none; }
             .cover { border-bottom: 2px solid #ccc; padding-bottom: 15px; margin-bottom: 20px; }
@@ -81,7 +85,7 @@
             <p>Arquitetura, Instalação, Segurança e Motores de Lógica de Negócio</p>
         </div>
         <div class="cover-right">
-            <div class="version">v5.0</div><br>
+            <div class="version">v1.0</div><br>
             <strong>Data:</strong> Março 2026<br>
             <strong>Público-Alvo:</strong> Desenvolvedores / DevOps<br>
             <strong>Autor:</strong> Diosives Crobute
@@ -149,7 +153,7 @@
         </p>
 
         <pre>
-<span class="comment"># Estrutura de pastas do projeto GHS v5.0</span>
+<span class="comment"># Estrutura de pastas do projeto GHS v1.0</span>
 green/
 ├── <span class="key">index.php</span>           <span class="comment"># Front Controller — ponto de entrada único</span>
 ├── <span class="key">.htaccess</span>           <span class="comment"># URL Rewriting: /controlador/acao → index.php</span>
@@ -454,7 +458,7 @@ AVG(nota_disciplina) AS media_geral
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Segurança de Nível Profissional. <strong>By Diosives
                 Crobute</strong></span>
-        <span>README Técnico v5.0</span>
+        <span>README Técnico v1.0</span>
     </div>
 
 </body>

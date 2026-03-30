@@ -1,12 +1,12 @@
 <?php
-// Resumo Executivo GHS v5.0
+// Resumo Executivo GHS v1.0
 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
 
 <head>
     <meta charset="UTF-8">
-    <title>GHS — Resumo Executivo v5.0</title>
+    <title>GHS — Resumo Executivo v1.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -367,6 +367,10 @@
         }
 
         @media print {
+            @page {
+                margin: 0.5cm;
+            }
+
             body {
                 padding: 30px 40px;
             }
@@ -406,7 +410,7 @@
             <p>Documento de visão estratégica para Direção e Gestão Institucional</p>
         </div>
         <div class="cover-right">
-            <div class="version">v5.0</div><br>
+            <div class="version">v1.0</div><br>
             <strong>Data:</strong> Março 2026<br>
             <strong>Classificação:</strong> Uso Interno<br>
             <strong>Autor:</strong> Diosives Crobute
@@ -423,7 +427,7 @@
         ecossistema serve quatro perfis de utilizadores com portais independentes, garante a rastreabilidade de
         todas as
         operações e implementa padrões de segurança de nível empresarial.</p>
-    <p>Na versão 5.0, foram consolidados o motor de regras pedagógicas, o sistema de inteligência visual
+    <p>Na versão 1.0, foram consolidados o motor de regras pedagógicas, o sistema de inteligência visual
         (Dashboards) e
         as camadas de proteção de dados, resultando num produto robusto e pronto para escala institucional.</p>
 
@@ -518,7 +522,7 @@
         </tbody>
     </table>
 
-    <h2>4. Novas Funcionalidades da Versão 5.0</h2>
+    <h2>4. Novas Funcionalidades da Versão 1.0</h2>
 
     <h3>4.1 Dashboards de Inteligência Operacional</h3>
     <p>O painel Administrativo foi equipado com visualizações gráficas em tempo real utilizando a biblioteca
@@ -632,14 +636,14 @@
             </tr>
             <tr>
                 <td><strong>Versão Atual</strong></td>
-                <td>5.0 — Março 2026</td>
+                <td>1.0 — Março 2026</td>
             </tr>
         </tbody>
     </table>
 
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Escola Superior de Informática. Documento de Uso Interno.</span>
-        <span>Resumo Executivo v5.0</span>
+        <span>Resumo Executivo v1.0</span>
     </div>
 
 </body>
