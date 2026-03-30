@@ -216,4 +216,66 @@ class SecretariaController extends Controller {
         echo json_encode(['success' => $res]);
         exit;
     }
+    /**
+     * Criação de Matrícula Manual via Secretaria.
+     */
+    public function createMatriculaManual() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') exit;
+        $this->verifyCsrfToken();
+
+        $userModel = $this->model('User');
+        $estudanteModel = $this->model('Estudante');
+        $matriculaModel = $this->model('Matricula');
+
+        $nome = $_POST['nome'];
+        $email = $_POST['email'];
+        $bi = $_POST['bi'];
+        $senha_provisoria = 'ghs' . substr($bi, -4);
+
+        // 1. Criar Utilizador Ativo
+        $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'ativo');
+
+        if (!$user_id) {
+            $_SESSION['flash_error'] = "Erro: Email já cadastrado.";
+            header('Location: ' . URL_ROOT . '/secretaria');
+            exit;
+        }
+
+        // 2. Criar Perfil Estudante
+        $estudante_id = $estudanteModel->createEstudante([
+            'user_id' => $user_id,
+            'bi' => $bi,
+            'telefone' => $_POST['telefone'] ?? '',
+            'data_nascimento' => $_POST['data_nascimento'] ?? null,
+            'nacionalidade' => 'Guineense',
+            'sexo' => 'M',
+            'morada' => 'Bissau',
+            'escola' => 'GHS',
+            'ano_conclusao' => date('Y'),
+            'media' => 0
+        ]);
+
+        // 3. Criar Matrícula Aprovada
+        $matricula_id = $matriculaModel->createEnrollment([
+            'user_id' => $estudante_id,
+            'ano_id' => $_POST['ano_id'],
+            'turno' => $_POST['turno'],
+            'tipo' => $_POST['tipo'] ?? 'Novo Ingresso'
+        ]);
+
+        $matriculaModel->updateStatus($matricula_id, 'Aprovada', $_SESSION['user_id']);
+
+        // 4. Upload Comprovativo (se houver)
+        if (isset($_FILES['comprovativo']) && $_FILES['comprovativo']['error'] == 0) {
+            $dest = 'public/uploads/matriculas';
+            $upload = FileHelper::upload($_FILES['comprovativo'], $dest, ALLOWED_EXTENSIONS);
+            if ($upload['success']) {
+                $matriculaModel->saveDocument($matricula_id, 'Comprovativo_Pagamento', basename($upload['fileName']), $dest . '/' . $upload['fileName']);
+            }
+        }
+
+        $_SESSION['flash_success'] = "Matrícula manual para $nome criada e aprovada com sucesso!";
+        header('Location: ' . URL_ROOT . '/secretaria');
+        exit;
+    }
 }

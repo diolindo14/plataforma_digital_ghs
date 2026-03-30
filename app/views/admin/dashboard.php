@@ -1166,9 +1166,14 @@
                             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                                 <div class="card-header bg-white py-4 border-0 d-flex justify-content-between align-items-center">
                                     <h4 class="fw-bold mb-0">Fila de Triagem (Matrículas Pendentes)</h4>
-                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
-                                        <?= count($data['matriculas'] ?? []) ?> Processos Pendentes
-                                    </span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
+                                            <?= count($data['matriculas'] ?? []) ?> Processos Pendentes
+                                        </span>
+                                        <button class="btn btn-success btn-sm fw-bold rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#matriculaManualModal">
+                                            <ion-icon name="person-add-outline" class="me-1"></ion-icon> Nova Matrícula
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="card-body p-0">
                                     <div class="table-responsive">
@@ -1206,6 +1211,7 @@
                                                                     data-bs-toggle="modal" data-bs-target="#documentViewerModal"
                                                                     data-id="<?= $m['id'] ?>" data-nome="<?= htmlspecialchars($m['nome']) ?>"
                                                                     data-bi="<?= $m['bi_arquivo'] ?? '' ?>"
+                                                                    data-foto="<?= $m['foto_arquivo'] ?? '' ?>"
                                                                     data-cert="<?= $m['certificado_arquivo'] ?? '' ?>"
                                                                     data-comp="<?= $m['comprovativo_arquivo'] ?? '' ?>">
                                                                     <ion-icon name="documents-outline" class="me-1"></ion-icon> Ficheiros
@@ -2869,22 +2875,32 @@
             $('#docSelector .btn').removeClass('btn-light').addClass('btn-outline-light');
             $(`#btn-${type}`).removeClass('btn-outline-light').addClass('btn-light');
 
-            if (!file) {
+            if (!file || file.trim() === '') {
                 $('#viewerContent').html('<div class="text-center py-5 text-white opacity-50"><ion-icon name="warning-outline" style="font-size: 5rem;"></ion-icon><h4 class="mt-3">Ficheiro não anexado.</h4></div>');
                 modalLabel.textContent = 'Documento Indisponível';
                 return;
             }
 
-            const url = '<?= URL_ROOT ?>/public/uploads/matriculas/' + file;
+            // file may be just the filename (e.g. ghs_xxx.pdf) or a full relative path
+            const url = file.startsWith('public/') || file.startsWith('/') 
+                ? '<?= URL_ROOT ?>/' + file 
+                : '<?= URL_ROOT ?>/public/uploads/matriculas/' + file;
             const ext = file.split('.').pop().toLowerCase();
             
-            const titles = { 'bi': 'Bilhete de Identidade / ID', 'cert': 'Certificado Escolar / Disciplinas', 'comp': 'Comprovativo de Depósito / Recibo' };
-            modalLabel.textContent = titles[type] || 'Visualização';
+            const titles = { 
+                'bi': 'Bilhete de Identidade / ID', 
+                'foto': 'Fotografia do Estudante',
+                'cert': 'Certificado Escolar / Disciplinas', 
+                'comp': 'Comprovativo de Depósito / Recibo' 
+            };
+            modalLabel.textContent = (titles[type] || 'Visualização') + ' — ' + (currentDocData['nome'] || '');
 
             if (ext === 'pdf') {
                 $('#viewerContent').html(`<iframe src="${url}#toolbar=1" style="width:100%; height:80vh; border:none;"></iframe>`);
+            } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                $('#viewerContent').html(`<div class="p-4 text-center"><img src="${url}" class="img-fluid rounded shadow-lg" style="max-height: 75vh;" onerror="this.parentElement.innerHTML='<p class=\'text-white text-center mt-5\'>Imagem não encontrada no servidor.</p>'"></div>`);
             } else {
-                $('#viewerContent').html(`<div class="p-4 text-center"><img src="${url}" class="img-fluid rounded shadow-lg" style="max-height: 75vh;"></div>`);
+                $('#viewerContent').html(`<div class="text-center py-5 text-white opacity-50"><ion-icon name="document-outline" style="font-size: 5rem;"></ion-icon><h4 class="mt-3">Formato não suportado para pré-visualização.</h4><a href="${url}" target="_blank" class="btn btn-outline-light mt-3">Descarregar Ficheiro</a></div>`);
             }
         }
 
@@ -2894,8 +2910,13 @@
             if (docViewerModal) {
                 docViewerModal.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
+                    if (!button) return;
                     currentDocData = $(button).data();
-                    loadSpecialDoc('bi');
+                    // Reset viewer
+                    $('#viewerContent').html('<div class="text-center py-5 text-white opacity-50"><span class="spinner-border text-light"></span></div>');
+                    // Start on BI, fall back to first available doc
+                    const firstAvail = currentDocData['bi'] ? 'bi' : (currentDocData['foto'] ? 'foto' : (currentDocData['cert'] ? 'cert' : 'comp'));
+                    loadSpecialDoc(firstAvail);
                 });
             }
         });
@@ -3997,6 +4018,7 @@ function convocarComMotivo(eid, did) {
                     </div>
                     <div class="btn-group btn-group-sm ms-auto me-3" id="docSelector">
                         <button class="btn btn-outline-light" onclick="loadSpecialDoc('bi')" id="btn-bi">BI</button>
+                        <button class="btn btn-outline-light" onclick="loadSpecialDoc('foto')" id="btn-foto">Foto</button>
                         <button class="btn btn-outline-light" onclick="loadSpecialDoc('cert')" id="btn-cert">Certificado</button>
                         <button class="btn btn-outline-light" onclick="loadSpecialDoc('comp')" id="btn-comp">Recibo</button>
                     </div>
@@ -4008,6 +4030,94 @@ function convocarComMotivo(eid, did) {
             </div>
         </div>
     </div>
+<!-- Modal Nova Matrícula Manual -->
+<div class="modal fade" id="matriculaManualModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form class="modal-content border-0 shadow-lg" action="<?= URL_ROOT ?>/admin/createMatriculaManual" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            <div class="modal-header bg-success text-white border-0">
+                <h5 class="modal-title fw-bold">
+                    <ion-icon name="person-add-outline" class="me-2"></ion-icon> Nova Matrícula — Registo Manual
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="alert alert-info border-0 rounded-3 small mb-4">
+                    <ion-icon name="information-circle-outline" class="me-1"></ion-icon>
+                    Esta matrícula será criada e <strong>aprovada automaticamente</strong>. Utilize para alunos que se inscrevem presencialmente.
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Nome Completo *</label>
+                        <input type="text" name="nome" class="form-control" placeholder="Ex: João Silva" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Email *</label>
+                        <input type="email" name="email" class="form-control" placeholder="aluno@email.com" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Nº BI *</label>
+                        <input type="text" name="bi" class="form-control" placeholder="Ex: 123456789" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Telefone</label>
+                        <input type="text" name="telefone" class="form-control" placeholder="Ex: 955123456">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Data Nascimento</label>
+                        <input type="date" name="data_nascimento" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Ano do Curso *</label>
+                        <select name="ano_id" class="form-select" required>
+                            <?php foreach ($data['anos'] as $ano): ?>
+                                <option value="<?= $ano['id'] ?>"><?= htmlspecialchars($ano['nome']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Turno *</label>
+                        <select name="turno" class="form-select" required>
+                            <option value="Manhã">Manhã</option>
+                            <option value="Tarde">Tarde</option>
+                            <option value="Noite">Noite</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Tipo</label>
+                        <select name="tipo" class="form-select">
+                            <option value="Novo Ingresso">Novo Ingresso</option>
+                            <option value="Renovação">Renovação</option>
+                            <option value="Transferência">Transferência</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Sexo</label>
+                        <select name="sexo" class="form-select">
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Comprovativo de Pagamento (opcional)</label>
+                        <input type="file" name="comprovativo" class="form-control" accept="image/*,.pdf">
+                        <div class="form-text">PDF ou imagem. Máx. 5MB.</div>
+                    </div>
+                </div>
+                <div class="alert alert-warning border-0 rounded-3 small mt-3">
+                    <ion-icon name="key-outline" class="me-1"></ion-icon>
+                    A senha provisória gerada será: <strong>ghs + últimos 4 dígitos do BI</strong>. Comunique ao aluno.
+                </div>
+            </div>
+            <div class="modal-footer border-0 pb-4">
+                <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success px-5 rounded-pill fw-bold shadow-sm">
+                    <ion-icon name="checkmark-circle-outline" class="me-1"></ion-icon> Criar e Aprovar Matrícula
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

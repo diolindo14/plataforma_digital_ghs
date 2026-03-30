@@ -106,29 +106,28 @@
                                 <div class="row g-4 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">Nome Completo *</label>
-                                        <input type="text" name="nome" class="form-control" placeholder="Ex: Mamadu Baldé" required>
+                                        <input type="text" name="nome" class="form-control" placeholder="Ex: Mamadu Baldé" value="<?= $data['student_profile']['nome_completo'] ?? '' ?>" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Data de Nascimento *</label>
-                                        <!-- Note: Since original didn't have data_nascimento in backend, adding it here visually as requested, but might need db update -->
-                                        <input type="date" name="data_nascimento" class="form-control" required>
+                                        <input type="date" name="data_nascimento" class="form-control" value="<?= $data['student_profile']['data_nascimento'] ?? '' ?>" required>
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label class="form-label">Nº do B.I. *</label>
-                                        <input type="text" name="bi" class="form-control" placeholder="Número do Bilhete de Identidade" required>
+                                        <input type="text" name="bi" class="form-control" placeholder="Número do Bilhete de Identidade" value="<?= $data['student_profile']['bi'] ?? '' ?>" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Nacionalidade *</label>
-                                        <input type="text" name="nacionalidade" class="form-control" value="Guineense" required>
+                                        <input type="text" name="nacionalidade" class="form-control" value="<?= $data['student_profile']['nacionalidade'] ?? 'Guineense' ?>" required>
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <label class="form-label">Sexo *</label>
                                         <select name="sexo" class="form-select" required>
-                                            <option value="" disabled selected>Selecionar</option>
-                                            <option>Masculino</option>
-                                            <option>Feminino</option>
+                                            <option value="" disabled <?= empty($data['student_profile']['sexo']) ? 'selected' : '' ?>>Selecionar</option>
+                                            <option <?= ($data['student_profile']['sexo'] ?? '') == 'Masculino' ? 'selected' : '' ?>>Masculino</option>
+                                            <option <?= ($data['student_profile']['sexo'] ?? '') == 'Feminino' ? 'selected' : '' ?>>Feminino</option>
                                         </select>
                                     </div>
                                      <div class="col-md-6">
@@ -141,24 +140,25 @@
                                     
                                     <div class="col-md-6">
                                         <label class="form-label">Telefone *</label>
-                                        <input type="text" name="telefone" class="form-control" placeholder="+245 9X XXX XX XX" required>
+                                        <input type="text" name="telefone" class="form-control" placeholder="+245 9X XXX XX XX" value="<?= $data['student_profile']['telefone'] ?? '' ?>" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" name="email" class="form-control" placeholder="seu.email@exemplo.com" required>
+                                        <label class="form-label">Email *</label>
+                                        <input type="email" name="email" class="form-control" placeholder="seu.email@exemplo.com" value="<?= $data['student_profile']['email'] ?? '' ?>" required>
+                                        <div class="form-text mt-1" style="font-size: 0.7rem; color: #ef4444;"><strong>Atenção:</strong> Deve usar um email verdadeiro para receber o estado da sua matrícula.</div>
                                     </div>
                                     
                                     <div class="col-12">
                                         <label class="form-label">Endereço / Morada</label>
-                                        <input type="text" name="morada" class="form-control" placeholder="Bairro, cidade">
+                                        <input type="text" name="morada" class="form-control" placeholder="Bairro, cidade" value="<?= $data['student_profile']['morada'] ?? '' ?>">
                                     </div>
                                                                         <div class="col-12">
                                          <label class="form-label">Nome do/a Encarregado/a de Educação</label>
-                                         <input type="text" name="encarregado_nome" class="form-control" placeholder="Nome completo do/a encarregado/a">
+                                         <input type="text" name="encarregado_nome" class="form-control" placeholder="Nome completo do/a encarregado/a" value="<?= $data['student_profile']['nome_encarregado'] ?? '' ?>">
                                      </div>
                                                                         <div class="col-12">
                                          <label class="form-label">Telefone do/a Encarregado/a</label>
-                                         <input type="text" name="encarregado_telefone" class="form-control" placeholder="+245 9X XXX XX XX">
+                                         <input type="text" name="encarregado_telefone" class="form-control" placeholder="+245 9X XXX XX XX" value="<?= $data['student_profile']['telefone_encarregado'] ?? '' ?>">
                                      </div>
                                 </div>
                                 
@@ -174,12 +174,12 @@
                                 <p class="text-muted small mb-4 pb-3 border-bottom border-light" style="font-size: 0.85rem;">Informações sobre a sua formação anterior e o curso pretendido.</p>
                                 
                                 <div class="row g-4 mb-4">
-                                    <div class="col-12">
+                                    <div class="col-12" id="box_tipo_candidatura">
                                         <label class="form-label">Tipo de Candidatura *</label>
-                                        <select name="tipo_candidatura" class="form-select" required>
-                                            <option value="" disabled selected>Selecionar</option>
+                                        <select name="tipo_candidatura" id="tipo_candidatura" class="form-select" required onchange="toggleInternalFields()">
+                                            <option value="" disabled <?= !isset($data['is_internal']) ? 'selected' : '' ?>>Selecionar</option>
                                             <option value="Novo Ingresso">Novo Ingresso</option>
-                                            <option value="Estudante Interno">Estudante Interno</option>
+                                            <option value="Estudante Interno" <?= isset($data['is_internal']) ? 'selected' : '' ?>>Estudante Interno</option>
                                         </select>
                                     </div>
                                     <div class="col-12">
@@ -191,17 +191,17 @@
                                             <option value="Noite">Noite (17:45 - 00:00)</option>
                                         </select>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-12 extra-academico">
                                         <label class="form-label">Escola de Proveniência *</label>
-                                        <input type="text" name="escola" class="form-control" placeholder="Nome da escola onde concluiu os estudos" required>
+                                        <input type="text" name="escola" id="escola" class="form-control" placeholder="Nome da escola onde concluiu os estudos" required>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 extra-academico">
                                         <label class="form-label">Ano de Conclusão *</label>
-                                        <input type="number" name="ano_conclusao" class="form-control" placeholder="Ex: 2024" required>
+                                        <input type="number" name="ano_conclusao" id="ano_conclusao" class="form-control" placeholder="Ex: 2024" required>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 extra-academico">
                                         <label class="form-label">Média Final</label>
-                                        <input type="text" name="media" class="form-control" placeholder="Ex: 14">
+                                        <input type="text" name="media" id="media" class="form-control" placeholder="Ex: 14">
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">Especialização de Interesse <span class="text-muted fw-normal">(Opcional - Apenas para o 5º ano)</span></label>
@@ -215,9 +215,9 @@
                                         </select>
                                         <div class="mt-2" style="font-size: 0.75rem; color: #94a3b8;">Poderá alterar a sua escolha até ao 4º ano.</div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-12 extra-academico">
                                         <label class="form-label">Motivação (opcional)</label>
-                                        <textarea name="motivacao" class="form-control" rows="3" placeholder="Conte-nos por que deseja estudar Engenharia Informática na Green Hard & Softh..."></textarea>
+                                        <textarea name="motivacao" id="motivacao" class="form-control" rows="3" placeholder="Conte-nos por que deseja estudar Engenharia Informática na Green Hard & Softh..."></textarea>
                                     </div>
                                 </div>
                                 
@@ -253,10 +253,10 @@
                                             <div class="file-status"></div>
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-12" id="box_doc_cert">
                                         <label class="form-label text-dark">Certificado de Habilitações *</label>
                                         <div class="upload-zone">
-                                            <input type="file" name="doc_cert" class="upload-input" accept=".pdf,.jpg,.png" required onchange="showFileName(this)">
+                                            <input type="file" name="doc_cert" id="input_doc_cert" class="upload-input" accept=".pdf,.jpg,.png" required onchange="showFileName(this)">
                                             <ion-icon name="cloud-upload-outline" class="fs-4 text-muted mb-2"></ion-icon>
                                             <p class="mb-1 text-dark small">Arraste o ficheiro ou <strong class="text-success">clique para carregar</strong></p>
                                             <p class="mb-0 text-muted" style="font-size: 0.75rem;">PDF, JPG ou PNG até 5MB</p>
@@ -413,6 +413,44 @@
             // Subir suavemente
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
+
+        function toggleInternalFields() {
+            const tipo = document.getElementById('tipo_candidatura').value;
+            const extraFields = document.querySelectorAll('.extra-academico');
+            const docCertBox = document.getElementById('box_doc_cert');
+            const docCertInput = document.getElementById('input_doc_cert');
+            const tipoBox = document.getElementById('box_tipo_candidatura');
+
+            if (tipo === 'Estudante Interno') {
+                extraFields.forEach(el => el.style.display = 'none');
+                docCertBox.style.display = 'none';
+                docCertInput.required = false;
+                
+                // Se o aluno já está logado, podemos esconder até a pergunta de tipo
+                <?php if(isset($data['is_internal'])): ?>
+                    tipoBox.style.display = 'none';
+                <?php endif; ?>
+
+                // Limpar campos obrigatórios para não travar o submit
+                document.getElementById('escola').required = false;
+                document.getElementById('ano_conclusao').required = false;
+            } else {
+                extraFields.forEach(el => el.style.display = 'block');
+                docCertBox.style.display = 'block';
+                docCertInput.required = true;
+                tipoBox.style.display = 'block';
+                
+                document.getElementById('escola').required = true;
+                document.getElementById('ano_conclusao').required = true;
+            }
+        }
+
+        // Auto-executar se já vier interno
+        window.onload = function() {
+            if (document.getElementById('tipo_candidatura').value === 'Estudante Interno') {
+                toggleInternalFields();
+            }
+        };
     </script>
 </body>
 </html>

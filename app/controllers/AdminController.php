@@ -238,6 +238,113 @@ class AdminController extends Controller {
         exit;
     }
 
+    /**
+     * Criação Manual de Matrícula pelo Admin/Secretaria.
+     * Permite matricular um aluno diretamente sem passar pelo formulário público.
+     * Útil para casos presenciais ou situações especiais.
+     */
+    public function createMatriculaManual() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
+            exit;
+        }
+        $this->verifyCsrfToken();
+
+        $nome     = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS);
+        $email    = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+        $bi       = filter_input(INPUT_POST, 'bi', FILTER_SANITIZE_SPECIAL_CHARS);
+        $ano_id   = (int)($_POST['ano_id'] ?? 1);
+        $turno    = filter_input(INPUT_POST, 'turno', FILTER_SANITIZE_SPECIAL_CHARS);
+        $tipo     = filter_input(INPUT_POST, 'tipo', FILTER_SANITIZE_SPECIAL_CHARS) ?: 'Novo Ingresso';
+        $telefone = filter_input(INPUT_POST, 'telefone', FILTER_SANITIZE_SPECIAL_CHARS);
+
+        if (!$nome || !$email || !$bi) {
+            $_SESSION['flash_error'] = "Preencha todos os campos obrigatórios (Nome, Email, BI).";
+            header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
+            exit;
+        }
+
+        $userModel      = $this->model('User');
+        $estudanteModel = $this->model('Estudante');
+        $matriculaModel = $this->model('Matricula');
+        $db             = Database::getInstance();
+
+        // 1. Verifica se email já existe
+        $existe = $db->prepare("SELECT id FROM utilizadores WHERE email = :e");
+        $existe->execute([':e' => $email]);
+        if ($existe->fetch()) {
+            $_SESSION['flash_error'] = "Já existe um utilizador com este email: $email";
+            header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
+            exit;
+        }
+
+        // 2. Criar utilizador (imediatamente ativo, pois é criado pelo admin)
+        $senha_provisoria = 'ghs' . substr($bi, -4);
+        $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'ativo');
+
+        if (!$user_id) {
+            $_SESSION['flash_error'] = "Erro ao criar utilizador. Verifique o email.";
+            header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
+            exit;
+        }
+
+        // 3. Criar perfil de estudante
+        $estudante_id = $estudanteModel->createEstudante([
+            'user_id'    => $user_id,
+            'bi'         => $bi,
+            'telefone'   => $telefone,
+            'data_nascimento' => $_POST['data_nascimento'] ?? null,
+            'sexo'       => $_POST['sexo'] ?? 'M',
+            'nacionalidade' => $_POST['nacionalidade'] ?? 'Guineense',
+            'estado_civil' => 'Solteiro',
+            'morada'     => '',
+            'encarregado_nome' => '',
+            'encarregado_telefone' => '',
+            'escola'     => '',
+            'ano_conclusao' => '',
+            'media'      => 0
+        ]);
+
+        // 4. Criar matrícula já aprovada (admin cria e aprova no mesmo passo)
+        $matricula_id = $matriculaModel->createEnrollment([
+            'user_id'          => $estudante_id,
+            'ano_id'           => $ano_id,
+            'turno'            => $turno,
+            'tipo'             => $tipo,
+            'especializacao_id'=> null,
+            'motivo'           => 'Matrícula criada manualmente pelo Administrador/Secretaria.'
+        ]);
+
+        // 5. Upload de comprovativo se fornecido
+        if (isset($_FILES['comprovativo']) && $_FILES['comprovativo']['error'] == 0) {
+            $dest   = 'public/uploads/matriculas';
+            $upload = FileHelper::upload($_FILES['comprovativo'], $dest, ALLOWED_EXTENSIONS);
+            if ($upload['success']) {
+                $matriculaModel->saveDocument($matricula_id, 'Comprovativo_Pagamento', $upload['fileName'], $dest . '/' . $upload['fileName']);
+            }
+        }
+
+        // 6. Aprovar automaticamente
+        $matriculaModel->updateStatus($matricula_id, 'Aprovada', $_SESSION['user_id']);
+
+        // 7. Tentativa de alocação automática à turma
+        $stmtT = $db->prepare("SELECT id FROM turmas WHERE ano_id = :ano AND turno = :turno AND vagas > (SELECT COUNT(*) FROM matriculas WHERE turma_id = turmas.id) LIMIT 1");
+        $stmtT->execute([':ano' => $ano_id, ':turno' => $turno]);
+        $turmaAuto = $stmtT->fetch();
+        if ($turmaAuto) {
+            $matriculaModel->assignToTurma($matricula_id, $turmaAuto['id']);
+        }
+
+        $this->logActivity('Criar Matrícula Manual', ['user_id' => $user_id, 'email' => $email]);
+
+        // 8. Notificar aluno por email
+        Mailer::sendMatriculaAprovada($email, $nome);
+
+        $_SESSION['flash_success'] = "Matrícula de <strong>$nome</strong> criada e aprovada! Senha provisória: <code>$senha_provisoria</code>";
+        header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
+        exit;
+    }
+
     public function generateInvite() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();

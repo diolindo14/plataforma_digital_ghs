@@ -91,6 +91,8 @@
                 <a class="nav-link" id="tab-merito" data-bs-toggle="pill" data-bs-target="#pane-merito" role="tab"><ion-icon name="ribbon-outline" class="text-warning"></ion-icon> Mérito & Diplomas</a>
                 <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro" role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados" role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
+                <hr class="text-white opacity-25">
+                <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula"><ion-icon name="add-circle-outline"></ion-icon> Nova Matrícula</a>
             </div>
         </div>
 

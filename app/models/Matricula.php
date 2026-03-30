@@ -54,6 +54,7 @@ class Matricula {
         $stmt = $this->db->prepare("
             SELECT m.*, u.nome_completo as nome,
                    (SELECT nome_arquivo FROM documentos_matricula WHERE matricula_id = m.id AND tipo_documento = 'BI' LIMIT 1) as bi_arquivo,
+                   (SELECT nome_arquivo FROM documentos_matricula WHERE matricula_id = m.id AND tipo_documento = 'Fotografia' LIMIT 1) as foto_arquivo,
                    (SELECT nome_arquivo FROM documentos_matricula WHERE matricula_id = m.id AND tipo_documento = 'Certificado' LIMIT 1) as certificado_arquivo,
                    (SELECT nome_arquivo FROM documentos_matricula WHERE matricula_id = m.id AND tipo_documento = 'Comprovativo_Pagamento' LIMIT 1) as comprovativo_arquivo
             FROM matriculas m 
