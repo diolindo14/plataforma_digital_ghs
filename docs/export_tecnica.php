@@ -403,10 +403,32 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 AVG(nota_disciplina) AS media_geral
 </pre>
 
-        <h3>7.3 Histórico Global (Academico.php > getGlobalHistory)</h3>
+        <h3>7.3 Histórico Global (Academico.php &gt; getGlobalHistory)</h3>
         <p>Consolida o registo vitalício académico do aluno, agrupando todas as notas por Ano Letivo e Semestre. Cada
             disciplina é classificada como Aprovado, Reprovado ou Em Curso, servindo de base para emissão de certidões e
             análise histórica.</p>
+
+        <h3>7.4 Motor de Inscrição Inteligente (MatriculaController.php)</h3>
+        <p>O controlador de matrícula pública foi refatorado para distinguir automaticamente entre novos candidatos e estudantes internos já autenticados:</p>
+        <pre>
+<span class="comment">// 1. Identificar ou reutilizar utilizador existente</span>
+<span class="key">if</span> (isset($_SESSION['user_id']) && $_POST['tipo_candidatura'] == <span class="val">'Estudante Interno'</span>) {
+    $user_id = $_SESSION[<span class="val">'user_id'</span>]; <span class="comment">// Reutiliza conta</span>
+    $is_new_user = <span class="key">false</span>;
+} <span class="key">else</span> {
+    $user_id = $userModel->insertUser(...); <span class="comment">// Novo</span>
+    $is_new_user = <span class="key">true</span>;
+}
+
+<span class="comment">// 2. Criar ou atualizar perfil do estudante</span>
+$existing = $estudanteModel->findByUserId($user_id);
+<span class="key">if</span> ($existing) {
+    $estudanteModel->updateEstudante($existing['id'], $profileData);
+} <span class="key">else</span> {
+    $estudante_id = $estudanteModel->createEstudante($profileData);
+}
+        </pre>
+        <p>No frontend, a função <code>toggleInternalFields()</code> oculta/mostra elementos e remove/adiciona o atributo <code>required</code> conforme o tipo de candidato selecionado (ou detetado via sessão).</p>
 
         <h2>8. Sistema de Auditoria</h2>
         <p>Todas as ações críticas do sistema são registadas na tabela <code>logs_auditoria</code> com os seguintes

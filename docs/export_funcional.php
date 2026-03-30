@@ -155,6 +155,38 @@
             </li>
         </ol>
 
+        <h3>2.3 Renovação de Ano / Nova Inscrição (Estudante Interno)</h3>
+        <p>Alunos que já têm conta ativa na plataforma beneficiam de um processo de inscrição <strong>simplificado e
+                acelerado</strong>. O sistema reconhece automaticamente o perfil do aluno e remove os passos
+            desnecessários.</p>
+        <ol class="steps">
+            <li>
+                <div><strong>Faça Login e Aceda ao Formulário</strong> Entre na plataforma com as suas credenciais e
+                    clique em "Nova Matrícula" no menu lateral. O tipo "Estudante Interno" é selecionado automaticamente.
+                </div>
+            </li>
+            <li>
+                <div><strong>Confirme os seus Dados</strong> Os campos pessoais (nome, B.I., email, telefone) são
+                    pré-preenchidos com os dados do seu perfil. Verifique e corrija se necessário.</div>
+            </li>
+            <li>
+                <div><strong>Selecione o Turno</strong> Escolha o turno pretendido para o novo ciclo letivo (Manhã,
+                    Tarde ou Noite).</div>
+            </li>
+            <li>
+                <div><strong>Submeta a Candidatura</strong> Clique em "Submeter". Não é necessário carregar documentos
+                    académicos pois estes já constam do seu processo na secretaria.</div>
+            </li>
+        </ol>
+        <div class="info-box">
+            <strong>💡 Campos Removidos para Alunos Internos:</strong> Os campos de Escola de Proveniência, Ano de
+            Conclusão, Média Final, Motivação e Certificado de Habilitações <strong>não aparecem</strong> no
+            formulário
+            para alunos já registados — estes dados já existem no sistema e não precisam de ser repetidos.
+        </div>
+
+
+
         <h3>2.3 Consulta de Notas e Pautas</h3>
         <p>No separador "Notas", o aluno pode visualizar as suas avaliações organizadas por disciplina. A estrutura da
             pauta

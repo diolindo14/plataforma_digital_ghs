@@ -585,7 +585,21 @@
         por nível. Os rankings são calculados pela média aritmética de todas as disciplinas com exame lançado, e os
         certificados ficam visíveis no portal do aluno.</p>
 
-    <h2>5. Segurança e Conformidade</h2>
+    <h3>4.6 Fluxo de Inscrição Simplificado para Estudantes Internos</h3>
+    <p>O portal público de candidatura foi atualizado com lógica inteligente que distingue automaticamente entre
+        <strong>novos candidatos</strong> e <strong>estudantes internos</strong> (alunos já registados na plataforma).
+        Quando um aluno interno acede ao formulário de candidatura, o sistema:</p>
+    <ul>
+        <li><strong>Oculta campos redundantes</strong>: Escola de Proveniência, Ano de Conclusão, Média Final, Motivação e Certificado de Habilitações são automaticamente escondidos, pois estes dados já existem no sistema.</li>
+        <li><strong>Pré-preenche os dados pessoais</strong>: Nome, B.I., Email, Telefone, Morada e dados do encarregado são preenchidos automaticamente a partir do perfil existente.</li>
+        <li><strong>Reutiliza a conta existente</strong>: O backend identifica o utilizador já autenticado e associa a nova candidatura à conta existente, sem criar duplicados nem gerar novas credenciais.</li>
+        <li><strong>Página de confirmação adaptada</strong>: Após a submissão, a página de sucesso não exibe credenciais (que o aluno já possui), apresentando apenas a confirmação da submissão e os próximos passos.</li>
+    </ul>
+    <div class="success-box">
+        <strong>✅ Benefício Institucional:</strong> Este fluxo reduz o tempo de inscrição para estudantes em renovação de ano ou inscrição num novo curso, eliminando burocracia repetitiva e o risco de dados duplicados ou inconsistentes na base de dados.
+    </div>
+
+
     <p>A plataforma implementa proteção multicamada, garantindo conformidade com as melhores práticas internacionais
         de
         segurança de dados:</p>
