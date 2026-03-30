@@ -27,12 +27,13 @@ class Matricula {
      * // 'Pendente' ou 'Aprovada' para o mesmo ano letivo. Isso evita duplicados.
      */
     public function createEnrollment($data) {
-        $stmt = $this->db->prepare("INSERT INTO matriculas (estudante_id, ano_letivo, ano_curso_id, turno, tipo, status, data_matricula, observacoes) 
-                                    VALUES (:estudante_id, :ano_letivo, :ano_id, :turno, :tipo, 'Pendente', NOW(), :obs)");
+        $stmt = $this->db->prepare("INSERT INTO matriculas (estudante_id, ano_letivo, ano_curso_id, especializacao_id, turno, tipo, status, data_matricula, observacoes) 
+                                    VALUES (:estudante_id, :ano_letivo, :ano_id, :esp_id, :turno, :tipo, 'Pendente', NOW(), :obs)");
         
         $stmt->bindValue(':estudante_id', $data['user_id']);
         $stmt->bindValue(':ano_letivo', date('Y'));
         $stmt->bindValue(':ano_id', $data['ano_id']);
+        $stmt->bindValue(':esp_id', $data['especializacao_id'] ?? null);
         $stmt->bindValue(':turno', $data['turno']);
         $stmt->bindValue(':tipo', $data['tipo']);
         $stmt->bindValue(':obs', $data['motivo'] ?? '');
