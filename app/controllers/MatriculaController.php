@@ -111,10 +111,7 @@ class MatriculaController extends Controller {
                 }
 
                 // Sucesso total: armazenar dados na sessão flash para exibir na página de sucesso
-                if (isset($is_new_user) && $is_new_user) {
-                    $_SESSION['matricula_senha_provisoria'] = $senha_provisoria;
-                    $_SESSION['matricula_email'] = $email;
-                } else {
+                if (!isset($is_new_user) || !$is_new_user) {
                     $_SESSION['is_internal_enrollment'] = true;
                 }
                 
