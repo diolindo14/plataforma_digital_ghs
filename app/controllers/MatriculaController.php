@@ -30,8 +30,8 @@ class MatriculaController extends Controller {
                     exit;
                 }
 
-                $user_id = null;
                 $senha_provisoria = 'ghs' . substr($bi, -4);
+                $is_new_user = false;
 
                 // Se já estiver logado como estudante, usamos o ID da sessão
                 if (isset($_SESSION['user_id']) && ($_POST['tipo_candidatura'] ?? '') == 'Estudante Interno') {
@@ -39,6 +39,7 @@ class MatriculaController extends Controller {
                 } else {
                     // Novo utilizador
                     $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'ativo');
+                    $is_new_user = true;
                     
                     if (!$user_id) {
                         $_SESSION['flash_error'] = "Erro ao criar utilizador. Verifique se o email já existe ou peça recuperação de senha.";
@@ -110,8 +111,13 @@ class MatriculaController extends Controller {
                 }
 
                 // Sucesso total: armazenar dados na sessão flash para exibir na página de sucesso
-                $_SESSION['matricula_senha_provisoria'] = $senha_provisoria;
-                $_SESSION['matricula_email'] = $email;
+                if (isset($is_new_user) && $is_new_user) {
+                    $_SESSION['matricula_senha_provisoria'] = $senha_provisoria;
+                    $_SESSION['matricula_email'] = $email;
+                } else {
+                    $_SESSION['is_internal_enrollment'] = true;
+                }
+                
                 header('Location: ' . URL_ROOT . '/matricula/sucesso');
                 exit;
 
