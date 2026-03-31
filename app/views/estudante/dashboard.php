@@ -861,9 +861,9 @@
                                                     <?= $n['nota_final'] ? number_format($n['nota_final'], 1) : '-' ?></small>
                                             </td>
                                             <td class="text-end">
-                                                <?php elseif ($n['bloqueado_admin']): ?>
+                                                <?php if ($n['bloqueado_admin']): ?>
                                                     <small class="text-danger fw-bold">Pendente Admin</small>
-                                                <?php elseif (empty($n['feedback_status']) || $n['feedback_status'] == 'Pendente'): ?>
+                                                <?php elseif ($n['feedback_status'] == 'Pendente'): ?>
                                                     <div class="btn-group btn-group-sm shadow-sm">
                                                         <button
                                                             onclick="responderNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>, 'Concordado')"

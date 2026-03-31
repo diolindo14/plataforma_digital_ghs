@@ -104,3 +104,7 @@
 [2026-03-30 17:47:41] CRITICAL ERROR: Call to undefined method Estudante::findById() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 273
 [2026-03-30 17:47:45] CRITICAL ERROR: Call to undefined method Estudante::findById() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 273
 [2026-03-30 18:32:35] CRITICAL ERROR: Class "AdminFinanceiroController" not found em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 98
+[2026-03-31 11:49:42] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
+[2026-03-31 11:50:09] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
+[2026-03-31 11:50:14] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
+[2026-03-31 11:50:20] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
