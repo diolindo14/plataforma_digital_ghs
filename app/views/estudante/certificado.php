@@ -175,23 +175,7 @@
             </div>
         </div>
         
-        <div class="qr-section">
-            <?php 
-                $justificativa = "PREMIADO POR EXCELENCIA ACADEMICA: " . ($data['nome'] ?? '') . " atingiu a media de " . number_format((float)($data['media'] ?? 0), 2) . " no " . ($data['periodo'] ?? '') . ", situando-se no Top Elegivel (Lugar " . ($data['posicao_num'] ?? '1') . ") do GHS CAMPUS.";
-                $qrDataString = "CERTIFICADO DE MÉRITO - GHS\n" .
-                                "Estudante: " . ($data['nome'] ?? 'N/A') . "\n" .
-                                "Média Final: " . number_format((float)($data['media'] ?? 0), 2) . "\n" .
-                                "Posição: " . ($data['winner_type'] ?? 'N/A') . "\n" .
-                                "Nível: " . ($data['nivel_nome'] ?? 'N/A') . "\n" .
-                                "ID: #" . str_pad(($data['cert_id'] ?? 0), 6, '0', STR_PAD_LEFT) . "\n" .
-                                "Autenticação: Válida\n" .
-                                "Justificativa: " . $justificativa;
-                $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($qrDataString);
-            ?>
-            <img src="<?= $qrUrl ?>" class="qr-code" alt="QR Code Autenticidade">
-            <div class="auth-code">REF: <?= strtoupper(bin2hex(random_bytes(4))) ?></div>
-            <div style="font-size: 0.5rem; color: #cbd5e1; margin-top: 2px;">DOCUMENTO DIGITALMENTE AUTENTICADO</div>
-        </div>
+        
         
         <div style="position: absolute; bottom: 10mm; left: 15mm; font-size: 0.7rem; color: #94a3b8;">
             Data de Emissão: <?= (string)($data['data_emissao'] ?? date('d/m/Y')) ?> | GHS

@@ -103,6 +103,19 @@ class Estudante {
         return $this->getDetailsByUserId($user_id);
     }
 
+    public function findById($id) {
+        $stmt = $this->db->prepare("
+            SELECT e.*, u.nome_completo, u.email, u.status as user_status
+            FROM estudantes e 
+            JOIN utilizadores u ON e.utilizador_id = u.id 
+            WHERE e.id = :id
+            LIMIT 1
+        ");
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
     /**
      * Atualização parcial/total do perfil biográfico.
      * 

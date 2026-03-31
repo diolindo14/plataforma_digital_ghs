@@ -85,23 +85,23 @@ class AdminController extends Controller {
     // Estes métodos permitem que os links antigos continuem a funcionar,
     // delegando a execução para os novos controladores especializados.
 
-    public function saveTurma() { (new AdminAcademicoController())->saveTurma(); }
-    public function saveAno() { (new AdminAcademicoController())->saveAno(); }
-    public function deleteAno($id) { (new AdminAcademicoController())->deleteAno($id); }
-    public function saveDisciplina() { (new AdminAcademicoController())->saveDisciplina(); }
-    public function deleteDisciplina($id) { (new AdminAcademicoController())->deleteDisciplina($id); }
-    public function saveEspecialidade() { (new AdminAcademicoController())->saveEspecialidade(); }
-    public function deleteEspecialidade($id) { (new AdminAcademicoController())->deleteEspecialidade($id); }
-    public function saveHorario() { (new AdminAcademicoController())->saveHorario(); }
-    public function getHorariosAjax($id) { (new AdminAcademicoController())->getHorariosAjax($id); }
+    public function saveTurma() { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->saveTurma(); }
+    public function saveAno() { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->saveAno(); }
+    public function deleteAno($id) { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->deleteAno($id); }
+    public function saveDisciplina() { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->saveDisciplina(); }
+    public function deleteDisciplina($id) { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->deleteDisciplina($id); }
+    public function saveEspecialidade() { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->saveEspecialidade(); }
+    public function deleteEspecialidade($id) { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->deleteEspecialidade($id); }
+    public function saveHorario() { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->saveHorario(); }
+    public function getHorariosAjax($id) { require_once __DIR__ . '/AdminAcademicoController.php'; (new AdminAcademicoController())->getHorariosAjax($id); }
 
-    public function validarPagamento($id) { (new AdminFinanceiroController())->validarPagamento($id); }
-    public function rejeitarPagamento($id) { (new AdminFinanceiroController())->rejeitarPagamento($id); }
+    public function validarPagamento($id) { require_once __DIR__ . '/AdminFinanceiroController.php'; (new AdminFinanceiroController())->validarPagamento($id); }
+    public function rejeitarPagamento($id) { require_once __DIR__ . '/AdminFinanceiroController.php'; (new AdminFinanceiroController())->rejeitarPagamento($id); }
 
-    public function saveProfessor() { (new AdminUsuarioController())->saveProfessor(); }
-    public function deleteProfessor($id) { (new AdminUsuarioController())->deleteProfessor($id); }
-    public function createSecretaria() { (new AdminUsuarioController())->createSecretaria(); }
-    public function deleteSecretaria($id) { (new AdminUsuarioController())->deleteSecretaria($id); }
+    public function saveProfessor() { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->saveProfessor(); }
+    public function deleteProfessor($id) { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->deleteProfessor($id); }
+    public function createSecretaria() { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->createSecretaria(); }
+    public function deleteSecretaria($id) { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->deleteSecretaria($id); }
 
     /**
      * Aprova uma conta de utilizador (Estudante/Professor) após registo inicial.

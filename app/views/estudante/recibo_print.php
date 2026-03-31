@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Recibo de Pagamento - GHS</title>
     <style>
-        @page { size: 14.8cm 10.5cm; margin: 4mm; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 20px; box-sizing: border-box; display: flex; justify-content: center; }
+        @page { size: 14.8cm 10.5cm; margin: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 15mm; box-sizing: border-box; display: flex; justify-content: center; }
         .receipt-box { width: 14cm; min-height: 9.5cm; background: white; padding: 12px; box-sizing: border-box; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; flex-direction: column; position: relative; }
         .header { display: flex; justify-content: space-between; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-bottom: 10px; }
         .logo-container { display: flex; align-items: center; gap: 8px; }
@@ -21,7 +21,7 @@
         
         @media print { 
             .no-print { display: none; } 
-            body { background: white; padding: 0; margin: 0; display: block; } 
+            body { background: white; padding: 10mm; margin: 0; display: block; } 
             .receipt-box { border: none; padding: 0; width: 100%; height: 100%; border-radius: 0; } 
         }
         

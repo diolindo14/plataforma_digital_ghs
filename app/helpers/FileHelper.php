@@ -16,6 +16,9 @@ class FileHelper {
         }
 
         $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!is_array($allowedTypes)) {
+            $allowedTypes = is_array(ALLOWED_EXTENSIONS) ? ALLOWED_EXTENSIONS : ['jpg', 'jpeg', 'png', 'pdf'];
+        }
         if (!in_array($extension, $allowedTypes)) {
             return ['success' => false, 'message' => 'Tipo de ficheiro não permitido.'];
         }
