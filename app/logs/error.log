@@ -180,3 +180,4 @@
 [2026-04-01 03:31:14] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
 [2026-04-01 03:34:46] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
 [2026-04-01 03:46:07] CRITICAL ERROR: Call to undefined method User::isAccountLocked() em C:\xampp\htdocs\green\app\controllers\AuthController.php na linha 51
+[2026-04-01 04:25:51] CRITICAL ERROR: Undefined constant "MAX_FILE_SIZE" em C:\xampp\htdocs\green\app\helpers\FileHelper.php na linha 14
