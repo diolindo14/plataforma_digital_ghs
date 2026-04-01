@@ -166,11 +166,15 @@ class Academico {
                 a.ano_letivo,
                 a.semestre,
                 ta.id as tipo_id,
-                n.nota
+                n.nota,
+                cn.status as feedback_status
             FROM notas n
             JOIN avaliacoes a ON n.avaliacao_id = a.id
             JOIN tipos_avaliacao ta ON a.tipo_avaliacao_id = ta.id
             JOIN disciplinas d ON a.disciplina_id = d.id
+            LEFT JOIN concordancia_notas cn ON n.estudante_id = cn.estudante_id 
+                AND a.turma_id = cn.turma_id 
+                AND a.disciplina_id = cn.disciplina_id
             WHERE n.estudante_id = :eid
             ORDER BY a.ano_letivo DESC, a.semestre DESC, d.nome ASC
         ");
@@ -189,6 +193,9 @@ class Academico {
                 ];
             }
             $history[$key]['notas'][$r['tipo_id']] = $r['nota'];
+            if (!empty($r['feedback_status'])) {
+                $history[$key]['feedback_status'] = $r['feedback_status'];
+            }
         }
 
         foreach ($history as &$row) {
@@ -197,7 +204,14 @@ class Academico {
             $row['nota_final'] = ($row['notas'][5] !== null) ? ($ac + $row['notas'][5]) / 2 : null;
             
             if ($row['nota_final'] !== null) {
-                $row['status'] = ($row['nota_final'] >= 10) ? 'Aprovado' : 'Reprovado';
+                // Point 3: Aprovado only when there is consent.
+                $has_consent = (isset($row['feedback_status']) && in_array($row['feedback_status'], ['Concordado', 'Resolvido']));
+                
+                if (!$has_consent) {
+                    $row['status'] = 'Pendente Acordo';
+                } else {
+                    $row['status'] = ($row['nota_final'] >= 10) ? 'Aprovado' : 'Reprovado';
+                }
             } else {
                 $row['status'] = 'Em Curso';
             }
@@ -234,7 +248,7 @@ class Academico {
                 estudante_id,
                 nome,
                 foto_perfil,
-                AVG(nota_disciplina) AS media_geral,
+                SUM(nota_disciplina) / GREATEST(1, (SELECT COUNT(DISTINCT h.disciplina_id) FROM horarios h WHERE h.turma_id = notas_finais.turma_id)) AS media_geral,
                 COUNT(disciplina_id) AS num_disciplinas
             FROM (
                 SELECT
@@ -244,6 +258,7 @@ class Academico {
                     e.id          AS estudante_id,
                     u.nome_completo AS nome,
                     e.foto_perfil,
+                    m.turma_id,
                     av.disciplina_id,
                     (
                         COALESCE(MAX(CASE WHEN ta.id = 1 THEN n.nota END), 0) +
@@ -259,10 +274,10 @@ class Academico {
                 JOIN utilizadores u ON e.utilizador_id = u.id
                 JOIN matriculas m ON m.estudante_id = e.id AND m.status = 'Aprovada'
                 JOIN anos a ON m.ano_curso_id = a.id
-                GROUP BY a.id, a.nome, a.ordem, e.id, u.nome_completo, e.foto_perfil, av.disciplina_id
+                GROUP BY a.id, a.nome, a.ordem, e.id, u.nome_completo, e.foto_perfil, m.turma_id, av.disciplina_id
                 HAVING MAX(CASE WHEN ta.id = 5 THEN 1 ELSE 0 END) > 0
             ) AS notas_finais
-            GROUP BY ano_id, nivel_nome, nivel_ordem, estudante_id, nome, foto_perfil
+            GROUP BY ano_id, nivel_nome, nivel_ordem, estudante_id, nome, foto_perfil, turma_id
             HAVING num_disciplinas >= 1
             ORDER BY nivel_ordem ASC, media_geral DESC
         ";
@@ -289,12 +304,11 @@ class Academico {
      */
     public function getRankingEscola($limit = 3) {
         $sql = "
-            SELECT 
                 estudante_id,
                 nome,
                 foto_perfil,
                 nivel_nome,
-                AVG(nota_disciplina) AS media_geral,
+                SUM(nota_disciplina) / GREATEST(1, (SELECT COUNT(DISTINCT h.disciplina_id) FROM horarios h WHERE h.turma_id = notas_finais.turma_id)) AS media_geral,
                 COUNT(disciplina_id) AS num_disciplinas
             FROM (
                 SELECT
@@ -302,6 +316,7 @@ class Academico {
                     u.nome_completo AS nome,
                     e.foto_perfil,
                     a.nome        AS nivel_nome,
+                    m.turma_id,
                     av.disciplina_id,
                     (
                         COALESCE(MAX(CASE WHEN ta.id = 1 THEN n.nota END), 0) +
@@ -317,10 +332,10 @@ class Academico {
                 JOIN utilizadores u ON e.utilizador_id = u.id
                 JOIN matriculas m ON m.estudante_id = e.id AND m.status = 'Aprovada'
                 JOIN anos a ON m.ano_curso_id = a.id
-                GROUP BY e.id, u.nome_completo, e.foto_perfil, a.nome, av.disciplina_id
+                GROUP BY e.id, u.nome_completo, e.foto_perfil, a.nome, m.turma_id, av.disciplina_id
                 HAVING MAX(CASE WHEN ta.id = 5 THEN 1 ELSE 0 END) > 0
             ) AS notas_finais
-            GROUP BY estudante_id, nome, foto_perfil, nivel_nome
+            GROUP BY estudante_id, nome, foto_perfil, nivel_nome, turma_id
             HAVING num_disciplinas >= 1
             ORDER BY media_geral DESC
             LIMIT :lim
@@ -456,13 +471,14 @@ class Academico {
                 estudante_id,
                 nome_completo,
                 nivel_nome,
-                ROUND(AVG(media_disciplina), 2) AS media_calculada
+                ROUND(SUM(media_disciplina) / GREATEST(1, (SELECT COUNT(DISTINCT h.disciplina_id) FROM horarios h WHERE h.turma_id = t.turma_id)), 2) AS media_calculada
             FROM (
                 SELECT 
                     n.estudante_id,
                     u.nome_completo,
                     a.nome AS nivel_nome,
                     av.disciplina_id,
+                    m.turma_id,
                     (
                         SUM(CASE WHEN av.tipo_avaliacao_id IN (1,2,3,4) THEN n.nota ELSE 0 END) + 
                         MAX(CASE WHEN av.tipo_avaliacao_id = 5 THEN n.nota ELSE 0 END)
@@ -474,10 +490,10 @@ class Academico {
                 JOIN matriculas m ON m.estudante_id = e.id AND m.status = 'Aprovada'
                 JOIN anos a ON m.ano_curso_id = a.id
                 WHERE av.semestre = :semestre 
-                GROUP BY n.estudante_id, u.nome_completo, a.nome, av.disciplina_id
+                GROUP BY n.estudante_id, u.nome_completo, a.nome, av.disciplina_id, m.turma_id
                 HAVING MAX(CASE WHEN av.tipo_avaliacao_id = 5 THEN n.nota ELSE NULL END) IS NOT NULL
             ) AS t
-            GROUP BY estudante_id, nome_completo, nivel_nome
+            GROUP BY estudante_id, nome_completo, nivel_nome, turma_id
             ORDER BY media_calculada DESC
             LIMIT :limit
         ";
