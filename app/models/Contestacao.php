@@ -177,12 +177,25 @@ class Contestacao {
      */
     public function reagirAluno($estudante_id, $turma_id, $disciplina_id, $acao, $contra_argumento = null) {
         $contestacao = $this->_buscar($estudante_id, $turma_id, $disciplina_id);
+        
+        // Se a ação for aceitar e não houver record, criamos um novo com status Concordado
+        if (!$contestacao && $acao === 'aceitar') {
+            $stmt = $this->db->prepare("
+                INSERT INTO concordancia_notas 
+                    (estudante_id, turma_id, disciplina_id, status, data_abertura, data_resposta, comentario)
+                VALUES 
+                    (:eid, :tid, :did, 'Concordado', NOW(), NOW(), 'Nota confirmada pelo aluno no portal.')
+            ");
+            $ok = $stmt->execute([':eid' => $estudante_id, ':tid' => $turma_id, ':did' => $disciplina_id]);
+            return ['success' => $ok, 'message' => 'Nota confirmada com sucesso.', 'novo_status' => 'Concordado'];
+        }
+
         if (!$contestacao) {
             return ['success' => false, 'message' => 'Contestação não encontrada.'];
         }
 
-        if (!in_array($contestacao['status'], ['Respondido', 'Resolvido'])) {
-            return ['success' => false, 'message' => 'Acção não permitida no estado actual.'];
+        if (!in_array($contestacao['status'], ['Respondido', 'Resolvido', 'Pendente'])) {
+            return ['success' => false, 'message' => 'Acção não permitida no estado actual (' . $contestacao['status'] . ').'];
         }
 
         // Verificar se já enviou contra-argumentação (só 1 é permitida)

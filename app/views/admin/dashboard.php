@@ -1687,15 +1687,21 @@
                                                         <?php endif; ?>
                                                     </td>
                                                     <td class="text-center">
-                                                        <?php if($r['media_final'] === null): ?>
-                                                            <span class="badge bg-secondary">Pendente</span>
-                                                        <?php elseif($r['media_final'] >= 10): ?>
-                                                            <span class="badge bg-success">Aprovado</span>
-                                                        <?php elseif($r['media_final'] >= 7): ?>
-                                                            <span class="badge bg-warning text-dark">Recurso</span>
-                                                        <?php else: ?>
-                                                            <span class="badge bg-danger">Excluído</span>
-                                                        <?php endif; ?>
+                                                        <?php 
+                                                            $ac = (float)$r['total_ac'];
+                                                            $media = $r['media_final'];
+                                                            
+                                                            if($ac < 8): ?>
+                                                                <span class="badge bg-danger">Reprovado (Nota AC < 8)</span>
+                                                            <?php elseif($media === null): ?>
+                                                                <span class="badge bg-secondary">Admitido ao Exame</span>
+                                                            <?php elseif($media >= 12): ?>
+                                                                <span class="badge bg-success">Aprovado</span>
+                                                            <?php elseif($media >= 8): ?>
+                                                                <span class="badge bg-warning text-dark">Recurso</span>
+                                                            <?php else: ?>
+                                                                <span class="badge bg-danger">Reprovado</span>
+                                                            <?php endif; ?>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>

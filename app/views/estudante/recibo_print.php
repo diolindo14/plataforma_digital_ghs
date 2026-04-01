@@ -13,14 +13,14 @@
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         
         body { 
-            font-family: 'Courier New', Courier, monospace; /* Standard POS Font */
+            font-family: 'Courier New', Courier, monospace;
             background-color: #ffffff; 
             color: #000; 
             margin: 0; 
-            padding: 5mm;
+            padding: 2mm;
             width: 80mm;
-            font-size: 11pt;
-            line-height: 1.2;
+            font-size: 10pt;
+            line-height: 1.1;
         }
 
         .thermal-receipt {
@@ -28,56 +28,60 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            border-left: 1px dotted #999; /* Guia de corte esquerda */
+            border-right: 1px dotted #999; /* Guia de corte direita */
+            padding: 0 2mm; /* Afasta das bordas laterais */
+            margin-left: 1mm; /* Afasta o bloco inteiro da esquerda */
         }
 
         .header {
             text-align: center;
-            margin-bottom: 5mm;
+            margin-bottom: 3mm;
             width: 100%;
         }
 
         .logo-img {
-            width: 35mm;
+            width: 32mm;
             margin-bottom: 2mm;
-            filter: grayscale(100%); /* Thermal printers only print black */
+            /* grayscale removed to keep it colorful */
         }
 
         .brand-info h2 {
             margin: 0;
-            font-size: 14pt;
+            font-size: 12pt;
             font-weight: bold;
             text-transform: uppercase;
         }
 
         .brand-info p {
             margin: 1mm 0;
-            font-size: 9pt;
+            font-size: 8.5pt;
         }
 
         .divider {
             width: 100%;
             border-top: 1px dashed #000;
-            margin: 3mm 0;
+            margin: 2mm 0;
         }
 
         .receipt-info {
             width: 100%;
-            margin-bottom: 4mm;
+            margin-bottom: 2mm;
         }
 
         .receipt-title {
-            font-size: 13pt;
+            font-size: 12pt;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 2mm;
+            margin-bottom: 1mm;
             text-decoration: underline;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1mm;
-            font-size: 10pt;
+            margin-bottom: 0.8mm;
+            font-size: 9.5pt;
         }
 
         .label { font-weight: bold; }
@@ -85,40 +89,46 @@
 
         .item-table {
             width: 100%;
-            margin: 4mm 0;
+            margin: 2mm 0;
         }
 
-        .item-row {
+        .item-header {
             display: flex;
             justify-content: space-between;
             font-weight: bold;
-            font-size: 11pt;
-            margin-bottom: 2mm;
+            font-size: 10pt;
+            border-bottom: 1px solid #000;
+            padding-bottom: 1mm;
+            margin-bottom: 1.5mm;
         }
 
         .total-section {
             width: 100%;
             text-align: center;
-            border: 2px solid #000;
-            padding: 3mm;
-            margin: 4mm 0;
+            border: 1.5px solid #000;
+            padding: 2mm;
+            margin: 3mm 0;
         }
 
         .total-amount {
-            font-size: 18pt;
+            font-size: 16pt;
             font-weight: 900;
+        }
+
+        .qr-section {
+            text-align: center;
+            margin: 3mm 0;
+        }
+
+        .qr-code {
+            width: 30mm;
+            height: 30mm;
         }
 
         .footer {
             text-align: center;
-            font-size: 9pt;
-            margin-top: 5mm;
-        }
-
-        .barcode {
-            margin: 5mm 0;
-            font-family: 'Libre Barcode 39', cursive;
-            font-size: 24pt;
+            font-size: 8.5pt;
+            margin-top: 2mm;
         }
 
         /* ── Controls (Hidden in Print) ────────────────────────── */
@@ -139,11 +149,12 @@
             color: #000;
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         @media print {
             .controls { display: none !important; }
-            body { padding: 2mm; }
+            body { padding: 1mm; }
         }
     </style>
 </head>
@@ -151,17 +162,16 @@
 
     <div class="controls">
         <button class="btn" onclick="window.print()">IMPRIMIR POS</button>
-        <button class="btn" onclick="window.close()">FECHAR</button>
+        <button class="btn" onclick="fecharRecibo()">FECHAR</button>
     </div>
 
     <div class="thermal-receipt">
         <div class="header">
-            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo" class="logo-img">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" class="logo-img">
             <div class="brand-info">
                 <h2>GHS ÉDUCATION</h2>
                 <p>Ensino Digital & Tecnologia</p>
-                <p>NIF: 0987654321</p>
-                <p>Tel: +244 9XX XXX XXX</p>
+                <p>Tel: +245 95529 54 75</p>
             </div>
         </div>
 
@@ -179,7 +189,7 @@
             </div>
             <div class="info-row">
                 <span class="label">OPERADOR:</span>
-                <span class="value"><?= htmlspecialchars($data['pagamento']['registado_por_nome'] ?? 'SI') ?></span>
+                <span class="value"><?= htmlspecialchars($data['pagamento']['registado_por_nome'] ?? 'Secretaria') ?></span>
             </div>
         </div>
 
@@ -199,44 +209,65 @@
         <div class="divider"></div>
 
         <div class="item-table">
-            <div class="item-row">
+            <div class="item-header">
                 <span>DESCRIÇÃO</span>
                 <span>TOTAL</span>
             </div>
-            <div class="info-row" style="margin-top: 2mm;">
-                <span style="font-size: 9pt; width: 45mm;"><?= htmlspecialchars($data['pagamento']['descricao'] ?? 'Serviço Académico') ?></span>
-                <span class="value"><?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?></span>
+            <div class="info-row" style="margin-top: 1mm;">
+                <span style="font-size: 9pt; width: 45mm; font-weight: bold;"><?= htmlspecialchars($data['pagamento']['descricao'] ?? 'Serviço Académico') ?></span>
+                <span class="value fw-bold"><?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?></span>
             </div>
             <?php if(!empty($data['pagamento']['mes_referencia'])): ?>
             <div class="info-row">
-                <span class="label">MES:</span>
+                <span class="label">MÊS:</span>
                 <span class="value"><?= htmlspecialchars($data['pagamento']['mes_referencia']) ?></span>
             </div>
             <?php endif; ?>
         </div>
 
         <div class="total-section">
-            <div style="font-size: 10pt;">TOTAL PAGO (XOF)</div>
+            <div style="font-size: 9pt; font-weight: bold;">TOTAL PAGO (XOF)</div>
             <div class="total-amount"><?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?></div>
         </div>
 
-        <div class="info-row">
-            <span class="label">METODO:</span>
+        <div class="info-row" style="width: 100%;">
+            <span class="label">MÉTODO:</span>
             <span class="value"><?= htmlspecialchars($data['pagamento']['forma_pagamento'] ?? 'Numerário') ?></span>
         </div>
 
-        <div class="divider"></div>
+        <div class="qr-section">
+            <?php 
+                $qrData = "RECIBO:#" . str_pad($data['pagamento']['id'] ?? 0, 6, '0', STR_PAD_LEFT) . 
+                         "|VALOR:" . ($data['pagamento']['valor'] ?? 0) . 
+                         "|ALUNO:" . ($data['pagamento']['estudante_id'] ?? 0);
+                $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" . urlencode($qrData);
+            ?>
+            <img src="<?= $qrUrl ?>" alt="QR Code" class="qr-code" style="width: 25mm; height: 25mm;">
+            <p style="font-size: 7pt; margin-top: 0.5mm; opacity: 0.7;">Autenticação Digital GHS</p>
+        </div>
 
-        <div class="footer">
-            <p><strong>OBRIGADO PELA PREFERÊNCIA!</strong></p>
-            <p style="font-size: 8pt; margin-top: 2mm;">
-                Conservar este talão como prova oficial.<br>
-                Software GHS - Versão 2.4.0
+        <div class="divider" style="margin: 1mm 0;"></div>
+
+        <div class="footer" style="margin-top: 1mm;">
+            <p style="margin: 0;"><strong>OBRIGADO PELA PREFERÊNCIA!</strong></p>
+            <p style="font-size: 8pt; margin-top: 0.5mm;">
+                Conserve este talão como prova oficial.
             </p>
         </div>
 
-        <div class="divider" style="border-top-style: dotted;"></div>
+        <div class="divider" style="border-top-style: dotted; margin: 1mm 0 2mm 0;"></div>
     </div>
 
+    <script>
+        function fecharRecibo() {
+            if (window.opener || window.history.length > 1) {
+                window.close();
+                // Fallback to history back if close fails
+                setTimeout(() => { history.back(); }, 100);
+            } else {
+                window.location.href = '<?= URL_ROOT ?>/estudante';
+            }
+        }
+    </script>
 </body>
 </html>

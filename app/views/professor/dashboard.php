@@ -347,15 +347,22 @@
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="text-center">
-                                                    <?php if($r['media_final'] === null): ?>
-                                                        <span class="badge bg-secondary">Pendente</span>
-                                                    <?php elseif($r['media_final'] >= 10): ?>
-                                                        <span class="badge bg-success">Aprovado</span>
-                                                    <?php elseif($r['media_final'] >= 7): ?>
-                                                        <span class="badge bg-warning text-dark">Recurso</span>
-                                                    <?php else: ?>
-                                                        <span class="badge bg-danger">Excluído</span>
-                                                    <?php endif; ?>
+                                                    <?php 
+                                                        $ac = (float)$r['total_ac'];
+                                                        $media = $r['media_final'];
+                                                        $exame = $r['notas'][5];
+                                                        
+                                                        if($ac < 8): ?>
+                                                            <span class="badge bg-danger">Reprovado (Nota AC < 8)</span>
+                                                        <?php elseif($media === null): ?>
+                                                            <span class="badge bg-secondary">Admitido ao Exame</span>
+                                                        <?php elseif($media >= 12): ?>
+                                                            <span class="badge bg-success">Aprovado</span>
+                                                        <?php elseif($media >= 8): ?>
+                                                            <span class="badge bg-warning text-dark">Recurso</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-danger">Reprovado</span>
+                                                        <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -436,12 +443,18 @@
                                                     ?>
                                                 </td>
                                                 <td class="border-start border-primary">
-                                                    <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" value="<?= $sn[5] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>>
+                                                    <?php $pode_fazer_exame = $total >= 8; ?>
+                                                    <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" 
+                                                           value="<?= $sn[5] ?? '' ?>" 
+                                                           <?= ($is_locked || !$pode_fazer_exame) ? 'readonly disabled' : '' ?>
+                                                           placeholder="<?= !$pode_fazer_exame ? 'Reprovado' : '' ?>">
                                                 </td>
                                                 <td class="text-center fw-bold fs-5 text-media-final">
                                                     <?php 
                                                         $exame = $sn[5] ?? null;
-                                                        if($exame !== null && $exame !== '') {
+                                                        if($total < 8) {
+                                                            echo '<span class="text-danger" style="font-size: 0.7rem;">Reprovado</span>';
+                                                        } elseif($exame !== null && $exame !== '') {
                                                             echo number_format(($total + floatval($exame)) / 2, 1);
                                                         } else {
                                                             echo '-';

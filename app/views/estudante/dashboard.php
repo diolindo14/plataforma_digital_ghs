@@ -867,8 +867,11 @@
                                                 <?php if ($n['bloqueado_admin']): ?>
                                                     <small class="text-danger fw-bold"><ion-icon name="lock-closed"></ion-icon> Pendente Admin</small>
                                                 <?php elseif ($n['feedback_status'] == 'Concordado' || $n['feedback_status'] == 'Encerrado'): ?>
-                                                    <ion-icon name="checkmark-done" class="text-success fs-5"></ion-icon>
-                                                <?php elseif ($n['feedback_status'] == 'Pendente' || $n['feedback_status'] == 'Reclamado'): ?>
+                                                    <div class="text-success d-flex align-items-center gap-1 justify-content-end">
+                                                        <ion-icon name="checkmark-done-circle" class="fs-5"></ion-icon>
+                                                        <small class="fw-bold">Nota Validada</small>
+                                                    </div>
+                                                <?php elseif ($n['feedback_status'] == 'Reclamado'): ?>
                                                     <small class="text-danger fw-bold"><ion-icon name="time"></ion-icon> Aguarda Prof.</small>
                                                 <?php elseif ($n['feedback_status'] == 'Respondido' || $n['feedback_status'] == 'Resolvido'): ?>
                                                     <div class="d-grid gap-1">
@@ -883,12 +886,18 @@
                                                 <?php elseif ($n['feedback_status'] == 'Impasse' || $n['feedback_status'] == 'Em_Mediacao' || $n['feedback_status'] == 'Aguardando_Comparecimento'): ?>
                                                     <ion-icon name="lock-closed" class="text-danger"></ion-icon> <small class="text-danger fw-bold">Sob Mediação</small>
                                                 <?php else: ?>
-                                                    <!-- Estado Inicial: Sem contestação -->
-                                                    <div class="btn-group btn-group-sm shadow-sm">
+                                                    <!-- Estado Inicial: Aguardando Ação do Aluno -->
+                                                    <div class="d-grid gap-1">
+                                                        <button
+                                                            onclick="aceitarNota(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
+                                                            class="btn btn-sm btn-success fw-bold py-1 shadow-sm">
+                                                            <ion-icon name="checkmark-circle"></ion-icon> Confirmar Nota
+                                                        </button>
                                                         <button
                                                             onclick="abrirModalContestacao(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
-                                                            class="btn btn-outline-danger fw-bold py-1" title="Contestar Oficialmente"><ion-icon
-                                                                name="hand-right"></ion-icon> Contestar</button>
+                                                            class="btn btn-sm btn-outline-danger fw-bold py-1" style="font-size: 0.75rem;">
+                                                            <ion-icon name="hand-right"></ion-icon> Contestar
+                                                        </button>
                                                     </div>
                                                 <?php endif; ?>
                                             </td>
