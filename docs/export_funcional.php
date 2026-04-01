@@ -105,7 +105,7 @@
                     pela secretaria (ex: <code>http://localhost/green/auth</code>).</div>
             </li>
             <div style="text-align: center; margin: 15px 0;">
-                <img src="../public/assets/img/login_screen.png" alt="Interface de Login GHS" style="max-width: 300px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <img src="../public/img/login_screen.png" alt="Interface de Login GHS" style="max-width: 300px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <p style="font-size: 10px; color: var(--muted); margin-top: 5px;">Interface do Portal Institucional GHS</p>
             </div>
             <li>
