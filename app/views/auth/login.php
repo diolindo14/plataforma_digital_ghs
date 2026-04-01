@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= URL_ROOT ?>/styles.css">
+    <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/styles.css">
     
     <!-- Icons (Ionicons) -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -42,7 +42,7 @@
 
             <!-- Branding -->
             <div class="brand" style="margin-bottom: 1.5rem;">
-                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
+                <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Green Hard & Softh" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
             </div>
 
             <!-- Login View -->
@@ -209,6 +209,6 @@
             setTimeout(() => activeView.classList.add('active'), 10);
         }
     </script>
-    <script src="<?= URL_ROOT ?>/js/script.js"></script>
+    <script src="<?= URL_ROOT ?>/public/js/script.js"></script>
 </body>
 </html>

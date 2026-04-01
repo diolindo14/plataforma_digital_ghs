@@ -21,7 +21,7 @@
         .brand-sub { font-size: 0.8rem; color: #64748b; font-weight: 500; }
 
         /* Hero */
-        .hero { background: linear-gradient(to right, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.3) 100%), url('<?= URL_ROOT ?>/img/ghs.jpg') center/cover no-repeat; color: white; padding: 180px 0 60px 0; min-height: 95vh; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .hero { background: linear-gradient(to right, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.3) 100%), url('<?= URL_ROOT ?>/public/img/ghs.jpg') center/cover no-repeat; color: white; padding: 180px 0 60px 0; min-height: 95vh; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         .hero h1 { font-weight: 800; font-size: 4.5rem; letter-spacing: -1px; line-height: 1.1; margin-bottom: 20px; }
         .hero h1 span { color: #f59e0b; }
         .hero p { font-size: 1.35rem; font-weight: 400; max-width: 750px; line-height: 1.6; margin-bottom: 40px; color: #f1f5f9; }
@@ -106,7 +106,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
         <div class="container">            <a class="navbar-brand d-flex align-items-center" href="<?= URL_ROOT ?>/">
-                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
+                <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <ion-icon name="menu" class="text-dark fs-1"></ion-icon>
@@ -487,7 +487,7 @@
                 <div class="col-lg-4 pe-lg-5">
                     <div class="footer-logo">
                         <div class="footer-logo-circle">
-                            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
+                            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
                         </div>
                         Green Hard & Softh
                     </div>

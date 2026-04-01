@@ -98,7 +98,7 @@
         <div>
             <div class="text-center mb-4 mt-2">
                 <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
-                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="fw-bold mt-2 text-white">Portal GHS</h5>
                 <span class="badge bg-secondary mb-3">Docente</span>
@@ -320,13 +320,21 @@
                                         ?>
                                         <?php foreach($data['students'] as $s): ?>
                                             <?php $sn = $data['notas'][$s['id']] ?? []; ?>
-                                            <tr data-student-id="<?= $s['id'] ?>" data-turma-id="<?= $turma_id ?>" data-disc-id="<?= $disc_id ?>">
-                                                <td><?= $s['id'] ?></td>
+                                            <?php 
+                                                $is_locked = in_array($sn['feedback_status'] ?? '', ['Concordado', 'Resolvido']);
+                                            ?>
+                                            <tr data-student-id="<?= $s['id'] ?>" data-turma-id="<?= $turma_id ?>" data-disc-id="<?= $disc_id ?>" class="<?= $is_locked ? 'table-light' : '' ?>">
+                                                <td>
+                                                    <?= $s['id'] ?>
+                                                    <?php if($is_locked): ?>
+                                                        <ion-icon name="lock-closed" class="text-secondary" title="Nota Trancada (Aluno Concordou)"></ion-icon>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td class="fw-bold"><?= $this->e($s['nome_completo']) ?></td>
-                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc" value="<?= $sn[1] ?? '' ?>"></td>
-                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ap" value="<?= $sn[2] ?? '' ?>"></td>
-                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi" value="<?= $sn[3] ?? '' ?>"></td>
-                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ce" value="<?= $sn[4] ?? '' ?>"></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc" value="<?= $sn[1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ap" value="<?= $sn[2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi" value="<?= $sn[3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ce" value="<?= $sn[4] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
                                                 <td class="fw-bold text-success text-center fs-5 text-total-ac">
                                                     <?php 
                                                         $total = floatval($sn[1]??0) + floatval($sn[2]??0) + floatval($sn[3]??0) + floatval($sn[4]??0);
@@ -334,7 +342,7 @@
                                                     ?>
                                                 </td>
                                                 <td class="border-start border-primary">
-                                                    <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" value="<?= $sn[5] ?? '' ?>">
+                                                    <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" value="<?= $sn[5] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>>
                                                 </td>
                                                 <td class="text-center fw-bold fs-5 text-media-final">
                                                     <?php 
@@ -347,10 +355,14 @@
                                                     ?>
                                                 </td>
                                                 <td class="text-center">
-                                                    <div class="mb-1">
-                                                        <textarea class="form-control form-control-sm val-resposta" placeholder="Resposta/Feedback..." rows="1"><?= htmlspecialchars($sn['resposta_professor'] ?? '') ?></textarea>
-                                                    </div>
-                                                    <button class="btn btn-sm btn-success btn-save-nota w-100" onclick="saveNota(this)">Guardar</button>
+                                                    <?php if($is_locked): ?>
+                                                        <span class="badge bg-secondary w-100 py-2"><ion-icon name="lock-closed-outline"></ion-icon> Trancado</span>
+                                                    <?php else: ?>
+                                                        <div class="mb-1">
+                                                            <textarea class="form-control form-control-sm val-resposta" placeholder="Resposta/Feedback..." rows="1"><?= htmlspecialchars($sn['resposta_professor'] ?? '') ?></textarea>
+                                                        </div>
+                                                        <button class="btn btn-sm btn-success btn-save-nota w-100" onclick="saveNota(this)">Guardar</button>
+                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

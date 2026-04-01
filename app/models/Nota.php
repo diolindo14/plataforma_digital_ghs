@@ -7,14 +7,23 @@ class Nota {
     }
 
     public function saveNotasRow($data) {
+        $estudante_id = $data['estudante_id'];
+        $turma_id = $data['turma_id'];
+        $disciplina_id = $data['disciplina_id'];
+        $professor_id = $_SESSION['user_id'];
+
+        // 0. VERIFICAÇÃO DE SEGURANÇA: Bloquear se o aluno já concordou
+        $stmtLock = $this->db->prepare("SELECT status FROM concordancia_notas WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did");
+        $stmtLock->execute([':eid' => $estudante_id, ':tid' => $turma_id, ':did' => $disciplina_id]);
+        $lockStatus = $stmtLock->fetchColumn();
+
+        if ($lockStatus === 'Concordado' || $lockStatus === 'Resolvido') {
+            return false; // Nota trancada - Retornar antes de iniciar transação
+        }
+
         try {
             $this->db->beginTransaction();
-            
-            $estudante_id = $data['estudante_id'];
-            $turma_id = $data['turma_id'];
-            $disciplina_id = $data['disciplina_id'];
-            $professor_id = $_SESSION['user_id'];
-            
+
             // Map types to IDs from tipos_avaliacao
             $map = [
                 'tpc' => 1,
@@ -69,18 +78,6 @@ class Nota {
                 ':tid' => $turma_id, 
                 ':did' => $disciplina_id,
                 ':resp' => $data['resposta_professor'] ?? null
-            ]);
-
-            // Se o professor alterou/lançou nota e o estado não é Reclamado nem Respondido, reseta para que a Acção/Feedback do aluno apareça novamente.
-            $stmtReset = $this->db->prepare("
-                UPDATE concordancia_notas 
-                SET status = 'Pendente'
-                WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status IN ('Concordado', 'Resolvido')
-            ");
-            $stmtReset->execute([
-                ':eid' => $estudante_id, 
-                ':tid' => $turma_id, 
-                ':did' => $disciplina_id
             ]);
 
             $this->db->commit();
