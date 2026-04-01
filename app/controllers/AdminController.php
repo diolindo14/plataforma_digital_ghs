@@ -60,6 +60,8 @@ class AdminController extends Controller {
         $data['atrasos_sumarios'] = $frequenciaModel->getMissingSummaries();
         $data['teacher_attendance_report'] = $frequenciaModel->getTeacherAttendanceReport();
         $data['detailed_attendance'] = $frequenciaModel->getDetailedAttendanceLog();
+        $data['indisciplina_report'] = $frequenciaModel->getIndisciplinaReport(); // POINT 2: Relatório de Conduta
+        $data['log_notas'] = $this->model('Nota')->getLogsAtivos(); // POINT 5: Auditoria
 
         $data['secretarios'] = $this->model('Administrador')->getAllSecretarios();
         
@@ -83,11 +85,33 @@ class AdminController extends Controller {
         $data['backups'] = BackupManager::getLatestBackups(10);
 
         // --- ⚖️ CONTESTAÇÕES EM MEDIAÇÃO (Impasse / Admin) ---
-        $data['contestacoes_mediacao'] = $this->model('Contestacao')->getEmMediacao();
         $data['contestacoes_admin_all'] = $this->model('Contestacao')->getAllParaAdmin();
 
-        $this->view('admin/dashboard', $data);
+        // --- POINT 4: GESTÃO DE PRAZOS (Monitor de Atrasos nas Correções) ---
+        $data['atrasos_correcao'] = [];
+        foreach($data['contestacoes_admin_all'] as $c) {
+            if ($c['status'] === 'Aguardando_Correcao') {
+                $data_ordem = new DateTime($c['data_reuniao'] ?? $c['data_resposta']);
+                $agora = new DateTime();
+                $diff = $data_ordem->diff($agora);
+                if ($diff->days >= 2) { // Mais de 48h
+                    $data['atrasos_correcao'][] = $c;
+                }
+            }
+        }
 
+        $this->view('admin/dashboard', $data);
+    }
+
+    /**
+     * POINT 3: Geração de Recibo Digital (Térmico)
+     */
+    public function imprimirRecibo($id) {
+        $pagamento = $this->model('Pagamento')->getById($id);
+        if (!$pagamento) die('Pagamento não encontrado.');
+        
+        $data['p'] = $pagamento;
+        $this->view('shared/recibo_termico', $data);
     }
 
     /**

@@ -1283,6 +1283,14 @@
                                             <button class="nav-link" data-bs-toggle="pill"
                                                 data-bs-target="#pills-professores" type="button">Professores</button>
                                         </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="tab-conduta" data-bs-toggle="pill"
+                                                data-bs-target="#pills-conduta" type="button">Relatório de Conduta (I)</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="tab-logs-notas" data-bs-toggle="pill"
+                                                data-bs-target="#pills-logs-notas" type="button">Auditoria de Notas</button>
+                                        </li>
                                     </ul>
                                     <div class="tab-content border p-3 rounded bg-light bg-opacity-50">
                                         <!-- Aba Anos -->
@@ -1462,6 +1470,92 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        </div>
+
+                                        <!-- Aba Conduta (I) -->
+                                        <div class="tab-pane fade" id="pills-conduta">
+                                            <div class="d-flex justify-content-between mb-3">
+                                                <div>
+                                                    <h5>Monitor de Indisciplina (Ponto 2)</h5>
+                                                    <p class="text-muted small">Cálculo cumulativo de marcas 'I' por disciplina.</p>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="badge bg-danger">Faltas Críticas</span>
+                                                </div>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm bg-white shadow-sm rounded">
+                                                    <thead class="table-dark">
+                                                        <tr>
+                                                            <th>Estudante</th>
+                                                            <th>Turma</th>
+                                                            <th>Disciplina</th>
+                                                            <th class="text-center">Total 'I'</th>
+                                                            <th class="text-end">Frequência (%)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php if(!empty($data['indisciplina_report'])): ?>
+                                                            <?php foreach($data['indisciplina_report'] as $ir): ?>
+                                                                <tr>
+                                                                    <td class="fw-bold"><?= htmlspecialchars($ir['aluno']) ?></td>
+                                                                    <td><?= htmlspecialchars($ir['turma']) ?></td>
+                                                                    <td><?= htmlspecialchars($ir['disciplina']) ?></td>
+                                                                    <td class="text-center"><span class="badge bg-dark rounded-circle"><?= $ir['total'] ?></span></td>
+                                                                    <td class="text-end">
+                                                                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">Ver Pauta Geral</span>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        <?php else: ?>
+                                                            <tr><td colspan="5" class="text-center text-muted">Nenhum registo de indisciplina encontrado.</td></tr>
+                                                        <?php endif; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <!-- Aba Auditoria (Ponto 5) -->
+                                        <div class="tab-pane fade" id="pills-logs-notas">
+                                            <div class="d-flex justify-content-between mb-3">
+                                                <h5>Histórico de Alterações de Notas (Pilar 5)</h5>
+                                                <p class="text-muted small">Registo oficial de todas as mudanças de notas e justificações.</p>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-striped small bg-white shadow-sm rounded datatable-simple">
+                                                    <thead class="table-dark">
+                                                        <tr>
+                                                            <th>Data</th>
+                                                            <th>Estudante</th>
+                                                            <th>Disc.</th>
+                                                            <th>Tipo</th>
+                                                            <th>Ant.</th>
+                                                            <th>Novo</th>
+                                                            <th>Autor</th>
+                                                            <th>Motivo</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php if(!empty($data['log_notas'])): ?>
+                                                            <?php foreach($data['log_notas'] as $ln): ?>
+                                                                <tr>
+                                                                    <td><?= date('d/m/y H:i', strtotime($ln['data_alteracao'])) ?></td>
+                                                                    <td class="fw-bold"><?= htmlspecialchars($ln['aluno']) ?></td>
+                                                                    <td><?= htmlspecialchars($ln['disciplina']) ?></td>
+                                                                    <td><?= htmlspecialchars($ln['tipo']) ?></td>
+                                                                    <td class="text-danger"><?= $ln['valor_anterior'] ?></td>
+                                                                    <td class="text-success fw-bold"><?= $ln['valor_novo'] ?></td>
+                                                                    <td><?= htmlspecialchars($ln['autor']) ?></td>
+                                                                    <td class="text-muted italic"><?= htmlspecialchars($ln['motivo']) ?></td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        <?php else: ?>
+                                                            <tr><td colspan="8" class="text-center">Nenhum log de alteração disponível.</td></tr>
+                                                        <?php endif; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1502,8 +1596,22 @@
                                     <h6 class="fw-bold mb-2"><ion-icon name="alert-circle-outline"></ion-icon> Comprovativos
                                         Pendentes de Validação</h6>
                                     <div class="row g-2">
+                                        <?php if (!empty($data['atrasos_correcao'])): ?>
+                                            <div class="col-12">
+                                                <div class="alert alert-danger shadow-sm border-start border-5 border-danger fade show mb-4 d-flex align-items-center" role="alert">
+                                                    <ion-icon name="warning-outline" class="fs-1 me-3"></ion-icon>
+                                                    <div>
+                                                        <h5 class="alert-heading fw-bold mb-1">Atraso Crítico em Rectificações (Ponto 4)</h5>
+                                                        <p class="mb-0 small text-dark">
+                                                            Existem <strong><?= count($data['atrasos_correcao']) ?></strong> ordens de correção pendentes há mais de 48 horas. Recomendamos intervenção administrativa junto dos professores.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+
                                         <?php foreach ($pendentes as $pp): ?>
-                                            <div class="col-md-6">
+                                            <div class="col-md-3">
                                                 <div class="card border-warning border-opacity-50 shadow-sm">
                                                     <div class="card-body py-2 px-3">
                                                         <div class="d-flex justify-content-between align-items-start">
@@ -1557,7 +1665,8 @@
                                             <th>Valor</th>
                                             <th>Forma</th>
                                             <th>Status</th>
-                                            <th>Ações</th>
+                                            <th>Recibo</th>
+                                            <th class="text-end">Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1565,45 +1674,40 @@
                                             <tr class="<?= $p['status'] === 'Pendente' ? 'table-warning' : '' ?>">
                                                 <td><?= date('d/m/Y', strtotime($p['data_pagamento'] ?? $p['data_criacao'])) ?>
                                                 </td>
-                                                <td class="fw-bold"><?= htmlspecialchars($p['estudante_nome']) ?></td>
+                                                <td class="fw-bold"><?= htmlspecialchars($p['estudante_nome'] ?? 'N/A') ?></td>
                                                 <td><?= htmlspecialchars($p['descricao']) ?></td>
                                                 <td class="text-primary fw-bold">
                                                     <?= number_format($p['valor'], 0, ',', '.') ?> XOF</td>
+                                                <td><?= htmlspecialchars($p['forma_pagamento'] ?? 'Via Portal') ?></td>
                                                 <td>
-                                                    <?php if (!empty($p['forma_pagamento'])): ?>
-                                                        <?= htmlspecialchars($p['forma_pagamento']) ?>
-                                                    <?php elseif (!empty($p['metodo_pagamento'])): ?>
-                                                        <?= htmlspecialchars($p['metodo_pagamento']) ?>
-                                                    <?php else: ?>
-                                                        <span
-                                                            class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">Via
-                                                            Portal Aluno</span>
+                                                    <span class="badge <?= $p['status'] === 'Pago' ? 'bg-success' : ($p['status'] === 'Pendente' ? 'bg-warning text-dark' : 'bg-danger') ?>"><?= $p['status'] ?></span>
+                                                </td>
+                                                <td>
+                                                    <?php if ($p['status'] === 'Pago'): ?>
+                                                        <button class="btn btn-sm btn-dark" onclick="imprimirRecibo(<?= $p['id'] ?>)">
+                                                            <ion-icon name="print-outline"></ion-icon> Recibo
+                                                        </button>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td>
-                                                    <span
-                                                        class="badge bg-<?= $p['status'] === 'Pago' ? 'success' : ($p['status'] === 'Rejeitado' ? 'danger' : 'warning text-dark') ?>">
-                                                        <?= $p['status'] ?>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex gap-1">
+                                                <td class="text-end">
+                                                    <div class="btn-group">
                                                         <?php if (!empty($p['comprovativo_arquivo'])): ?>
-                                                            <a href="<?= URL_ROOT ?>/<?= $p['comprovativo_arquivo'] ?>"
-                                                                target="_blank" class="btn btn-xs btn-outline-primary py-0 px-1"
-                                                                title="Ver Comprovativo"><ion-icon
-                                                                    name="document-outline"></ion-icon></a>
+                                                            <a href="<?= URL_ROOT ?>/<?= $p['comprovativo_arquivo'] ?>" target="_blank" class="btn btn-sm btn-light" title="Ver Comprovativo">
+                                                                <ion-icon name="document-outline"></ion-icon>
+                                                            </a>
                                                         <?php endif; ?>
+                                                        
                                                         <?php if ($p['status'] === 'Pendente'): ?>
-                                                            <a href="<?= URL_ROOT ?>/admin/validarPagamento/<?= $p['id'] ?>"
-                                                                class="btn btn-xs btn-success py-0 px-1"
-                                                                title="Validar"><ion-icon
-                                                                    name="checkmark-circle-outline"></ion-icon></a>
-                                                            <a href="<?= URL_ROOT ?>/admin/rejeitarPagamento/<?= $p['id'] ?>"
-                                                                class="btn btn-xs btn-outline-danger py-0 px-1" title="Rejeitar"
-                                                                onclick="return confirm('Rejeitar este pagamento?')"><ion-icon
-                                                                    name="close-circle-outline"></ion-icon></a>
+                                                            <a href="<?= URL_ROOT ?>/admin/validarPagamento/<?= $p['id'] ?>" class="btn btn-sm btn-success" title="Aprovar">
+                                                                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                                            </a>
+                                                            <a href="<?= URL_ROOT ?>/admin/rejeitarPagamento/<?= $p['id'] ?>" class="btn btn-sm btn-outline-danger" title="Rejeitar" onclick="return confirm('Rejeitar este pagamento?')">
+                                                                <ion-icon name="close-circle-outline"></ion-icon>
+                                                            </a>
                                                         <?php endif; ?>
+                                                        <button class="btn btn-sm btn-light" onclick="viewPagamento(<?= $p['id'] ?>)">
+                                                            <ion-icon name="eye-outline"></ion-icon>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -4641,6 +4745,13 @@ function convocarComMotivo(eid, did) {
         function abrirModalDecisao(e, d) {
             $('#dec_est_id').val(e); $('#dec_disc_id').val(d);
             new bootstrap.Modal(document.getElementById('modalDecisao')).show();
+        }
+    </script>
+    <script>
+        function imprimirRecibo(id) {
+            const url = '<?= URL_ROOT ?>/admin/imprimirRecibo/' + id;
+            const win = window.open(url, '_blank', 'width=400,height=600');
+            win.focus();
         }
     </script>
 </body>

@@ -186,8 +186,19 @@ class Matricula {
         $reprovadoCount = 0;
         $missingCount = 0;
 
+        $frequenciaModel = new Frequencia();
         foreach ($grades as $g) {
             $media = $g['media_final'];
+            $disciplina_id = $g['disciplina_id'];
+            $turma_id = $current['turma_id'] ?? 0;
+
+            // --- POINT 1: REGRA DOS 25% FALTAS ---
+            $ratio = $frequenciaModel->getStudentAbsenceRatio($estudante_id, $disciplina_id, $turma_id);
+            if ($ratio > 0.25) {
+               $reprovadoCount++;
+               continue; // Bloqueado por faltas (Pilar Pedagógico)
+            }
+
             if ($media === null || $media == 0) {
                 $missingCount++;
             } elseif (round($media, 1) >= 11.5) {

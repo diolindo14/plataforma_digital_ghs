@@ -124,12 +124,44 @@ class Frequencia {
                     'grupo' => $r['grupo'] ?? 'G1',
                     'turma_id' => $r['turma_id'],
                     'disciplina_id' => $r['disciplina_id'],
-                    'P' => 0, 'F' => 0, 'J' => 0
+                    'P' => 0, 'F' => 0, 'J' => 0, 'I' => 0
                 ];
             }
             $report[$key][$r['status']] = $r['total'];
         }
         return $report;
+    }
+
+    public function getStudentAbsenceRatio($estudante_id, $disciplina_id, $turma_id) {
+        $stmtP = $this->db->prepare("SELECT COUNT(*) FROM frequencias WHERE estudante_id = ? AND disciplina_id = ? AND status = 'P'");
+        $stmtF = $this->db->prepare("SELECT COUNT(*) FROM frequencias WHERE estudante_id = ? AND disciplina_id = ? AND (status IN ('F', 'I'))");
+        
+        $stmtP->execute([$estudante_id, $disciplina_id]);
+        $presencas = (int)$stmtP->fetchColumn();
+        
+        $stmtF->execute([$estudante_id, $disciplina_id]);
+        $faltas = (int)$stmtF->fetchColumn();
+        
+        $totalClasses = $presencas + $faltas;
+        if ($totalClasses == 0) return 0;
+        
+        return $faltas / $totalClasses;
+    }
+
+    public function getIndisciplinaReport() {
+        $stmt = $this->db->prepare("
+            SELECT u.nome_completo as aluno, t.codigo as turma, d.nome as disciplina, COUNT(*) as total
+            FROM frequencias f
+            JOIN estudantes e ON f.estudante_id = e.id
+            JOIN utilizadores u ON e.utilizador_id = u.id
+            JOIN turmas t ON f.turma_id = t.id
+            JOIN disciplinas d ON f.disciplina_id = d.id
+            WHERE f.status = 'I'
+            GROUP BY f.estudante_id, f.turma_id, f.disciplina_id
+            ORDER BY total DESC
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getMissingSummaries() {
         $diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];

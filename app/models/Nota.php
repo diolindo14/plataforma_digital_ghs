@@ -60,6 +60,25 @@ class Nota {
                 $notaExist = $stmtCheck->fetch();
 
                 if ($notaExist) {
+                    // --- POINT 5: AUDITORIA DE NOTAS ---
+                    $stmtGetOld = $this->db->prepare("SELECT nota FROM notas WHERE id = :nid");
+                    $stmtGetOld->execute([':nid' => $notaExist['id']]);
+                    $oldVal = $stmtGetOld->fetchColumn();
+
+                    $stmtLog = $this->db->prepare("INSERT INTO logs_notas (nota_id, estudante_id, turma_id, disciplina_id, tipo_avaliacao_id, valor_anterior, valor_novo, alterado_por, motivo)
+                                                 VALUES (:nid, :eid, :tid, :did, :taid, :va, :vn, :lpor, :mot)");
+                    $stmtLog->execute([
+                        ':nid' => $notaExist['id'],
+                        ':eid' => $estudante_id,
+                        ':tid' => $turma_id,
+                        ':did' => $disciplina_id,
+                        ':taid' => $tipo_id,
+                        ':va' => $oldVal,
+                        ':vn' => $valor,
+                        ':lpor' => $professor_id,
+                        ':mot' => $data['motivo_correcao'] ?? 'Lançamento/Correção Professor'
+                    ]);
+
                     $stmtUpd = $this->db->prepare("UPDATE notas SET nota = :val, lancado_por = :lpor, data_atualizacao = NOW() WHERE id = :nid");
                     $stmtUpd->execute([':val' => $valor, ':lpor' => $professor_id, ':nid' => $notaExist['id']]);
                 } else {
@@ -359,5 +378,21 @@ class Nota {
             ':tid' => $nota['turma_id'],
             ':did' => $nota['disciplina_id']
         ]);
+    }
+
+    public function getLogsAtivos() {
+        $stmt = $this->db->prepare("
+            SELECT l.*, u.nome_completo as aluno, t.codigo as turma, d.nome as disciplina, ta.nome as tipo, p.nome_completo as autor
+            FROM logs_notas l
+            JOIN estudantes e ON l.estudante_id = e.id
+            JOIN utilizadores u ON e.utilizador_id = u.id
+            JOIN turmas t ON l.turma_id = t.id
+            JOIN disciplinas d ON l.disciplina_id = d.id
+            JOIN tipos_avaliacao ta ON l.tipo_avaliacao_id = ta.id
+            JOIN utilizadores p ON l.alterado_por = p.id
+            ORDER BY l.data_alteracao DESC LIMIT 100
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
