@@ -571,7 +571,7 @@ class Contestacao {
             JOIN utilizadores u_prof ON p.utilizador_id = u_prof.id
             JOIN estudantes e ON e.id = :eid
             JOIN utilizadores u_est ON e.utilizador_id = u_est.id
-            JOIN disciplinas d ON d.id = :did
+            JOIN disciplinas d ON d.id = pd.disciplina_id
             WHERE pd.turma_id = :tid AND pd.disciplina_id = :did
             LIMIT 1
         ");
