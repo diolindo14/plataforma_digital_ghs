@@ -167,6 +167,7 @@ class Nota {
             if (!isset($report[$key])) {
                 $report[$key] = [
                     'estudante' => $r['estudante_nome'],
+                    'estudante_id' => $r['estudante_id'],
                     'turma' => $r['turma_codigo'],
                     'disciplina' => $r['disciplina_nome'],
                     'turma_id' => $r['turma_id'],

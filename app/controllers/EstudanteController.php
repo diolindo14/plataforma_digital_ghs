@@ -484,10 +484,11 @@ class EstudanteController extends Controller {
     public function downloadRecibo($id) {
         $db = Database::getInstance();
         $stmt = $db->prepare("
-            SELECT p.*, u.nome_completo as estudante_nome, e.bi, u.id as utilizador_id
+            SELECT p.*, ue.nome_completo as estudante_nome, e.bi, ue.id as utilizador_id, ua.nome_completo as registado_por_nome
             FROM pagamentos p
             JOIN estudantes e ON p.estudante_id = e.id
-            JOIN utilizadores u ON e.utilizador_id = u.id
+            JOIN utilizadores ue ON e.utilizador_id = ue.id
+            LEFT JOIN utilizadores ua ON p.processado_por = ua.id
             WHERE p.id = :id AND p.status = 'Pago'
         ");
         $stmt->execute([':id' => $id]);

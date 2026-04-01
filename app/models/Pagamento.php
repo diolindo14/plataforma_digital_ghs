@@ -46,6 +46,7 @@ class Pagamento {
             $forma = $map[$data['metodo_pagamento']] ?? 'Dinheiro';
         }
 
+        if (!isset($data['estudante_id'])) return false;
         $stmt->bindValue(':estudante_id', $data['estudante_id']);
         $stmt->bindValue(':descricao', $data['tipo_pagamento'] ?? 'Pagamento Manual');
         $stmt->bindValue(':mes_referencia', $mes);
