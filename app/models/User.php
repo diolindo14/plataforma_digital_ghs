@@ -30,12 +30,16 @@ class User {
     }
 
     public function insertUser($nome, $email, $senha, $tipo, $status = 'pendente') {
-        $check = $this->findByEmail($email);
-        if ($check) return false;
+        // Se o email não for vazio, verificamos se já está em uso
+        if (!empty($email)) {
+            $check = $this->findByEmail($email);
+            if ($check) return false;
+        }
+        
         $hash = password_hash($senha, PASSWORD_DEFAULT);
         $stmt = $this->db->prepare("INSERT INTO utilizadores (nome_completo, email, senha, tipo, status) VALUES (:nome, :email, :senha, :tipo, :status)");
         $stmt->bindValue(':nome', $nome);
-        $stmt->bindValue(':email', $email);
+        $stmt->bindValue(':email', $email); // Pode ser vazio ou NULL
         $stmt->bindValue(':senha', $hash);
         $stmt->bindValue(':tipo', $tipo);
         $stmt->bindValue(':status', $status);
@@ -48,18 +52,27 @@ class User {
     public function updateUser($id, $data) {
         $fields = [];
         if (array_key_exists('nome_completo', $data)) $fields[] = "nome_completo = :nome";
-        if (array_key_exists('email', $data)) $fields[] = "email = :email";
+        if (array_key_exists('email', $data)) {
+            // Verificação de unicidade apenas se o email for alterado e não estiver vazio
+            if (!empty($data['email'])) {
+                $existing = $this->findByEmail($data['email']);
+                if ($existing && $existing['id'] != $id) return false;
+            }
+            $fields[] = "email = :email";
+        }
         if (array_key_exists('status', $data)) $fields[] = "status = :status";
         if (!empty($data['senha'])) $fields[] = "senha = :senha";
 
         if (empty($fields)) return true;
         $sql = "UPDATE utilizadores SET " . implode(', ', $fields) . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
+        
         if (array_key_exists('nome_completo', $data)) $stmt->bindValue(':nome', $data['nome_completo']);
         if (array_key_exists('email', $data)) $stmt->bindValue(':email', $data['email']);
         if (array_key_exists('status', $data)) $stmt->bindValue(':status', $data['status']);
         if (!empty($data['senha'])) $stmt->bindValue(':senha', password_hash($data['senha'], PASSWORD_DEFAULT));
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        
         return $stmt->execute();
     }
 

@@ -186,9 +186,9 @@ class AdminController extends Controller {
             
             if ($t) {
                 $matriculaModel->assignToTurma($id, $t['id']);
-                $_SESSION['flash_success'] = "Matrícula de <strong>{$m['nome_completo']}</strong> aprovada! Aluno alocado automaticamente à turma compatível.";
+                $_SESSION['flash_success'] = "Matrícula de {$m['nome_completo']} aprovada! Aluno alocado automaticamente à turma compatível.";
             } else {
-                $_SESSION['flash_success'] = "Matrícula de <strong>{$m['nome_completo']}</strong> aprovada! Alocação manual necessária.";
+                $_SESSION['flash_success'] = "Matrícula de {$m['nome_completo']} aprovada! Alocação manual necessária.";
             }
             
             // 📧 Notificação por Email ao aluno
@@ -210,25 +210,43 @@ class AdminController extends Controller {
     public function rejectMatricula($id) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();
-            $motivo = $_POST['motivo'] ?? '';
+            $motivo = $_POST['motivo'] ?? 'Documentação incompleta';
             
-            // Busca dados do aluno para notificação
             $db = Database::getInstance();
-            $stmt = $db->prepare("SELECT u.email, u.nome_completo FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+            // Busca dados para notificação antes de apagar
+            $stmt = $db->prepare("SELECT u.email, u.nome_completo, m.tipo, e.id as estudante_id, u.id as user_id 
+                                 FROM matriculas m 
+                                 JOIN estudantes e ON m.estudante_id = e.id 
+                                 JOIN utilizadores u ON e.utilizador_id = u.id 
+                                 WHERE m.id = :id");
             $stmt->execute([':id' => $id]);
-            $aluno = $stmt->fetch();
+            $m = $stmt->fetch();
 
-            if ($this->model('Matricula')->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo)) {
-                $this->logActivity('Rejeitar Matrícula', ['matricula_id' => $id, 'motivo' => $motivo]);
-                
-                // 📧 Notificação por Email ao aluno
-                if (!empty($aluno['email'])) {
-                    Mailer::sendMatriculaRejeitada($aluno['email'], $aluno['nome_completo'] ?? 'Estudante', $motivo);
+            if ($m) {
+                // Notifica o aluno sobre a rejeição antes de remover
+                if (!empty($m['email'])) {
+                    Mailer::sendMatriculaRejeitada($m['email'], $m['nome_completo'] ?? 'Candidato', $motivo);
                 }
-                
-                $_SESSION['flash_success'] = "Matrícula rejeitada. Email enviado ao aluno.";
+
+                // REMOÇÃO FÍSICA: Não armazenar se for rejeitada (Pilar 1)
+                $db->prepare("DELETE FROM documentos_matricula WHERE matricula_id = ?")->execute([$id]);
+                $db->prepare("DELETE FROM matriculas WHERE id = ?")->execute([$id]);
+
+                // Se era um "Novo Ingresso", limpamos o perfil temporário também
+                if ($m['tipo'] === 'Novo Ingresso') {
+                    // Verifica se tem outras matrículas (segurança)
+                    $outras = $db->prepare("SELECT COUNT(*) FROM matriculas WHERE estudante_id = ?");
+                    $outras->execute([$m['estudante_id']]);
+                    if ($outras->fetchColumn() == 0) {
+                        $db->prepare("DELETE FROM estudantes WHERE id = ?")->execute([$m['estudante_id']]);
+                        $db->prepare("DELETE FROM utilizadores WHERE id = ? AND tipo = 'aluno'")->execute([$m['user_id']]);
+                    }
+                }
+
+                $this->logActivity('Rejeitar e Apagar Matrícula', ['id' => $id, 'aluno' => $m['nome_completo']]);
+                $_SESSION['flash_success'] = "Matrícula rejeitada e registo removido com sucesso.";
             } else {
-                $_SESSION['flash_error'] = "Erro ao rejeitar matrícula.";
+                $_SESSION['flash_error'] = "Registo não encontrado.";
             }
         }
         header('Location: ' . URL_ROOT . '/admin#pane-matriculas');

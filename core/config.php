@@ -23,5 +23,6 @@ define('YEAR_END_DATE', '2026-07-22');
 define('TOTAL_MONTHS_YEAR', 10);
 define('PAYMENT_DUE_DAY', 15);
 
-// Extensões de arquivos permitidas para upload
+// Configurações de arquivos
 define('ALLOWED_EXTENSIONS', ['pdf', 'jpg', 'jpeg', 'png']);
+define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB em bytes (Pilar 3)

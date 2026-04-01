@@ -11,8 +11,9 @@ class FileHelper {
             return ['success' => false, 'message' => 'Nenhum ficheiro enviado ou erro no upload.'];
         }
 
-        if ($file['size'] > MAX_FILE_SIZE) {
-            return ['success' => false, 'message' => 'O ficheiro excede o tamanho máximo de 5MB.'];
+        $maxSize = defined('MAX_FILE_SIZE') ? MAX_FILE_SIZE : 5242880; // Fallback 5MB (Pilar 3)
+        if ($file['size'] > $maxSize) {
+            return ['success' => false, 'message' => 'O ficheiro excede o tamanho máximo permitido (5MB).'];
         }
 
         $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
