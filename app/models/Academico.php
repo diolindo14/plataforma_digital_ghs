@@ -564,15 +564,14 @@ class Academico {
             // Inserir ou atualizar (ON DUPLICATE KEY)
             $sql = "
                 INSERT INTO certificados_merito 
-                    (estudante_id, semestre, ano_letivo, posicao, media, nivel_nome, emitido_por, data_emissao, status)
+                    (estudante_id, semestre, ano_letivo, posicao, media, nivel_nome, emitido_por, data_emissao)
                 VALUES 
-                    (:eid, :semestre, :ano, :posicao, :media, :nivel, :emitido_por, NOW(), 'Publicado')
+                    (:eid, :semestre, :ano, :posicao, :media, :nivel, :emitido_por, NOW())
                 ON DUPLICATE KEY UPDATE
                     posicao = VALUES(posicao),
                     media = VALUES(media),
                     nivel_nome = VALUES(nivel_nome),
                     emitido_por = VALUES(emitido_por),
-                    status = 'Publicado',
                     data_emissao = NOW()
             ";
             $stmt = $this->db->prepare($sql);
