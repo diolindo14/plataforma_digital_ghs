@@ -1,0 +1,24 @@
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+estudante_id	int(11)	NO	MUL	NULL	
+turma_id	int(11)	NO	MUL	NULL	
+disciplina_id	int(11)	NO	MUL	NULL	
+status	enum('Pendente','Respondido','Resolvido','Impasse','Em_Mediacao','Aguardando_Comparecimento','Encerrado','Concordado','Reclamado')	NO	MUL	Pendente	
+comentario	text	YES		NULL	
+resposta_professor	text	YES		NULL	
+contra_argumentacao	text	YES		NULL	
+data_resposta	datetime	YES		current_timestamp()	
+data_abertura	datetime	YES		NULL	
+data_impasse	datetime	YES		NULL	
+data_escalacao	datetime	YES		NULL	
+data_reuniao	date	YES		NULL	
+hora_reuniao	time	YES		NULL	
+local_reuniao	varchar(150)	YES		NULL	
+motivo_convocacao	text	YES		NULL	
+decisao_final	text	YES		NULL	
+mediado_por	int(11)	YES		NULL	
+presenca_aluno	tinyint(1)	YES		NULL	
+presenca_professor	tinyint(1)	YES		NULL	
+data_decisao	datetime	YES		NULL	
+contador_reclamacoes	int(11)	YES		0	
+bloqueado_admin	tinyint(1)	YES		0	

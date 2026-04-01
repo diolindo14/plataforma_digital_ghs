@@ -107,6 +107,9 @@
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                 <a class="nav-link active" id="tab-home" data-bs-toggle="pill" href="#pane-home"><ion-icon name="grid-outline"></ion-icon> Dashboard Resumo</a>
                 <a class="nav-link" id="tab-notas" data-bs-toggle="pill" href="#pane-notas"><ion-icon name="create-outline"></ion-icon> Lançamento de Notas</a>
+                <a class="nav-link text-success fw-bold" id="tab-relatorios" data-bs-toggle="pill" href="#pane-relatorios">
+                    <ion-icon name="document-text-outline"></ion-icon> Pautas & Relatórios
+                </a>
                 <a class="nav-link" id="tab-chamada" data-bs-toggle="pill" href="#pane-chamada"><ion-icon name="people-outline"></ion-icon> Frequência / Chamada</a>
                 <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" href="#pane-materiais"><ion-icon name="cloud-upload-outline"></ion-icon> Upload de Materiais</a>
                 <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" href="#pane-calendario"><ion-icon name="calendar-outline"></ion-icon> Calendário Acadêmico</a>
@@ -273,6 +276,97 @@
                 </div>
             </div>
 
+            <!-- Relatórios Acadêmicos -->
+            <div class="tab-pane fade" id="pane-relatorios">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="fw-bold mb-0">Centro de Relatórios & Pautas</h4>
+                        <p class="text-muted small mb-0">Consolidado Geral de Aproveitamento (AC + Exames)</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-dark d-flex align-items-center gap-2" onclick="printSection('relatorios-print')">
+                            <ion-icon name="print-outline"></ion-icon> Imprimir Pauta Oficial
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden" id="relatorios-print">
+                    <div class="card-header bg-white py-3 border-bottom border-light d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-success bg-opacity-10 p-2 rounded-3 text-success">
+                                <ion-icon name="stats-chart" class="fs-4"></ion-icon>
+                            </div>
+                            <h5 class="fw-bold mb-0">Pauta Geral de Aproveitamento</h5>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 datatable-export">
+                                <thead class="table-light text-muted small">
+                                    <tr class="text-uppercase" style="font-size: 10px; letter-spacing: 0.05em;">
+                                        <th class="ps-4">Código / Turma</th>
+                                        <th>Disciplina</th>
+                                        <th>Estudante</th>
+                                        <th class="text-center">Total AC<br><small>(20 pts)</small></th>
+                                        <th class="text-center">Exame<br><small>(20 pts)</small></th>
+                                        <th class="text-center bg-dark text-white">Média Final<br><small>(20 pts)</small></th>
+                                        <th class="text-center">Situação Final</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if(empty($data['relatorio_notas'])): ?>
+                                        <tr><td colspan="7" class="text-center py-5 text-muted">Ainda não há notas lançadas para as suas turmas.</td></tr>
+                                    <?php else: ?>
+                                        <?php foreach($data['relatorio_notas'] as $r): ?>
+                                            <tr>
+                                                <td class="ps-4 fw-bold">
+                                                    <span class="badge bg-light text-dark border"><?= $r['turma'] ?></span>
+                                                </td>
+                                                <td class="small fw-semibold"><?= $r['disciplina'] ?></td>
+                                                <td>
+                                                    <div class="fw-bold text-dark"><?= $this->e($r['estudante']) ?></div>
+                                                    <div class="text-muted" style="font-size: 0.7rem;">ID: #<?= $r['estudante_id'] ?></div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="fw-bold <?= $r['total_ac'] < 10 ? 'text-danger' : 'text-success' ?>">
+                                                        <?= number_format($r['total_ac'], 1) ?>
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="fw-bold">
+                                                        <?= ($r['notas'][5] !== null) ? number_format($r['notas'][5], 1) : '<span class="text-muted">---</span>' ?>
+                                                    </span>
+                                                </td>
+                                                <td class="text-center bg-light fw-bold fs-5">
+                                                    <?php if($r['media_final'] !== null): ?>
+                                                        <span class="<?= $r['media_final'] < 10 ? 'text-danger' : 'text-success' ?>">
+                                                            <?= number_format($r['media_final'], 1) ?>
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">---</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <?php if($r['media_final'] === null): ?>
+                                                        <span class="badge bg-secondary">Pendente</span>
+                                                    <?php elseif($r['media_final'] >= 10): ?>
+                                                        <span class="badge bg-success">Aprovado</span>
+                                                    <?php elseif($r['media_final'] >= 7): ?>
+                                                        <span class="badge bg-warning text-dark">Recurso</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-danger">Excluído</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Notas -->
             <div class="tab-pane fade" id="pane-notas">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -300,9 +394,9 @@
                                     <tr>
                                         <th>Matrícula</th>
                                         <th>Nome do Estudante</th>
-                                        <th class="text-center" style="width: 80px;">TPC<br><small>(Máx 2)</small></th>
-                                        <th class="text-center" style="width: 80px;">AP<br><small>(Máx 3)</small></th>
-                                        <th class="text-center" style="width: 80px;">TPI<br><small>(Máx 5)</small></th>
+                                        <th class="text-center" style="width: 80px;">Trabalho<br><small>(TPC - 2)</small></th>
+                                        <th class="text-center" style="width: 80px;">Avaliação<br><small>(AP - 3)</small></th>
+                                        <th class="text-center" style="width: 80px;">Trabalho<br><small>(TPI - 5)</small></th>
                                         <th class="text-center" style="width: 80px;">CE<br><small>(Máx 10)</small></th>
                                         <th class="text-center text-white bg-success">Total AC<br><small>(20 pts)</small></th>
                                         <th class="text-center border-start border-primary" style="width: 90px;">Exame Semestral</th>

@@ -241,6 +241,10 @@
                         href="javascript:void(0)" role="tab">
                         <ion-icon name="journal-outline"></ion-icon> Acompanhamento Pedagógico
                     </a>
+                    <a class="nav-link text-success fw-bold" id="tab-relatorios" data-bs-toggle="pill" data-bs-target="#pane-relatorios"
+                        href="javascript:void(0)" role="tab">
+                        <ion-icon name="document-text-outline"></ion-icon> Pautas & Relatórios
+                    </a>
                     <a class="nav-link" id="tab-mediacao" data-bs-toggle="pill" data-bs-target="#pane-mediacao"
                         href="javascript:void(0)" role="tab">
                         <ion-icon name="scale-outline"></ion-icon> Mediação GHS
@@ -1611,6 +1615,97 @@
                     </div>
                 </div>
 
+
+                <!-- Pautas & Relatórios de Aproveitamento -->
+                <div class="tab-pane fade" id="pane-relatorios">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-0">Relatórios Académicos & Pautas</h4>
+                            <p class="text-muted small mb-0">Visão consolidada de aproveitamento (AC + Exames) — Todos os Cursos</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-dark d-flex align-items-center gap-2" onclick="printSection('admin-relatorios-print')">
+                                <ion-icon name="print-outline"></ion-icon> Imprimir Pauta Geral
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0 rounded-4 overflow-hidden" id="admin-relatorios-print">
+                        <div class="card-header bg-white py-3 border-bottom border-light">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-success bg-opacity-10 p-2 rounded-3 text-success">
+                                    <ion-icon name="podium-outline" class="fs-4"></ion-icon>
+                                </div>
+                                <h5 class="fw-bold mb-0">Pauta de Aproveitamento Semestral</h5>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0 datatable-export">
+                                    <thead class="table-light text-muted small">
+                                        <tr class="text-uppercase" style="font-size: 10px; letter-spacing: 0.05em;">
+                                            <th class="ps-4">Código / Turma</th>
+                                            <th>Disciplina</th>
+                                            <th>Estudante</th>
+                                            <th class="text-center">Aval. Contínua<br><small>(Total 20)</small></th>
+                                            <th class="text-center">Exame<br><small>(Total 20)</small></th>
+                                            <th class="text-center bg-dark text-white">Média Final<br><small>(20 pts)</small></th>
+                                            <th class="text-center">Situação Final</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if(empty($data['notas_report'])): ?>
+                                            <tr><td colspan="7" class="text-center py-5 text-muted">Ainda não há dados de aproveitamento registados.</td></tr>
+                                        <?php else: ?>
+                                            <?php foreach($data['notas_report'] as $r): ?>
+                                                <tr>
+                                                    <td class="ps-4 fw-bold">
+                                                        <span class="badge bg-light text-dark border"><?= $r['turma'] ?></span>
+                                                    </td>
+                                                    <td class="small fw-semibold"><?= $r['disciplina'] ?></td>
+                                                    <td>
+                                                        <div class="fw-bold text-dark"><?= htmlspecialchars($r['estudante']) ?></div>
+                                                        <div class="text-muted" style="font-size: 0.7rem;">ID: #<?= $r['estudante_id'] ?></div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <span class="fw-bold <?= $r['total_ac'] < 10 ? 'text-danger' : 'text-success' ?>">
+                                                            <?= number_format($r['total_ac'], 1) ?>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <span class="fw-bold">
+                                                            <?= ($r['notas'][5] !== null) ? number_format($r['notas'][5], 1) : '<span class="text-muted">---</span>' ?>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-center bg-light fw-bold fs-5">
+                                                        <?php if($r['media_final'] !== null): ?>
+                                                            <span class="<?= $r['media_final'] < 10 ? 'text-danger' : 'text-success' ?>">
+                                                                <?= number_format($r['media_final'], 1) ?>
+                                                            </span>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">---</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php if($r['media_final'] === null): ?>
+                                                            <span class="badge bg-secondary">Pendente</span>
+                                                        <?php elseif($r['media_final'] >= 10): ?>
+                                                            <span class="badge bg-success">Aprovado</span>
+                                                        <?php elseif($r['media_final'] >= 7): ?>
+                                                            <span class="badge bg-warning text-dark">Recurso</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-danger">Excluído</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Acompanhamento Pedagógico -->
                 <div class="tab-pane fade" id="pane-pedagogico">

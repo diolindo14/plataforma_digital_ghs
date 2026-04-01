@@ -356,15 +356,6 @@ class Contestacao {
     // ────────────────────────────────────────────────────────────
     public function registrarDecisao($estudante_id, $disciplina_id, $admin_user_id, $decisao, $presenca_aluno, $presenca_professor) {
         $stmt = $this->db->prepare("
-            SELECT id, status, estudante_user_id_view.*
-            FROM concordancia_notas cn
-            JOIN estudantes e ON cn.estudante_id = e.id
-            WHERE cn.estudante_id = :eid AND cn.disciplina_id = :did
-              AND cn.status = 'Aguardando_Comparecimento'
-            ORDER BY cn.data_escalacao DESC LIMIT 1
-        ");
-        // Query simplificada
-        $stmt = $this->db->prepare("
             SELECT cn.id, cn.status FROM concordancia_notas cn
             WHERE cn.estudante_id = :eid AND cn.disciplina_id = :did
               AND cn.status = 'Aguardando_Comparecimento'

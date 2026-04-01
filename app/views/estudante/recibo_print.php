@@ -2,117 +2,361 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <title>Recibo de Pagamento - GHS</title>
+    <title>Recibo GHS - #<?= str_pad($data['pagamento']['id'] ?? 0, 6, '0', STR_PAD_LEFT) ?></title>
     <style>
-        @page { size: 14.8cm 10.5cm; margin: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 15mm; box-sizing: border-box; display: flex; justify-content: center; }
-        .receipt-box { width: 14cm; min-height: 9.5cm; background: white; padding: 12px; box-sizing: border-box; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; flex-direction: column; position: relative; }
-        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-bottom: 10px; }
-        .logo-container { display: flex; align-items: center; gap: 8px; }
-        .logo-img { width: 35px; height: 35px; border-radius: 6px; border: 1px solid #10b981; object-fit: cover; }
-        .school-name { font-size: 14px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.5px; }
-        .info { margin-bottom: 10px; line-height: 1.3; font-size: 9px; }
-        .info p { margin: 2px 0; }
-        .footer { margin-top: auto; text-align: center; font-size: 8px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-        th { background-color: #f1f5f9; padding: 4px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 8px; text-transform: uppercase; color: #64748b; }
-        td { padding: 4px; text-align: left; font-size: 9px; border-bottom: 1px dashed #e2e8f0; }
-        .total-row td { background-color: #f8fafc; font-size: 12px; font-weight: 800; color: #10b981; border: none; }
-        
-        @media print { 
-            .no-print { display: none; } 
-            body { background: white; padding: 10mm; margin: 0; display: block; } 
-            .receipt-box { border: none; padding: 0; width: 100%; height: 100%; border-radius: 0; } 
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        /* ── Print Settings ────────────────────────────────────── */
+        @page { 
+            size: A4 portrait; 
+            margin: 0; /* Removes browser headers/footers */
         }
         
-        .btn-close-window { 
-            position: absolute; top: -40px; right: 0; padding: 8px 15px; 
-            background: #ef4444; color: white; border: none; border-radius: 6px; 
-            cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.2s;
-            display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; 
+            color: #1e293b; 
+            margin: 0; 
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
-        .btn-close-window:hover { background: #dc2626; }
+
+        /* ── Receipt Layout ────────────────────────────────────── */
+        .receipt-container {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 50px;
+            position: relative;
+        }
+
+        .receipt-card {
+            background: #ffffff;
+            width: 100%;
+            height: auto;
+            min-height: 12cm; /* Fits comfortably in A4 */
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Decorative Elements ────────────────────────────────── */
+        .receipt-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+            border-radius: 16px 16px 0 0;
+        }
+
+        /* ── Header ────────────────────────────────────────────── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #10b981;
+        }
+
+        .brand-info h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-info p {
+            margin: 0;
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .receipt-title {
+            text-align: right;
+        }
+
+        .receipt-title h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 900;
+            color: #10b981;
+            line-height: 1;
+        }
+
+        .receipt-title span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        /* ── Information Grid ──────────────────────────────────── */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .info-section h4 {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0 0 10px 0;
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #64748b;
+            font-weight: 500;
+            width: 80px;
+        }
+
+        .info-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        /* ── Table ─────────────────────────────────────────────── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 15px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        td {
+            padding: 18px 15px;
+            font-size: 14px;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .total-row td {
+            background: #f8fafc;
+            border-bottom: none;
+            padding: 25px 15px;
+        }
+
+        .total-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            text-align: right;
+        }
+
+        .total-amount {
+            font-size: 24px;
+            font-weight: 800;
+            color: #10b981;
+            text-align: right;
+        }
+
+        /* ── Footer ────────────────────────────────────────────── */
+        .receipt-footer {
+            margin-top: auto;
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .legal-notice {
+            font-size: 10px;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .copyright {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            margin-top: 10px;
+        }
+
+        /* ── Controls ──────────────────────────────────────────── */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-print { background: #10b981; color: white; }
+        .btn-print:hover { background: #059669; transform: translateY(-1px); }
+
+        .btn-back { background: #64748b; color: white; }
+        .btn-back:hover { background: #475569; transform: translateY(-1px); }
+
+        /* ── Media Queries ─────────────────────────────────────── */
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .receipt-container { margin: 10mm auto; max-width: 100%; }
+            .receipt-card { box-shadow: none; border: none; padding: 15mm; }
+            .controls { display: none !important; }
+            .receipt-card::before { left: 15mm; right: 15mm; }
+        }
     </style>
 </head>
 <body onload="window.print()">
-    <div style="position: relative;">
-        <button class="btn-close-window no-print" onclick="fecharOuVoltar()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            Fechar Janela
-        </button>
 
-        <div class="receipt-box">
+    <div class="controls">
+        <button class="btn btn-print" onclick="window.print()">Imprimir Recibo</button>
+        <button class="btn btn-back" onclick="fecharOuVoltar()">X</button>
+    </div>
+
+    <div class="receipt-container">
+        <div class="receipt-card">
             <div class="header">
-                <div class="logo-container">
-                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo Escola" class="logo-img">
-                    <div class="school-name">Green Hard & Softh</div>
+                <div class="brand">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="GHS" class="logo-img">
+                    <div class="brand-info">
+                        <h2>GREEN HARD & SOFTH</h2>
+                        <p>Plataforma de Gestão Digital Educacional</p>
+                    </div>
                 </div>
-                <div style="text-align: right; display: flex; flex-direction: column; justify-content: center;">
-                    <h1 style="margin:0; font-size: 16px; color: #0f172a;">RECIBO</h1>
-                    <p style="margin:2px 0 0 0; color: #64748b; font-weight: 600; font-size: 9px;">Ref: #<?= str_pad($data['pagamento']['id'] ?? 0, 6, '0', STR_PAD_LEFT) ?></p>
+                <div class="receipt-title">
+                    <h1>RECIBO</h1>
+                    <span>#<?= str_pad($data['pagamento']['id'] ?? 0, 6, '0', STR_PAD_LEFT) ?></span>
                 </div>
             </div>
 
-            <div class="info">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div>
-                        <p style="color: #64748b; font-size: 8px; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">DADOS DO ALUNO</p>
-                        <p><strong>Nome:</strong> <?= htmlspecialchars($data['pagamento']['estudante_nome'] ?? $_SESSION['user_name'] ?? 'N/A') ?></p>
-                        <p><strong>BI:</strong> <?= htmlspecialchars($data['pagamento']['bi'] ?? 'N/A') ?></p>
+            <div class="info-grid">
+                <div class="info-section">
+                    <h4>Identificação do Aluno</h4>
+                    <div class="info-item">
+                        <span class="info-label">Nome:</span>
+                        <span class="info-value"><?= htmlspecialchars($data['pagamento']['estudante_nome'] ?? 'Documento Interno') ?></span>
                     </div>
-                    <div style="text-align: right;">
-                        <p style="color: #64748b; font-size: 8px; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">DETALHES DA EMISSÃO</p>
-                        <p><strong>Emitido em:</strong> <?= date('d/m/Y H:i') ?></p>
-                        <p><strong>Operador:</strong> Sistema Digital GHS</p>
+                    <div class="info-item">
+                        <span class="info-label">Documento:</span>
+                        <span class="info-value">BI / ID N.º <?= htmlspecialchars($data['pagamento']['bi'] ?? '---') ?></span>
                     </div>
                 </div>
-                
-                <hr style="border: 0; border-top: 1px dotted #cbd5e1; margin: 8px 0;">
-                
-                <p style="margin-bottom: 6px;"><strong>Período Referente:</strong> <?php 
-                    $m = $data['pagamento']['mes_referencia'] ?? null;
-                    if ($m) {
-                        if (is_numeric($m)) {
-                            $meses = [1=>'Janeiro', 2=>'Fevereiro', 3=>'Março', 4=>'Abril', 5=>'Maio', 6=>'Junho', 7=>'Julho', 8=>'Agosto', 9=>'Setembro', 10=>'Outubro', 11=>'Novembro', 12=>'Dezembro'];
-                            echo $meses[(int)$m] ?? $m;
-                        } else {
-                            echo htmlspecialchars($m);
-                        }
-                    } else {
-                        echo date('F', strtotime($data['pagamento']['data_pagamento'] ?? $data['pagamento']['data_criacao'] ?? 'now'));
-                    }
-                    echo ' / ' . htmlspecialchars($data['pagamento']['ano_letivo'] ?? date('Y'));
-                ?></p>
+                <div class="info-section" style="border-left: 1px solid #e2e8f0; padding-left: 40px;">
+                    <h4>Dados Financeiros</h4>
+                    <div class="info-item">
+                        <span class="info-label">Data:</span>
+                        <span class="info-value"><?= date('d/m/Y H:i', strtotime($data['pagamento']['data_pagamento'] ?? 'now')) ?></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Período:</span>
+                        <span class="info-value"><?php 
+                            $m = $data['pagamento']['mes_referencia'] ?? null;
+                            if ($m) {
+                                if (is_numeric($m)) {
+                                    $meses = [1=>'Janeiro', 2=>'Fevereiro', 3=>'Março', 4=>'Abril', 5=>'Maio', 6=>'Junho', 7=>'Julho', 8=>'Agosto', 9=>'Setembro', 10=>'Outubro', 11=>'Novembro', 12=>'Dezembro'];
+                                    echo $meses[(int)$m] ?? $m;
+                                } else { echo htmlspecialchars($m); }
+                            } else { echo date('F'); }
+                            echo ' / ' . htmlspecialchars($data['pagamento']['ano_letivo'] ?? date('Y'));
+                        ?></span>
+                    </div>
+                </div>
             </div>
 
             <table>
                 <thead>
                     <tr>
-                        <th>Descrição dos Serviços / Taxas</th>
-                        <th style="text-align: right;">Valor (XOF)</th>
+                        <th width="70%">Descrição da Transação / Servico</th>
+                        <th style="text-align: right;">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="font-weight: 600; font-size: 10px;"><?= htmlspecialchars($data['pagamento']['descricao'] ?? 'N/A') ?></td>
-                        <td style="text-align: right; font-weight: 600;"><?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?></td>
+                        <td>
+                            <div style="font-weight: 700; color: #1e293b;"><?= htmlspecialchars($data['pagamento']['descricao'] ?? 'Serviço Académico') ?></div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Pagamento processado via Sistema Digital de Gestão GHS.</div>
+                        </td>
+                        <td style="text-align: right; font-weight: 700;">
+                            <?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?> XOF
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr class="total-row">
-                        <td style="text-align: right; font-weight: 700;">TOTAL PAGO:</td>
-                        <td style="text-align: right;"><?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?> XOF</td>
+                        <td class="total-label">TOTAL LIQUIDADO</td>
+                        <td class="total-amount"><?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?> XOF</td>
                     </tr>
                 </tfoot>
             </table>
 
-            <div style="margin-top: 10px; padding: 6px; background-color: #f8fafc; border-radius: 4px; border-left: 3px solid #10b981;">
-                <p style="margin: 0; font-size: 7px; color: #475569;"><strong>Obs:</strong> Pagamento validado digitalmente. Serve como prova oficial de quitação.</p>
-            </div>
-
-            <div class="footer">
-                <p style="margin-bottom: 2px;">Este documento foi gerado eletronicamente e é válido sem assinatura manuscrita.</p>
-                <p style="font-weight: 700;">&copy; <?= date('Y') ?> Green Hard & Softh - O futuro é Hoje</p>
+            <div class="receipt-footer">
+                <div class="status-badge">ORDEM DE PAGAMENTO VALIDADA</div>
+                <p class="legal-notice">
+                    Este recibo é gerado automaticamente pelo Sistema Digital GHS.<br>
+                    Constitui prova oficial de quitação financeira para os fins devidos na instituição.
+                </p>
+                <p class="copyright">&copy; <?= date('Y') ?> Green Hard & Soft - O Futuro é Hoje</p>
             </div>
         </div>
     </div>
@@ -124,10 +368,6 @@
             } else {
                 window.history.back();
             }
-            // Fallback para fechar se ainda estiver aberto (pode ser bloqueado pelo browser)
-            setTimeout(function() {
-                if(!window.closed) window.location.href = '<?= URL_ROOT ?>/estudante';
-            }, 300);
         }
     </script>
 </body>

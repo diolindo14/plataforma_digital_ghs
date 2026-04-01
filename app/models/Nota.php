@@ -125,9 +125,9 @@ class Nota {
         return $packed;
     }
 
-    public function getRelatorioGeral() {
+    public function getRelatorioGeral($professor_id = null) {
         // Query to get all grades with student, turma and discipline info
-        $stmt = $this->db->prepare("
+        $sql = "
             SELECT 
                 u.nome_completo as estudante_nome,
                 t.codigo as turma_codigo,
@@ -144,10 +144,21 @@ class Nota {
             JOIN estudantes e ON n.estudante_id = e.id
             JOIN utilizadores u ON e.utilizador_id = u.id
             JOIN turmas t ON a.turma_id = t.id
-            JOIN disciplinas d ON a.disciplina_id = d.id
-            ORDER BY t.codigo, d.nome, u.nome_completo
-        ");
-        $stmt->execute();
+            JOIN disciplinas d ON a.disciplina_id = d.id";
+
+        if ($professor_id) {
+            $sql .= " JOIN professor_disciplina pd ON d.id = pd.disciplina_id AND t.id = pd.turma_id 
+                      WHERE pd.professor_id = :pid";
+        }
+
+        $sql .= " ORDER BY t.codigo, d.nome, u.nome_completo";
+
+        $stmt = $this->db->prepare($sql);
+        if ($professor_id) {
+            $stmt->execute([':pid' => $professor_id]);
+        } else {
+            $stmt->execute();
+        }
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $report = [];
