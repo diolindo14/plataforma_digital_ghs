@@ -71,6 +71,18 @@ class Nota {
                 ':resp' => $data['resposta_professor'] ?? null
             ]);
 
+            // Se o professor alterou/lançou nota e o estado não é Reclamado nem Respondido, reseta para que a Acção/Feedback do aluno apareça novamente.
+            $stmtReset = $this->db->prepare("
+                UPDATE concordancia_notas 
+                SET status = 'Pendente'
+                WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status IN ('Concordado', 'Resolvido')
+            ");
+            $stmtReset->execute([
+                ':eid' => $estudante_id, 
+                ':tid' => $turma_id, 
+                ':did' => $disciplina_id
+            ]);
+
             $this->db->commit();
             return true;
         } catch (Exception $e) {
