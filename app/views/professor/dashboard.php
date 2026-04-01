@@ -227,6 +227,28 @@
                                     <button class="btn btn-sm btn-dark fw-bold rounded-pill" onclick="$('#tab-reclamacoes').tab('show');">Ir para Centro de Contestações</button>
                                 </div>
                             </div>
+                        <?php elseif ($h['status'] === 'Aguardando_Correcao'): ?>
+                            <div class="alert alert-warning shadow-sm border-0 border-start border-4 border-warning rounded-4 mb-4 p-4" role="alert">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
+                                        <ion-icon name="alert-circle" class="fs-2"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="fw-bold mb-1 text-dark">⚠️ Ordem de Rectificação de Notas</h4>
+                                        <p class="mb-0 text-muted">A Administração Académica deliberou a favor da reclamação do aluno <strong><?= htmlspecialchars($h['estudante_nome']) ?></strong>.</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-50 p-3 rounded-4 border mb-3">
+                                    <small class="fw-bold text-muted text-uppercase small d-block mb-1">Ata da Decisão:</small>
+                                    <p class="mb-0 small italic">"<?= nl2br(htmlspecialchars($h['decisao_final'])) ?>"</p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-danger rounded-pill px-3 py-2">PENDENTE DE EXECUÇÃO</span>
+                                    <button class="btn btn-warning fw-bold rounded-pill px-4" onclick="switchClass('<?= $h['turma_id'] ?>|<?= $h['disciplina_id'] ?>'); $('#tab-notas').tab('show');">
+                                        <ion-icon name="create-outline"></ion-icon> Ir Lançar Correção
+                                    </button>
+                                </div>
+                            </div>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -969,7 +991,35 @@
                             </div>
                         </div>
 
-                        <!-- 📋 ALERTAS DE CONVOCATÓRIA (Mediação Profissional) -->
+                        <!-- 🚨 ALERTAS DE CORRECÇÃO OBRIGATÓRIA -->
+                        <?php if (!empty($data['contestacoes_historico'])): ?>
+                            <?php foreach ($data['contestacoes_historico'] as $h): ?>
+                                <?php if ($h['status'] === 'Aguardando_Correcao'): ?>
+                                    <div class="alert alert-danger border-0 border-start border-4 border-danger shadow-sm rounded-4 mb-4 p-4">
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger">
+                                                <ion-icon name="alert-circle" class="fs-2"></ion-icon>
+                                            </div>
+                                            <div>
+                                                <h5 class="fw-bold mb-0 text-dark">Ordem Administrativa: Rectificação de Notas</h5>
+                                                <span class="small text-muted">A administração decidiu a favor do aluno <strong><?= htmlspecialchars($h['estudante_nome']) ?></strong>. Proceda à correcção.</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 p-3 bg-white bg-opacity-50 rounded-4 border">
+                                            <small class="fw-bold text-danger text-uppercase small d-block mb-1">Fundamentação da Decisão:</small>
+                                            <p class="mb-0 small italic">"<?= nl2br(htmlspecialchars($h['decisao_final'])) ?>"</p>
+                                        </div>
+                                        <div class="mt-3 text-end">
+                                            <a href="#pane-notas" class="btn btn-sm btn-danger fw-bold rounded-pill px-4" onclick="switchClass('<?= $h['turma_id'] ?>|<?= $h['disciplina_id'] ?>'); $('#tab-notas').tab('show');">
+                                                <ion-icon name="create-outline"></ion-icon> Corrigir Notas Agora
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <!-- 📋 ALERTAS DE CONVOCATÓRIA -->
                         <?php if (!empty($data['contestacoes_historico'])): ?>
                             <?php foreach ($data['contestacoes_historico'] as $h): ?>
                                 <?php if ($h['status'] === 'Aguardando_Comparecimento'): ?>
@@ -1095,6 +1145,7 @@
                                                         'Impasse'              => 'bg-dark',
                                                         'Em_Mediacao'          => 'bg-warning text-dark',
                                                         'Aguardando_Comparecimento' => 'bg-warning text-dark',
+                                                        'Aguardando_Correcao'  => 'bg-danger animate-pulse',
                                                         'Encerrado','Concordado' => 'bg-secondary',
                                                         default => 'bg-secondary'
                                                     };

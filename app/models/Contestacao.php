@@ -25,6 +25,7 @@ class Contestacao {
         'IMPASSE'                    => 'Impasse',
         'EM_MEDIACAO'                => 'Em_Mediacao',
         'AGUARDANDO_COMPARECIMENTO'  => 'Aguardando_Comparecimento',
+        'AGUARDANDO_CORRECAO'        => 'Aguardando_Correcao',
         'ENCERRADO'                  => 'Encerrado',
         'CONCORDADO'                 => 'Concordado',
     ];
@@ -36,7 +37,8 @@ class Contestacao {
         'Resolvido'                  => ['Encerrado', 'Concordado'],
         'Impasse'                    => ['Em_Mediacao'],
         'Em_Mediacao'                => ['Aguardando_Comparecimento'],
-        'Aguardando_Comparecimento'  => ['Encerrado'],
+        'Aguardando_Comparecimento'  => ['Encerrado', 'Aguardando_Correcao'],
+        'Aguardando_Correcao'        => ['Encerrado'],
         'Encerrado'                  => [],
         'Concordado'                 => [],
         // Estado legado
@@ -136,13 +138,17 @@ class Contestacao {
             return ['success' => false, 'message' => 'Contestação não encontrada.'];
         }
 
-        $estadosPermitidos = ['Pendente', 'Reclamado'];
+        $estadosPermitidos = ['Pendente', 'Reclamado', 'Aguardando_Correcao'];
         if (!in_array($contestacao['status'], $estadosPermitidos)) {
             return ['success' => false,
                     'message' => "Resposta não permitida no estado actual: {$contestacao['status']}."];
         }
 
-        $novoStatus = $alterou_nota ? 'Resolvido' : 'Respondido';
+        if ($contestacao['status'] === 'Aguardando_Correcao') {
+            $novoStatus = 'Encerrado';
+        } else {
+            $novoStatus = $alterou_nota ? 'Resolvido' : 'Respondido';
+        }
 
         $stmt = $this->db->prepare("
             UPDATE concordancia_notas
@@ -367,7 +373,7 @@ class Contestacao {
     // ────────────────────────────────────────────────────────────
     // PASSO 7 & 8: Registar Decisão Final e Encerrar
     // ────────────────────────────────────────────────────────────
-    public function registrarDecisao($estudante_id, $disciplina_id, $admin_user_id, $decisao, $presenca_aluno, $presenca_professor) {
+    public function registrarDecisao($estudante_id, $disciplina_id, $admin_user_id, $decisao, $presenca_aluno, $presenca_professor, $ordenar_correcao = false) {
         $stmt = $this->db->prepare("
             SELECT cn.id, cn.status FROM concordancia_notas cn
             WHERE cn.estudante_id = :eid AND cn.disciplina_id = :did
@@ -381,9 +387,11 @@ class Contestacao {
             return ['success' => false, 'message' => 'Nenhuma contestação aguardando comparecimento.'];
         }
 
+        $novoStatus = $ordenar_correcao ? 'Aguardando_Correcao' : 'Encerrado';
+
         $stmt = $this->db->prepare("
             UPDATE concordancia_notas
-            SET status               = 'Encerrado',
+            SET status               = :status,
                 decisao_final        = :decisao,
                 presenca_aluno       = :pa,
                 presenca_professor   = :pp,
@@ -393,6 +401,7 @@ class Contestacao {
             WHERE id = :id
         ");
         $ok = $stmt->execute([
+            ':status'  => $novoStatus,
             ':decisao' => $decisao,
             ':pa'      => $presenca_aluno ? 1 : 0,
             ':pp'      => $presenca_professor ? 1 : 0,
@@ -404,20 +413,29 @@ class Contestacao {
             // Notificar ambas as partes sobre o encerramento
             $info = $this->_getInfoByContestacaoId($contestacao['id']);
             if ($info) {
-                $msgEncerramento = "✅ Processo de Contestação Encerrado\n\n"
-                                 . "Disciplina: {$info['disciplina_nome']}\n"
-                                 . "Decisão da Administração:\n\n{$decisao}";
+                if ($novoStatus === 'Aguardando_Correcao') {
+                    $assunto = "⚠️ ORDEM DE CORRECÇÃO — Contestação de Nota: {$info['disciplina_nome']}";
+                    $msgEncerramento = "A Administração Académica deliberou a favor do aluno.\n\n"
+                                     . "O Professor deve proceder à CORRECÇÃO da nota imediatamente no seu portal.\n\n"
+                                     . "Decisão:\n{$decisao}";
+                } else {
+                    $assunto = "✅ Processo de Contestação Encerrado";
+                    $msgEncerramento = "✅ Processo de Contestação Encerrado\n\n"
+                                     . "Disciplina: {$info['disciplina_nome']}\n"
+                                     . "Decisão da Administração:\n\n{$decisao}";
+                }
+
                 $this->_enviarMensagem($admin_user_id, $info['estudante_user_id'],
-                    'Contestação Encerrada: ' . $info['disciplina_nome'], $msgEncerramento);
+                    $assunto, $msgEncerramento);
                     
                 if (!empty($info['professor_user_id'])) {
                     $this->_enviarMensagem($admin_user_id, $info['professor_user_id'],
-                        'Contestação Encerrada: ' . $info['disciplina_nome'], $msgEncerramento);
+                        $assunto, $msgEncerramento);
                 }
             }
         }
 
-        return ['success' => $ok, 'message' => $ok ? 'Decisão registada. Processo encerrado.' : 'Erro ao registar decisão.'];
+        return ['success' => $ok, 'message' => $ok ? ($ordenar_correcao ? 'Decisão registada. Ordem de correcção enviada ao professor.' : 'Decisão registada. Processo encerrado.') : 'Erro ao registar decisão.'];
     }
 
     // ────────────────────────────────────────────────────────────
@@ -455,8 +473,8 @@ class Contestacao {
             JOIN disciplinas d ON cn.disciplina_id = d.id
             JOIN professor_disciplina pd ON pd.disciplina_id = cn.disciplina_id AND pd.turma_id = cn.turma_id
             WHERE pd.professor_id = :pid
-              AND cn.status IN ('Pendente', 'Reclamado')
-            ORDER BY cn.data_abertura ASC
+              AND cn.status IN ('Pendente', 'Reclamado', 'Aguardando_Correcao')
+            ORDER BY FIELD(cn.status, 'Aguardando_Correcao', 'Reclamado', 'Pendente'), cn.data_abertura ASC
         ");
         $stmt->execute([':pid' => $professor_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -4584,6 +4584,24 @@ function convocarComMotivo(eid, did) {
                             <label class="form-check-label" for="check_prof">Docente Presente</label>
                         </div>
                     </div>
+
+                    <div class="col-12 mt-2 mb-4 p-3 bg-warning bg-opacity-10 rounded-3 border border-warning border-opacity-25">
+                        <label class="form-label fw-bold d-block mb-2 small text-muted text-uppercase">Resultado da Mediação</label>
+                        <div class="d-flex flex-column flex-md-row gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="ordenar_correcao" id="radioEncerrar" value="0" checked>
+                                <label class="form-check-label fw-bold" for="radioEncerrar">
+                                    Manter Notas Atuais <br><small class="text-muted fw-normal small">Encerrar processo</small>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="ordenar_correcao" id="radioCorrigir" value="1">
+                                <label class="form-check-label fw-bold text-danger" for="radioCorrigir">
+                                    Dar Razão ao Aluno <br><small class="text-muted fw-normal small text-danger">Ordenar Correcção</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         <label class="form-label small fw-bold text-dark">Ata / Decisão Final Administrativa</label>
                         <textarea name="decisao_final" class="form-control" rows="5" required placeholder="Registe os acordos alcançados ou a decisão autocrática com base na legislação da instituição..."></textarea>

@@ -145,6 +145,7 @@ class ContestacaoController extends Controller {
         $decisao            = trim( $_POST['decisao_final']       ?? '');
         $presenca_aluno     = isset($_POST['presenca_aluno'])     ? 1 : 0;
         $presenca_professor = isset($_POST['presenca_professor']) ? 1 : 0;
+        $ordenar_correcao   = isset($_POST['ordenar_correcao'])   ? 1 : 0;
 
         if (empty($decisao)) {
             $_SESSION['flash_error'] = 'A decisão final é obrigatória.';
@@ -155,7 +156,7 @@ class ContestacaoController extends Controller {
         $model  = $this->model('Contestacao');
         $result = $model->registrarDecisao(
             $estudante_id, $disciplina_id, $_SESSION['user_id'],
-            $decisao, $presenca_aluno, $presenca_professor
+            $decisao, $presenca_aluno, $presenca_professor, $ordenar_correcao
         );
 
         $_SESSION[$result['success'] ? 'flash_success' : 'flash_error'] = $result['message'];

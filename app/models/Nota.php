@@ -68,19 +68,20 @@ class Nota {
                 }
             }
             
-            // Mark pending complaints as resolved for this student/turma/discipline
+            // Mark pending complaints/orders as fulfilled for this student/turma/discipline
             $stmtRes = $this->db->prepare("
                 UPDATE concordancia_notas 
-                SET status = 'Respondido', 
+                SET status = CASE WHEN status = 'Aguardando_Correcao' THEN 'Encerrado' ELSE 'Respondido' END, 
                     resposta_professor = :resp,
                     data_resposta = NOW() 
-                WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did AND status = 'Reclamado'
+                WHERE estudante_id = :eid AND turma_id = :tid AND disciplina_id = :did 
+                  AND status IN ('Reclamado', 'Aguardando_Correcao', 'Pendente')
             ");
             $stmtRes->execute([
                 ':eid' => $estudante_id, 
                 ':tid' => $turma_id, 
                 ':did' => $disciplina_id,
-                ':resp' => $data['resposta_professor'] ?? null
+                ':resp' => $data['resposta_professor'] ?? 'Nota corrigida conforme ordem administrativa.'
             ]);
 
             $this->db->commit();
