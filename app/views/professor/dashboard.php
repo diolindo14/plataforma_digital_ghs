@@ -1369,42 +1369,38 @@ function printSection(paneId) {
     setTimeout(() => { printWindow.print(); }, 800);
 }
 
-function abrirModalResposta(estId, nome, tid, did) {
+function abrirRespostaContestacao(estId, nome, tid, did) {
     $('#resp_est_id').val(estId);
     $('#resp_turma_id').val(tid);
     $('#resp_disc_id').val(did);
     $('#resp_nome_aluno').text(nome);
-    const modal = new bootstrap.Modal(document.getElementById('modalRespostaReclamacao'));
+    $('#textoResposta').val('');
+    $('#alterou_nota_check').prop('checked', false);
+    const modal = new bootstrap.Modal(document.getElementById('modalRespostaContestacao'));
     modal.show();
 }
 
-function salvarRespostaReclamacao() {
+function salvarRespostaContestacao() {
     const btn = $('#btnSalvarResposta');
     const data = {
         estudante_id: $('#resp_est_id').val(),
         turma_id: $('#resp_turma_id').val(),
         disciplina_id: $('#resp_disc_id').val(),
-        resposta_professor: $('#textoResposta').val(),
+        resposta: $('#textoResposta').val(),
+        alterou_nota: $('#alterou_nota_check').is(':checked') ? 1 : 0,
         csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     };
 
-    if (!data.resposta_professor) {
-        alert('Por favor, escreva uma resposta.');
+    if (!data.resposta.trim()) {
+        alert('Por favor, escreva uma resposta / justificativa.');
         return;
     }
 
-    btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
+    btn.html('<span class="spinner-border spinner-border-sm"></span> a enviar...').prop('disabled', true);
     
-    // CORREÇÃO: Apontar para o método correto de resposta à reclamação
-    $.post('<?= URL_ROOT ?>/professor/saveRespostaReclamacao', {
-        estudante_id: data.estudante_id,
-        turma_id: data.turma_id,
-        disciplina_id: data.disciplina_id,
-        resposta_professor: data.resposta_professor,
-        csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
-    }, function(res) {
+    $.post('<?= URL_ROOT ?>/contestacao/responder', data, function(res) {
         if (res.success) {
-            alert('Resposta enviada com sucesso! O estado foi alterado para "Respondido" e aguarda concordância do aluno.');
+            alert('Resposta enviada com sucesso! O processo de contestação foi atualizado.');
             location.reload();
         } else {
             alert('Erro ao enviar resposta: ' + (res.message || 'Falha técnica.'));
@@ -1475,12 +1471,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Modal Resposta Reclamação -->
-<div class="modal fade" id="modalRespostaReclamacao" tabindex="-1" aria-hidden="true">
+<!-- Modal Resposta Contestação -->
+<div class="modal fade" id="modalRespostaContestacao" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title fw-bold">Responder à Reclamação</h5>
+                <h5 class="modal-title fw-bold">Responder à Contestação</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
@@ -1491,15 +1487,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 <div class="mb-3">
                     <label class="form-label small fw-bold">Sua Resposta / Justificativa</label>
-                    <textarea id="textoResposta" class="form-control" rows="4" placeholder="Explique a nota ou informe que já foi corrigida..."></textarea>
+                    <textarea id="textoResposta" class="form-control" rows="4" placeholder="Explique a nota ao aluno, seja empático e claro..."></textarea>
                 </div>
-                <div class="alert alert-info small">
-                    <ion-icon name="information-circle"></ion-icon> Ao enviar, o aluno receberá a sua resposta e poderá decidir se <strong>concorda</strong> com a nota final ou se mantém a reclamação.
+                
+                <div class="form-check form-switch mb-3 text-start">
+                    <input class="form-check-input" type="checkbox" role="switch" id="alterou_nota_check">
+                    <label class="form-check-label small fw-bold text-success" for="alterou_nota_check">
+                        Já procedi à alteração da nota do aluno no Pessoal Docente.
+                    </label>
+                </div>
+
+                <div class="alert alert-info small mb-0">
+                    <ion-icon name="information-circle"></ion-icon> Se manteve a nota, a contestação passará ao estado <strong>Respondido</strong>. Caso o aluno rebata, o processo gerará um <strong class="text-danger">Impasse</strong> encaminhado à mediação escolar.
                 </div>
             </div>
             <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" id="btnSalvarResposta" onclick="salvarRespostaReclamacao()" class="btn btn-danger fw-bold">Enviar Resposta</button>
+                <button type="button" id="btnSalvarResposta" onclick="salvarRespostaContestacao()" class="btn btn-danger fw-bold">Enviar Resposta</button>
             </div>
         </div>
     </div>

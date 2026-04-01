@@ -865,38 +865,31 @@
                                             </td>
                                             <td class="text-end">
                                                 <?php if ($n['bloqueado_admin']): ?>
-                                                    <small class="text-danger fw-bold">Pendente Admin</small>
-                                                <?php elseif ($n['feedback_status'] == 'Pendente'): ?>
-                                                    <div class="btn-group btn-group-sm shadow-sm">
-                                                        <button
-                                                            onclick="responderNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>, 'Concordado')"
-                                                            class="btn btn-success" title="Concordar com a Nota"><ion-icon
-                                                                name="checkmark-done"></ion-icon></button>
-                                                        <button
-                                                            onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
-                                                            class="btn btn-danger" title="Reclamar"><ion-icon
-                                                                name="chatbubble-ellipses"></ion-icon></button>
-                                                    </div>
-                                                <?php elseif ($n['feedback_status'] == 'Respondido'): ?>
+                                                    <small class="text-danger fw-bold"><ion-icon name="lock-closed"></ion-icon> Pendente Admin</small>
+                                                <?php elseif ($n['feedback_status'] == 'Concordado' || $n['feedback_status'] == 'Encerrado'): ?>
+                                                    <ion-icon name="checkmark-done" class="text-success fs-5"></ion-icon>
+                                                <?php elseif ($n['feedback_status'] == 'Pendente' || $n['feedback_status'] == 'Reclamado'): ?>
+                                                    <small class="text-danger fw-bold"><ion-icon name="time"></ion-icon> Aguarda Prof.</small>
+                                                <?php elseif ($n['feedback_status'] == 'Respondido' || $n['feedback_status'] == 'Resolvido'): ?>
                                                     <div class="d-grid gap-1">
                                                         <button
-                                                            onclick="concordarResposta(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
+                                                            onclick="aceitarNota(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
                                                             class="btn btn-sm btn-success fw-bold py-1 shadow-sm"><ion-icon
                                                                 name="checkmark-circle"></ion-icon> Confirmar</button>
                                                         <button
-                                                            onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
-                                                            class="btn btn-sm btn-outline-danger fw-bold py-1">Reclamar de Novo</button>
+                                                            onclick="abrirModalReacao(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
+                                                            class="btn btn-sm btn-outline-danger fw-bold py-1 px-1" style="font-size: 0.70rem;">Discordar (Escalar)</button>
                                                     </div>
-                                                <?php elseif ($n['feedback_status'] == 'Reclamado'): ?>
-                                                    <div class="d-grid">
-                                                        <button
-                                                            onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
-                                                            class="btn btn-sm btn-outline-danger fw-bold py-1">Reforçar Reclamação</button>
-                                                    </div>
-                                                <?php elseif ($n['feedback_status'] == 'Impasse' || $n['bloqueado_admin']): ?>
+                                                <?php elseif ($n['feedback_status'] == 'Impasse' || $n['feedback_status'] == 'Em_Mediacao' || $n['feedback_status'] == 'Aguardando_Comparecimento'): ?>
                                                     <ion-icon name="lock-closed" class="text-danger"></ion-icon> <small class="text-danger fw-bold">Sob Mediação</small>
                                                 <?php else: ?>
-                                                    <ion-icon name="lock-closed-outline" class="text-muted opacity-50"></ion-icon>
+                                                    <!-- Estado Inicial: Sem contestação -->
+                                                    <div class="btn-group btn-group-sm shadow-sm">
+                                                        <button
+                                                            onclick="abrirModalContestacao(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
+                                                            class="btn btn-outline-danger fw-bold py-1" title="Contestar Oficialmente"><ion-icon
+                                                                name="hand-right"></ion-icon> Contestar</button>
+                                                    </div>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -1443,26 +1436,57 @@
         </div>
     </div>
 
-    <!-- Modal Reclamação -->
-    <div class="modal fade" id="modalReclamacao" tabindex="-1">
+    <!-- Modal Contestação -->
+    <div class="modal fade" id="modalContestacao" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="fw-bold">Reportar Reclamação de Nota</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-danger text-white border-0 pb-3">
+                    <h5 class="fw-bold mb-0">Iniciar Contestação Oficial</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="text-muted small">Explique brevemente ao seu professor o motivo da sua reclamação.</p>
-                    <form id="formReclamacao">
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">O seu pedido será encaminhado ao docente responsável. Fundamente bem a sua solicitação com base nos elementos de avaliação.</p>
+                    <form id="formContestacao" onsubmit="enviarContestacao(event, this)">
                         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                        <input type="hidden" name="turma_id" id="rec_turma_id">
-                        <input type="hidden" name="disciplina_id" id="rec_disciplina_id">
-                        <input type="hidden" name="status" value="Reclamado">
-                        <textarea name="comentario" class="form-control bg-light" rows="4"
-                            placeholder="Ex: A minha nota do CE não coincide com a folha de exame..."
+                        <input type="hidden" name="estudante_id" value="<?= $data['estudante']['id'] ?>">
+                        <input type="hidden" name="turma_id" id="cont_turma_id">
+                        <input type="hidden" name="disciplina_id" id="cont_disciplina_id">
+                        <textarea name="justificativa" class="form-control bg-light mb-3 p-3 border-0 shadow-sm" rows="4"
+                            placeholder="Ex: A minha nota do teste escrito não coincide com a correção apresentada..."
                             required></textarea>
-                        <button type="submit" class="btn btn-danger w-100 mt-3 rounded-pill fw-bold">Enviar
-                            Reclamação</button>
+                        <button type="submit" class="btn btn-danger py-2 w-100 rounded-pill fw-bold shadow">
+                            Enviar Contestação
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Reação (Contra-Argumentação) -->
+    <div class="modal fade" id="modalReacao" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header bg-dark text-white border-0 pb-3">
+                    <h5 class="fw-bold mb-0">Reagir à Resposta do Docente</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="alert alert-warning small border-0 mb-3 shadow-sm rounded-3">
+                        <ion-icon name="warning"></ion-icon> <strong>Atenção:</strong> Ao contra-argumentar, o sistema detectará um <strong>IMPASSE</strong>, e o processo será alvo de uma mediação presencial onde a sua comparência será obrigatória.
+                    </div>
+                    <form id="formReacao" onsubmit="enviarReacao(event, this)">
+                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                        <input type="hidden" name="estudante_id" value="<?= $data['estudante']['id'] ?>">
+                        <input type="hidden" name="turma_id" id="reac_turma_id">
+                        <input type="hidden" name="disciplina_id" id="reac_disciplina_id">
+                        <input type="hidden" name="acao" value="contra_argumentar">
+                        <textarea name="contra_argumento" class="form-control bg-light mb-3 p-3 border-0 shadow-sm" rows="4"
+                            placeholder="Apresente as suas provas sólidas para prosseguir com a mediação..."
+                            required></textarea>
+                        <button type="submit" class="btn btn-dark py-2 w-100 rounded-pill fw-bold shadow">
+                            Escalar Processo para Mediação
+                        </button>
                     </form>
                 </div>
             </div>
@@ -1558,66 +1582,73 @@
                 }
             });
 
-            // Handle complaint form
-            $('#formReclamacao').on('submit', function (e) {
-                e.preventDefault();
-                const data = $(this).serialize();
-                const btn = $(this).find('button');
-                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> A enviar...');
+        }); // Close document.ready
 
-                $.post('<?= URL_ROOT ?>/estudante/registarFeedbackNota', data, function (res) {
-                    if (res.success) {
-                        alert('A sua reclamação foi enviada com sucesso ao professor.');
-                        location.reload();
-                    } else {
-                        alert('Erro ao enviar reclamação.');
-                        btn.prop('disabled', false).html('Enviar Reclamação');
-                    }
-                }, 'json').fail(function () {
-                    alert('Erro de rede ao enviar reclamação.');
-                    btn.prop('disabled', false).html('Enviar Reclamação');
-                });
+        function abrirModalContestacao(tid, did) {
+            $('#cont_turma_id').val(tid);
+            $('#cont_disciplina_id').val(did);
+            new bootstrap.Modal(document.getElementById('modalContestacao')).show();
+        }
+
+        function abrirModalReacao(tid, did) {
+            $('#reac_turma_id').val(tid);
+            $('#reac_disciplina_id').val(did);
+            new bootstrap.Modal(document.getElementById('modalReacao')).show();
+        }
+
+        function enviarContestacao(e, form) {
+            e.preventDefault();
+            const btn = $(form).find('button');
+            const originalContent = btn.html();
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> A enviar...');
+            $.post('<?= URL_ROOT ?>/contestacao/abrir', $(form).serialize(), function(res) {
+                if (res.success) {
+                    alert(res.message);
+                    location.reload();
+                } else {
+                    alert('Erro: ' + (res.message || 'Falha técnica.'));
+                    btn.prop('disabled', false).html(originalContent);
+                }
+            }, 'json').fail(function() {
+                alert('Erro crítico ao comunicar com o servidor.');
+                btn.prop('disabled', false).html(originalContent);
             });
-        });
-
-        function responderNotas(tid, did, status) {
-            if (confirm('Tem certeza que deseja marcar como "' + status + '"? Esta ação é definitiva.')) {
-                $.post('<?= URL_ROOT ?>/estudante/registarFeedbackNota', {
-                    turma_id: tid,
-                    disciplina_id: did,
-                    status: status,
-                    csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
-                }, function (res) {
-                    if (res.success) {
-                        location.reload();
-                    } else {
-                        alert('Erro ao registar feedback.');
-                    }
-                }, 'json');
-            }
         }
 
-        function concordarResposta(tid, did) {
-            if (confirm('Ao confirmar, você declara que concorda com a resposta do professor e com a nota final. Deseja encerrar este processo?')) {
-                $.post('<?= URL_ROOT ?>/estudante/concordarNota', {
-                    turma_id: tid,
-                    disciplina_id: did,
-                    csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
-                }, function (res) {
-                    if (res.success) {
-                        location.reload();
-                    } else {
-                        alert('Erro ao registar concordância.');
-                    }
-                }, 'json');
-            }
+        function enviarReacao(e, form) {
+            e.preventDefault();
+            const btn = $(form).find('button');
+            const originalContent = btn.html();
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> A processar...');
+            $.post('<?= URL_ROOT ?>/contestacao/reagir', $(form).serialize(), function(res) {
+                if (res.success) {
+                    alert(res.message);
+                    location.reload();
+                } else {
+                    alert('Erro: ' + (res.message || 'Falha técnica.'));
+                    btn.prop('disabled', false).html(originalContent);
+                }
+            }, 'json').fail(function() {
+                alert('Erro crítico ao comunicar com o servidor.');
+                btn.prop('disabled', false).html(originalContent);
+            });
         }
 
-        function reclamarNotas(tid, did) {
-            $('#rec_turma_id').val(tid);
-            $('#rec_disciplina_id').val(did);
-            const modal = new bootstrap.Modal(document.getElementById('modalReclamacao'));
-            modal.show();
+        function aceitarNota(tid, did) {
+            if (confirm("Ao confirmar a receção/resolução da nota, o processo de contestação será encerrado permanentemente. Confirma conclusão?")) {
+                $.post('<?= URL_ROOT ?>/contestacao/reagir', {
+                    csrf_token: '<?= $_SESSION['csrf_token'] ?>',
+                    estudante_id: <?= isset($data['estudante']['id']) ? $data['estudante']['id'] : '0' ?>,
+                    turma_id: tid,
+                    disciplina_id: did,
+                    acao: 'aceitar'
+                }, function(res) {
+                    if (res.success) location.reload();
+                    else alert('Erro: ' + (res.message || 'Falha ao encerrar processo.'));
+                }, 'json').fail(function() {
+                    alert('Erro de rede.');
+                });
+            }
         }
 
         function marcarComoLido(id, btn) {

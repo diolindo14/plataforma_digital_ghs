@@ -241,6 +241,13 @@
                         href="javascript:void(0)" role="tab">
                         <ion-icon name="journal-outline"></ion-icon> Acompanhamento Pedagógico
                     </a>
+                    <a class="nav-link" id="tab-mediacao" data-bs-toggle="pill" data-bs-target="#pane-mediacao"
+                        href="javascript:void(0)" role="tab">
+                        <ion-icon name="scale-outline"></ion-icon> Mediação GHS
+                        <?php if (!empty($data['contestacoes_mediacao'])): ?>
+                            <span class="badge bg-danger ms-auto"><?= count($data['contestacoes_mediacao']) ?></span>
+                        <?php endif; ?>
+                    </a>
                     <a class="nav-link d-flex align-items-center" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro"
                         href="javascript:void(0)" role="tab">
                         <ion-icon name="cash-outline" class="me-2"></ion-icon> Tesouraria
@@ -2225,6 +2232,108 @@
                     </div>
                 </div>
             </div>
+            <!-- Painel de Mediação -->
+            <div class="tab-pane fade" id="pane-mediacao">
+                <div class="card shadow-sm border-0 border-top border-4 border-danger">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="fw-bold mb-0">Centro de Mediação Escolar</h4>
+                                <p class="text-muted small mb-0">Gestão de impasses e contestações que requeiram intervenção administrativa.</p>
+                            </div>
+                        </div>
+
+                        <ul class="nav nav-tabs mb-4">
+                            <li class="nav-item">
+                                <button class="nav-link active fw-bold text-danger" data-bs-toggle="tab" data-bs-target="#sub-med-ativos">
+                                    <ion-icon name="warning-outline" class="me-1"></ion-icon> Processos Ativos
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link fw-bold text-secondary" data-bs-toggle="tab" data-bs-target="#sub-med-historico">
+                                    <ion-icon name="archive-outline" class="me-1"></ion-icon> Auditoria Global
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <!-- Processos Ativos -->
+                            <div class="tab-pane fade show active" id="sub-med-ativos">
+                                <?php if (empty($data['contestacoes_mediacao'])): ?>
+                                    <div class="text-center py-5">
+                                        <ion-icon name="checkmark-done-circle-outline" style="font-size:3rem; color:#22c55e;"></ion-icon>
+                                        <p class="text-muted mt-3">Nenhum impasse ativo requer mediação neste momento.</p>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle datatable-simple">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Envolvidos</th>
+                                                    <th>Disciplina</th>
+                                                    <th>Estado</th>
+                                                    <th class="text-end">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($data['contestacoes_mediacao'] as $c): ?>
+                                                    <tr>
+                                                        <td><strong><?= $c['id'] ?></strong></td>
+                                                        <td>
+                                                            <div class="small fw-bold text-dark">A: <?= htmlspecialchars($c['estudante_nome']) ?></div>
+                                                            <div class="small text-muted">D: <?= htmlspecialchars($c['professor_nome'] ?? 'N/D') ?></div>
+                                                        </td>
+                                                        <td><span class="badge bg-secondary"><?= htmlspecialchars($c['disciplina_nome']) ?></span></td>
+                                                        <td><span class="badge bg-danger"><?= $c['status'] ?></span></td>
+                                                        <td class="text-end gap-2 d-flex justify-content-end">
+                                                            <button class="btn btn-sm btn-info fw-bold" onclick="verDetalhesContestacao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="eye"></ion-icon></button>
+                                                            <?php if($c['status'] == 'Impasse' || $c['status'] == 'Em_Mediacao'): ?>
+                                                                <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="abrirModalConvocatoria(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="calendar"></ion-icon> Convocar</button>
+                                                            <?php elseif($c['status'] == 'Aguardando_Comparecimento'): ?>
+                                                                <button class="btn btn-sm btn-success fw-bold" onclick="abrirModalDecisao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="checkmark-done"></ion-icon> Decidir</button>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Auditoria Global -->
+                            <div class="tab-pane fade" id="sub-med-historico">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle datatable-simple">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Aluno</th>
+                                                <th>Disciplina</th>
+                                                <th>Estado Final</th>
+                                                <th>Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($data['contestacoes_admin_all'] as $c): ?>
+                                                <tr>
+                                                    <td><?= date('d/m/Y', strtotime($c['data_abertura'] ?? $c['data_resposta'])) ?></td>
+                                                    <td><?= htmlspecialchars($c['estudante_nome']) ?></td>
+                                                    <td><?= htmlspecialchars($c['disciplina_nome']) ?></td>
+                                                    <td><span class="badge bg-secondary"><?= $c['status'] ?></span></td>
+                                                    <td><button class="btn btn-sm btn-outline-dark" onclick="verDetalhesContestacao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="eye"></ion-icon></button></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -4297,5 +4406,123 @@ function convocarComMotivo(eid, did) {
     </div>
 </div>
 
+    <!-- Modais de Mediação GHS -->
+    <!-- Modal Ver Detalhes -->
+    <div class="modal fade" id="modalDetalhesContestacao" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold">Rastreamento de Processo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <pre id="detalhesContestacaoRaw" class="bg-white p-3 rounded border" style="max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; font-family: 'Outfit', monospace; font-size: 0.85rem;"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Convocar Partes -->
+    <div class="modal fade" id="modalConvocatoria" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="<?= URL_ROOT ?>/contestacao/convocar" method="POST" class="modal-content border-0 shadow-lg" onsubmit="$(this).find('button').prop('disabled', true)">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="estudante_id" id="conv_est_id">
+                <input type="hidden" name="disciplina_id" id="conv_disc_id">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold">Agendar Mediação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Data Mês/Dia/Ano</label>
+                            <input type="date" name="data_reuniao" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Hora</label>
+                            <input type="time" name="hora_reuniao" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Local</label>
+                            <input type="text" name="local_reuniao" class="form-control" value="Gabinete de Apoio Psicopedagógico (GAP)" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Motivo (visível na convocatória)</label>
+                            <textarea name="motivo_convocacao" class="form-control" rows="2" required>Convocatória obrigatória para resolução de impasse em avaliação académica.</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sair</button>
+                    <button type="submit" class="btn btn-warning fw-bold text-dark">Disparar Notificações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Decisão Final -->
+    <div class="modal fade" id="modalDecisao" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="<?= URL_ROOT ?>/contestacao/decidir" method="POST" class="modal-content border-0 shadow-lg" onsubmit="$(this).find('button').prop('disabled', true)">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="estudante_id" id="dec_est_id">
+                <input type="hidden" name="disciplina_id" id="dec_disc_id">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">Registar Resolução</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3 d-flex gap-4">
+                        <div class="form-check text-dark fw-bold">
+                            <input type="checkbox" name="presenca_aluno" class="form-check-input" id="check_aluno" checked>
+                            <label class="form-check-label" for="check_aluno">Aluno Presente</label>
+                        </div>
+                        <div class="form-check text-dark fw-bold">
+                            <input type="checkbox" name="presenca_professor" class="form-check-input" id="check_prof" checked>
+                            <label class="form-check-label" for="check_prof">Docente Presente</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label small fw-bold text-dark">Ata / Decisão Final Administrativa</label>
+                        <textarea name="decisao_final" class="form-control" rows="5" required placeholder="Registe os acordos alcançados ou a decisão autocrática com base na legislação da instituição..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sair</button>
+                    <button type="submit" class="btn btn-success fw-bold">Fechar Processo e Bloquear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function verDetalhesContestacao(e, d) {
+            $.get('<?= URL_ROOT ?>/contestacao/detalhes/' + e + '/' + d, function(data) {
+                let out = "DOCUMENTO OFICIAL DE MEDIAÇÃO\n=============================\n";
+                out += "Estado: " + data.status + "\n";
+                out += "Aluno: " + data.estudante_nome + " (Turma: " + data.turma_codigo + ")\n";
+                out += "Professor: " + (data.professor_nome || "N/A") + " - " + data.disciplina_nome + "\n\n";
+                out += "=> ARGUMENTAÇÃO INICIAL ALUNO\n[" + (data.data_abertura || "-") + "]\n" + data.comentario + "\n\n";
+                out += "=> RESPOSTA DO DOCENTE\n[" + (data.data_resposta || "-") + "]\n" + (data.resposta_professor || "[Sem Resposta]") + "\n\n";
+                out += "=> CONTRA-ARGUMENTAÇÃO DO ALUNO (IMPASSE)\n[" + (data.data_impasse || "-") + "]\n" + (data.contra_argumentacao || "[Não enviada]") + "\n\n";
+                if (data.decisao_final) {
+                    out += "=> DECISÃO FINAL\n[" + data.data_decisao + "] Mediado por: " + (data.mediador_nome|| "Admin") + "\n" + data.decisao_final;
+                }
+                $('#detalhesContestacaoRaw').text(out);
+                new bootstrap.Modal(document.getElementById('modalDetalhesContestacao')).show();
+            }).fail(function(){ alert('Erro de comunicação.'); });
+        }
+
+        function abrirModalConvocatoria(e, d) {
+            $('#conv_est_id').val(e); $('#conv_disc_id').val(d);
+            new bootstrap.Modal(document.getElementById('modalConvocatoria')).show();
+        }
+
+        function abrirModalDecisao(e, d) {
+            $('#dec_est_id').val(e); $('#dec_disc_id').val(d);
+            new bootstrap.Modal(document.getElementById('modalDecisao')).show();
+        }
+    </script>
 </body>
 </html>
