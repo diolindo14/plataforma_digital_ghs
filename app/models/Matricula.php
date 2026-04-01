@@ -31,7 +31,7 @@ class Matricula {
                                     VALUES (:estudante_id, :ano_letivo, :ano_id, :esp_id, :turno, :tipo, 'Pendente', NOW(), :obs)");
         
         $stmt->bindValue(':estudante_id', $data['user_id']);
-        $stmt->bindValue(':ano_letivo', date('Y'));
+        $stmt->bindValue(':ano_letivo', '2025/2026'); // Ano Lectivo Corrente (Pilar 1)
         $stmt->bindValue(':ano_id', $data['ano_id']);
         $stmt->bindValue(':esp_id', $data['especializacao_id'] ?? null);
         $stmt->bindValue(':turno', $data['turno']);

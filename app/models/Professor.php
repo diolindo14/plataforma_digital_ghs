@@ -5,17 +5,20 @@
  * Este modelo orquestra a relação entre o perfil docente, a conta de utilizador 
  * e as disciplinas vinculadas em turmas específicas.
  */
-class Professor {
+class Professor
+{
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Database::getInstance();
     }
 
     /**
      * Listagem completa de professores com info de atribuições via GROUP_CONCAT.
      */
-    public function getAllProfessors() {
+    public function getAllProfessors()
+    {
         $stmt = $this->db->prepare("
             SELECT p.*, u.nome_completo, u.email, u.status as user_status,
                    (SELECT GROUP_CONCAT(CONCAT(t.codigo, ' - ', d.nome) SEPARATOR ' | ') 
@@ -41,10 +44,11 @@ class Professor {
      * // Mentoria: O uso de transacções (beginTransaction/commit) é vital 
      * // para evitar estados "orfãos" onde o utilizador muda mas o professor não.
      */
-    public function updateManual($id, $data) {
+    public function updateManual($id, $data)
+    {
         try {
             $this->db->beginTransaction();
-            
+
             // 1. Obter utilizador_id
             $stmt = $this->db->prepare("SELECT utilizador_id FROM professores WHERE id = :id");
             $stmt->execute([':id' => $id]);
@@ -72,11 +76,11 @@ class Professor {
                 ':data_con' => $data['data_contratacao'] ?? null,
                 ':id' => $id
             ]);
-            
+
             // 4. Reconstrução de Grade Curricular/Atribuições
             $stmtDel = $this->db->prepare("DELETE FROM professor_disciplina WHERE professor_id = :pid");
             $stmtDel->execute([':pid' => $id]);
-            
+
             if (!empty($data['atribuicoes'])) {
                 $stmtPD = $this->db->prepare("INSERT INTO professor_disciplina (professor_id, disciplina_id, turma_id, ano_letivo) VALUES (:pid, :did, :tid, :ano)");
                 $ano = date('Y');
@@ -91,7 +95,7 @@ class Professor {
                     }
                 }
             }
-            
+
             $this->db->commit();
             return true;
         } catch (Exception $e) {
@@ -103,10 +107,11 @@ class Professor {
     /**
      * Cadastro Integral de Docente com Segurança Atómica.
      */
-    public function createManual($data) {
+    public function createManual($data)
+    {
         try {
             $this->db->beginTransaction();
-            
+
             // 1. Criar Utilizador
             $stmt = $this->db->prepare("INSERT INTO utilizadores (nome_completo, email, senha, tipo, status) VALUES (:nome, :email, :senha, 'professor', 'ativo')");
             $senhaHash = password_hash($data['senha'] ?? '123456', PASSWORD_DEFAULT);
@@ -116,7 +121,7 @@ class Professor {
                 ':senha' => $senhaHash
             ]);
             $userId = $this->db->lastInsertId();
-            
+
             // 2. Criar Perfil Professor
             $stmt = $this->db->prepare("INSERT INTO professores (utilizador_id, bi, telefone, especialidade, grau_academico, data_contratacao) VALUES (:uid, :bi, :tel, :esp, :grau, :data_con)");
             $stmt->execute([
@@ -128,7 +133,7 @@ class Professor {
                 ':data_con' => $data['data_contratacao'] ?? date('Y-m-d')
             ]);
             $profId = $this->db->lastInsertId();
-            
+
             // 3. Criar Alocações
             if (!empty($data['atribuicoes'])) {
                 $stmtPD = $this->db->prepare("INSERT INTO professor_disciplina (professor_id, disciplina_id, turma_id, ano_letivo) VALUES (:pid, :did, :tid, :ano)");
@@ -144,7 +149,7 @@ class Professor {
                     }
                 }
             }
-            
+
             $this->db->commit();
             return true;
         } catch (Exception $e) {
@@ -156,7 +161,8 @@ class Professor {
     /**
      * Retorna detalhes expandidos do docente pelo seu ID.
      */
-    public function getDetails($id) {
+    public function getDetails($id)
+    {
         $stmt = $this->db->prepare("
             SELECT p.*, u.nome_completo, u.email, u.status as user_status
             FROM professores p
@@ -175,7 +181,7 @@ class Professor {
             ");
             $stmtPD->execute([':pid' => $id]);
             $pds = $stmtPD->fetchAll();
-            
+
             $prof['disciplinas_ids'] = array_column($pds, 'disciplina_id');
             $prof['turma_id'] = !empty($pds) ? $pds[0]['turma_id'] : null;
             $prof['turma_nome'] = !empty($pds) ? $pds[0]['codigo'] . ' - ' . $pds[0]['turno'] : null;
@@ -184,14 +190,16 @@ class Professor {
         return $prof;
     }
 
-    public function findById($id) {
+    public function findById($id)
+    {
         return $this->getDetails($id);
     }
 
     /**
      * Localiza perfil de professor a partir do ID do utilizador autenticado.
      */
-    public function findByUserId($user_id) {
+    public function findByUserId($user_id)
+    {
         $stmt = $this->db->prepare("
             SELECT p.*, u.nome_completo, u.email, u.status as user_status, p.foto_perfil as user_foto
             FROM professores p
@@ -205,7 +213,8 @@ class Professor {
     /**
      * Retorna turmas e disciplinas vinculadas.
      */
-    public function getAssignedClasses($professor_id) {
+    public function getAssignedClasses($professor_id)
+    {
         $stmt = $this->db->prepare("
             SELECT pd.*, d.nome as disciplina_nome, t.codigo as turma_codigo, t.turno 
             FROM professor_disciplina pd
@@ -221,7 +230,8 @@ class Professor {
     /**
      * Recupera listagem de alunos de uma turma vinculada ao professor.
      */
-    public function getStudentsByTurma($turma_id) {
+    public function getStudentsByTurma($turma_id)
+    {
         $stmt = $this->db->prepare("
             SELECT e.*, u.nome_completo, m.grupo 
             FROM estudantes e
