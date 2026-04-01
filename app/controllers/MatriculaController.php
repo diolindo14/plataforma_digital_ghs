@@ -83,6 +83,26 @@ class MatriculaController extends Controller {
                 $esp_map = ['Hardware & Robótica' => 1, 'Programação' => 2, 'Banco de Dados' => 3, 'Redes de Computadores' => 4, 'Engenharia Médica' => 5];
                 $esp_id = isset($_POST['especializacao']) ? ($esp_map[$_POST['especializacao']] ?? null) : null;
 
+                // 2.5. Validar Duplicidade de Matrícula no mesmo ano
+                if ($estudante_id) {
+                    $db = Database::getInstance();
+                    $stmtCheck = $db->prepare("SELECT id, status FROM matriculas WHERE estudante_id = :eid AND ano_letivo = :ano LIMIT 1");
+                    $stmtCheck->execute([':eid' => $estudante_id, ':ano' => date('Y')]);
+                    $matExistente = $stmtCheck->fetch();
+
+                    if ($matExistente) {
+                        if ($matExistente['status'] === 'Pendente' || $matExistente['status'] === 'Em validacao') {
+                            $_SESSION['flash_error'] = "Já tem um processo de matrícula pendente para este ano. Aguarde a validação.";
+                        } elseif ($matExistente['status'] === 'Aprovada') {
+                            $_SESSION['flash_error'] = "Já concluiu a matrícula para este ano letivo com sucesso.";
+                        } else {
+                            $_SESSION['flash_error'] = "Existe uma restrição ou conflito na sua matrícula anterior.";
+                        }
+                        header('Location: ' . URL_ROOT . '/matricula');
+                        exit;
+                    }
+                }
+
                 // 3. Criar Matrícula
                 $matricula_id = $matriculaModel->createEnrollment([
                     'user_id' => $estudante_id,
