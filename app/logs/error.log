@@ -184,3 +184,5 @@
 [2026-04-01 06:31:02] CRITICAL ERROR: Call to a member function prepare() on null em C:\xampp\htdocs\green\app\controllers\ContestacaoController.php na linha 176
 [2026-04-01 06:31:07] CRITICAL ERROR: Call to a member function prepare() on null em C:\xampp\htdocs\green\app\controllers\ContestacaoController.php na linha 176
 [2026-04-01 06:31:49] CRITICAL ERROR: Call to a member function prepare() on null em C:\xampp\htdocs\green\app\controllers\ContestacaoController.php na linha 176
+[2026-04-01 06:42:46] CRITICAL ERROR: SQLSTATE[42S02]: Base table or view not found: 1051 Unknown table 'ghsespf_db.estudante_user_id_view' em C:\xampp\htdocs\green\app\models\Contestacao.php na linha 358
+[2026-04-01 06:43:12] CRITICAL ERROR: SQLSTATE[42S02]: Base table or view not found: 1051 Unknown table 'ghsespf_db.estudante_user_id_view' em C:\xampp\htdocs\green\app\models\Contestacao.php na linha 358

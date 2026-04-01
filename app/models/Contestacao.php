@@ -287,9 +287,9 @@ class Contestacao {
             JOIN utilizadores u_est ON e.utilizador_id = u_est.id
             JOIN disciplinas d ON cn.disciplina_id = d.id
             JOIN turmas t ON cn.turma_id = t.id
-            JOIN professor_disciplina pd ON pd.disciplina_id = cn.disciplina_id AND pd.turma_id = cn.turma_id
-            JOIN professores p ON pd.professor_id = p.id
-            JOIN utilizadores u_prof ON p.utilizador_id = u_prof.id
+            LEFT JOIN professor_disciplina pd ON pd.disciplina_id = cn.disciplina_id AND pd.turma_id = cn.turma_id
+            LEFT JOIN professores p ON pd.professor_id = p.id
+            LEFT JOIN utilizadores u_prof ON p.utilizador_id = u_prof.id
             WHERE cn.estudante_id = :eid AND cn.disciplina_id = :did
               AND cn.status IN ('Impasse', 'Em_Mediacao')
             ORDER BY cn.data_escalacao DESC LIMIT 1
@@ -335,16 +335,18 @@ class Contestacao {
         $this->_enviarMensagem($admin_user_id, $contestacao['estudante_user_id'],
             "Convocatória: Mediação de Nota — {$contestacao['disciplina_nome']}", $msgAluno);
 
-        // Notificar Professor
-        $msgProf = "📋 CONVOCATÓRIA — Mediação de Nota: {$contestacao['disciplina_nome']}\n\n"
-                 . "Foi agendada uma reunião de mediação referente à contestação do(a) aluno(a) {$contestacao['estudante_nome']}.\n\n"
-                 . "📅 Data: " . date('d/m/Y', strtotime($data_reuniao)) . "\n"
-                 . "⏰ Hora: " . substr($hora_reuniao, 0, 5) . "\n"
-                 . "📍 Local: {$local}\n"
-                 . "📌 Motivo: {$motivo}\n\n"
-                 . "A sua comparência é obrigatória.";
-        $this->_enviarMensagem($admin_user_id, $contestacao['professor_user_id'],
-            "Convocatória: Mediação de Nota — {$contestacao['disciplina_nome']}", $msgProf);
+        // Notificar Professor (se existir)
+        if (!empty($contestacao['professor_user_id'])) {
+            $msgProf = "📋 CONVOCATÓRIA — Mediação de Nota: {$contestacao['disciplina_nome']}\n\n"
+                     . "Foi agendada uma reunião de mediação referente à contestação do(a) aluno(a) {$contestacao['estudante_nome']}.\n\n"
+                     . "📅 Data: " . date('d/m/Y', strtotime($data_reuniao)) . "\n"
+                     . "⏰ Hora: " . substr($hora_reuniao, 0, 5) . "\n"
+                     . "📍 Local: {$local}\n"
+                     . "📌 Motivo: {$motivo}\n\n"
+                     . "A sua comparência é obrigatória.";
+            $this->_enviarMensagem($admin_user_id, $contestacao['professor_user_id'],
+                "Convocatória: Mediação de Nota — {$contestacao['disciplina_nome']}", $msgProf);
+        }
 
         return ['success' => true, 'message' => 'Partes convocadas com sucesso. Notificações enviadas.'];
     }
@@ -403,8 +405,11 @@ class Contestacao {
                                  . "Decisão da Administração:\n\n{$decisao}";
                 $this->_enviarMensagem($admin_user_id, $info['estudante_user_id'],
                     'Contestação Encerrada: ' . $info['disciplina_nome'], $msgEncerramento);
-                $this->_enviarMensagem($admin_user_id, $info['professor_user_id'],
-                    'Contestação Encerrada: ' . $info['disciplina_nome'], $msgEncerramento);
+                    
+                if (!empty($info['professor_user_id'])) {
+                    $this->_enviarMensagem($admin_user_id, $info['professor_user_id'],
+                        'Contestação Encerrada: ' . $info['disciplina_nome'], $msgEncerramento);
+                }
             }
         }
 
