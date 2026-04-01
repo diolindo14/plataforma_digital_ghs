@@ -827,7 +827,7 @@
                                                         <span
                                                             class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 small"
                                                             title="<?= htmlspecialchars($n['feedback_comentario'] ?? '') ?>"><ion-icon
-                                                                name="warning"></ion-icon> Reclamação Enviada
+                                                                name="warning"></ion-icon> Aguarda Revisão do Professor
                                                             (<?= $n['contador_reclamacoes'] ?>)</span>
                                                     <?php elseif ($n['feedback_status'] == 'Respondido'): ?>
                                                         <div>
@@ -848,7 +848,7 @@
                                                             class="badge bg-danger text-white border border-danger small"><ion-icon
                                                                 name="alert-circle"></ion-icon> Em Mediação pela Adm. Acência</span>
                                                     <?php else: ?>
-                                                        <span class="badge bg-light text-muted border small">Pendente de Revisão</span>
+                                                        <span class="badge bg-light text-muted border small">Aguarda Validação</span>
                                                     <?php endif; ?>
                                                 </div>
                                             </td>
@@ -886,6 +886,12 @@
                                                         <button
                                                             onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
                                                             class="btn btn-sm btn-outline-danger fw-bold py-1">Reclamar de Novo</button>
+                                                    </div>
+                                                <?php elseif ($n['feedback_status'] == 'Reclamado'): ?>
+                                                    <div class="d-grid">
+                                                        <button
+                                                            onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
+                                                            class="btn btn-sm btn-outline-danger fw-bold py-1">Reforçar Reclamação</button>
                                                     </div>
                                                 <?php elseif ($n['feedback_status'] == 'Impasse' || $n['bloqueado_admin']): ?>
                                                     <ion-icon name="lock-closed" class="text-danger"></ion-icon> <small class="text-danger fw-bold">Sob Mediação</small>

@@ -183,14 +183,17 @@ class Nota {
             $novoContador = $exist['contador_reclamacoes'];
             $bloqueado = 0;
 
-            // Se o aluno está a reclamar novamente após uma resposta, resolução ou se insiste na reclamação
-            if ($status === 'Reclamado' && in_array($exist['status'], ['Resolvido', 'Concordado', 'Reclamado', 'Respondido'])) {
-                // Apenas incrementa se houver repetição do ciclo de reclamação
-                // O requisito diz: se houver 2 reclamações para a mesma nota, bloqueia.
-                $novoContador++;
+            // Se o aluno está a reclamar novamente após uma resposta ou se apenas está a atualizar/reforçar a queixa
+            if ($status === 'Reclamado') {
+                // Só incrementa o contador (e arrisca bloqueio) se estiver a rejeitar uma resposta do professor
+                // Se já estava 'Reclamado', apenas atualizamos o comentário/data sem contar como nova "instância" de conflito
+                if ($exist['status'] === 'Respondido' || $exist['status'] === 'Resolvido' || $exist['status'] === 'Concordado') {
+                    $novoContador++;
+                }
+                
                 if ($novoContador >= 2) {
                     $bloqueado = 1;
-                    $novoStatus = 'Impasse'; // Alterar status para facilitar visibilidade caso necessário
+                    $novoStatus = 'Impasse';
                 }
             }
 
