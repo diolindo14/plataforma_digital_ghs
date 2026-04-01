@@ -682,7 +682,7 @@
                                         <ion-icon name="alert-circle" class="fs-1"></ion-icon>
                                     </div>
                                     <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Inadimplência (Alunos)
+                                        <p class="text-muted small fw-bold text-uppercase mb-0">Atraso de pagamento (Alunos)
                                         </p>
                                         <h2 class="fw-bold mb-0 text-danger"><?= $data['stats']['inadimplencia'] ?></h2>
                                     </div>
