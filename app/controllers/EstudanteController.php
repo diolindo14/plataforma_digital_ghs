@@ -167,7 +167,12 @@ class EstudanteController extends Controller {
         // Posição exata universal (Para todos os alunos)
         $data['meu_ranking']     = $acadRank->getDetailedStudentRank($estudanteData['id']);
 
+        // --- ⚖️ FLUXO DE CONTESTAÇÃO DE AVALIAÇÃO ---
+        $contestacaoModel = $this->model('Contestacao');
+        $data['contestacoes'] = $contestacaoModel->getDoAluno($estudanteData['id']);
+
         $this->view('estudante/dashboard', $data);
+
     }
 
     public function getCalendarEvents() {

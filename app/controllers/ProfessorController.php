@@ -68,7 +68,10 @@ class ProfessorController extends Controller {
             'meus_eventos' => $todos_eventos,
             'agendamentos_proprios' => $agendamentos_proprios,
             'eventos_globais' => array_values($eventos_globais),
-            'reclamacoes' => $notaModel->getFeedbacksParaProfessor($profData['id']),
+            'reclamacoes' => $notaModel->getFeedbacksParaProfessor($profData['id']), // legado
+            'contestacoes_pendentes' => $this->model('Contestacao')->getPendentesDocente($profData['id']),
+            'contestacoes_historico'  => $this->model('Contestacao')->getHistoricoDocente($profData['id']),
+
             'minha_assiduidade' => $frequenciaModel->getDetailedAttendanceForProfessor($profData['id']),
             'selected_turma' => $selected_turma,
             'selected_disciplina' => $selected_disciplina,

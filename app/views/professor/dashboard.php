@@ -805,64 +805,137 @@
 
             <!-- Reclamações de Notas -->
             <div class="tab-pane fade" id="pane-reclamacoes">
-                <div class="card shadow-sm border-0 border-top border-4 border-danger">
+                <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold mb-0">Reclamações de Notas Recebidas</h4>
-                            <span class="badge bg-danger rounded-pill"><?= count($data['reclamacoes']) ?> Pendentes</span>
+                            <div>
+                                <h4 class="fw-bold mb-0">Centro de Contestações</h4>
+                                <p class="text-muted small mb-0">Gerencie as contestações de notas com rastreabilidade completa.</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <?php $pendentes_count = count($data['contestacoes_pendentes'] ?? []); ?>
+                                <?php if ($pendentes_count > 0): ?>
+                                    <span class="badge bg-danger rounded-pill fs-6 px-3"><?= $pendentes_count ?> Pendente(s)</span>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle datatable-simple">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Data</th>
-                                        <th>Estudante</th>
-                                        <th>Turma</th>
-                                        <th>Disciplina</th>
-                                        <th>Mensagem / Reclamação</th>
-                                        <th class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if(empty($data['reclamacoes'])): ?>
-                                        <tr><td colspan="6" class="text-center py-4 text-muted">Nenhuma reclamação ativa.</td></tr>
-                                    <?php else: ?>
-                                        <?php foreach($data['reclamacoes'] as $r): ?>
-                                            <tr>
-                                                <td class="small"><?= date('d/m/Y H:i', strtotime($r['data_resposta'])) ?></td>
-                                                <td><div class="fw-bold"><?= htmlspecialchars($r['estudante_nome']) ?></div></td>
-                                                <td><span class="badge bg-secondary"><?= $r['turma_codigo'] ?></span></td>
-                                                <td><span class="badge bg-info-subtle text-info border border-info border-opacity-25"><?= htmlspecialchars($r['disciplina_nome']) ?></span></td>
-                                                <td style="max-width: 300px;">
-                                                    <div class="p-2 bg-light rounded shadow-sm small italic">
-                                                        "<?= htmlspecialchars($r['comentario']) ?>"
-                                                    </div>
-                                                </td>
-                                                <td class="text-end">
-                                                    <div class="d-flex gap-2 justify-content-end">
-                                                        <button class="btn btn-sm btn-outline-danger fw-bold rounded-pill" onclick="abrirModalResposta(<?= $r['estudante_id'] ?>, '<?= $r['estudante_nome'] ?>', <?= $r['turma_id'] ?>, <?= $r['disciplina_id'] ?>)">
-                                                            <ion-icon name="chatbubble-ellipses-outline"></ion-icon> Responder
-                                                        </button>
-                                                        <a href="#pane-notas" onclick="$('#tab-notas').tab('show'); switchClass('<?= $r['turma_id'] ?>|<?= $r['disciplina_id'] ?>');" class="btn btn-sm btn-primary fw-bold rounded-pill text-nowrap">
-                                                            <ion-icon name="create-outline"></ion-icon> Corrigir Nota
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
+
+                        <!-- Sub-tabs -->
+                        <ul class="nav nav-tabs mb-4" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#sub-cont-pendentes">
+                                    <ion-icon name="alert-circle-outline" class="me-1"></ion-icon>
+                                    Aguardam Resposta
+                                    <?php if ($pendentes_count > 0): ?>
+                                        <span class="badge bg-danger ms-1"><?= $pendentes_count ?></span>
                                     <?php endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div class="mt-4 alert alert-warning border-0 shadow-sm rounded-4">
-                            <h6 class="fw-bold"><ion-icon name="information-circle"></ion-icon> Nota do Sistema</h6>
-                            <p class="small mb-0">As reclamações desaparecem desta lista assim que o professor atualizar a nota do estudante ou o estudante aceitar os novos valores.</p>
-                        </div>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#sub-cont-historico">
+                                    <ion-icon name="time-outline" class="me-1"></ion-icon>
+                                    Histórico Completo
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <!-- Pendentes -->
+                            <div class="tab-pane fade show active" id="sub-cont-pendentes">
+                                <?php if (empty($data['contestacoes_pendentes'])): ?>
+                                    <div class="text-center py-5">
+                                        <ion-icon name="checkmark-circle-outline" style="font-size:3rem; color:#22c55e;"></ion-icon>
+                                        <p class="text-muted mt-3">Nenhuma contestação aguarda a sua resposta.</p>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="row g-3">
+                                        <?php foreach ($data['contestacoes_pendentes'] as $c): ?>
+                                            <div class="col-12">
+                                                <div class="card border-start border-4 border-danger shadow-sm">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                                            <div>
+                                                                <div class="fw-bold text-dark"><?= htmlspecialchars($c['estudante_nome']) ?></div>
+                                                                <div class="d-flex gap-2 mt-1 flex-wrap">
+                                                                    <span class="badge bg-secondary"><?= $c['turma_codigo'] ?></span>
+                                                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25"><?= htmlspecialchars($c['disciplina_nome']) ?></span>
+                                                                    <span class="badge bg-light text-muted border small"><?= date('d/m/Y H:i', strtotime($c['data_abertura'] ?? $c['data_resposta'])) ?></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex gap-2">
+                                                                <button class="btn btn-sm btn-primary fw-bold rounded-pill" onclick="switchClass('<?= $c['turma_id'] ?>|<?= $c['disciplina_id'] ?>'); $('#tab-notas').tab('show');">
+                                                                    <ion-icon name="create-outline"></ion-icon> Corrigir Nota
+                                                                </button>
+                                                                <button class="btn btn-sm btn-danger fw-bold rounded-pill"
+                                                                    onclick="abrirRespostaContestacao(<?= $c['estudante_id_real'] ?>, '<?= htmlspecialchars($c['estudante_nome']) ?>', <?= $c['turma_id'] ?>, <?= $c['disciplina_id'] ?>)">
+                                                                    <ion-icon name="chatbubble-ellipses-outline"></ion-icon> Responder
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mt-3 p-3 bg-danger bg-opacity-10 rounded border-start border-3 border-danger">
+                                                            <small class="text-muted fw-bold d-block mb-1"><ion-icon name="megaphone-outline"></ion-icon> Argumentação do Aluno:</small>
+                                                            <p class="mb-0 small"><?= nl2br(htmlspecialchars($c['comentario'])) ?></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Histórico -->
+                            <div class="tab-pane fade" id="sub-cont-historico">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle datatable-simple">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Estudante</th>
+                                                <th>Turma / Disc.</th>
+                                                <th>Estado</th>
+                                                <th>Detalhes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (empty($data['contestacoes_historico'])): ?>
+                                                <tr><td colspan="5" class="text-center py-4 text-muted">Sem histórico de contestações.</td></tr>
+                                            <?php else: ?>
+                                                <?php foreach ($data['contestacoes_historico'] as $h): ?>
+                                                    <?php
+                                                    $badge = match($h['status']) {
+                                                        'Pendente','Reclamado' => 'bg-danger',
+                                                        'Respondido'           => 'bg-info text-dark',
+                                                        'Resolvido'            => 'bg-success',
+                                                        'Impasse'              => 'bg-dark',
+                                                        'Em_Mediacao'          => 'bg-warning text-dark',
+                                                        'Aguardando_Comparecimento' => 'bg-warning text-dark',
+                                                        'Encerrado','Concordado' => 'bg-secondary',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    ?>
+                                                    <tr>
+                                                        <td class="small"><?= date('d/m/Y', strtotime($h['data_resposta'])) ?></td>
+                                                        <td class="fw-bold"><?= htmlspecialchars($h['estudante_nome']) ?></td>
+                                                        <td>
+                                                            <span class="badge bg-secondary me-1"><?= $h['turma_codigo'] ?></span>
+                                                            <small><?= htmlspecialchars($h['disciplina_nome']) ?></small>
+                                                        </td>
+                                                        <td><span class="badge <?= $badge ?>"><?= $h['status'] ?></span></td>
+                                                        <td class="small text-muted" style="max-width:250px">
+                                                            <?= htmlspecialchars(mb_strimwidth($h['comentario'] ?? '', 0, 80, '...')) ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div><!-- /tab-content -->
                     </div>
                 </div>
-            </div> <!-- Close pane-reclamacoes -->
+            </div><!-- Close pane-reclamacoes -->
 
             <!-- Minha Assiduidade -->
             <div class="tab-pane fade" id="pane-assiduidade">

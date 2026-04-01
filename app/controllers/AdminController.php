@@ -82,7 +82,12 @@ class AdminController extends Controller {
         require_once __DIR__ . '/../helpers/BackupManager.php';
         $data['backups'] = BackupManager::getLatestBackups(10);
 
+        // --- ⚖️ CONTESTAÇÕES EM MEDIAÇÃO (Impasse / Admin) ---
+        $data['contestacoes_mediacao'] = $this->model('Contestacao')->getEmMediacao();
+        $data['contestacoes_admin_all'] = $this->model('Contestacao')->getAllParaAdmin();
+
         $this->view('admin/dashboard', $data);
+
     }
 
     /**
