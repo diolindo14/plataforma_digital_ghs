@@ -424,6 +424,47 @@
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home" role="tabpanel">
 
+                <!-- 📢 ALERTAS DE CONVOCATÓRIA (Mediação) -->
+                <?php if (!empty($data['notas'])): ?>
+                    <?php foreach ($data['notas'] as $n): ?>
+                        <?php if ($n['feedback_status'] === 'Aguardando_Comparecimento'): ?>
+                            <div class="alert alert-danger shadow-sm border-0 border-start border-4 border-danger rounded-4 mb-4 p-4" role="alert">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger">
+                                        <ion-icon name="calendar" class="fs-2"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="fw-bold mb-1 text-danger">Convocatória de Mediação Presencial</h4>
+                                        <p class="mb-0 text-muted">A sua contestação da disciplina <strong><?= htmlspecialchars($n['disciplina']) ?></strong> foi escalada para mediação.</p>
+                                    </div>
+                                </div>
+                                <div class="row g-3 bg-white bg-opacity-50 p-3 rounded-4 border">
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Data Agendada</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= date('d/m/Y', strtotime($n['data_reuniao'])) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Hora</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= substr($n['hora_reuniao'], 0, 5) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Local / Gabinete</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= htmlspecialchars($n['local_reuniao']) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Referência</div>
+                                        <div class="badge bg-danger rounded-pill px-3">OBRIGATÓRIO</div>
+                                    </div>
+                                    <div class="col-12 mt-3 pt-3 border-top">
+                                        <small class="fw-bold text-danger d-block mb-1">Motivo da Convocação:</small>
+                                        <p class="mb-0 small italic text-muted">"<?= nl2br(htmlspecialchars($n['motivo_convocacao'])) ?>"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
                 <!-- 🏆 RANKING ACADÉMICO UNIVERSAL (Pilar 7) -->
                 <?php if (!empty($data['meu_ranking'])): ?>
                     <div class="row g-4 mb-5">
@@ -884,7 +925,19 @@
                                                             class="btn btn-sm btn-outline-danger fw-bold py-1 px-1" style="font-size: 0.70rem;">Discordar (Escalar)</button>
                                                     </div>
                                                 <?php elseif ($n['feedback_status'] == 'Impasse' || $n['feedback_status'] == 'Em_Mediacao' || $n['feedback_status'] == 'Aguardando_Comparecimento'): ?>
-                                                    <ion-icon name="lock-closed" class="text-danger"></ion-icon> <small class="text-danger fw-bold">Sob Mediação</small>
+                                                    <?php if ($n['feedback_status'] == 'Aguardando_Comparecimento'): ?>
+                                                        <div class="d-grid gap-1">
+                                                            <div class="badge bg-danger p-2 shadow-sm mb-1">
+                                                                <ion-icon name="calendar-outline" class="me-1"></ion-icon> OBRIGATÓRIO: MEDIAÇÃO
+                                                            </div>
+                                                            <div class="small text-danger fw-bold text-center">
+                                                                <?= date('d/m/Y', strtotime($n['data_reuniao'])) ?> - <?= substr($n['hora_reuniao'], 0, 5) ?><br>
+                                                                Local: <?= htmlspecialchars($n['local_reuniao']) ?>
+                                                            </div>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <ion-icon name="lock-closed" class="text-danger"></ion-icon> <small class="text-danger fw-bold">Sob Mediação</small>
+                                                    <?php endif; ?>
                                                 <?php else: ?>
                                                     <!-- Estado Inicial: Aguardando Ação do Aluno -->
                                                     <div class="d-grid gap-1">

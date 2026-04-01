@@ -113,7 +113,11 @@ class Academico {
                 cn.comentario as feedback_comentario,
                 cn.resposta_professor,
                 cn.bloqueado_admin,
-                cn.contador_reclamacoes
+                cn.contador_reclamacoes,
+                cn.data_reuniao,
+                cn.hora_reuniao,
+                cn.local_reuniao,
+                cn.motivo_convocacao
             FROM notas n
             JOIN avaliacoes a ON n.avaliacao_id = a.id
             JOIN tipos_avaliacao ta ON a.tipo_avaliacao_id = ta.id
@@ -139,6 +143,10 @@ class Academico {
                     'resposta_professor' => $r['resposta_professor'] ?? null,
                     'bloqueado_admin' => $r['bloqueado_admin'] ?? 0,
                     'contador_reclamacoes' => $r['contador_reclamacoes'] ?? 0,
+                    'data_reuniao' => $r['data_reuniao'],
+                    'hora_reuniao' => $r['hora_reuniao'],
+                    'local_reuniao' => $r['local_reuniao'],
+                    'motivo_convocacao' => $r['motivo_convocacao'],
                     'notas' => [1=>0, 2=>0, 3=>0, 4=>0, 5=>null]
                 ];
             }

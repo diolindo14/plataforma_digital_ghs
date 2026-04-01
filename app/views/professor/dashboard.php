@@ -186,6 +186,50 @@
             
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home">
+
+                <!-- 📢 ALERTAS DE CONVOCATÓRIA (Mediação Profissional) -->
+                <?php if (!empty($data['contestacoes_historico'])): ?>
+                    <?php foreach ($data['contestacoes_historico'] as $h): ?>
+                        <?php if ($h['status'] === 'Aguardando_Comparecimento'): ?>
+                            <div class="alert alert-danger shadow-sm border-0 border-start border-4 border-danger rounded-4 mb-4 p-4" role="alert">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger">
+                                        <ion-icon name="warning" class="fs-2"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="fw-bold mb-1 text-danger">Convocação Administrativa: Mediação Acadêmica em Curso</h4>
+                                        <p class="mb-0 text-muted">A Administração agendou uma reunião obrigatória para resolver a contestação do aluno <strong><?= htmlspecialchars($h['estudante_nome']) ?></strong>.</p>
+                                    </div>
+                                </div>
+                                <div class="row g-3 bg-white bg-opacity-50 p-3 rounded-4 border">
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Data Agendada</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= date('d/m/Y', strtotime($h['data_reuniao'])) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Hora</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= substr($h['hora_reuniao'], 0, 5) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Local / Gabinete</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= htmlspecialchars($h['local_reuniao']) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Status</div>
+                                        <div class="badge bg-danger rounded-pill px-3">COMPARECIMENTO OBRIGATÓRIO</div>
+                                    </div>
+                                    <div class="col-12 mt-3 pt-3 border-top">
+                                        <small class="fw-bold text-danger d-block mb-1">Motivo / Memorando:</small>
+                                        <p class="mb-0 small italic text-muted">"<?= nl2br(htmlspecialchars($h['motivo_convocacao'])) ?>"</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 text-end">
+                                    <button class="btn btn-sm btn-dark fw-bold rounded-pill" onclick="$('#tab-reclamacoes').tab('show');">Ir para Centro de Contestações</button>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
                 <div class="row g-4 mb-4">
                     <div class="col-md-4">
                         <div class="card border-0 shadow-sm" style="border-left: 5px solid #10B981 !important;">
@@ -926,6 +970,42 @@
                                 <?php endif; ?>
                             </div>
                         </div>
+
+                        <!-- 📋 ALERTAS DE CONVOCATÓRIA (Mediação Profissional) -->
+                        <?php if (!empty($data['contestacoes_historico'])): ?>
+                            <?php foreach ($data['contestacoes_historico'] as $h): ?>
+                                <?php if ($h['status'] === 'Aguardando_Comparecimento'): ?>
+                                    <div class="alert alert-warning border-0 border-start border-4 border-warning shadow-sm rounded-4 mb-4 p-4">
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <div class="bg-warning bg-opacity-20 p-3 rounded-circle text-warning">
+                                                <ion-icon name="business" class="fs-2"></ion-icon>
+                                            </div>
+                                            <div>
+                                                <h5 class="fw-bold mb-0 text-dark">Convocação Administrativa: Mediação Acadêmica</h5>
+                                                <span class="small text-muted">Referente ao aluno: <strong><?= htmlspecialchars($h['estudante_nome']) ?></strong> (<?= htmlspecialchars($h['disciplina_nome']) ?>)</span>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 bg-white bg-opacity-50 p-3 rounded-4 border">
+                                            <div class="col-md-3">
+                                                <div class="small fw-bold text-muted text-uppercase mb-1">Data</div>
+                                                <div class="fw-bold fs-5"><?= date('d/m/Y', strtotime($h['data_reuniao'])) ?></div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="small fw-bold text-muted text-uppercase mb-1">Hora</div>
+                                                <div class="fw-bold fs-5"><?= substr($h['hora_reuniao'], 0, 5) ?></div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="small fw-bold text-muted text-uppercase mb-1">Local / Gabinete</div>
+                                                <div class="fw-bold fs-5"><?= htmlspecialchars($h['local_reuniao']) ?></div>
+                                            </div>
+                                            <div class="col-md-2 text-end">
+                                                <span class="badge bg-dark rounded-pill px-3">COMPARECIMENTO OBRIGATÓRIO</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
 
                         <!-- Sub-tabs -->
                         <ul class="nav nav-tabs mb-4" role="tablist">
