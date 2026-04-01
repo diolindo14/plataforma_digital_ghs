@@ -108,3 +108,4 @@
 [2026-03-31 11:50:09] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
 [2026-03-31 11:50:14] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
 [2026-03-31 11:50:20] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
+[2026-03-31 16:31:48] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'REG-33287FF3' for key 'bi' em C:\xampp\htdocs\green\app\models\Estudante.php na linha 42
