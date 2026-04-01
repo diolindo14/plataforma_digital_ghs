@@ -151,10 +151,7 @@
                                          <label class="form-label">Nº de B.I. / Passaporte *</label>
                                          <input type="text" name="bi" class="form-control" placeholder="Número do documento" required>
                                      </div>
-                                     <div class="col-md-6">
-                                         <label class="form-label">Data de Nascimento *</label>
-                                         <input type="date" name="data_nascimento" class="form-control" required>
-                                     </div>
+                                     
                                      <div class="col-md-6">
                                          <label class="form-label">Estado Civil / Género</label>
                                          <select name="estado_civil" class="form-select">
