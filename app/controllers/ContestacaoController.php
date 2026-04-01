@@ -64,10 +64,7 @@ class ContestacaoController extends Controller {
             $this->_jsonError('A resposta não pode estar vazia.');
         }
 
-        // Obter professor_id a partir da sessão
-        $prof = $this->db->prepare("SELECT id FROM professores WHERE utilizador_id = :uid");
-        $prof->execute([':uid' => $_SESSION['user_id']]);
-        $professor_id = $prof->fetchColumn();
+
 
         $model  = $this->model('Contestacao');
         $result = $model->responderDocente(
@@ -171,9 +168,9 @@ class ContestacaoController extends Controller {
     // ────────────────────────────────────────────────────────
     public function detalhes($estudante_id, $disciplina_id) {
         header('Content-Type: application/json');
-        $model = $this->model('Contestacao');
+        $db = Database::getInstance();
 
-        $stmt = $this->db->prepare("
+        $stmt = $db->prepare("
             SELECT cn.*, d.nome as disciplina_nome, t.codigo as turma_codigo,
                    u_est.nome_completo as estudante_nome,
                    u_prof.nome_completo as professor_nome,
