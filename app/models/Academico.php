@@ -218,7 +218,13 @@ class Academico {
                 if (!$has_consent) {
                     $row['status'] = 'Pendente Acordo';
                 } else {
-                    $row['status'] = ($row['nota_final'] >= 10) ? 'Aprovado' : 'Reprovado';
+                    if ($row['nota_final'] >= 12) {
+                        $row['status'] = 'Aprovado';
+                    } elseif ($row['nota_final'] >= 8) {
+                        $row['status'] = 'Recurso';
+                    } else {
+                        $row['status'] = 'Reprovado';
+                    }
                 }
             } else {
                 $row['status'] = 'Em Curso';

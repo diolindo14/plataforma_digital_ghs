@@ -1017,6 +1017,9 @@
                                                 <?php if ($h['status'] === 'Aprovado'): ?>
                                                     <span
                                                         class="badge bg-success-subtle text-success border border-success border-opacity-25">Aprovado</span>
+                                                <?php elseif ($h['status'] === 'Recurso'): ?>
+                                                    <span
+                                                        class="badge bg-warning-subtle text-warning border border-warning border-opacity-25">Recurso</span>
                                                 <?php elseif ($h['status'] === 'Reprovado'): ?>
                                                     <span
                                                         class="badge bg-danger-subtle text-danger border border-danger border-opacity-25">Reprovado</span>
