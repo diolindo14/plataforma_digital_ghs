@@ -1695,9 +1695,9 @@
                                                                 <span class="badge bg-danger">Reprovado (Nota AC < 8)</span>
                                                             <?php elseif($media === null): ?>
                                                                 <span class="badge bg-secondary">Admitido ao Exame</span>
-                                                            <?php elseif($media >= 12): ?>
+                                                            <?php elseif(round($media, 1) >= 12): ?>
                                                                 <span class="badge bg-success">Aprovado</span>
-                                                            <?php elseif($media >= 8): ?>
+                                                            <?php elseif(round($media, 1) >= 8): ?>
                                                                 <span class="badge bg-warning text-dark">Recurso</span>
                                                             <?php else: ?>
                                                                 <span class="badge bg-danger">Reprovado</span>

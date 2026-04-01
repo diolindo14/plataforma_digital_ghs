@@ -190,10 +190,10 @@ class Matricula {
             $media = $g['media_final'];
             if ($media === null || $media == 0) {
                 $missingCount++;
-            } elseif ($media >= 12) {
+            } elseif (round($media, 1) >= 12) {
                 // Aprovado Direto
                 $passedCount++;
-            } elseif ($media >= 8) {
+            } elseif (round($media, 1) >= 8) {
                 // Elegível para Recurso (Exame de segunda época)
                 $recursoCount++;
             } else {
