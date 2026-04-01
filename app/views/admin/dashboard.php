@@ -815,58 +815,6 @@
                         </div>
                     </div>
 
-                    <!-- ── TABELA DE AUDITORIA DE ACESSOS (Monitorização Inteligente) ── -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-12">
-                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden border-start border-4 border-info">
-                                <div class="card-header bg-white py-3 border-bottom border-light">
-                                    <h6 class="fw-bold mb-0 d-flex align-items-center gap-2 text-info">
-                                        <ion-icon name="eye-outline" class="fs-4"></ion-icon>
-                                        Log de Acessos Recentes (Totalmente Silencioso)
-                                    </h6>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle mb-0 datatable-simple">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>Utilizador</th>
-                                                    <th>Papel</th>
-                                                    <th>IP de Origem</th>
-                                                    <th>Navegador / Sistema</th>
-                                                    <th>Data/Hora do Acesso</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php if (empty($data['logs_acesso'])): ?>
-                                                    <tr>
-                                                        <td colspan="5" class="text-center py-4 text-muted small">Sem registos de acesso recentes.</td>
-                                                    </tr>
-                                                <?php else: ?>
-                                                    <?php foreach ($data['logs_acesso'] as $log): ?>
-                                                        <tr>
-                                                            <td class="fw-bold text-dark"><?= htmlspecialchars($log['nome_completo']) ?></td>
-                                                            <td><span class="badge bg-light text-dark text-uppercase" style="font-size: 0.65rem;"><?= $log['tipo'] ?></span></td>
-                                                            <td class="small fw-bold text-secondary text-nowrap"><?= $log['ip_address'] ?></td>
-                                                            <td class="small text-muted" title="<?= htmlspecialchars($log['user_agent']) ?>">
-                                                                <?= substr(htmlspecialchars($log['user_agent']), 0, 40) ?>...
-                                                            </td>
-                                                            <td>
-                                                                <span class="small fw-bold border-start border-3 border-info ps-2">
-                                                                    <?= date('d/m/Y H:i:s', strtotime($log['data_acesso'])) ?>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    <?php endforeach; ?>
-                                                <?php endif; ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
 
 
                     <!-- 🏆 QUADRO DE MÉRITO (Ranking Global) -->

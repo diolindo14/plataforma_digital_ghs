@@ -109,3 +109,19 @@
 [2026-03-31 11:50:14] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
 [2026-03-31 11:50:20] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
 [2026-03-31 16:31:48] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'REG-33287FF3' for key 'bi' em C:\xampp\htdocs\green\app\models\Estudante.php na linha 42
+[2026-04-01 01:16:52] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:17:00] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:17:06] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:17:50] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343

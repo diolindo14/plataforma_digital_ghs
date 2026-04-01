@@ -116,9 +116,6 @@ class AdminController extends Controller {
             $this->logActivity('Aprovar Conta Utilizador', ['user_id' => $id]);
             
             $user = $this->model('User')->findById($id);
-            $notif = "O Administrador aprovou a conta de " . ($user['nome_completo'] ?? 'Utilizador') . ".";
-            $this->model('Mensagem')->notifyGroup('secretaria', $notif, $_SESSION['user_id']);
-            
             // 📧 Notificação por Email ao utilizador aprovado
             if (!empty($user['email'])) {
                 Mailer::sendWelcome($user['email'], $user['nome_completo'] ?? 'Estudante');
