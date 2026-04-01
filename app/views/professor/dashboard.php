@@ -418,15 +418,16 @@
                                                         $media = $r['media_final'];
                                                         $exame = $r['notas'][5];
                                                         
-                                                        if($media === null): ?>
-                                                            <span class="badge bg-secondary">Admitido ao Exame</span>
-                                                        <?php elseif(round($media, 1) >= 12): ?>
-                                                            <span class="badge bg-success">Aprovado</span>
-                                                        <?php elseif(round($media, 1) >= 8): ?>
-                                                            <span class="badge bg-warning text-dark">Recurso</span>
-                                                        <?php else: ?>
-                                                            <span class="badge bg-danger">Reprovado</span>
-                                                        <?php endif; ?>
+                                                            $media_r = round($media, 1);
+                                                            if($media === null): ?>
+                                                                <span class="badge bg-secondary">Admitido ao Exame</span>
+                                                            <?php elseif($media_r >= 11.5): ?>
+                                                                <span class="badge bg-success">Aprovado</span>
+                                                            <?php elseif($media_r >= 8): ?>
+                                                                <span class="badge bg-warning text-dark">Recurso</span>
+                                                            <?php else: ?>
+                                                                <span class="badge bg-danger">Reprovado</span>
+                                                            <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -612,9 +613,10 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="btn-group btn-group-sm btn-group-presenca" data-status="P">
-                                                        <button class="btn btn-outline-success active" onclick="setPresenca(this, 'P')" title="Marcar Presença">PRESENTE</button>
+                                                        <button class="btn btn-outline-success active" onclick="setPresenca(this, 'P')" title="Marcar Presença">P</button>
                                                         <button class="btn btn-outline-danger" onclick="setPresenca(this, 'F')" title="Marcar Falta">F</button>
-                                                        <button class="btn btn-outline-warning" onclick="setPresenca(this, 'J')" title="Justificar Falta">J</button>
+                                                        <button class="btn btn-outline-warning" onclick="setPresenca(this, 'J')" title="Justificada">J</button>
+                                                        <button class="btn btn-outline-dark" onclick="setPresenca(this, 'I')" title="Indisciplina / Mau Comportamento">I</button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1378,19 +1380,23 @@ function setPresenca(btn, status) {
         if (s.includes("'P'")) $(this).text('P').addClass('btn-outline-success').removeClass('btn-outline-secondary');
         if (s.includes("'F'")) $(this).text('F').addClass('btn-outline-danger').removeClass('btn-outline-secondary');
         if (s.includes("'J'")) $(this).text('J').addClass('btn-outline-warning').removeClass('btn-outline-secondary');
+        if (s.includes("'I'")) $(this).text('I').addClass('btn-outline-dark').removeClass('btn-outline-secondary');
     });
 
     // 2. Ativar este botão
-    el.addClass('active').removeClass('btn-outline-success btn-outline-danger btn-outline-warning btn-outline-secondary');
+    el.addClass('active').removeClass('btn-outline-success btn-outline-danger btn-outline-warning btn-outline-dark btn-outline-secondary');
     if (status === 'P') {
         el.text('PRESENTE').addClass('btn-success');
-        badge.text('Presente').removeClass('bg-danger bg-warning text-danger text-warning').addClass('bg-success text-success');
+        badge.text('Presente').removeClass('bg-danger bg-warning bg-dark text-danger text-warning text-dark').addClass('bg-success text-success');
     } else if (status === 'F') {
         el.text('FALTA').addClass('btn-danger');
-        badge.text('Falta').removeClass('bg-success bg-warning text-success text-warning').addClass('bg-danger text-danger');
+        badge.text('Falta').removeClass('bg-success bg-warning bg-dark text-success text-warning text-dark').addClass('bg-danger text-danger');
     } else if (status === 'J') {
         el.text('JUSTIFICADA').addClass('btn-warning');
-        badge.text('Justificada').removeClass('bg-success bg-danger text-success text-danger').addClass('bg-warning text-warning');
+        badge.text('Justificada').removeClass('bg-success bg-danger bg-dark text-success text-danger text-dark').addClass('bg-warning text-warning');
+    } else if (status === 'I') {
+        el.text('INDISCIPLINA').addClass('btn-dark');
+        badge.text('Indisciplina').removeClass('bg-success bg-danger bg-warning text-success text-danger text-warning').addClass('bg-dark text-white');
     }
     
     group.attr('data-status', status);

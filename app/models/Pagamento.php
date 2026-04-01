@@ -173,6 +173,42 @@ class Pagamento {
     }
     
     /**
+     * Regista automaticamente o pagamento do 10º mês (Julho).
+     * Conforme regra institucional, este mês é pago obrigatoriamente no acto da matrícula.
+     */
+    public function registrarJulhoAutomatico($estudante_id, $admin_id, $valor = 0) {
+        $ano_letivo = date('Y') . '/' . (date('Y') + 1);
+        
+        // Verificar se já existe pagamento para Julho (mes 7) neste ano letivo
+        $stmtCheck = $this->db->prepare("SELECT id FROM pagamentos WHERE estudante_id = :eid AND mes_referencia = 7 AND (ano_letivo = :ano OR ano_letivo = :ano2)");
+        $stmtCheck->execute([
+            ':eid' => $estudante_id, 
+            ':ano' => $ano_letivo,
+            ':ano2' => date('Y')
+        ]);
+        if ($stmtCheck->fetch()) return true;
+
+        $stmt = $this->db->prepare('
+            INSERT INTO pagamentos (
+                estudante_id, descricao, mes_referencia, ano_letivo, valor, 
+                data_pagamento, data_vencimento, forma_pagamento, status, 
+                processado_por, observacoes
+            ) VALUES (
+                :eid, "10º Mês (Julho) - Acto de Matrícula", 7, :ano, :valor, 
+                NOW(), NOW(), "Numerário", "Pago", :admin, 
+                "Pagamento automático validado pelo sistema após aprovação da matrícula."
+            )
+        ');
+        
+        return $stmt->execute([
+            ':eid'   => $estudante_id,
+            ':ano'   => $ano_letivo,
+            ':valor' => $valor,
+            ':admin' => $admin_id
+        ]);
+    }
+
+    /**
      * Estatística: Calcula o montante total arrecadado num período específico.
      */
     public function getEstatisticasMensais($mes, $ano) {

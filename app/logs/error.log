@@ -187,3 +187,5 @@
 [2026-04-01 06:42:46] CRITICAL ERROR: SQLSTATE[42S02]: Base table or view not found: 1051 Unknown table 'ghsespf_db.estudante_user_id_view' em C:\xampp\htdocs\green\app\models\Contestacao.php na linha 358
 [2026-04-01 06:43:12] CRITICAL ERROR: SQLSTATE[42S02]: Base table or view not found: 1051 Unknown table 'ghsespf_db.estudante_user_id_view' em C:\xampp\htdocs\green\app\models\Contestacao.php na linha 358
 [2026-04-01 06:48:12] CRITICAL ERROR: SQLSTATE[42S02]: Base table or view not found: 1051 Unknown table 'ghsespf_db.estudante_user_id_view' em C:\xampp\htdocs\green\app\models\Contestacao.php na linha 358
+[2026-04-01 16:17:44] CRITICAL ERROR: Call to undefined method Pagamento::getTiposPagamento() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 47
+[2026-04-01 16:17:46] CRITICAL ERROR: Call to undefined method Pagamento::getTiposPagamento() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 47

@@ -190,7 +190,7 @@ class Matricula {
             $media = $g['media_final'];
             if ($media === null || $media == 0) {
                 $missingCount++;
-            } elseif (round($media, 1) >= 12) {
+            } elseif (round($media, 1) >= 11.5) {
                 // Aprovado Direto
                 $passedCount++;
             } elseif (round($media, 1) >= 8) {
