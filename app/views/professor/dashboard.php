@@ -291,7 +291,7 @@
                 
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold text-success mb-2">IA4 - Avaliação Contínua (20 pontos)</h5>
+                        <h5 class="fw-bold text-success mb-2"> Avaliação Contínua (20 pontos)</h5>
                         <p class="text-muted small border-bottom pb-3">A Métrica Institucional define: TPC (2) | AP (3) | TPI (5) | CE (10)</p>
 
                         <div class="table-responsive mt-3">
@@ -305,7 +305,7 @@
                                         <th class="text-center" style="width: 80px;">TPI<br><small>(Máx 5)</small></th>
                                         <th class="text-center" style="width: 80px;">CE<br><small>(Máx 10)</small></th>
                                         <th class="text-center text-white bg-success">Total AC<br><small>(20 pts)</small></th>
-                                        <th class="text-center border-start border-primary" style="width: 90px;">Exame</th>
+                                        <th class="text-center border-start border-primary" style="width: 90px;">Exame Semestral</th>
                                         <th class="text-center text-white bg-dark">Média Final</th>
                                         <th class="text-center">Feedback / Ação</th>
                                     </tr>
@@ -367,7 +367,7 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold mb-0">Livro de Ponto / Frequência</h4>
+                            <h4 class="fw-bold mb-0">Livro de Ponto & Frequência dos estudantes</h4>
                             <input type="date" class="form-control w-25" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-4 mb-4">
