@@ -104,6 +104,10 @@
                 <div><strong>Aceda ao Endereço Institucional</strong> Abra o browser e navegue para o endereço fornecido
                     pela secretaria (ex: <code>http://localhost/green/auth</code>).</div>
             </li>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="../public/assets/img/login_screen.png" alt="Interface de Login GHS" style="max-width: 300px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <p style="font-size: 10px; color: var(--muted); margin-top: 5px;">Interface do Portal Institucional GHS</p>
+            </div>
             <li>
                 <div><strong>Introduza as Suas Credenciais</strong> Preencha o campo de Email e Password com os dados
                     recebidos no momento da matrícula ou contratação.</div>
@@ -213,17 +217,34 @@
                 <tr>
                     <td>Nota Final</td>
                     <td><strong>(AC + Exame) ÷ 2</strong></td>
-                    <td>Média aritmética. Valor ≥ 12 = Aprovado. Entre 8-11 = Recurso. &lt; 8 = Reprovado.</td>
+                    <td>Média aritmética. Valor ≥ 12 = Aprovado. Entre 8 e 11.9 = Recurso. &lt; 8 = Reprovado.</td>
+                </tr>
+                <tr>
+                    <td>Admissão ao Exame</td>
+                    <td><strong>Mínimo 8.0 AC</strong></td>
+                    <td>Alunos com média AC inferior a 8.0 são reprovados automaticamente.</td>
                 </tr>
             </tbody>
         </table>
 
-        <div class="info-box">
-            <strong>💡 Reclamação de Nota:</strong> Se discordar de uma avaliação, pode submeter uma reclamação
-            diretamente
-            na página de notas. O professor receberá a reclamação e deverá responder no prazo definido. Cada aluno tem
-            um
-            limite de reclamações por disciplina.
+        <h3>2.3.1 Ciclo de Validação e Contestação de Notas</h3>
+        <p>Para garantir a integridade pedagógica, a plataforma utiliza um sistema de validação ativa em quatro fases:</p>
+        <ol class="steps">
+            <li>
+                <div><strong>Estado: Pendente (Contestação)</strong> Se o aluno discordar da nota, clica em "Contestar" e descreve o motivo. O professor recebe uma notificação imediata para rever o caso.</div>
+            </li>
+            <li>
+                <div><strong>Estado: Respondido</strong> O professor analisa a reclamação e envia uma resposta formal pelo portal. O professor pode optar por manter a nota original (com justificativa) ou proceder à retificação.</div>
+            </li>
+            <li>
+                <div><strong>Estado: Concordado / Resolvido</strong> Após a resposta do docente, o aluno deve ler o parecer. Caso concorde, clica em "Aceitar Resposta", o que encerra o processo de avaliação daquela disciplina e tranca a nota para alterações.</div>
+            </li>
+            <li>
+                <div><strong>Mediação (Impasse)</strong> Caso o aluno e o professor não cheguem a um acordo, o processo é escalado para a Coordenação Académica (Administrador) para uma decisão final e definitiva.</div>
+            </li>
+        </ol>
+        <div class="success-box">
+            <strong>✅ Importante:</strong> Assim que clicar em <strong>"Confirmar Nota"</strong> (mesmo sem contestação prévia), a nota é considerada definitiva para efeitos de pauta oficial e o processo é dado como encerrado.
         </div>
 
         <h3>2.4 Horários Dinâmicos e Interativos (Novo)</h3>
@@ -255,9 +276,9 @@
                     "Submeter Pagamento".</div>
             </li>
             <li>
-                <div><strong>Aguarde a Validação</strong> A tesouraria irá confirmar o pagamento. Após aprovação,
-                    receberá
-                    um recibo digital disponível para download.</div>
+                <div><strong>Aceda ao Recibo Térmico (POS)</strong> Após a validação, poderá descarregar um recibo 
+                em formato térmico (80mm), otimizado para impressão rápida, contendo um <strong>QR Code</strong> de 
+                autenticação digital para prova oficial.</div>
             </li>
         </ol>
 

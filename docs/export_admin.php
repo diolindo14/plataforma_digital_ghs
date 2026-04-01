@@ -551,28 +551,28 @@
         </thead>
         <tbody>
             <tr>
-                <td>Aprovação por Trânsito</td>
+                <td>Aprovação Direta</td>
                 <td>Média final ≥ 12 em todas as disciplinas</td>
                 <td><span class="badge badge-green">Aprovado ✓</span></td>
             </tr>
             <tr>
                 <td>Acesso a Exame de Recurso</td>
-                <td>Média entre 8 e 11 (máx. 3 disciplinas)</td>
+                <td>Média entre 8 e 11.9 (8.0 mínimo AC)</td>
                 <td><span class="badge badge-yellow">Recurso ⚠</span></td>
             </tr>
             <tr>
-                <td>Repetição de Ano</td>
-                <td>Nota &lt; 8 em qualquer disciplina OU mais de 3 negativas acumuladas</td>
+                <td>Repetição de Disciplina</td>
+                <td>Nota AC < 8 ou Média Final < 8</td>
                 <td><span class="badge badge-red">Reprovado ✗</span></td>
             </tr>
         </tbody>
     </table>
 
     <h3>4.3 Gestão de Tesouraria e Pagamento Manual</h3>
-    <p>Além da submissão e validação digital de comprovativos, a secretaria pode agora registar pagamentos em
-        pessoa:
-        depósitos bancários diretos são lançados manualmente pelo administrativo, activando imediatamente o status
-        académico do aluno e gerando um recibo digital com número de série único.</p>
+    <p>Além da submissão e validação digital de comprovativos, a secretaria pode agora registar pagamentos em 
+    pessoa: depósitos bancários diretos são lançados manualmente pelo administrativo, activando imediatamente o status 
+    académico do aluno e gerando um <strong>Recibo Térmico (POS 80mm)</strong> com <strong>QR Code dinâmico</strong> 
+    de autenticação digital instantânea.</p>
 
     <h3>4.4 Histórico Académico Global</h3>
     <p>Cada aluno tem acesso ao seu <strong>Histórico Global</strong>, um registo imutável e vitalício de todas as
@@ -598,6 +598,9 @@
     <div class="success-box">
         <strong>✅ Benefício Institucional:</strong> Este fluxo reduz o tempo de inscrição para estudantes em renovação de ano ou inscrição num novo curso, eliminando burocracia repetitiva e o risco de dados duplicados ou inconsistentes na base de dados.
     </div>
+
+    <h3>4.7 Transparência Académica: Ciclo de Confirmação de Notas</h3>
+    <p>A plataforma introduziu um fluxo de "Acordo de Notas" onde o aluno deve validar ativamente o resultado final. Isto reduz drasticamente os erros de lançamento e as reclamações presenciais, movendo o debate pedagógico para um ambiente digital auditável (Pendente -> Respondido -> Resolvido).</p>
 
 
     <p>A plataforma implementa proteção multicamada, garantindo conformidade com as melhores práticas internacionais

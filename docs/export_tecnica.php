@@ -307,8 +307,13 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
                 </tr>
                 <tr>
                     <td><code>concordancia_notas</code></td>
-                    <td>Reclamações e respostas de notas</td>
-                    <td>id, estudante_id, disciplina_id, status, comentario</td>
+                    <td>Reclamações e fluxo de validação ativa de notas</td>
+                    <td>id, estudante_id, disciplina_id, status (Pendente, Respondido, Concordado, Resolvido), comentario</td>
+                </tr>
+                <tr>
+                    <td><code>recibos_pos</code></td>
+                    <td>Metadados de conformidade para recibos térmicos</td>
+                    <td>id, pagamento_id, qr_code_hash, data_impressao</td>
                 </tr>
             </tbody>
         </table>
@@ -377,18 +382,28 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
             do
             estatuto académico de cada aluno:</p>
         <pre>
-<span class="comment">// Regras de Progressão — Matricula.php</span>
+<span class="comment">// Regras de Progressão — Académico (Calculado em Nota.php)</span>
 <span class="key">foreach</span> ($grades <span class="key">as</span> $g) {
-    <span class="key">if</span>     ($media >= <span class="val">12</span>) $passedCount++;    <span class="comment">// Aprovado Direto</span>
-    <span class="key">elseif</span> ($media >= <span class="val">8</span>)  $recursoCount++;   <span class="comment">// Elegível para Recurso</span>
-    <span class="key">else</span>               $reprovadoCount++; <span class="comment">// Reprovado (&lt; 8)</span>
+    <span class="key">if</span>     ($media >= <span class="val">12</span>) $status = <span class="val">'Aprovado'</span>; <span class="comment">// Aprovado Direto</span>
+    <span class="key">elseif</span> ($media >= <span class="val">8</span>)  $status = <span class="val">'Recurso'</span>;  <span class="comment">// Elegível para Recurso</span>
+    <span class="key">else</span>               $status = <span class="val">'Reprovado'</span>; <span class="comment">// Reprovado (< 8)</span>
 }
 
-<span class="comment">// Regra das 3 Negativas</span>
-<span class="key">if</span> ($reprovadoCount > <span class="val">0</span> || ($recursoCount + $reprovadoCount) > <span class="val">3</span>) {
-    <span class="key">return</span> [<span class="val">'status'</span> => <span class="val">'Reprovado'</span>, <span class="val">'can_transit'</span> => <span class="key">false</span>];
+<span class="comment">// Barreira de Admissão em Académico.php</span>
+<span class="key">if</span> ($total_ac < <span class="val">8</span>) {
+    <span class="key">return</span> [<span class="val">'pode_fazer_exame'</span> => <span class="key">false</span>, <span class="val">'situacao'</span> => <span class="val">'Reprovado'</span>];
 }
 </pre>
+        <h3>7.2 Máquina de Estados: Confirmação de Notas (Contestacao.php)</h3>
+        <p>Implementa um ciclo de vida rigoroso para a validação de avaliações, permitindo que o aluno aceite ou conteste resultados:</p>
+        <table>
+            <tr><th>Estado</th><th>Ação do Aluno</th><th>Próximo Estado</th></tr>
+            <tr><td><b>Inexistente</b></td><td>Confirmar Nota</td><td><code>Concordado</code> (Encerrado)</td></tr>
+            <tr><td><b>Inexistente</b></td><td>Contestar</td><td><code>Pendente</code> (Aguarda Prof)</td></tr>
+            <tr><td><b>Pendente</b></td><td>Professor Responde</td><td><code>Respondido</code></td></tr>
+            <tr><td><b>Respondido</b></td><td>Aceitar</td><td><code>Resolvido</code> (Encerrado)</td></tr>
+            <tr><td><b>Respondido</b></td><td>Escalar (Discordar)</td><td><code>Impasse</code> (Aguarda Admin)</td></tr>
+        </table>
 
         <h3>7.2 Motor de Ranking e Mérito (Academico.php)</h3>
         <p>Os métodos <code>getRankingByNivel()</code> e <code>getRankingEscola()</code> calculam dinamicamente as
@@ -429,6 +444,14 @@ $existing = $estudanteModel->findByUserId($user_id);
 }
         </pre>
         <p>No frontend, a função <code>toggleInternalFields()</code> oculta/mostra elementos e remove/adiciona o atributo <code>required</code> conforme o tipo de candidato selecionado (ou detetado via sessão).</p>
+
+        <h3>7.5 Motor de Recibos Térmicos POS (recibo_print.php)</h3>
+        <p>Sistema de geração de documentos em formato 80mm para impressoras POS térmicas, injetando metadados de autenticação visual:</p>
+        <ul>
+            <li><strong>QR Code Encoder:</strong> Gera um hash contendo <code>ID_PAGAMENTO | VALOR | ID_ESTUDANTE</code> via API externa para validação rápida por scanner.</li>
+            <li><strong>CSS Thermal Optimization:</strong> Uso de <code>print-color-adjust: exact</code> e remoção de escalas de cinza para máxima legibilidade em cabeças térmicas.</li>
+            <li><strong>Guia de Corte:</strong> Delimitação visual por bordas pontilhadas simétricas (esquerda/direita) para ajuste manual de papel.</li>
+        </ul>
 
         <h2>8. Sistema de Auditoria</h2>
         <p>Todas as ações críticas do sistema são registadas na tabela <code>logs_auditoria</code> com os seguintes
