@@ -133,10 +133,7 @@
                                         <input type="date" name="data_nascimento" class="form-control" value="<?= $data['student_profile']['data_nascimento'] ?? '' ?>" required>
                                     </div>
                                     
-                                    <div class="col-md-6">
-                                        <label class="form-label">Nº do B.I. *</label>
-                                        <input type="text" name="bi" class="form-control" placeholder="Número do Bilhete de Identidade" value="<?= $data['student_profile']['bi'] ?? '' ?>" required>
-                                    </div>
+                                    
                                     <div class="col-md-6">
                                         <label class="form-label">Nacionalidade *</label>
                                         <input type="text" name="nacionalidade" class="form-control" value="<?= $data['student_profile']['nacionalidade'] ?? 'Guineense' ?>" required>
