@@ -173,39 +173,54 @@ class Pagamento {
     }
     
     /**
-     * Regista automaticamente o pagamento do 10º mês (Julho).
-     * Conforme regra institucional, este mês é pago obrigatoriamente no acto da matrícula.
+     * Regista automaticamente as taxas obrigatórias no acto da matrícula:
+     * 10º Mês (Julho), Inscrição, Cartão e Caderneta.
      */
-    public function registrarJulhoAutomatico($estudante_id, $admin_id, $valor = 0) {
+    public function registrarTaxasMatricula($estudante_id, $admin_id, $mensalidade = 0, $tipo_aluno = 'Novo Ingresso') {
         $ano_letivo = date('Y') . '/' . (date('Y') + 1);
+        $taxa_inscricao = ($tipo_aluno === 'Novo Ingresso') ? 15000 : 10000;
         
-        // Verificar se já existe pagamento para Julho (mes 7) neste ano letivo
-        $stmtCheck = $this->db->prepare("SELECT id FROM pagamentos WHERE estudante_id = :eid AND mes_referencia = 7 AND (ano_letivo = :ano OR ano_letivo = :ano2)");
-        $stmtCheck->execute([
-            ':eid' => $estudante_id, 
-            ':ano' => $ano_letivo,
-            ':ano2' => date('Y')
-        ]);
-        if ($stmtCheck->fetch()) return true;
+        $itens = [
+            ['nome' => "10º Mês (Julho)", 'valor' => $mensalidade, 'mes' => 7],
+            ['nome' => "Taxa de Inscrição ($tipo_aluno)", 'valor' => $taxa_inscricao, 'mes' => 0],
+            ['nome' => "Cartão de Estudante", 'valor' => 2500, 'mes' => 0],
+            ['nome' => "Caderneta de Notas", 'valor' => 3000, 'mes' => 0]
+        ];
 
-        $stmt = $this->db->prepare('
-            INSERT INTO pagamentos (
-                estudante_id, descricao, mes_referencia, ano_letivo, valor, 
-                data_pagamento, data_vencimento, forma_pagamento, status, 
-                processado_por, observacoes
-            ) VALUES (
-                :eid, "10º Mês (Julho) - Acto de Matrícula", 7, :ano, :valor, 
-                NOW(), NOW(), "Numerário", "Pago", :admin, 
-                "Pagamento automático validado pelo sistema após aprovação da matrícula."
-            )
-        ');
-        
-        return $stmt->execute([
-            ':eid'   => $estudante_id,
-            ':ano'   => $ano_letivo,
-            ':valor' => $valor,
-            ':admin' => $admin_id
-        ]);
+        foreach ($itens as $item) {
+            // Evitar duplicidade básica para o mesmo ano letivo
+            $stmtCheck = $this->db->prepare("SELECT id FROM pagamentos WHERE estudante_id = :eid AND descricao LIKE :desc AND (ano_letivo = :ano OR ano_letivo = :ano2)");
+            $stmtCheck->execute([
+                ':eid' => $estudante_id, 
+                ':desc' => $item['nome'] . '%',
+                ':ano' => $ano_letivo,
+                ':ano2' => date('Y')
+            ]);
+            
+            if ($stmtCheck->fetch()) continue;
+
+            $stmt = $this->db->prepare('
+                INSERT INTO pagamentos (
+                    estudante_id, descricao, mes_referencia, ano_letivo, valor, 
+                    data_pagamento, data_vencimento, forma_pagamento, status, 
+                    processado_por, observacoes
+                ) VALUES (
+                    :eid, :desc, :mes, :ano, :valor, 
+                    NOW(), NOW(), "Numerário", "Pago", :admin, 
+                    "Pagamento automático de taxas obrigatórias no acto da matrícula (Workflow GHS)."
+                )
+            ');
+            
+            $stmt->execute([
+                ':eid'   => $estudante_id,
+                ':desc'  => $item['nome'] . " - Acto de Matrícula",
+                ':mes'   => $item['mes'],
+                ':ano'   => $ano_letivo,
+                ':valor' => $item['valor'],
+                ':admin' => $admin_id
+            ]);
+        }
+        return true;
     }
 
     /**

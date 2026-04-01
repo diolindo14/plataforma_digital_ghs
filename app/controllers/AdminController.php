@@ -236,7 +236,7 @@ class AdminController extends Controller {
         $db = Database::getInstance(); 
         
         $stmt = $db->prepare("
-            SELECT m.*, u.nome_completo, u.email, u.id as user_id, u.status as user_status,
+            SELECT m.*, u.nome_completo, u.email, u.id as user_id, 
                    a.nome as ano_nome, a.mensalidade
             FROM matriculas m 
             JOIN estudantes e ON m.estudante_id = e.id 
@@ -264,9 +264,8 @@ class AdminController extends Controller {
                 $_SESSION['flash_success'] = "Matrícula de {$m['nome_completo']} aprovada! Alocação manual necessária.";
             }
 
-            // --- PILAR FINANCEIRO: Registro Automatizado do 10º Mês (Julho) ---
-            // Conforme solicitado: Julho é pago no acto da matrícula.
-            $this->model('Pagamento')->registrarJulhoAutomatico($m['estudante_id'], $_SESSION['user_id'], $m['mensalidade'] ?? 0);
+            // --- PILAR FINANCEIRO: Registro Automatizado das Taxas Integradas ---
+            $this->model('Pagamento')->registrarTaxasMatricula($m['estudante_id'], $_SESSION['user_id'], $m['mensalidade'] ?? 0, $m['tipo'] ?? 'Novo Ingresso');
             
             // 📧 Notificação por Email ao aluno
             if (!empty($m['email'])) {
@@ -427,9 +426,9 @@ class AdminController extends Controller {
             $matriculaModel->assignToTurma($matricula_id, $turmaAuto['id']);
         }
 
-        // --- PILAR FINANCEIRO: Registro Automatizado do 10º Mês (Julho) ---
+        // --- PILAR FINANCEIRO: Registro Automatizado das Taxas Integradas ---
         $anoC = $this->model('Academico')->getAnoById($ano_id);
-        $this->model('Pagamento')->registrarJulhoAutomatico($estudante_id, $_SESSION['user_id'], $anoC['mensalidade'] ?? 0);
+        $this->model('Pagamento')->registrarTaxasMatricula($estudante_id, $_SESSION['user_id'], $anoC['mensalidade'] ?? 0, $tipo);
 
         $this->logActivity('Criar Matrícula Manual', ['user_id' => $user_id, 'email' => $email]);
 

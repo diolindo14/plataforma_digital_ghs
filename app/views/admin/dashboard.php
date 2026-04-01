@@ -1470,7 +1470,6 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        </div>
 
                                         <!-- Aba Conduta (I) -->
                                         <div class="tab-pane fade" id="pills-conduta">

@@ -70,7 +70,14 @@ class SecretariaController extends Controller {
         $matriculaModel = $this->model('Matricula'); 
         $db = Database::getInstance(); 
         
-        $stmt = $db->prepare("SELECT m.*, u.nome_completo, u.email, u.id as user_id FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+        $stmt = $db->prepare("
+            SELECT m.*, u.nome_completo, u.email, u.id as user_id, 
+                   a.nome as ano_nome, a.mensalidade
+            FROM matriculas m 
+            JOIN estudantes e ON m.estudante_id = e.id 
+            JOIN utilizadores u ON e.utilizador_id = u.id 
+            LEFT JOIN anos a ON m.ano_curso_id = a.id
+            WHERE m.id = :id");
         $stmt->execute([':id' => $id]);
         $m = $stmt->fetch(); 
 
@@ -91,6 +98,9 @@ class SecretariaController extends Controller {
             } else {
                 $_SESSION['flash_success'] = "Matrícula aprovada e aluno ativado! (Alocação manual necessária).";
             }
+
+            // --- PILAR FINANCEIRO: Registro Automatizado das Taxas Integradas ---
+            $this->model('Pagamento')->registrarTaxasMatricula($m['estudante_id'], $_SESSION['user_id'], $m['mensalidade'] ?? 0, $m['tipo'] ?? 'Novo Ingresso');
 
             // Integração: Informe ao Admin
             $notif = "A Secretaria (" . ($_SESSION['user_name'] ?? 'Membro') . ") aprovou a matrícula de " . ($m['nome_completo'] ?? 'N/A') . ".";
@@ -273,6 +283,10 @@ class SecretariaController extends Controller {
                 $matriculaModel->saveDocument($matricula_id, 'Comprovativo_Pagamento', basename($upload['fileName']), $dest . '/' . $upload['fileName']);
             }
         }
+
+        // 5. PILAR FINANCEIRO: Registro Automatizado de Taxas
+        $anoC = $this->model('Academico')->getAnoById($_POST['ano_id']);
+        $this->model('Pagamento')->registrarTaxasMatricula($estudante_id, $_SESSION['user_id'], $anoC['mensalidade'] ?? 0, $_POST['tipo'] ?? 'Novo Ingresso');
 
         $_SESSION['flash_success'] = "Matrícula manual para $nome criada e aprovada com sucesso!";
         header('Location: ' . URL_ROOT . '/secretaria');
