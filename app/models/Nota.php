@@ -1,5 +1,8 @@
 <?php
+require_once __DIR__ . '/../helpers/BackupManager.php';
+
 class Nota {
+
     private $db;
 
     public function __construct() {
@@ -81,6 +84,10 @@ class Nota {
             ]);
 
             $this->db->commit();
+            
+            // Backup em tempo real após mudança crítica (Pilar 3: Integridade)
+            BackupManager::createCheckpoint('Check Grads');
+
             return true;
         } catch (Exception $e) {
             $this->db->rollBack();

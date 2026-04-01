@@ -274,6 +274,10 @@
                         href="javascript:void(0)" role="tab">
                         <ion-icon name="shield-half-outline"></ion-icon> Auditoria de Acessos
                     </a>
+                    <a class="nav-link" id="tab-backup" data-bs-toggle="pill" data-bs-target="#pane-backup"
+                        href="javascript:void(0)" role="tab">
+                        <ion-icon name="cloud-upload-outline"></ion-icon> Centro de Backup
+                    </a>
                 </div>
 
                 <div class="sidebar-section-label">Navegação Externa</div>
@@ -2132,6 +2136,91 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Centro de Backup em Tempo Real -->
+                <div class="tab-pane fade" id="pane-backup" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="fw-bold mb-0 text-dark">Centro de Proteção de Dados</h2>
+                            <p class="text-muted small">Snapshots automáticos e manuais para garantir a integridade do sistema GHS.</p>
+                        </div>
+                        <a href="<?= URL_ROOT ?>/admin/triggerBackup" class="btn btn-primary fw-bold shadow-sm rounded-pill px-4">
+                            <ion-icon name="cloud-upload-outline" class="me-1"></ion-icon> Gerar Backup Agora
+                        </a>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Estatísticas de Backup -->
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm rounded-4 h-100 bg-dark text-white">
+                                <div class="card-body p-4 text-center">
+                                    <ion-icon name="shield-checkmark-outline" style="font-size: 3rem;" class="text-success mb-3"></ion-icon>
+                                    <h5 class="fw-bold">Estado do Sistema</h5>
+                                    <p class="small text-white-50">A proteção em tempo real está ativa. Snapshots são gerados em ações críticas.</p>
+                                    <hr class="opacity-25">
+                                    <div class="d-flex justify-content-between small px-3">
+                                        <span>Total Backups:</span>
+                                        <span class="fw-bold text-success"><?= count($data['backups'] ?? []) ?>/10</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lista de Backups Recentes -->
+                        <div class="col-md-8">
+                            <div class="card border-0 shadow-sm rounded-4 h-100">
+                                <div class="card-header bg-white py-3 border-bottom border-light">
+                                    <h6 class="fw-bold mb-0">Snapshots Disponíveis (SQL)</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light small">
+                                                <tr>
+                                                    <th>Identificador do Ficheiro</th>
+                                                    <th>Data/Hora</th>
+                                                    <th>Tamanho</th>
+                                                    <th class="text-end">Ação</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($data['backups'])): ?>
+                                                    <tr><td colspan="4" class="text-center py-5 text-muted small">Nenhum snapshot encontrado.</td></tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($data['backups'] as $bk): ?>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex align-items-center gap-2">
+                                                                    <ion-icon name="document-text-outline" class="text-primary"></ion-icon>
+                                                                    <span class="small fw-bold text-dark"><?= htmlspecialchars($bk['name']) ?></span>
+                                                                </div>
+                                                            </td>
+                                                            <td class="small"><?= $bk['date'] ?></td>
+                                                            <td><span class="badge bg-light text-dark border"><?= $bk['size'] ?></span></td>
+                                                            <td class="text-end">
+                                                                <a href="<?= URL_ROOT ?>/admin/downloadBackup/<?= urlencode($bk['name']) ?>" class="btn btn-sm btn-outline-success">
+                                                                    <ion-icon name="download-outline"></ion-icon>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning border-0 shadow-sm rounded-4 mt-4 d-flex align-items-center gap-3">
+                        <ion-icon name="warning-outline" class="fs-2"></ion-icon>
+                        <div class="small">
+                            <strong>Aviso de Segurança:</strong> O sistema mantém apenas os últimos 10 checkpoints para otimização de espaço. 
+                            Recomenda-se descarregar mensalmente uma cópia para armazenamento externo offline.
                         </div>
                     </div>
                 </div>

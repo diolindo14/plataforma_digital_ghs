@@ -78,7 +78,49 @@ class AdminController extends Controller {
         // --- 📊 LOGS DE ACESSO (Auditoria de Segurança) ---
         $data['logs_acesso'] = $this->model('User')->getRecentAccesses(20);
 
+        // --- 🛡️ SISTEMA DE BACKUP EM TEMPO REAL ---
+        require_once __DIR__ . '/../helpers/BackupManager.php';
+        $data['backups'] = BackupManager::getLatestBackups(10);
+
         $this->view('admin/dashboard', $data);
+    }
+
+    /**
+     * Gatilho manual para criação de Backup.
+     */
+    public function triggerBackup() {
+        require_once __DIR__ . '/../helpers/BackupManager.php';
+        if (BackupManager::createCheckpoint('Manual Backup')) {
+            $_SESSION['flash_success'] = "Backup realizado com sucesso!";
+        } else {
+            $_SESSION['flash_error'] = "Falha ao realizar backup. Verifique as permissões do sistema.";
+        }
+        header('Location: ' . URL_ROOT . '/admin');
+        exit;
+    }
+
+    /**
+     * Descarregar um ficheiro de backup específico.
+     * Protege contra path traversal — só permite ficheiros do directório de backups.
+     */
+    public function downloadBackup($filename) {
+        // Sanitização: remover qualquer directório da entrada
+        $safe = basename($filename);
+        $path = __DIR__ . '/../../database/backups/' . $safe;
+
+        if (!file_exists($path) || !str_ends_with($safe, '.sql')) {
+            $_SESSION['flash_error'] = "Ficheiro de backup não encontrado.";
+            header('Location: ' . URL_ROOT . '/admin');
+            exit;
+        }
+
+        // Servir o ficheiro como download
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $safe . '"');
+        header('Content-Length: ' . filesize($path));
+        header('Cache-Control: no-cache');
+        readfile($path);
+        exit;
     }
 
     // --- PONTES DE COMPATIBILIDADE (Pilar 2) ---
