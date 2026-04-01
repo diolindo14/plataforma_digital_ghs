@@ -183,13 +183,14 @@ class Nota {
             $novoContador = $exist['contador_reclamacoes'];
             $bloqueado = 0;
 
-            // Se o aluno está a reclamar novamente após uma resolução/concordância
-            if ($status === 'Reclamado' && ($exist['status'] === 'Resolvido' || $exist['status'] === 'Concordado' || $exist['status'] === 'Reclamado')) {
-                // Apenas incrementa se o status anterior era de resolução ou se estamos forçando o fluxo
-                // O requisito diz: se houver 2 reclamações para a mesma nota.
+            // Se o aluno está a reclamar novamente após uma resposta, resolução ou se insiste na reclamação
+            if ($status === 'Reclamado' && in_array($exist['status'], ['Resolvido', 'Concordado', 'Reclamado', 'Respondido'])) {
+                // Apenas incrementa se houver repetição do ciclo de reclamação
+                // O requisito diz: se houver 2 reclamações para a mesma nota, bloqueia.
                 $novoContador++;
                 if ($novoContador >= 2) {
                     $bloqueado = 1;
+                    $novoStatus = 'Impasse'; // Alterar status para facilitar visibilidade caso necessário
                 }
             }
 

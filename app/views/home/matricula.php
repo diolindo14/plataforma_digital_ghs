@@ -91,13 +91,33 @@
                 <!-- Main Form Card -->
                 <div class="card bg-white shadow-sm" style="border-radius: 12px; border: 1px solid #e2e8f0;">
                     <div class="card-body p-4 p-md-5">
+                        <!-- STEP-BY-STEP FORM -->
                         <form action="<?= URL_ROOT ?>/matricula/submit" method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-
-    
-
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             
+                            <!-- Display Flash Messages HERE -->
+                            <?php if (isset($_SESSION['flash_error'])): ?>
+                                <div class="alert alert-danger alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm d-flex align-items-center gap-3" role="alert">
+                                    <ion-icon name="alert-circle" class="fs-4"></ion-icon>
+                                    <div>
+                                        <strong>Opps!</strong> <?= $_SESSION['flash_error'] ?>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <?php unset($_SESSION['flash_error']); ?>
+                            <?php endif; ?>
+
+                            <?php if (isset($_SESSION['flash_success'])): ?>
+                                <div class="alert alert-success alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm d-flex align-items-center gap-3" role="alert">
+                                    <ion-icon name="checkmark-circle" class="fs-4"></ion-icon>
+                                    <div>
+                                        <strong>Sucesso!</strong> <?= $_SESSION['flash_success'] ?>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <?php unset($_SESSION['flash_success']); ?>
+                            <?php endif; ?>
+
                             <!-- STEP 1: Dados Pessoais -->
                             <div class="step active" id="step-1">
                                 <h4 class="fw-bold text-dark mb-1">Dados Pessoais</h4>

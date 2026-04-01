@@ -32,21 +32,36 @@ class DashboardModel {
         $stmt->execute([':mes' => $mesAtual, ':ano' => $anoAtual]);
         $stats['pagamentos_mes'] = $stmt->fetch()['total'] ?? 0;
 
-        // Inadimplência Inteligente: Total de alunos com pagamentos em falta de meses anteriores (M+1)
+        // Inadimplência Inteligente: Sincronizada com o modelo Financeiro (Regra 15/10/2025)
+        $today = new DateTime();
+        $start = new DateTime(YEAR_START_DATE);
+        
+        $months_expected = 0;
+        if ($today >= $start) {
+            $diff = $start->diff($today);
+            $months_expected = ($diff->y * 12) + $diff->m + 1;
+            if ((int)$today->format('d') < PAYMENT_DUE_DAY) {
+                $months_expected--;
+            }
+            if ($months_expected > TOTAL_MONTHS_YEAR) $months_expected = TOTAL_MONTHS_YEAR;
+            if ($months_expected < 0) $months_expected = 0;
+        }
+
+        // Alunos em atraso: Aqueles cujas matrículas estão aprovadas mas têm menos pagamentos 'Pago' do que o esperado
         $sqlInad = "
-            SELECT COUNT(*) as total FROM (
+            SELECT COUNT(*) FROM (
                 SELECT e.id, 
-                    (TIMESTAMPDIFF(MONTH, MIN(m.data_criacao), DATE_SUB(DATE_FORMAT(NOW(), '%Y-%m-01'), INTERVAL 1 DAY)) + 1) as months_expected,
                     (SELECT COUNT(*) FROM pagamentos p WHERE p.estudante_id = e.id AND p.status = 'Pago') as payments_done
                 FROM estudantes e
                 JOIN matriculas m ON e.id = m.estudante_id
                 WHERE m.status = 'Aprovada'
                 GROUP BY e.id
-                HAVING payments_done < months_expected
+                HAVING payments_done < :expected
             ) as subquery
         ";
-        $stmtInad = $this->db->query($sqlInad);
-        $stats['inadimplencia'] = $stmtInad->fetch()['total'] ?? 0;
+        $stmtInad = $this->db->prepare($sqlInad);
+        $stmtInad->execute([':expected' => $months_expected]);
+        $stats['inadimplencia'] = $stmtInad->fetchColumn() ?? 0;
         
         return $stats;
     }

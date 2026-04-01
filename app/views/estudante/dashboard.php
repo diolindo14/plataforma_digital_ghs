@@ -843,9 +843,12 @@
                                                                 </div>
                                                             <?php endif; ?>
                                                         </div>
+                                                    <?php elseif ($n['feedback_status'] == 'Impasse'): ?>
+                                                        <span
+                                                            class="badge bg-danger text-white border border-danger small"><ion-icon
+                                                                name="alert-circle"></ion-icon> Em Mediação pela Adm. Acência</span>
                                                     <?php else: ?>
-                                                        <span class="badge bg-light text-muted border small">Pendente de
-                                                            Revisão</span>
+                                                        <span class="badge bg-light text-muted border small">Pendente de Revisão</span>
                                                     <?php endif; ?>
                                                 </div>
                                             </td>
@@ -879,12 +882,13 @@
                                                         <button
                                                             onclick="concordarResposta(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
                                                             class="btn btn-sm btn-success fw-bold py-1 shadow-sm"><ion-icon
-                                                                name="checkmark-circle"></ion-icon> Confirmar e Encerrar</button>
+                                                                name="checkmark-circle"></ion-icon> Confirmar</button>
                                                         <button
                                                             onclick="reclamarNotas(<?= $n['turma_id'] ?>, <?= $n['disciplina_id'] ?>)"
-                                                            class="btn btn-sm btn-outline-danger fw-bold py-1">Reclamar de
-                                                            Novo</button>
+                                                            class="btn btn-sm btn-outline-danger fw-bold py-1">Reclamar de Novo</button>
                                                     </div>
+                                                <?php elseif ($n['feedback_status'] == 'Impasse' || $n['bloqueado_admin']): ?>
+                                                    <ion-icon name="lock-closed" class="text-danger"></ion-icon> <small class="text-danger fw-bold">Sob Mediação</small>
                                                 <?php else: ?>
                                                     <ion-icon name="lock-closed-outline" class="text-muted opacity-50"></ion-icon>
                                                 <?php endif; ?>
