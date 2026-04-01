@@ -66,6 +66,53 @@ class Administrador {
         }
     }
 
+    public function getSecretariaById($id) {
+        $stmt = $this->db->prepare("
+            SELECT a.*, u.nome_completo, u.email, u.status as user_status
+            FROM administradores a 
+            JOIN utilizadores u ON a.utilizador_id = u.id 
+            WHERE a.id = :id AND a.cargo = 'Secretaria'
+        ");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch();
+    }
+
+    public function updateSecretaria($id, $data) {
+        try {
+            $this->db->beginTransaction();
+            
+            // 1. Obter utilizador_id
+            $stmt = $this->db->prepare("SELECT utilizador_id FROM administradores WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+            $uid = $stmt->fetchColumn();
+
+            // 2. Atualizar utilizador
+            $sqlU = "UPDATE utilizadores SET nome_completo = :nome, email = :email";
+            $paramsU = [':nome' => $data['nome'], ':email' => $data['email'], ':uid' => $uid];
+            if (!empty($data['senha'])) {
+                $sqlU .= ", senha = :senha";
+                $paramsU[':senha'] = password_hash($data['senha'], PASSWORD_DEFAULT);
+            }
+            $sqlU .= " WHERE id = :uid";
+            $this->db->prepare($sqlU)->execute($paramsU);
+
+            // 3. Atualizar Perfil Admin
+            $stmtA = $this->db->prepare("UPDATE administradores SET bi = :bi, telefone = :tel, data_contratacao = :data_con WHERE id = :id");
+            $stmtA->execute([
+                ':bi' => $data['bi'],
+                ':tel' => $data['telefone'],
+                ':data_con' => $data['data_contratacao'],
+                ':id' => $id
+            ]);
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return false;
+        }
+    }
+
     public function deleteSecretaria($id) {
         try {
             $this->db->beginTransaction();

@@ -102,6 +102,8 @@ class AdminController extends Controller {
     public function deleteProfessor($id) { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->deleteProfessor($id); }
     public function createSecretaria() { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->createSecretaria(); }
     public function deleteSecretaria($id) { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->deleteSecretaria($id); }
+    public function updateSecretaria() { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->updateSecretaria(); }
+    public function getSecretariaData($id) { require_once __DIR__ . '/AdminUsuarioController.php'; (new AdminUsuarioController())->getSecretariaData($id); }
 
     /**
      * Aprova uma conta de utilizador (Estudante/Professor) após registo inicial.
@@ -549,6 +551,13 @@ class AdminController extends Controller {
                 }
             }
             
+            // Validação de e-mail obrigatório (Pilar 4)
+            if (empty($_POST['email'])) {
+                $_SESSION['flash_error'] = "O campo E-mail é obrigatório para todos os docentes.";
+                header('Location: ' . URL_ROOT . '/admin#pane-professores');
+                exit;
+            }
+
             $data = [
                 'nome' => $_POST['nome'],
                 'email' => $_POST['email'],
@@ -561,11 +570,16 @@ class AdminController extends Controller {
                 'atribuicoes' => $atribuicoes
             ];
 
-            if ($this->model('Professor')->createManual($data)) {
-                $this->logActivity('Criar Professor v2', ['nome' => $data['nome']]);
-                $_SESSION['flash_success'] = "Professor cadastrado com sucesso.";
-            } else {
-                $_SESSION['flash_error'] = "Erro ao criar professor. O email pode já estar em uso.";
+            try {
+                if ($this->model('Professor')->createManual($data)) {
+                    $this->logActivity('Criar Professor v2', ['nome' => $data['nome']]);
+                    $_SESSION['flash_success'] = "Professor cadastrado com sucesso.";
+                } else {
+                    $_SESSION['flash_error'] = "Erro técnico ao gravar docente. Verifique se o BI ou E-mail já existem.";
+                }
+            } catch (Exception $e) {
+                $_SESSION['flash_error'] = "Erro: " . $e->getMessage();
+                error_log("FALHA CRITICA CADASTRO: " . $e->getMessage());
             }
             header('Location: ' . URL_ROOT . '/admin#pane-professores');
             exit;
@@ -586,6 +600,13 @@ class AdminController extends Controller {
                         ];
                     }
                 }
+            }
+
+            // Validação de e-mail obrigatório na edição 
+            if (empty($_POST['email'])) {
+                $_SESSION['flash_error'] = "O campo E-mail é obrigatório para todos os docentes.";
+                header('Location: ' . URL_ROOT . '/admin#pane-professores');
+                exit;
             }
 
             $data = [

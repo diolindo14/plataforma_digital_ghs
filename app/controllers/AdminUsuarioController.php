@@ -59,4 +59,25 @@ class AdminUsuarioController extends Controller {
         header('Location: ' . URL_ROOT . '/admin#pane-secretaria');
         exit;
     }
+
+    public function getSecretariaData($id) {
+        $sec = $this->model('Administrador')->getSecretariaById($id);
+        header('Content-Type: application/json');
+        echo json_encode(['sec' => $sec]);
+        exit;
+    }
+
+    public function updateSecretaria() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrfToken();
+            $id = $_POST['id'];
+            if ($this->model('Administrador')->updateSecretaria($id, $_POST)) {
+                $_SESSION['flash_success'] = "Membro da secretaria atualizado.";
+            } else {
+                $_SESSION['flash_error'] = "Erro ao atualizar dados.";
+            }
+            header('Location: ' . URL_ROOT . '/admin#pane-secretaria');
+            exit;
+        }
+    }
 }

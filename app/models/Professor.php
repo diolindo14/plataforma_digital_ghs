@@ -100,6 +100,7 @@ class Professor
             return true;
         } catch (Exception $e) {
             $this->db->rollBack();
+            error_log("ERRO AO ATUALIZAR PROFESSOR: " . $e->getMessage());
             return false;
         }
     }
@@ -154,6 +155,7 @@ class Professor
             return true;
         } catch (Exception $e) {
             $this->db->rollBack();
+            error_log("ERRO AO CRIAR PROFESSOR MANUAL: " . $e->getMessage());
             return false;
         }
     }
@@ -242,5 +244,32 @@ class Professor
         $stmt->bindValue(':turma_id', $turma_id);
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Remove um professor e todos os seus vínculos (integridade total).
+     */
+    public function deleteProfessor($id)
+    {
+        try {
+            $this->db->beginTransaction();
+
+            $stmt = $this->db->prepare("SELECT utilizador_id FROM professores WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+            $prof = $stmt->fetch();
+            
+            if (!$prof) return false;
+
+            $this->db->prepare("DELETE FROM professor_disciplina WHERE professor_id = :id")->execute([':id' => $id]);
+            $this->db->prepare("DELETE FROM professores WHERE id = :id")->execute([':id' => $id]);
+            $this->db->prepare("DELETE FROM utilizadores WHERE id = :uid")->execute([':uid' => $prof['utilizador_id']]);
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            error_log("ERRO AO ELIMINAR PROFESSOR: " . $e->getMessage());
+            return false;
+        }
     }
 }

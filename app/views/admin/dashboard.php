@@ -2069,7 +2069,15 @@
                                                         </span>
                                                     </td>
                                                     <td class="text-end">
-                                                        <div class="btn-group">
+                                                        <div class="btn-group gap-2">
+                                                            <button class="btn btn-sm btn-outline-info" 
+                                                                onclick="viewSecretaria(<?= $s['id'] ?>)">
+                                                                <ion-icon name="eye-outline"></ion-icon>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-outline-primary" 
+                                                                onclick="editSecretaria(<?= $s['id'] ?>)">
+                                                                <ion-icon name="create-outline"></ion-icon>
+                                                            </button>
                                                             <button class="btn btn-sm btn-light text-danger"
                                                                 onclick="confirmDeleteSecretaria(<?= $s['id'] ?>)">
                                                                 <ion-icon name="trash-outline"></ion-icon>
@@ -2314,11 +2322,40 @@
                             <label class="form-label small fw-bold">Email</label>
                             <input type="email" name="email" class="form-control" required>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">B.I. (Documento)</label>
+                            <input type="text" name="bi" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Telefone</label>
+                            <input type="text" name="telefone" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Senha de Acesso</label>
+                            <input type="password" name="senha" class="form-control" placeholder="123456">
+                            <div class="form-text">Padrão: 123456</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Especialidade</label>
+                            <input type="text" name="especialidade" class="form-control" placeholder="Ex: Matemática, Redes">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Grau Académico</label>
+                            <select name="grau_academico" id="prof_grau" class="form-select">
+                                <option value="Licenciado">Licenciado</option>
+                                <option value="Mestre">Mestre</option>
+                                <option value="Doutor">Doutor</option>
+                                <option value="Especialista">Especialista</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Data de Contratação</label>
+                            <input type="date" name="data_contratacao" id="prof_contratacao" class="form-control" value="<?= date('Y-m-d') ?>">
+                        </div>
                     </div>
-                    <h6 class="fw-bold mt-4">Atribuições</h6>
+                    <h6 class="fw-bold mt-4">Atribuições de Turmas e Disciplinas</h6>
                     <div id="atribuicoes-container" class="border rounded p-2 bg-light"></div>
-                    <button type="button" class="btn btn-sm btn-link mt-2" onclick="addAtribuicaoRow()">+ Adicionar
-                        Atribuição</button>
+                    <button type="button" class="btn btn-sm btn-link mt-2" onclick="addAtribuicaoRow()">+ Adicionar Nova Atribuição</button>
                 </div>
                 <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -2480,18 +2517,33 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Nome Completo</label>
-                        <input type="text" name="nome" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Email de Acesso</label>
-                        <input type="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Senha de Acesso</label>
-                        <input type="password" name="senha" class="form-control" value="123456" required>
-                        <div class="form-text">Padrão: 123456</div>
+                    <input type="hidden" name="id" id="sec_id">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Nome Completo</label>
+                            <input type="text" name="nome" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Email de Acesso</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">BI (Documento)</label>
+                            <input type="text" name="bi" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Telefone</label>
+                            <input type="text" name="telefone" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Data de Contratação</label>
+                            <input type="date" name="data_contratacao" class="form-control" value="<?= date('Y-m-d') ?>">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Senha de Acesso</label>
+                            <input type="password" name="senha" class="form-control" placeholder="Mínimo 6 caracteres">
+                            <div class="form-text">Padrão: 123456 (Deixe vazio para manter a atual se estiver a editar).</div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-0">
@@ -3181,6 +3233,83 @@
                 });
         }
 
+        function viewSecretaria(id) {
+            $('#viewProfessorContent').html('<div class="text-center py-4"><div class="spinner-border text-dark"></div></div>');
+            const modal = new bootstrap.Modal(document.getElementById('viewProfessorModal')); 
+            $('#viewProfessorModal .modal-title').html('<ion-icon name="person-outline"></ion-icon> Perfil de Secretaria');
+            modal.show();
+
+            fetch('<?= URL_ROOT ?>/admin/getSecretariaData/' + id)
+                .then(r => r.json())
+                .then(data => {
+                    const s = data.sec;
+                    let html = `
+                        <div class="text-center mb-4">
+                            <ion-icon name="person-circle" style="font-size: 5rem;" class="text-info"></ion-icon>
+                            <h4 class="fw-bold mb-0">${s.nome_completo}</h4>
+                            <span class="badge bg-info">Equipa Administrativa</span>
+                        </div>
+                        <div class="list-group list-group-flush small">
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Email:</span>
+                                <span class="fw-bold">${s.email}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">BI:</span>
+                                <span class="fw-bold">${s.bi || 'N/A'}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Telefone:</span>
+                                <span class="fw-bold">${s.telefone || 'N/A'}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Contratado em:</span>
+                                <span class="fw-bold">${s.data_contratacao ? new Date(s.data_contratacao).toLocaleDateString() : 'N/A'}</span>
+                            </div>
+                        </div>
+                    `;
+                    $('#viewProfessorContent').html(html);
+                });
+        }
+
+        function editSecretaria(id) {
+            $('#secretariaModal .modal-title').text('Editar Membro da Secretaria');
+            $('#secretariaModal form').attr('action', '<?= URL_ROOT ?>/admin/updateSecretaria');
+            $('#secretariaModal button[type="submit"]').text('Salvar Alterações');
+
+            fetch('<?= URL_ROOT ?>/admin/getSecretariaData/' + id)
+                .then(r => r.json())
+                .then(data => {
+                    const s = data.sec;
+                    $('#sec_id').val(s.id);
+                    $('#secretariaModal input[name="nome"]').val(s.nome_completo);
+                    $('#secretariaModal input[name="email"]').val(s.email);
+                    $('#secretariaModal input[name="bi"]').val(s.bi);
+                    $('#secretariaModal input[name="telefone"]').val(s.telefone);
+                    $('#secretariaModal input[name="data_contratacao"]').val(s.data_contratacao || '');
+                    $('#secretariaModal input[name="senha"]').attr('required', false).val('');
+                    $('#secretariaModal .form-text').text('Deixe em branco para manter a senha atual.');
+
+                    const modal = new bootstrap.Modal(document.getElementById('secretariaModal'));
+                    modal.show();
+                });
+        }
+
+        function clearSecretariaForm() {
+            $('#secretariaModal .modal-title').text('Novo Membro de Secretaria');
+            $('#secretariaModal form').attr('action', '<?= URL_ROOT ?>/admin/createSecretaria');
+            $('#secretariaModal button[type="submit"]').text('Criar Acesso');
+            $('#sec_id').val('');
+            $('#secretariaModal form')[0].reset();
+            $('#secretariaModal input[name="senha"]').attr('required', true);
+            $('.form-text').text('Padrão: 123456');
+        }
+
+        // Vincular o reset ao botão "Novo Secretário"
+        $('[data-bs-target="#secretariaModal"]').on('click', function () {
+            clearSecretariaForm();
+        });
+
         function viewStudent(id) {
             $('#viewStudentContent').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
             const modal = new bootstrap.Modal(document.getElementById('viewStudentModal'));
@@ -3293,6 +3422,18 @@
                     const modal = new bootstrap.Modal(document.getElementById('professorModal'));
                     modal.show();
                 });
+        }
+
+        function confirmDeleteProfessor(id) {
+            if (confirm('Deseja realmente remover este professor? Esta ação limpará todas as suas atribuições e acesso ao sistema.')) {
+                window.location.href = '<?= URL_ROOT ?>/admin/deleteProfessor/' + id;
+            }
+        }
+
+        function confirmDeleteSecretaria(id) {
+            if (confirm('Remover este acesso da secretaria?')) {
+                window.location.href = '<?= URL_ROOT ?>/admin/deleteSecretaria/' + id;
+            }
         }
 
         function clearProfessorForm() {
