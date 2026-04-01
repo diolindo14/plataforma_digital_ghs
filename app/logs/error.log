@@ -125,3 +125,39 @@
                 nome,
                 foto_perfil,
             ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:38] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:39] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:46] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:48] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:53] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:25:11] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:30:19] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:32:18] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:32:58] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343

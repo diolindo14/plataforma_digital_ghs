@@ -304,6 +304,7 @@ class Academico {
      */
     public function getRankingEscola($limit = 3) {
         $sql = "
+            SELECT 
                 estudante_id,
                 nome,
                 foto_perfil,
