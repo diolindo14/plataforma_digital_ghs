@@ -59,21 +59,30 @@ class MatriculaController extends Controller {
             if (!$user_id) throw new Exception("Falha ao criar/identificar conta de utilizador.");
 
             // 3. Orquestração de Perfil (Dados Biográficos)
+            // Busca por user_id primeiro, mas também por BI para evitar violação de UNIQUE constraint.
             $existingEstudante = $estudanteModel->findByUserId($user_id);
+            if (!$existingEstudante) {
+                // Fallback: busca pelo BI caso o estudante exista com outro utilizador
+                $db = Database::getInstance();
+                $stmtBi = $db->prepare("SELECT * FROM estudantes e JOIN utilizadores u ON u.id = e.utilizador_id WHERE e.bi = :bi LIMIT 1");
+                $stmtBi->execute([':bi' => $bi]);
+                $existingEstudante = $stmtBi->fetch() ?: null;
+            }
+
             $profileData = [
-                'user_id' => $user_id,
-                'bi' => $bi,
-                'data_nascimento' => $_POST['data_nascimento'] ?? null,
-                'nacionalidade' => $_POST['nacionalidade'] ?? 'Guineense',
-                'sexo' => $_POST['sexo'] ?? 'M',
-                'estado_civil' => $_POST['estado_civil'] ?? 'Solteiro',
-                'telefone' => $_POST['telefone'] ?? '',
-                'morada' => $_POST['morada'] ?? '',
-                'encarregado_nome' => $_POST['encarregado_nome'] ?? '',
+                'user_id'              => $user_id,
+                'bi'                   => $bi,
+                'data_nascimento'      => $_POST['data_nascimento'] ?? null,
+                'nacionalidade'        => $_POST['nacionalidade'] ?? 'Guineense',
+                'sexo'                 => !empty($_POST['sexo']) ? $_POST['sexo'] : 'Masculino',
+                'estado_civil'         => $_POST['estado_civil'] ?? 'Solteiro',
+                'telefone'             => $_POST['telefone'] ?? '',
+                'morada'               => $_POST['morada'] ?? '',
+                'encarregado_nome'     => $_POST['encarregado_nome'] ?? '',
                 'encarregado_telefone' => $_POST['encarregado_telefone'] ?? '',
-                'escola' => $_POST['escola'] ?? 'Externa',
-                'ano_conclusao' => $_POST['ano_conclusao'] ?? date('Y'),
-                'media' => $_POST['media'] ?? 0
+                'escola'               => !empty($_POST['escola']) ? $_POST['escola'] : 'Externa',
+                'ano_conclusao'        => !empty($_POST['ano_conclusao']) ? $_POST['ano_conclusao'] : date('Y'),
+                'media'                => $_POST['media'] ?? 0
             ];
 
             if ($existingEstudante) {
@@ -81,16 +90,17 @@ class MatriculaController extends Controller {
                 $estudanteModel->updateEstudante($estudante_id, $profileData);
             } else {
                 $estudante_id = $estudanteModel->createEstudante($profileData);
+                if (!$estudante_id) throw new Exception("Erro ao criar o perfil biográfico do candidato.");
             }
 
-            if (!$estudante_id) throw new Exception("Erro ao processar o perfil biográfico do aluno.");
-
             // 4. Verificação de Duplicidade de Matrícula Pendente
+            // Usa o formato correcto do ano letivo: '2025/2026'
+            $ano_letivo_corrente = date('Y') - 1 . '/' . date('Y'); // ex: 2025/2026
             $db = Database::getInstance();
             $stmtCheck = $db->prepare("SELECT status FROM matriculas WHERE estudante_id = :eid AND ano_letivo = :ano AND status != 'Rejeitada' LIMIT 1");
-            $stmtCheck->execute([':eid' => $estudante_id, ':ano' => date('Y')]);
+            $stmtCheck->execute([':eid' => $estudante_id, ':ano' => $ano_letivo_corrente]);
             if ($stmtCheck->fetch()) {
-                $_SESSION['flash_error'] = "Já possui uma matrícula (Pendente ou Aprovada) para este ano letivo.";
+                $_SESSION['flash_error'] = "Já possui uma candidatura (Pendente ou Aprovada) para este ano letivo ($ano_letivo_corrente). Contacte a Secretaria para mais informações.";
                 header('Location: ' . URL_ROOT . '/matricula');
                 exit;
             }
@@ -128,9 +138,10 @@ class MatriculaController extends Controller {
             exit;
 
         } catch (Exception $e) {
-            error_log("FALHA MATRÍCULA ONLINE: " . $e->getMessage());
-            $_SESSION['flash_error'] = "Ocorreu um erro ao processar: " . $e->getMessage();
-            $this->view('home/erro');
+            // Log detalhado para o ficheiro de log da aplicação
+            $this->logError("FALHA MATRÍCULA ONLINE: " . $e->getMessage() . " | Ficheiro: " . $e->getFile() . ":" . $e->getLine());
+            $_SESSION['flash_error'] = "Ocorreu um erro técnico ao processar a sua inscrição. Por favor, tente novamente ou contacte o suporte GHS.";
+            header('Location: ' . URL_ROOT . '/matricula');
             exit;
         }
     }
