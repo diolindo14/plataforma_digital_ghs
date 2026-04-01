@@ -225,21 +225,54 @@ class EstudanteController extends Controller {
         exit;
     }
 
-    public function concordarNota() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->verifyCsrfToken();
-            $db = Database::getInstance();
-            $stmt = $db->prepare("UPDATE concordancia_notas SET status = 'Resolvido', data_resposta = NOW() WHERE estudante_id = (SELECT id FROM estudantes WHERE utilizador_id = :uid) AND turma_id = :tid AND disciplina_id = :did");
-            $res = $stmt->execute([
-                ':uid' => $_SESSION['user_id'],
-                ':tid' => $_POST['turma_id'],
-                ':did' => $_POST['disciplina_id']
-            ]);
-            
-            header('Content-Type: application/json');
-            echo json_encode(['success' => $res]);
+    public function concordarNota($notaId = null) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
+            header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
+        $this->verifyCsrfToken();
+
+        $notaModel = $this->model('Nota');
+        $estudanteModel = $this->model('Estudante');
+        $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
+        
+        if (!$estudanteData) {
+            $_SESSION['flash_error'] = "Perfil de estudante não encontrado.";
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        // Se o ID não vier via URL, tenta via POST (compatibilidade com versões anteriores)
+        $id = $notaId ?? $_POST['nota_id'] ?? null;
+
+        if (!$id) {
+            $_SESSION['flash_error'] = "Nota não identificada.";
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        // Verificação de Impasse: Se a nota está sob mediação, o aluno não pode concordar para forçar a resolução administrativa
+        $stmtCheck = Database::getInstance()->prepare("SELECT feedback_status FROM notas WHERE id = :id");
+        $stmtCheck->execute([':id' => $id]);
+        $status = $stmtCheck->fetchColumn();
+
+        if ($status === 'Impasse') {
+            $_SESSION['flash_warning'] = "Esta nota está sob mediação académica pela Administração. Não é possível concordar neste momento.";
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        // Registrar concordância oficial (gera log no histórico global)
+        $result = $notaModel->registarConcordancia($id, $estudanteData['id']);
+
+        if ($result) {
+            $_SESSION['flash_success'] = "Concordância registada com sucesso! A nota foi consolidada no seu histórico.";
+        } else {
+            $_SESSION['flash_error'] = "Erro ao registar concordância. Tente novamente ou contacte a secretaria.";
+        }
+
+        header('Location: ' . URL_ROOT . '/estudante');
+        exit;
     }
 
     public function removerComunicado() {
@@ -612,4 +645,3 @@ class EstudanteController extends Controller {
         $this->view('estudante/certificado', $renderData);
     }
 }
-

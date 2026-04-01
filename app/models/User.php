@@ -261,9 +261,31 @@ class User {
     /**
      * Lista novos registos aguardando aprovação.
      */
-    public function getPendingUsers() {
-        $stmt = $this->db->prepare("SELECT * FROM utilizadores WHERE status = 'pendente' ORDER BY data_criacao DESC");
-        $stmt->execute();
-        return $stmt->fetchAll();
+    /**
+     * Cria ou atualiza o perfil detalhado do estudante.
+     */
+    public function createStudentProfile($userId, $data) {
+        // Verifica se já existe
+        $stmtCheck = $this->db->prepare("SELECT id FROM estudantes WHERE utilizador_id = :uid");
+        $stmtCheck->execute([':uid' => $userId]);
+        $exists = $stmtCheck->fetch();
+
+        if ($exists) {
+            $sql = "UPDATE estudantes SET bi = :bi, data_nascimento = :dn, telefone = :tel, morada = :morada, estado_civil = :ec, nome_encarregado = :en, telefone_encarregado = :et WHERE utilizador_id = :uid";
+        } else {
+            $sql = "INSERT INTO estudantes (utilizador_id, bi, data_nascimento, telefone, morada, estado_civil, nome_encarregado, telefone_encarregado) VALUES (:uid, :bi, :dn, :tel, :morada, :ec, :en, :et)";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':uid' => $userId,
+            ':bi' => $data['bi'] ?? '',
+            ':dn' => $data['data_nascimento'] ?? null,
+            ':tel' => $data['telefone'] ?? '',
+            ':morada' => $data['morada'] ?? '',
+            ':ec' => $data['estado_civil'] ?? '',
+            ':en' => $data['encarregado_nome'] ?? '',
+            ':et' => $data['encarregado_telefone'] ?? ''
+        ]);
     }
 }

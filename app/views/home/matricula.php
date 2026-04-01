@@ -144,12 +144,20 @@
                                     
                                     <div class="col-md-6">
                                         <label class="form-label">Sexo *</label>
-                                        <select name="sexo" class="form-select" required>
-                                            <option value="" disabled <?= empty($data['student_profile']['sexo']) ? 'selected' : '' ?>>Selecionar</option>
-                                            <option <?= ($data['student_profile']['sexo'] ?? '') == 'Masculino' ? 'selected' : '' ?>>Masculino</option>
-                                            <option <?= ($data['student_profile']['sexo'] ?? '') == 'Feminino' ? 'selected' : '' ?>>Feminino</option>
-                                        </select>
-                                    </div>
+                                         <select name="sexo" class="form-select">
+                                             <option value="" disabled selected>Selecionar</option>
+                                             <option <?= ($data['student_profile']['sexo'] ?? '') == 'Masculino' ? 'selected' : '' ?>>Masculino</option>
+                                             <option <?= ($data['student_profile']['sexo'] ?? '') == 'Feminino' ? 'selected' : '' ?>>Feminino</option>
+                                         </select>
+                                     </div>
+                                     <div class="col-md-6">
+                                         <label class="form-label">Nº de B.I. / Passaporte *</label>
+                                         <input type="text" name="bi" class="form-control" placeholder="Número do documento" required>
+                                     </div>
+                                     <div class="col-md-6">
+                                         <label class="form-label">Data de Nascimento *</label>
+                                         <input type="date" name="data_nascimento" class="form-control" required>
+                                     </div>
                                      <div class="col-md-6">
                                          <label class="form-label">Estado Civil / Género</label>
                                          <select name="estado_civil" class="form-select">
@@ -197,11 +205,22 @@
                                     <div class="col-12" id="box_tipo_candidatura">
                                         <label class="form-label">Tipo de Candidatura *</label>
                                         <select name="tipo_candidatura" id="tipo_candidatura" class="form-select" required onchange="toggleInternalFields()">
-                                            <option value="" disabled <?= !isset($data['is_internal']) ? 'selected' : '' ?>>Selecionar</option>
-                                            <option value="Novo Ingresso">Novo Ingresso</option>
-                                            <option value="Estudante Interno" <?= isset($data['is_internal']) ? 'selected' : '' ?>>Estudante Interno</option>
-                                        </select>
-                                    </div>
+                                             <option value="" disabled <?= !isset($data['is_internal']) ? 'selected' : '' ?>>Selecionar</option>
+                                             <option value="Novo Ingresso">Novo Ingresso</option>
+                                             <option value="Estudante Interno" <?= isset($data['is_internal']) ? 'selected' : '' ?>>Estudante Interno</option>
+                                             <option value="Transferência">Transferência</option>
+                                         </select>
+                                     </div>
+                                     <div class="col-md-6">
+                                         <label class="form-label">Ano do Curso Pretendido *</label>
+                                         <select name="ano_id" class="form-select" required>
+                                             <option value="1" selected>1º Ano</option>
+                                             <option value="2">2º Ano</option>
+                                             <option value="3">3º Ano</option>
+                                             <option value="4">4º Ano</option>
+                                             <option value="5">5º Ano</option>
+                                         </select>
+                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">Turno Pretendido *</label>
                                         <select name="turno" class="form-select" required>

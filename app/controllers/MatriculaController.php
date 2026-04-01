@@ -31,21 +31,44 @@ class MatriculaController extends Controller {
                 }
 
                 $senha_provisoria = 'ghs' . substr($bi, -4);
-                $is_new_user = false;
-
                 // Se já estiver logado como estudante, usamos o ID da sessão
                 if (isset($_SESSION['user_id']) && ($_POST['tipo_candidatura'] ?? '') == 'Estudante Interno') {
                     $user_id = $_SESSION['user_id'];
                 } else {
-                    // Novo utilizador
-                    $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'ativo');
-                    $is_new_user = true;
+                    // Novo utilizador (Candidato Externo)
+                    // Gerar senha baseada no BI (padrão GHS visto na secretaria)
+                    $bi_last4 = substr($_POST['bi'] ?? '0000', -4);
+                    $senha_provisoria = 'ghs' . $bi_last4;
                     
-                    if (!$user_id) {
-                        $_SESSION['flash_error'] = "Erro ao criar utilizador. Verifique se o email já existe ou peça recuperação de senha.";
-                        header('Location: ' . URL_ROOT . '/matricula');
-                        exit;
+                    $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'ativo');
+                    
+                    if ($user_id) {
+                        // Criar perfil do estudante com dados completos
+                        $this->model('User')->createStudentProfile($user_id, [
+                            'bi' => $_POST['bi'] ?? '',
+                            'data_nascimento' => $_POST['data_nascimento'] ?? null,
+                            'telefone' => $_POST['telefone'] ?? '',
+                            'morada' => $_POST['morada'] ?? '',
+                            'estado_civil' => $_POST['estado_civil'] ?? '',
+                            'encarregado_nome' => $_POST['encarregado_nome'] ?? '',
+                            'encarregado_telefone' => $_POST['encarregado_telefone'] ?? ''
+                        ]);
                     }
+                }
+
+                // Map Especialização
+                $esp_map = ['Hardware & Robótica' => 1, 'Programação' => 2, 'Banco de Dados' => 3, 'Redes de Computadores' => 4, 'Engenharia Médica' => 5];
+                $esp_id = isset($_POST['especializacao']) ? ($esp_map[$_POST['especializacao']] ?? null) : null;
+
+                if ($user_id) {
+                    $matricula_id = $matriculaModel->createEnrollment([
+                        'user_id' => $user_id,
+                        'ano_id' => $_POST['ano_id'] ?? 1, // Agora capturado do formulário
+                        'especializacao_id' => $esp_id,
+                        'turno' => $_POST['turno'],
+                        'tipo' => $_POST['tipo_candidatura'],
+                        'motivo' => $_POST['motivacao'] ?? ''
+                    ]);
                 }
 
                 // 2. Criar ou Atualizar Perfil Estudante

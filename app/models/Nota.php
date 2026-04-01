@@ -312,4 +312,32 @@ class Nota {
             ':did' => $disciplina_id
         ]);
     }
+
+    /**
+     * Registra a concordância definitiva do aluno com a nota.
+     */
+    public function registarConcordancia($notaId, $estudanteId) {
+        // Encontrar os dados da nota para atualizar a tabela de concordancia
+        $stmtNota = $this->db->prepare("
+            SELECT a.turma_id, a.disciplina_id 
+            FROM notas n
+            JOIN avaliacoes a ON n.avaliacao_id = a.id
+            WHERE n.id = :id AND n.estudante_id = :eid
+        ");
+        $stmtNota->execute([':id' => $notaId, ':eid' => $estudanteId]);
+        $nota = $stmtNota->fetch();
+
+        if (!$nota) return false;
+
+        $stmt = $this->db->prepare("
+            INSERT INTO concordancia_notas (estudante_id, turma_id, disciplina_id, status, data_resposta)
+            VALUES (:eid, :tid, :did, 'Concordado', NOW())
+            ON DUPLICATE KEY UPDATE status = 'Concordado', data_resposta = NOW()
+        ");
+        return $stmt->execute([
+            ':eid' => $estudanteId,
+            ':tid' => $nota['turma_id'],
+            ':did' => $nota['disciplina_id']
+        ]);
+    }
 }

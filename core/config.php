@@ -22,3 +22,6 @@ define('YEAR_START_DATE', '2025-10-15');
 define('YEAR_END_DATE', '2026-07-22');
 define('TOTAL_MONTHS_YEAR', 10);
 define('PAYMENT_DUE_DAY', 15);
+
+// Extensões de arquivos permitidas para upload
+define('ALLOWED_EXTENSIONS', ['pdf', 'jpg', 'jpeg', 'png']);
