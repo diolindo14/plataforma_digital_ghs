@@ -508,6 +508,56 @@ class EstudanteController extends Controller {
         exit;
     }
 
+    public function downloadReciboMatricula() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . URL_ROOT . '/auth');
+            exit;
+        }
+
+        $db = Database::getInstance();
+        $estudanteModel = $this->model('Estudante');
+        $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
+        
+        if (!$estudanteData) {
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        // Buscar as taxas de matrícula mais recentes
+        $stmtAno = $db->prepare("SELECT MAX(ano_letivo) FROM pagamentos WHERE estudante_id = :eid AND descricao LIKE '%Acto de Matrícula%'");
+        $stmtAno->execute([':eid' => $estudanteData['id']]);
+        $maxAno = $stmtAno->fetchColumn();
+
+        if (!$maxAno) {
+            $_SESSION['flash_error'] = "Ainda não existem taxas de matrícula registadas para o seu perfil.";
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        $stmt = $db->prepare("
+            SELECT p.*, ue.nome_completo as estudante_nome, e.bi, ue.id as utilizador_id, ua.nome_completo as registado_por_nome
+            FROM pagamentos p
+            JOIN estudantes e ON p.estudante_id = e.id
+            JOIN utilizadores ue ON e.utilizador_id = ue.id
+            LEFT JOIN utilizadores ua ON p.processado_por = ua.id
+            WHERE p.estudante_id = :eid AND p.ano_letivo = :ano AND p.descricao LIKE '%Acto de Matrícula%' AND p.status = 'Pago'
+        ");
+        $stmt->execute([':eid' => $estudanteData['id'], ':ano' => $maxAno]);
+        $pagamentos = $stmt->fetchAll();
+
+        if (empty($pagamentos)) {
+            $_SESSION['flash_error'] = "Não foi possível encontrar os detalhes das suas taxas de matrícula.";
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        // Mitigação de IDOR implícita, já que consultamos pelo `estudante_id` pertencente à sessão
+
+        $data = ['pagamentos' => $pagamentos, 'ano_letivo' => $maxAno];
+        $this->view('estudante/recibo_matricula_print', $data);
+        exit;
+    }
+
     public function renewEnrollment() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . URL_ROOT . '/estudante');

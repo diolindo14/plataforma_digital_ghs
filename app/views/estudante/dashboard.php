@@ -1186,9 +1186,14 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between mb-4">
                         <h4 class="fw-bold">Gestão Financeira</h4>
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalPagamento">
-                            <ion-icon name="cash-outline"></ion-icon> Pagar Mensalidade
-                        </button>
+                        <div>
+                            <a href="<?= URL_ROOT ?>/estudante/downloadReciboMatricula" target="_blank" class="btn btn-outline-primary mb-2 mb-md-0 me-md-2 shadow-sm">
+                                <ion-icon name="print-outline"></ion-icon> Imprimir Recibo 10º Mês (e Inscrição)
+                            </a>
+                            <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#modalPagamento">
+                                <ion-icon name="cash-outline"></ion-icon> Pagar Mensalidade
+                            </button>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle datatable-simple">
