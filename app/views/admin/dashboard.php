@@ -4287,6 +4287,7 @@ $(document).ready(function () {
         
         if (id) {
             $('#reject_item_id').val(id);
+            $('#reject_item_id_short').val(id);
             $('#reject_student_name').text(nome);
             $('#reject_student_email').text(email);
             $('#rejectForm').attr('action', '<?= URL_ROOT ?>/admin/rejectMatricula/' + id);
@@ -4489,6 +4490,7 @@ function convocarComMotivo(eid, did) {
             <form id="rejectForm" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <input type="hidden" name="matricula_id" id="reject_item_id">
+                <input type="hidden" name="id" id="reject_item_id_short">
                 <div class="modal-header bg-danger text-white border-0 py-3">
                     <h5 class="modal-title fw-bold"><ion-icon name="alert-circle-outline" class="me-2"></ion-icon> Rejeitar Matrícula</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>

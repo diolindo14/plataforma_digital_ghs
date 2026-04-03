@@ -285,10 +285,12 @@ class AdminController extends Controller {
     }
 
     public function rejectMatricula($id = null) {
-        $id = $id ?? ($_POST['matricula_id'] ?? null);
+        // Tripla Redundância: URL, POST['id'] ou POST['matricula_id']
+        $id = $id ?? ($_POST['id'] ?? ($_POST['matricula_id'] ?? null));
         
         if (!$id) {
-            $_SESSION['flash_error'] = "Erro: ID da matrícula não fornecido.";
+            $this->logError("REJEIÇÃO FALHOU: ID não recebido. REQUEST_DATA: " . json_encode($_REQUEST));
+            $_SESSION['flash_error'] = "Erro: O sistema não conseguiu identificar a matrícula (ID ausente).";
             header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
             exit;
         }
