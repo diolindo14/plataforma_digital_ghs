@@ -508,11 +508,11 @@
                                                     ?>
                                                 </td>
                                                 <td class="border-start border-primary">
-                                                    <?php $pode_fazer_exame = $total >= 8; ?>
+                                                    <?php $pode_fazer_exame = true; // Unblocked as per user request ?>
                                                     <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" 
                                                            value="<?= $sn[5] ?? '' ?>" 
-                                                           <?= ($is_locked || !$pode_fazer_exame) ? 'readonly disabled' : '' ?>
-                                                           placeholder="<?= !$pode_fazer_exame ? 'Reprovado' : '' ?>">
+                                                           <?= ($is_locked) ? 'readonly disabled' : '' ?>
+                                                           placeholder="<?= (floatval($total) < 8) ? 'Exame (AC < 8)' : 'Exame' ?>">
                                                 </td>
                                                 <td class="text-center fw-bold fs-5 text-media-final">
                                                     <?php 
@@ -1012,7 +1012,7 @@
                                             <p class="mb-0 small italic">"<?= nl2br(htmlspecialchars($h['decisao_final'])) ?>"</p>
                                         </div>
                                         <div class="mt-3 text-end">
-                                            <a href="#pane-notas" class="btn btn-sm btn-danger fw-bold rounded-pill px-4" onclick="switchClass('<?= $h['turma_id'] ?>|<?= $h['disciplina_id'] ?>'); $('#tab-notas').tab('show');">
+                                            <a href="<?= URL_ROOT ?>/professor?turma_id=<?= $h['turma_id'] ?>&disciplina_id=<?= $h['disciplina_id'] ?>&tab=notas" class="btn btn-sm btn-danger fw-bold rounded-pill px-4">
                                                 <ion-icon name="create-outline"></ion-icon> Corrigir Notas Agora
                                             </a>
                                         </div>
@@ -1100,9 +1100,9 @@
                                                                 </div>
                                                             </div>
                                                             <div class="d-flex gap-2">
-                                                                <button class="btn btn-sm btn-primary fw-bold rounded-pill" onclick="switchClass('<?= $c['turma_id'] ?>|<?= $c['disciplina_id'] ?>'); $('#tab-notas').tab('show');">
+                                                                <a href="<?= URL_ROOT ?>/professor?turma_id=<?= $c['turma_id'] ?>&disciplina_id=<?= $c['disciplina_id'] ?>&tab=notas" class="btn btn-sm btn-primary fw-bold rounded-pill">
                                                                     <ion-icon name="create-outline"></ion-icon> Corrigir Nota
-                                                                </button>
+                                                                </a>
                                                                 <button class="btn btn-sm btn-danger fw-bold rounded-pill"
                                                                     onclick="abrirRespostaContestacao(<?= $c['estudante_id_real'] ?>, '<?= htmlspecialchars($c['estudante_nome']) ?>', <?= $c['turma_id'] ?>, <?= $c['disciplina_id'] ?>)">
                                                                     <ion-icon name="chatbubble-ellipses-outline"></ion-icon> Responder
