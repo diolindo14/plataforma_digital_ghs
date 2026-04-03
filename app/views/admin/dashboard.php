@@ -1183,7 +1183,10 @@
                                                             <td class="text-end pe-4">
                                                                 <div class="btn-group btn-group-sm">
                                                                     <button class="btn btn-success fw-bold btn-approve-matricula" data-id="<?= $m['id'] ?>">Aprovar</button>
-                                                                    <button class="btn btn-danger fw-bold btn-reject-matricula" data-id="<?= $m['id'] ?>">Rejeitar</button>
+                                                                    <button class="btn btn-danger fw-bold btn-reject-matricula" 
+                                                                         data-id="<?= $m['id'] ?>" 
+                                                                         data-nome="<?= htmlspecialchars($m['nome']) ?>"
+                                                                         data-email="<?= htmlspecialchars($m['email'] ?? '') ?>">Rejeitar</button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -4279,8 +4282,13 @@ $(document).ready(function () {
 
     $(document).on('click', '.btn-reject-matricula', function () {
         const id = $(this).data('id');
+        const nome = $(this).data('nome') || 'Estudante';
+        const email = $(this).data('email') || 'n/d';
+        
         if (id) {
-            $('#reject_item_id').val(id); // Valor para o campo escondido (redundância segura)
+            $('#reject_item_id').val(id);
+            $('#reject_student_name').text(nome);
+            $('#reject_student_email').text(email);
             $('#rejectForm').attr('action', '<?= URL_ROOT ?>/admin/rejectMatricula/' + id);
             new bootstrap.Modal(document.getElementById('rejectModal')).show();
         }
@@ -4485,11 +4493,14 @@ function convocarComMotivo(eid, did) {
                     <h5 class="modal-title fw-bold"><ion-icon name="alert-circle-outline" class="me-2"></ion-icon> Rejeitar Matrícula</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted small mb-3">Indique o motivo da rejeição. Esta informação será enviada ao estudante.</p>
-                    <div class="form-floating">
+                <div class="modal-body p-4 text-center">
+                    <p class="text-muted small mb-1">Deseja rejeitar a matrícula de:</p>
+                    <h6 class="fw-bold text-dark mb-0" id="reject_student_name">...</h6>
+                    <p class="text-primary small mb-3" id="reject_student_email">...</p>
+                    
+                    <div class="form-floating text-start">
                         <textarea class="form-control" name="motivo" placeholder="Motivo da Rejeição" id="rejection_motivo" style="height: 120px" required></textarea>
-                        <label for="rejection_motivo">Motivo detalhado...</label>
+                        <label for="rejection_motivo">Motivo da Rejeição (Será enviado por email)</label>
                     </div>
                 </div>
                 <div class="modal-footer border-0 pb-4">

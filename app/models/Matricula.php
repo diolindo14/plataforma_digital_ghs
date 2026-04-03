@@ -53,7 +53,7 @@ class Matricula {
      */
     public function getPendingEnrollments() {
         $stmt = $this->db->prepare("
-            SELECT m.*, u.nome_completo as nome,
+            SELECT m.*, u.nome_completo as nome, u.email as email,
                    (SELECT nome_arquivo FROM documentos_matricula WHERE matricula_id = m.id AND tipo_documento = 'BI' LIMIT 1) as bi_arquivo,
                    (SELECT nome_arquivo FROM documentos_matricula WHERE matricula_id = m.id AND tipo_documento = 'Fotografia' LIMIT 1) as foto_arquivo,
                    (SELECT nome_arquivo FROM documentos_matricula WHERE matricula_id = m.id AND tipo_documento = 'Certificado' LIMIT 1) as certificado_arquivo,
