@@ -815,8 +815,8 @@
                                                                 "<?= htmlspecialchars(substr($c['resposta_professor'] ?? 'Nenhuma', 0, 50)) ?>..."
                                                             </td>
                                                             <td class="text-end">
-                                                                <button type="button" class="btn btn-sm btn-danger shadow-sm" onclick="convocarComMotivo(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)">
-                                                                    <ion-icon name="megaphone-outline" class="me-1"></ion-icon> Convocar Partes
+                                                                <button type="button" class="btn btn-sm btn-warning shadow-sm fw-bold text-dark" onclick="abrirModalConvocatoria(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)">
+                                                                    <ion-icon name="calendar" class="me-1"></ion-icon> Convocar Partes
                                                                 </button>
                                                             </td>
                                                         </tr>
