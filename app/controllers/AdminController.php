@@ -85,6 +85,7 @@ class AdminController extends Controller {
         $data['backups'] = BackupManager::getLatestBackups(10);
 
         // --- ⚖️ CONTESTAÇÕES EM MEDIAÇÃO (Impasse / Admin) ---
+        $data['contestacoes_mediacao'] = $this->model('Contestacao')->getEmMediacao();
         $data['contestacoes_admin_all'] = $this->model('Contestacao')->getAllParaAdmin();
 
         // --- POINT 4: GESTÃO DE PRAZOS (Monitor de Atrasos nas Correções) ---
@@ -303,6 +304,9 @@ class AdminController extends Controller {
                 if (!empty($m['email'])) {
                     Mailer::sendMatriculaRejeitada($m['email'], $m['nome_completo'] ?? 'Candidato', $motivo);
                 }
+
+                // Notificação interna GHS (se o utilizador ainda não for deletado)
+                $this->model('Mensagem')->send($_SESSION['user_id'], $m['user_id'], "🚨 Matrícula Rejeitada", "A sua matrícula foi rejeitada pelo seguinte motivo: $motivo. Por favor, corrija os dados ou contacte a secretaria.");
 
                 // REMOÇÃO FÍSICA: Não armazenar se for rejeitada (Pilar 1)
                 $db->prepare("DELETE FROM documentos_matricula WHERE matricula_id = ?")->execute([$id]);

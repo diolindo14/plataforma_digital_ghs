@@ -481,8 +481,9 @@
                                         <tr><td colspan="9" class="text-center">Nenhum aluno matriculado nesta turma.</td></tr>
                                     <?php else: ?>
                                         <?php 
-                                            $turma_id = $data['classes'][0]['turma_id'] ?? 0;
-                                            $disc_id = $data['classes'][0]['disciplina_id'] ?? 0;
+                                            // Usar os IDs seleccionados no filtro para garantir o contexto correcto
+                                            $turma_id = (int)($data['selected_turma'] ?? ($data['classes'][0]['turma_id'] ?? 0));
+                                            $disc_id  = (int)($data['selected_disciplina'] ?? ($data['classes'][0]['disciplina_id'] ?? 0));
                                         ?>
                                         <?php foreach($data['students'] as $s): ?>
                                             <?php $sn = $data['notas'][$s['id']] ?? []; ?>
@@ -1032,8 +1033,12 @@
                                             </div>
                                             <div>
                                                 <h5 class="fw-bold mb-0 text-dark">Convocação Administrativa: Mediação Acadêmica</h5>
-                                                <span class="small text-muted">Referente ao aluno: <strong><?= htmlspecialchars($h['estudante_nome']) ?></strong> (<?= htmlspecialchars($h['disciplina_nome']) ?>)</span>
+                                                <span class="small text-muted">A administração convocou as partes. Referente ao aluno: <strong><?= htmlspecialchars($h['estudante_nome']) ?></strong></span>
                                             </div>
+                                        </div>
+                                        <div class="mt-2 p-3 bg-white bg-opacity-50 rounded-4 border mb-3">
+                                            <small class="fw-bold text-warning text-uppercase small d-block mb-1">Motivo da Convocatória:</small>
+                                            <p class="mb-0 small italic">"<?= nl2br(htmlspecialchars($h['motivo_convocacao'])) ?>"</p>
                                         </div>
                                         <div class="row g-3 bg-white bg-opacity-50 p-3 rounded-4 border">
                                             <div class="col-md-3">
@@ -1750,5 +1755,45 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
+    <script>
+        function saveNota(btn) {
+            const tr = $(btn).closest('tr');
+            const studentId = tr.data('student-id');
+            const turmaId = tr.data('turma-id');
+            const discId = tr.data('disc-id');
+            
+            const data = {
+                csrf_token: '<?= $_SESSION['csrf_token'] ?>',
+                estudante_id: studentId,
+                turma_id: turmaId,
+                disciplina_id: discId,
+                tpc: tr.find('.val-tpc').val(),
+                ap:  tr.find('.val-ap').val(),
+                tpi: tr.find('.val-tpi').val(),
+                ce:  tr.find('.val-ce').val(),
+                exame: tr.find('.val-exame').val(),
+                resposta: tr.find('.val-resposta').val()
+            };
+
+            const originalBtnText = $(btn).html();
+            $(btn).prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+
+            $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
+                if(res.success) {
+                    // Update the average in the UI
+                    tr.find('td:nth-last-child(2)').html(res.media_final || '-');
+                    // Small visual feedback
+                    $(btn).removeClass('btn-success').addClass('btn-secondary').text('Guardado!');
+                    setTimeout(() => { $(btn).removeClass('btn-secondary').addClass('btn-success').html(originalBtnText).prop('disabled', false); }, 1500);
+                } else {
+                    alert('Erro: ' + (res.message || 'Falha ao guardar.'));
+                    $(btn).prop('disabled', false).html(originalBtnText);
+                }
+            }, 'json').fail(function() {
+                alert('Erro crítico ao comunicar com o servidor.');
+                $(btn).prop('disabled', false).html(originalBtnText);
+            });
+        }
+    </script>
 </body>
 </html>

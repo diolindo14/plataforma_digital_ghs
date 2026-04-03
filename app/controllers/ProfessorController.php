@@ -116,10 +116,35 @@ class ProfessorController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();
             $notaModel = $this->model('Nota');
+            
+            // Lógica unificada para salvar notas e feedbacks
             $res = $notaModel->saveNotasRow($_POST);
+            
             if ($res) {
-                $this->logActivity('Lançar Nota', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
-                echo json_encode(['success' => true]);
+                // Notificação automática se houver resposta
+                if (!empty($_POST['resposta'])) {
+                    $estudanteModel = $this->model('Estudante');
+                    $est = $estudanteModel->findById($_POST['estudante_id']);
+                    if ($est && !empty($est['utilizador_id'])) {
+                        $msgModel = $this->model('Mensagem');
+                        $msgModel->send(
+                            $_SESSION['user_id'], 
+                            $est['utilizador_id'], 
+                            "Feedback sobre Avaliação", 
+                            "O Professor respondeu à sua contestação ou actualizou as suas notas. Resposta: \"" . $_POST['resposta'] . "\""
+                        );
+                    }
+                }
+
+                $this->logActivity('Lançar Nota', ['estudante_id' => $_POST['estudante_id'] ?? 'N/A']);
+                
+                // Retornar a média recalculada para o UI (Opcional, mas melhora UX)
+                $novaNota = $notaModel->getNotaEstudante($_POST['estudante_id'], $_POST['disciplina_id']);
+                
+                echo json_encode([
+                    'success' => true,
+                    'media_final' => $novaNota['media_final'] ?? null
+                ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Erro ao guardar notas na base de dados.']);
             }
@@ -329,6 +354,8 @@ class ProfessorController extends Controller {
         }
         header('Location: ' . URL_ROOT . '/professor/dashboard');
     }
+
+
 
     public function getCalendarEvents() {
         $events = $this->model('Evento')->getAll();

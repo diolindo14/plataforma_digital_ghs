@@ -540,7 +540,10 @@ class EstudanteController extends Controller {
             JOIN estudantes e ON p.estudante_id = e.id
             JOIN utilizadores ue ON e.utilizador_id = ue.id
             LEFT JOIN utilizadores ua ON p.processado_por = ua.id
-            WHERE p.estudante_id = :eid AND p.ano_letivo = :ano AND p.descricao LIKE '%Acto de Matrícula%' AND p.status = 'Pago'
+            WHERE p.estudante_id = :eid 
+              AND p.ano_letivo = :ano 
+              AND (p.descricao LIKE '%Acto de Matrícula%' OR p.descricao LIKE '%10º Mês%' OR p.descricao LIKE '%Taxa%')
+              AND p.status = 'Pago'
         ");
         $stmt->execute([':eid' => $estudanteData['id'], ':ano' => $maxAno]);
         $pagamentos = $stmt->fetchAll();
