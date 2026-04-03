@@ -284,7 +284,15 @@ class AdminController extends Controller {
         exit;
     }
 
-    public function rejectMatricula($id) {
+    public function rejectMatricula($id = null) {
+        $id = $id ?? ($_POST['matricula_id'] ?? null);
+        
+        if (!$id) {
+            $_SESSION['flash_error'] = "Erro: ID da matrícula não fornecido.";
+            header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
+            exit;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();
             $motivo = $_POST['motivo'] ?? 'Documentação incompleta';

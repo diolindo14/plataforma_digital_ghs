@@ -4280,6 +4280,7 @@ $(document).ready(function () {
     $(document).on('click', '.btn-reject-matricula', function () {
         const id = $(this).data('id');
         if (id) {
+            $('#reject_item_id').val(id); // Valor para o campo escondido (redundância segura)
             $('#rejectForm').attr('action', '<?= URL_ROOT ?>/admin/rejectMatricula/' + id);
             new bootstrap.Modal(document.getElementById('rejectModal')).show();
         }
@@ -4479,6 +4480,7 @@ function convocarComMotivo(eid, did) {
         <div class="modal-dialog modal-dialog-centered">
             <form id="rejectForm" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="matricula_id" id="reject_item_id">
                 <div class="modal-header bg-danger text-white border-0 py-3">
                     <h5 class="modal-title fw-bold"><ion-icon name="alert-circle-outline" class="me-2"></ion-icon> Rejeitar Matrícula</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
