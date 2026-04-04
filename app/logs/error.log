@@ -226,3 +226,10 @@
 [2026-04-04 14:09:00] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
                 FROM notas n
                 JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388
+[2026-04-04 14:11:09] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
+                FROM notas n
+                JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388
+[2026-04-04 14:19:06] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:19:09] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:23:06] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:23:13] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526

@@ -126,26 +126,26 @@
             </div>
             
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-                <a class="nav-link active" id="tab-home" data-bs-toggle="pill" href="#pane-home"><ion-icon name="grid-outline"></ion-icon> Dashboard Resumo</a>
-                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" href="#pane-notas"><ion-icon name="create-outline"></ion-icon> Lançamento de Notas</a>
-                <a class="nav-link text-success fw-bold" id="tab-relatorios" data-bs-toggle="pill" href="#pane-relatorios">
+                <button class="nav-link active border-0 text-start" id="tab-home" data-bs-toggle="pill" data-bs-target="#pane-home" type="button" role="tab"><ion-icon name="grid-outline"></ion-icon> Dashboard Resumo</button>
+                <button class="nav-link border-0 text-start" id="tab-notas" data-bs-toggle="pill" data-bs-target="#pane-notas" type="button" role="tab"><ion-icon name="create-outline"></ion-icon> Lançamento de Notas</button>
+                <button class="nav-link text-success fw-bold border-0 text-start" id="tab-relatorios" data-bs-toggle="pill" data-bs-target="#pane-relatorios" type="button" role="tab">
                     <ion-icon name="document-text-outline"></ion-icon> Pautas & Relatórios
-                </a>
-                <a class="nav-link" id="tab-chamada" data-bs-toggle="pill" href="#pane-chamada"><ion-icon name="people-outline"></ion-icon> Frequência / Chamada</a>
-                <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" href="#pane-materiais"><ion-icon name="cloud-upload-outline"></ion-icon> Upload de Materiais</a>
-                <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" href="#pane-calendario"><ion-icon name="calendar-outline"></ion-icon> Calendário Acadêmico</a>
-                <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" href="#pane-comunicados"><ion-icon name="chatbubbles-outline"></ion-icon> Comunicados & Alertas</a>
-                <a class="nav-link text-danger fw-bold position-relative" id="tab-reclamacoes" data-bs-toggle="pill" href="#pane-reclamacoes">
+                </button>
+                <button class="nav-link border-0 text-start" id="tab-chamada" data-bs-toggle="pill" data-bs-target="#pane-chamada" type="button" role="tab"><ion-icon name="people-outline"></ion-icon> Frequência / Chamada</button>
+                <button class="nav-link border-0 text-start" id="tab-materiais" data-bs-toggle="pill" data-bs-target="#pane-materiais" type="button" role="tab"><ion-icon name="cloud-upload-outline"></ion-icon> Upload de Materiais</button>
+                <button class="nav-link border-0 text-start" id="tab-calendario" data-bs-toggle="pill" data-bs-target="#pane-calendario" type="button" role="tab"><ion-icon name="calendar-outline"></ion-icon> Calendário Acadêmico</button>
+                <button class="nav-link border-0 text-start" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados" type="button" role="tab"><ion-icon name="chatbubbles-outline"></ion-icon> Comunicados & Alertas</button>
+                <button class="nav-link text-danger fw-bold position-relative border-0 text-start" id="tab-reclamacoes" data-bs-toggle="pill" data-bs-target="#pane-reclamacoes" type="button" role="tab">
                     <ion-icon name="warning-outline"></ion-icon> Reclamações de Notas
                     <?php if(count($data['reclamacoes']) > 0): ?>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
                             <?= count($data['reclamacoes']) ?>
                         </span>
                     <?php endif; ?>
-                </a>
-                <a class="nav-link text-info fw-bold" id="tab-assiduidade" data-bs-toggle="pill" href="#pane-assiduidade">
+                </button>
+                <button class="nav-link text-info fw-bold border-0 text-start" id="tab-assiduidade" data-bs-toggle="pill" data-bs-target="#pane-assiduidade" type="button" role="tab">
                     <ion-icon name="calendar-check-outline"></ion-icon> Minha Assiduidade
-                </a>
+                </button>
             </div>
         </div>
 
@@ -191,22 +191,22 @@
         <div id="print-turma-label" style="display:none;"><?= $current_turma_label ?></div>
         <div id="print-nivel-label" style="display:none;"><?= $current_nivel_label ?></div>
         
-        <!-- 🏆 QUADRO DE MÉRITO (visível quando há dados) -->
-        <?php if (!empty($data['ranking_escola'])): ?>
-        <div class="mb-4">
-            <?php
-                $ranking_escola = $data['ranking_escola'];
-                $ranking_nivel  = $data['ranking_nivel'];
-                $show_details   = false; // Professor vê apenas o Top 3 da escola
-                include __DIR__ . '/../partials/merit_board.php';
-            ?>
-        </div>
-        <?php endif; ?>
-
         <div class="tab-content" id="v-pills-tabContent">
             
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home">
+                
+                <!-- 🏆 QUADRO DE MÉRITO (visível quando há dados) -->
+                <?php if (!empty($data['ranking_escola'])): ?>
+                <div class="mb-4">
+                    <?php
+                        $ranking_escola = $data['ranking_escola'];
+                        $ranking_nivel  = $data['ranking_nivel'];
+                        $show_details   = false;
+                        include __DIR__ . '/../partials/merit_board.php';
+                    ?>
+                </div>
+                <?php endif; ?>
 
                 <!-- 📢 ALERTAS DE CONVOCATÓRIA (Mediação Profissional) -->
                 <?php if (!empty($data['contestacoes_historico'])): ?>
@@ -518,10 +518,38 @@
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="fw-bold"><?= $this->e($s['nome_completo']) ?></td>
-                                                <td><div class="d-flex gap-1" style="min-width: 140px;"><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc1" value="<?= $sn['notas_slots'][1][1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1"><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc2" value="<?= $sn['notas_slots'][1][2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2"><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc3" value="<?= $sn['notas_slots'][1][3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3"></div></td>
-                                                <td><div class="d-flex gap-1" style="min-width: 140px;"><input type="number" step="0.1" class="form-control form-control-sm text-center val-ap1" value="<?= $sn['notas_slots'][2][1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1"><input type="number" step="0.1" class="form-control form-control-sm text-center val-ap2" value="<?= $sn['notas_slots'][2][2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2"><input type="number" step="0.1" class="form-control form-control-sm text-center val-ap3" value="<?= $sn['notas_slots'][2][3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3"></div></td>
-                                                <td><div class="d-flex gap-1" style="min-width: 140px;"><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi1" value="<?= $sn['notas_slots'][3][1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1"><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi2" value="<?= $sn['notas_slots'][3][2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2"><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi3" value="<?= $sn['notas_slots'][3][3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3"></div></td>
-                                                <td><div class="d-flex gap-1" style="min-width: 140px;"><input type="number" step="0.1" class="form-control form-control-sm text-center val-ce1" value="<?= $sn['notas_slots'][4][1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1"><input type="number" step="0.1" class="form-control form-control-sm text-center val-ce2" value="<?= $sn['notas_slots'][4][2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2"><input type="number" step="0.1" class="form-control form-control-sm text-center val-ce3" value="<?= $sn['notas_slots'][4][3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3"></div></td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-1" style="min-width: 180px;">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc1" value="<?= $sn['notas_slots'][1][1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc2" value="<?= $sn['notas_slots'][1][2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc3" value="<?= $sn['notas_slots'][1][3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3">
+                                                        <span class="badge bg-secondary-subtle text-dark border ms-1 res-avg-tpc"><?= number_format($calcAvgValue($sn['notas_slots'][1] ?? []), 1) ?></span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-1" style="min-width: 180px;">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap1" value="<?= $sn['notas_slots'][2][1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap2" value="<?= $sn['notas_slots'][2][2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap3" value="<?= $sn['notas_slots'][2][3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3">
+                                                        <span class="badge bg-secondary-subtle text-dark border ms-1 res-avg-ap"><?= number_format($calcAvgValue($sn['notas_slots'][2] ?? []), 1) ?></span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-1" style="min-width: 180px;">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi1" value="<?= $sn['notas_slots'][3][1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi2" value="<?= $sn['notas_slots'][3][2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi3" value="<?= $sn['notas_slots'][3][3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3">
+                                                        <span class="badge bg-secondary-subtle text-dark border ms-1 res-avg-tpi"><?= number_format($calcAvgValue($sn['notas_slots'][3] ?? []), 1) ?></span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-1" style="min-width: 180px;">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce1" value="<?= $sn['notas_slots'][4][1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce2" value="<?= $sn['notas_slots'][4][2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2">
+                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce3" value="<?= $sn['notas_slots'][4][3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3">
+                                                        <span class="badge bg-secondary-subtle text-dark border ms-1 res-avg-ce"><?= number_format($calcAvgValue($sn['notas_slots'][4] ?? []), 1) ?></span>
+                                                    </div>
+                                                </td>
                                                 <td class="fw-bold text-success text-center fs-5 text-total-ac">
                                                     <?php 
                                                         $calcAvgValue = function($slots) {
@@ -1322,6 +1350,70 @@ $(document).ready(function() {
                 });
             }
         } catch(e) { /* skip tables with column count issues */ }
+    });
+
+    // Cálculo Dinâmico de Notas em Tempo Real
+    $(document).on('input', '.val-tpc1, .val-tpc2, .val-tpc3, .val-ap1, .val-ap2, .val-ap3, .val-tpi1, .val-tpi2, .val-tpi3, .val-ce1, .val-ce2, .val-ce3, .val-exame', function() {
+        const row = $(this).closest('tr');
+        
+        const getAvg = (prefix) => {
+            let sum = 0;
+            let count = 0;
+            for(let i=1; i<=3; i++) {
+                let val = parseFloat(row.find('.val-'+prefix+i).val());
+                if(!isNaN(val)) {
+                    sum += val;
+                    count++;
+                }
+            }
+            const avg = count > 0 ? (sum / count) : 0;
+            row.find('.res-avg-'+prefix).text(avg.toFixed(1));
+            return avg;
+        };
+
+        const tpc = getAvg('tpc');
+        const ap = getAvg('ap');
+        const tpi = getAvg('tpi');
+        const ce = getAvg('ce');
+        
+        const totalAc = tpc + ap + tpi + ce;
+        row.find('.text-total-ac').text(totalAc.toFixed(1));
+        
+        const exameInput = row.find('.val-exame');
+        const exameVal = parseFloat(exameInput.val());
+        const mediaFinalTd = row.find('.text-media-final');
+        
+        if (totalAc < 8) {
+            exameInput.prop('disabled', true).prop('readonly', true).val('');
+            mediaFinalTd.html('<span class="text-danger" style="font-size: 0.7rem;">Reprovado</span>');
+        } else {
+            exameInput.prop('disabled', false).prop('readonly', false);
+            if (!isNaN(exameVal)) {
+                mediaFinalTd.text(((totalAc + exameVal) / 2).toFixed(1));
+            } else {
+                mediaFinalTd.text('-');
+            }
+        }
+    });
+
+    // Navegação Direta via Hash na URL (Ex: #pane-chamada)
+    const hash = window.location.hash;
+    if (hash) {
+        const triggerEl = document.querySelector(`.nav-link[data-bs-target="${hash}"]`);
+        if (triggerEl) {
+            bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+        }
+    }
+
+    // Atualizar Hash ao mudar Tab
+    $('.nav-link[data-bs-toggle="pill"]').on('shown.bs.tab', function(e) {
+        const target = $(e.target).data('bs-target');
+        window.location.hash = target;
+        $(window).scrollTop(0);
+        // Fechar sidebar no mobile ao clicar
+        if (window.innerWidth < 992) {
+            $('.sidebar').removeClass('active');
+        }
     });
 
     // Subir ao Topo Global
