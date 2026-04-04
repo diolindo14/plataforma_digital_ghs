@@ -233,3 +233,7 @@
 [2026-04-04 14:19:09] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
 [2026-04-04 14:23:06] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
 [2026-04-04 14:23:13] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:29:59] CRITICAL ERROR: syntax error, unexpected token "\" em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 1436
+[2026-04-04 14:34:55] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:43:39] CRITICAL ERROR: syntax error, unexpected token ";", expecting "(" em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 484
+[2026-04-04 14:43:41] CRITICAL ERROR: syntax error, unexpected token ";", expecting "(" em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 484
