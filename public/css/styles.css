@@ -205,27 +205,4 @@ select.input-field { appearance: none; }
     transition: opacity 0.2s;
 }
 
-/* --- Grade Table Compact Styles --- */
-.small-inputs {
-    min-width: 90px;
-}
-
-.form-control-xs {
-    height: 22px;
-    padding: 2px 4px;
-    font-size: 0.7rem;
-    border-radius: 4px;
-    background-color: #fcfcfc;
-    border: 1px solid #eef2f1;
-}
-
-.form-control-xs:focus {
-    background-color: #fff;
-    border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.1);
-}
-
-.form-control-xs::placeholder {
-    color: #ccc;
-    font-size: 0.6rem;
-}
+/* Estilos originais da plataforma GHS seguem abaixo */
