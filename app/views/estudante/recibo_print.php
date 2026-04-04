@@ -169,7 +169,7 @@
         <div class="header">
             <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" class="logo-img">
             <div class="brand-info">
-                <h2>GHS ÉDUCATION</h2>
+                <h2>GHS "O futuro é hoje!"</h2>
                 <p>Ensino Digital & Tecnologia</p>
                 <p>Tel: +245 95529 54 75</p>
             </div>
