@@ -107,7 +107,7 @@ class AdminController extends Controller {
      * POINT 3: Geração de Recibo Digital (Térmico)
      */
     public function imprimirRecibo($id) {
-        $pagamento = $this->model('Pagamento')->getById($id);
+        $pagamento = $this->model('Pagamento')->getPagamentoById($id);
         if (!$pagamento) die('Pagamento não encontrado.');
         
         $data['p'] = $pagamento;

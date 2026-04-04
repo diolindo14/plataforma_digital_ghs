@@ -214,3 +214,6 @@
 [2026-04-04 03:02:49] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
 [2026-04-04 03:05:08] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
 [2026-04-04 03:18:41] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1780
+[2026-04-04 03:21:09] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1780
+[2026-04-04 03:27:59] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+[2026-04-04 03:28:11] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
