@@ -200,3 +200,4 @@
 [2026-04-04 01:27:01] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
 [2026-04-04 01:30:18] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
 [2026-04-04 01:30:32] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
+[2026-04-04 01:32:54] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1777

@@ -19,6 +19,10 @@
         body {
             font-family: 'Outfit', sans-serif;
             background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            display: block !important;
+            overflow-x: hidden;
         }
 
         /* ── Sidebar ────────────────────────────────────── */
@@ -339,17 +343,7 @@
                 </div>
             <?php endif; ?>
 
-            <!-- 🏆 QUADRO DE MÉRITO ACADÉMICO (visível apenas quando há dados) -->
-            <?php if (!empty($ranking_escola)): ?>
-                <div class="row mb-3">
-                    <div class="col-12 col-xl-4">
-                        <?php
-                        $show_details = true;
-                        include __DIR__ . '/../partials/merit_board.php';
-                        ?>
-                    </div>
-                </div>
-            <?php endif; ?>
+
 
             <div class="tab-content" id="v-pills-tabContent">
 
