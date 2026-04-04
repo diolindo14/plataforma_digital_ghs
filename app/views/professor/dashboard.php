@@ -545,9 +545,7 @@
                                                 <td class="text-center fw-bold fs-5 text-media-final">
                                                     <?php 
                                                         $exame = $sn['notas'][5]['Exame Final'] ?? null;
-                                                        if($ac_total < 8) {
-                                                            echo '<span class="text-danger" style="font-size: 0.7rem;">Reprovado</span>';
-                                                        } elseif($exame !== null && $exame !== '') {
+                                                        if($exame !== null && $exame !== '') {
                                                             echo number_format(($ac_total + floatval($exame)) / 2, 1);
                                                         } else {
                                                             echo '-';
