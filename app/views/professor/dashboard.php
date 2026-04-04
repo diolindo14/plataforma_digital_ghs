@@ -400,7 +400,7 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <span class="fw-bold">
-                                                        <?= ($r['notas'][5] !== null) ? number_format($r['notas'][5], 1) : '<span class="text-muted">---</span>' ?>
+                                                        <?= ($r['exame'] !== null) ? number_format($r['exame'], 1) : '<span class="text-muted">---</span>' ?>
                                                     </span>
                                                 </td>
                                                 <td class="text-center bg-light fw-bold fs-5">
@@ -414,20 +414,18 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <?php 
-                                                        $ac = (float)$r['total_ac'];
                                                         $media = $r['media_final'];
-                                                        $exame = $r['notas'][5];
+                                                        $media_r = round($media, 1);
                                                         
-                                                            $media_r = round($media, 1);
-                                                            if($media === null): ?>
-                                                                <span class="badge bg-secondary">Admitido ao Exame</span>
-                                                            <?php elseif($media_r >= 11.5): ?>
-                                                                <span class="badge bg-success">Aprovado</span>
-                                                            <?php elseif($media_r >= 8): ?>
-                                                                <span class="badge bg-warning text-dark">Recurso</span>
-                                                            <?php else: ?>
-                                                                <span class="badge bg-danger">Reprovado</span>
-                                                            <?php endif; ?>
+                                                        if($media === null): ?>
+                                                            <span class="badge bg-secondary">Admitido ao Exame</span>
+                                                        <?php elseif($media_r >= 11.5): ?>
+                                                            <span class="badge bg-success">Aprovado</span>
+                                                        <?php elseif($media_r >= 8): ?>
+                                                            <span class="badge bg-warning text-dark">Recurso</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-danger">Reprovado</span>
+                                                        <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -498,30 +496,59 @@
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="fw-bold"><?= $this->e($s['nome_completo']) ?></td>
-                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc" value="<?= $sn[1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
-                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ap" value="<?= $sn[2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
-                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi" value="<?= $sn[3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
-                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ce" value="<?= $sn[4] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
+                                                <td class="small-inputs">
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpc-1" value="<?= $sn['notas'][1]['1º TPC'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1º">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpc-2" value="<?= $sn['notas'][1]['2º TPC'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2º">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpc-3" value="<?= $sn['notas'][1]['3º TPC'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3º">
+                                                    </div>
+                                                </td>
+                                                <td class="small-inputs">
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ap-1" value="<?= $sn['notas'][2]['1º AP'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1º">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ap-2" value="<?= $sn['notas'][2]['2º AP'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2º">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ap-3" value="<?= $sn['notas'][2]['3º AP'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3º">
+                                                    </div>
+                                                </td>
+                                                <td class="small-inputs">
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpi-1" value="<?= $sn['notas'][3]['1º TPI'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1º">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpi-2" value="<?= $sn['notas'][3]['2º TPI'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2º">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpi-3" value="<?= $sn['notas'][3]['3º TPI'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3º">
+                                                    </div>
+                                                </td>
+                                                <td class="small-inputs">
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ce-1" value="<?= $sn['notas'][4]['1º CE'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1º">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ce-2" value="<?= $sn['notas'][4]['2º CE'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2º">
+                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ce-3" value="<?= $sn['notas'][4]['3º CE'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3º">
+                                                    </div>
+                                                </td>
                                                 <td class="fw-bold text-success text-center fs-5 text-total-ac">
                                                     <?php 
-                                                        $total = floatval($sn[1]??0) + floatval($sn[2]??0) + floatval($sn[3]??0) + floatval($sn[4]??0);
-                                                        echo number_format($total, 1);
+                                                        $ac_total = 0;
+                                                        foreach([1,2,3,4] as $tid) {
+                                                            if(!empty($sn['notas'][$tid])) {
+                                                                $vals = array_filter($sn['notas'][$tid], fn($v) => $v !== null && $v !== '');
+                                                                if(!empty($vals)) $ac_total += array_sum($vals) / count($vals);
+                                                            }
+                                                        }
+                                                        echo number_format($ac_total, 1);
                                                     ?>
                                                 </td>
                                                 <td class="border-start border-primary">
-                                                    <?php $pode_fazer_exame = true; // Unblocked as per user request ?>
                                                     <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" 
-                                                           value="<?= $sn[5] ?? '' ?>" 
+                                                           value="<?= $sn['notas'][5]['Exame Final'] ?? '' ?>" 
                                                            <?= ($is_locked) ? 'readonly disabled' : '' ?>
-                                                           placeholder="<?= (floatval($total) < 8) ? 'Exame (AC < 8)' : 'Exame' ?>">
+                                                           placeholder="Exame">
                                                 </td>
                                                 <td class="text-center fw-bold fs-5 text-media-final">
                                                     <?php 
-                                                        $exame = $sn[5] ?? null;
-                                                        if($total < 8) {
+                                                        $exame = $sn['notas'][5]['Exame Final'] ?? null;
+                                                        if($ac_total < 8) {
                                                             echo '<span class="text-danger" style="font-size: 0.7rem;">Reprovado</span>';
                                                         } elseif($exame !== null && $exame !== '') {
-                                                            echo number_format(($total + floatval($exame)) / 2, 1);
+                                                            echo number_format(($ac_total + floatval($exame)) / 2, 1);
                                                         } else {
                                                             echo '-';
                                                         }
@@ -1518,13 +1545,23 @@ function publicarMaterial() {
             }
         }
 
-        // Live Calculation for Grades
-        $('.val-tpc, .val-ap, .val-tpi, .val-ce, .val-exame').on('input', function() {
+        // Live Calculation for Grades (Arithmetic Mean per Component)
+        $('.val-tpc-1, .val-tpc-2, .val-tpc-3, .val-ap-1, .val-ap-2, .val-ap-3, .val-tpi-1, .val-tpi-2, .val-tpi-3, .val-ce-1, .val-ce-2, .val-ce-3, .val-exame').on('input', function() {
             const row = $(this).closest('tr');
-            const tpc = parseFloat(row.find('.val-tpc').val()) || 0;
-            const ap = parseFloat(row.find('.val-ap').val()) || 0;
-            const tpi = parseFloat(row.find('.val-tpi').val()) || 0;
-            const ce = parseFloat(row.find('.val-ce').val()) || 0;
+            
+            const getMean = (prefix) => {
+                let sum = 0, count = 0;
+                for(let i=1; i<=3; i++) {
+                    let val = parseFloat(row.find(`.val-${prefix}-${i}`).val());
+                    if(!isNaN(val)) { sum += val; count++; }
+                }
+                return count > 0 ? (sum / count) : 0;
+            };
+
+            const tpc = getMean('tpc');
+            const ap = getMean('ap');
+            const tpi = getMean('tpi');
+            const ce = getMean('ce');
             const exameInput = row.find('.val-exame').val();
             
             const totalAc = (tpc + ap + tpi + ce);
@@ -1767,10 +1804,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 estudante_id: studentId,
                 turma_id: turmaId,
                 disciplina_id: discId,
-                tpc: tr.find('.val-tpc').val(),
-                ap:  tr.find('.val-ap').val(),
-                tpi: tr.find('.val-tpi').val(),
-                ce:  tr.find('.val-ce').val(),
+                tpc_1: tr.find('.val-tpc-1').val(),
+                tpc_2: tr.find('.val-tpc-2').val(),
+                tpc_3: tr.find('.val-tpc-3').val(),
+                ap_1:  tr.find('.val-ap-1').val(),
+                ap_2:  tr.find('.val-ap-2').val(),
+                ap_3:  tr.find('.val-ap-3').val(),
+                tpi_1: tr.find('.val-tpi-1').val(),
+                tpi_2: tr.find('.val-tpi-2').val(),
+                tpi_3: tr.find('.val-tpi-3').val(),
+                ce_1:  tr.find('.val-ce-1').val(),
+                ce_2:  tr.find('.val-ce-2').val(),
+                ce_3:  tr.find('.val-ce-3').val(),
                 exame: tr.find('.val-exame').val(),
                 resposta: tr.find('.val-resposta').val()
             };
