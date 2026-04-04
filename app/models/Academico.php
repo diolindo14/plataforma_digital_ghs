@@ -213,7 +213,7 @@ class Academico {
             
             if ($row['nota_final'] !== null) {
                 // Point 3: Aprovado only when there is consent.
-                $has_consent = (isset($row['feedback_status']) && in_array($row['feedback_status'], ['Concordado', 'Resolvido']));
+                $has_consent = (isset($row['feedback_status']) && in_array($row['feedback_status'], ['Concordado', 'Encerrado']));
                 
                 if (!$has_consent) {
                     $row['status'] = 'Pendente Acordo';

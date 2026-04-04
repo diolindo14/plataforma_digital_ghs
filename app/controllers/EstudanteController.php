@@ -171,6 +171,11 @@ class EstudanteController extends Controller {
         $contestacaoModel = $this->model('Contestacao');
         $data['contestacoes'] = $contestacaoModel->getDoAluno($estudanteData['id']);
 
+        // --- 📨 SISTEMA DE MENSAGENS E CONVOCATÓRIAS (Notificações de Sistema) ---
+        $mensagemModel = $this->model('Mensagem');
+        $data['mensagens_unread'] = $mensagemModel->getUnreadMessages($_SESSION['user_id']);
+        $data['unread_count'] += count($data['mensagens_unread']); // Soma aos comunicados não lidos
+
         $this->view('estudante/dashboard', $data);
 
     }

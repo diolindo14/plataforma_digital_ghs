@@ -119,9 +119,22 @@ class SecretariaController extends Controller {
     public function rejectMatricula($id) {
         $this->verifyCsrfToken(); 
         $db = Database::getInstance(); 
-        $stmt = $db->prepare("SELECT u.nome_completo FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+        // Recuperamos o nome e o email do aluno para a notificação
+        $stmt = $db->prepare("
+            SELECT u.nome_completo, u.email 
+            FROM matriculas m 
+            JOIN estudantes e ON m.estudante_id = e.id 
+            JOIN utilizadores u ON e.utilizador_id = u.id 
+            WHERE m.id = :id
+        ");
         $stmt->execute([':id' => $id]);
         $u = $stmt->fetch();
+
+        if (!$u) {
+            $_SESSION['flash_error'] = "Matrícula não encontrada.";
+            header('Location: ' . URL_ROOT . '/secretaria');
+            exit;
+        }
 
         $model = $this->model('Matricula'); 
         $motivo = $_POST['motivo'] ?? 'Documentação incompleta'; 
@@ -129,10 +142,14 @@ class SecretariaController extends Controller {
         if ($model->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo)) {
             $this->logActivity('Rejeitar Matrícula Secretaria', ['matricula_id' => $id, 'motivo' => $motivo]);
             
-            $notif = "A Secretaria REJEITOU a matrícula de " . ($u['nome_completo'] ?? 'N/A') . ". Motivo: $motivo.";
+            // Notificação interna para Admin (Dashboard)
+            $notif = "A Secretaria REJEITOU a matrícula de " . $u['nome_completo'] . ". Motivo: $motivo.";
             $this->model('Mensagem')->notifyGroup('admin', $notif, $_SESSION['user_id']);
             
-            $_SESSION['flash_success'] = "Matrícula rejeitada.";
+            // Notificação Exclusiva por Email para o Aluno
+            Mailer::sendMatriculaRejeitada($u['email'], $u['nome_completo'], $motivo);
+            
+            $_SESSION['flash_success'] = "Matrícula rejeitada e aluno notificado por e-mail.";
         } else {
             $_SESSION['flash_error'] = "Erro ao rejeitar matrícula.";
         }

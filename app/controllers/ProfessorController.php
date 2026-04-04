@@ -103,10 +103,11 @@ class ProfessorController extends Controller {
         $data['gridData'] = $horarioModel->buildWeeklyGridForProfessor($data['professor']['id']);
         $data['dias_semana'] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-        // --- 🏆 MÉRITO ACADÉMICO ---
-        $acadRank = $this->model('Academico');
-        $data['ranking_escola'] = $acadRank->getRankingEscola(3);
-        $data['ranking_nivel']  = $acadRank->getRankingByNivel();
+        // --- 📨 SISTEMA DE MENSAGENS E CONVOCATÓRIAS (Notificações de Sistema) ---
+        $mensagemModel = $this->model('Mensagem');
+        $comunicadoModel = $this->model('Comunicado');
+        $data['mensagens_unread'] = $mensagemModel->getUnreadMessages($_SESSION['user_id']);
+        $data['unread_count'] = $comunicadoModel->getNotificacoesNaoLidas($_SESSION['user_id'], 'professor') + count($data['mensagens_unread']);
 
         $this->view('professor/dashboard', $data);
     }
