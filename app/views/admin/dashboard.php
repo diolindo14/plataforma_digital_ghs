@@ -19,10 +19,6 @@
         body {
             font-family: 'Outfit', sans-serif;
             background-color: #f1f5f9;
-            margin: 0;
-            padding: 0;
-            display: block !important;
-            overflow-x: hidden;
         }
 
         /* ── Sidebar ────────────────────────────────────── */
@@ -173,85 +169,6 @@
         .hover-scale:hover {
             transform: scale(1.05);
         }
-
-        /* ── Premium Buttons & Interactions ──────────────── */
-        .btn-ghs {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            font-weight: 600 !important;
-            border-radius: 8px !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            border: none !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            text-transform: none;
-            letter-spacing: 0.02em;
-        }
-
-        .btn-ghs:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
-            filter: brightness(1.15) !important;
-        }
-
-        .btn-ghs:active {
-            transform: translateY(0) !important;
-            filter: brightness(0.95);
-        }
-
-        .btn-success-ghs {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
-            color: white !important;
-        }
-
-        .btn-danger-ghs {
-            background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%) !important;
-            color: white !important;
-        }
-
-        .btn-primary-ghs {
-            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
-            color: white !important;
-        }
-
-        .btn-warning-ghs {
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
-            color: #451a03 !important;
-        }
-
-        .btn-info-ghs {
-            background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%) !important;
-            color: white !important;
-        }
-
-        .btn-dark-ghs {
-            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%) !important;
-            color: white !important;
-        }
-
-        .btn-light-ghs {
-            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%) !important;
-            color: #1E293B !important;
-            border: 1px solid rgba(0,0,0,0.05) !important;
-        }
-
-        .pills-custom {
-            border-radius: 50px;
-            padding: 8px 16px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.04);
-            transition: all 0.3s ease;
-        }
-        
-        .pills-custom:hover {
-            background: #f8fafc;
-        }
     </style>
 </head>
 
@@ -284,7 +201,7 @@
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                     <a class="nav-link active" id="tab-home" data-bs-toggle="pill" data-bs-target="#pane-home"
                         href="javascript:void(0)" role="tab">
-                        <ion-icon name="grid-outline"></ion-icon> Página Inicial Dashboard
+                        <ion-icon name="grid-outline"></ion-icon> Dashboard Analytics
                     </a>
 
                     <div class="sidebar-section-label mt-3">Corpo Escolar</div>
@@ -396,12 +313,12 @@
                     <p class="text-muted mb-0">Controlo Total - Green Hard & Softh</p>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                    <div class="pills-custom">
-                        <ion-icon name="person-circle" style="font-size: 1.8rem; color: #E11D48;"></ion-icon>
-                        <span class="text-dark small"><?= $this->e($_SESSION['user_name']) ?></span>
+                    <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm">
+                        <ion-icon name="person-circle" style="font-size: 1.8rem; color: #DC2626;"></ion-icon>
+                        <span class="fw-bold text-dark"><?= $this->e($_SESSION['user_name']) ?></span>
                     </div>
                     <a href="<?= URL_ROOT ?>/auth/logout"
-                        class="btn btn-ghs btn-success-ghs px-4 py-2">
+                        class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
                         <ion-icon name="log-out-outline"></ion-icon> Sair
                     </a>
                 </div>
@@ -422,218 +339,19 @@
                 </div>
             <?php endif; ?>
 
-
-
-            <div class="tab-content" id="v-pills-tabContent">
-
-                <!-- Dashboard Home (Página Inicial) -->
-                <div class="tab-pane fade show active" id="pane-home" role="tabpanel">
-                    <!-- Cards de Estatísticas Rápidas -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-4">
-                            <div class="card shadow-sm border-0 bg-white p-3 hover-scale h-100">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-success bg-opacity-10 text-success p-3 rounded-3 me-3">
-                                        <ion-icon name="people" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Alunos Ativos</p>
-                                        <h2 class="fw-bold mb-0"><?= $data['stats']['alunos_ativos'] ?></h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card shadow-sm border-0 bg-white p-3 hover-scale h-100">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3">
-                                        <ion-icon name="calendar" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Turmas Ativas</p>
-                                        <h2 class="fw-bold mb-0"><?= $data['stats']['turmas_abertas'] ?></h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card shadow-sm border-0 bg-white p-3 hover-scale h-100">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3">
-                                        <ion-icon name="document-text" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Matrículas Pendentes</p>
-                                        <h2 class="fw-bold mb-0"><?= $data['stats']['matriculas_pendentes'] ?></h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Novos Indicadores Financeiros -->
-                        <div class="col-md-6">
-                            <div class="card shadow-sm border-0 bg-white p-3 border-start border-success border-4 hover-scale">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-success text-white p-3 rounded-3 me-3 shadow-sm">
-                                        <ion-icon name="cash" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Receita do Mês (XOF)</p>
-                                        <h2 class="fw-bold mb-0 text-success">
-                                            <?= number_format($data['stats']['pagamentos_mes'] ?? 0, 0, ',', '.') ?></h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card shadow-sm border-0 bg-white p-3 border-start border-danger border-4 hover-scale">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-danger text-white p-3 rounded-3 me-3 shadow-sm">
-                                        <ion-icon name="alert-circle" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Dívidas Pendentes (Alunos)</p>
-                                        <h2 class="fw-bold mb-0 text-danger"><?= $data['stats']['inadimplencia'] ?? 0 ?></h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ── SECÇÃO DE NOTIFICAÇÕES DE SISTEMA (GHS Workflow) ── -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-12">
-                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                                <div class="card-header bg-white py-3 border-bottom border-light">
-                                    <h6 class="fw-bold mb-0 d-flex align-items-center gap-2 text-dark">
-                                        <ion-icon name="notifications-circle-outline"
-                                            class="text-primary fs-4"></ion-icon>
-                                        Alertas de Validação e Atividade da Secretaria
-                                    </h6>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="list-group list-group-flush"
-                                        style="max-height: 280px; overflow-y: auto;">
-                                        <?php if (empty($data['mensagens_painel'])): ?>
-                                            <div class="p-4 text-center text-muted">
-                                                <p class="small mb-0">Nenhum alerta pendente no momento.</p>
-                                            </div>
-                                        <?php else: ?>
-                                            <?php foreach ($data['mensagens_painel'] as $msg): ?>
-                                                <div class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-start gap-3">
-                                                    <div class="p-2 bg-primary bg-opacity-10 rounded-circle text-primary">
-                                                        <ion-icon name="information-circle"></ion-icon>
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                                            <span class="fw-bold small text-dark"><?= htmlspecialchars($msg['assunto']) ?></span>
-                                                            <span class="text-muted" style="font-size: 0.7rem;">
-                                                                <?= date('d/m/Y H:i', strtotime($msg['data_criacao'])) ?>
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-muted small" style="line-height: 1.4;">
-                                                            <?= htmlspecialchars($msg['mensagem']) ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-light py-2 d-flex justify-content-between align-items-center px-4">
-                                    <form action="<?= URL_ROOT ?>/admin/clearNotifications" method="POST" class="d-inline">
-                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                        <button type="submit" class="btn btn-sm btn-link text-decoration-none small text-muted p-0">Limpar lidas</button>
-                                    </form>
-                                    <a href="javascript:void(0)" onclick="document.getElementById('tab-notificacoes').click()" class="text-decoration-none small fw-bold text-primary">Ver histórico completo</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ── SECÇÃO DE CONFLITOS DE NOTAS (Anti-Fraude) ── -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-12">
-                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden border-start border-4 border-danger">
-                                <div class="card-header bg-white py-3 border-bottom border-light">
-                                    <h6 class="fw-bold mb-0 d-flex align-items-center gap-2 text-danger">
-                                        <ion-icon name="shield-checkmark-outline" class="fs-4"></ion-icon>
-                                        Monitorização Anti-Fraude: Reclamações de Notas Críticas
-                                    </h6>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle mb-0">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>Estudante</th>
-                                                    <th>Disciplina / Turma</th>
-                                                    <th>Professor</th>
-                                                    <th>Nº Reclamações</th>
-                                                    <th>Ação</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php if (empty($data['conflitos_notas'])): ?>
-                                                    <tr>
-                                                        <td colspan="5" class="text-center py-4 text-muted small">Nenhuma irregularidade detetada.</td>
-                                                    </tr>
-                                                <?php else: ?>
-                                                    <?php foreach ($data['conflitos_notas'] as $c): ?>
-                                                        <tr>
-                                                            <td class="fw-bold small"><?= htmlspecialchars($c['estudante_nome']) ?></td>
-                                                            <td><div class="small fw-semibold"><?= htmlspecialchars($c['disciplina_nome']) ?></div></td>
-                                                            <td class="small"><?= htmlspecialchars($c['professor_nome']) ?></td>
-                                                            <td class="text-center"><span class="badge bg-danger rounded-pill"><?= $c['contador_reclamacoes'] ?></span></td>
-                                                            <td class="text-end pe-3">
-                                                                <button type="button" class="btn btn-sm btn-ghs btn-warning-ghs px-3" onclick="abrirModalConvocatoria(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)">
-                                                                    Convocar
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    <?php endforeach; ?>
-                                                <?php endif; ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 🏆 QUADRO DE MÉRITO (Ranking Global) -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-12">
-                            <?php
-                            $ranking_escola = $data['ranking_escola'] ?? [];
-                            $ranking_nivel = $data['ranking_nivel'] ?? [];
-                            $show_details = true;
-                            include __DIR__ . '/../partials/merit_board.php';
-                            ?>
-                        </div>
-                    </div>
-
-                    <!-- Charts Gráficos -->
-                    <div class="row g-4 d-flex align-items-stretch mb-4">
-                        <div class="col-md-6 h-100">
-                            <div class="card border-0 shadow-sm h-100 rounded-4">
-                                <div class="card-body">
-                                    <h6 class="fw-bold mb-4 text-muted text-uppercase small">Alunos por Ano Letivo</h6>
-                                    <canvas id="barChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 h-100">
-                            <div class="card border-0 shadow-sm h-100 rounded-4">
-                                <div class="card-body">
-                                    <h6 class="fw-bold mb-4 text-muted text-uppercase small">Distribuição por Turno</h6>
-                                    <div style="max-width: 280px; margin: 0 auto;">
-                                        <canvas id="pieChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- 🏆 QUADRO DE MÉRITO ACADÉMICO (visível apenas quando há dados) -->
+            <?php if (!empty($ranking_escola)): ?>
+                <div class="row mb-3">
+                    <div class="col-12 col-xl-4">
+                        <?php
+                        $show_details = true;
+                        include __DIR__ . '/../partials/merit_board.php';
+                        ?>
                     </div>
                 </div>
+            <?php endif; ?>
+
+            <div class="tab-content" id="v-pills-tabContent">
 
                 <!-- Gestão de Mérito Escolar -->
                 <div class="tab-pane fade" id="pane-merito" role="tabpanel">
@@ -914,6 +632,240 @@
                     </div>
                 </div>
 
+                <!-- Dashboard Home (Chart.js) -->
+                <div class="tab-pane fade show active" id="pane-home">
+                    <!-- Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 bg-white p-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-box bg-success bg-opacity-10 text-success p-3 rounded-3 me-3">
+                                        <ion-icon name="people" class="fs-1"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted small fw-bold text-uppercase mb-0">Alunos Ativos</p>
+                                        <h2 class="fw-bold mb-0"><?= $data['stats']['alunos_ativos'] ?></h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 bg-white p-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-box bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3">
+                                        <ion-icon name="calendar" class="fs-1"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted small fw-bold text-uppercase mb-0">Turmas Ativas</p>
+                                        <h2 class="fw-bold mb-0"><?= $data['stats']['turmas_abertas'] ?></h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 bg-white p-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-box bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3">
+                                        <ion-icon name="document-text" class="fs-1"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted small fw-bold text-uppercase mb-0">Matrículas Pendentes</p>
+                                        <h2 class="fw-bold mb-0"><?= $data['stats']['matriculas_pendentes'] ?></h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Novos Indicadores Financeiros -->
+                        <div class="col-md-6">
+                            <div class="card shadow-sm border-0 bg-white p-3 mb-3 border-start border-success border-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-box bg-success text-white p-3 rounded-3 me-3 shadow-sm">
+                                        <ion-icon name="cash" class="fs-1"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted small fw-bold text-uppercase mb-0">Receita do Mês (XOF)</p>
+                                        <h2 class="fw-bold mb-0 text-success">
+                                            <?= number_format($data['stats']['pagamentos_mes'], 0, ',', '.') ?></h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm border-0 bg-white p-3 mb-3 border-start border-danger border-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-box bg-danger text-white p-3 rounded-3 me-3 shadow-sm">
+                                        <ion-icon name="alert-circle" class="fs-1"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted small fw-bold text-uppercase mb-0">Atraso de pagamento (Alunos)
+                                        </p>
+                                        <h2 class="fw-bold mb-0 text-danger"><?= $data['stats']['inadimplencia'] ?></h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── SECÇÃO DE NOTIFICAÇÕES DE SISTEMA (GHS Workflow) ── -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                                <div class="card-header bg-white py-3 border-bottom border-light">
+                                    <h6 class="fw-bold mb-0 d-flex align-items-center gap-2 text-dark">
+                                        <ion-icon name="notifications-circle-outline"
+                                            class="text-primary fs-4"></ion-icon>
+                                        Alertas de Validação e Atividade da Secretaria
+                                    </h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="list-group list-group-flush"
+                                        style="max-height: 250px; overflow-y: auto;">
+                                        <?php if (empty($data['mensagens_painel'])): ?>
+                                            <!-- Estado vazio quando não há alertas -->
+                                            <div class="p-4 text-center text-muted">
+                                                <p class="small mb-0">Nenhum alerta pendente no momento.</p>
+                                            </div>
+                                        <?php else: ?>
+                                            <?php foreach ($data['mensagens_painel'] as $msg): ?>
+                                                <!-- Item de notificação individual -->
+                                                <div
+                                                    class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-start gap-3">
+                                                    <div class="p-2 bg-primary bg-opacity-10 rounded-circle text-primary">
+                                                        <ion-icon name="information-circle"></ion-icon>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span
+                                                                class="fw-bold small text-dark"><?= htmlspecialchars($msg['assunto']) ?></span>
+                                                            <span class="text-muted" style="font-size: 0.7rem;">
+                                                                <?= date('d/m/Y H:i', strtotime($msg['data_criacao'])) ?>
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-muted small" style="line-height: 1.4;">
+                                                            <?= htmlspecialchars($msg['mensagem']) ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div
+                                    class="card-footer bg-light py-2 d-flex justify-content-between align-items-center px-4">
+                                    <form action="<?= URL_ROOT ?>/admin/clearNotifications" method="POST"
+                                        class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                        <button type="submit"
+                                            class="btn btn-sm btn-link text-decoration-none small text-muted p-0">Limpar
+                                            lidas</button>
+                                    </form>
+                                    <a href="javascript:void(0)"
+                                        onclick="document.getElementById('tab-notificacoes').click()"
+                                        class="text-decoration-none small fw-bold text-primary">Ver histórico
+                                        completo</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── SECÇÃO DE CONFLITOS DE NOTAS (Anti-Fraude) ── -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden border-start border-4 border-danger">
+                                <div class="card-header bg-white py-3 border-bottom border-light">
+                                    <h6 class="fw-bold mb-0 d-flex align-items-center gap-2 text-danger">
+                                        <ion-icon name="shield-checkmark-outline" class="fs-4"></ion-icon>
+                                        Monitorização Anti-Fraude: Reclamações de Notas Críticas
+                                    </h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Estudante</th>
+                                                    <th>Disciplina / Turma</th>
+                                                    <th>Professor</th>
+                                                    <th>Nº Reclamações</th>
+                                                    <th>Última Resposta Prof.</th>
+                                                    <th class="text-end">Ação</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($data['conflitos_notas'])): ?>
+                                                    <tr>
+                                                        <td colspan="6" class="text-center py-4 text-muted">
+                                                            <ion-icon name="checkmark-done-circle-outline" class="fs-2 opacity-25 d-block mx-auto mb-2"></ion-icon>
+                                                            Nenhuma irregularidade detetada. Todas as notas estão em conformidade.
+                                                        </td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($data['conflitos_notas'] as $c): ?>
+                                                        <tr>
+                                                            <td class="fw-bold"><?= htmlspecialchars($c['estudante_nome']) ?></td>
+                                                            <td>
+                                                                <div class="small fw-semibold"><?= htmlspecialchars($c['disciplina_nome']) ?></div>
+                                                                <div class="text-muted small"><?= htmlspecialchars($c['turma_codigo']) ?></div>
+                                                            </td>
+                                                            <td class="small"><?= htmlspecialchars($c['professor_nome']) ?></td>
+                                                            <td>
+                                                                <span class="badge bg-danger rounded-pill px-3"><?= $c['contador_reclamacoes'] ?></span>
+                                                            </td>
+                                                            <td class="small italic text-muted">
+                                                                "<?= htmlspecialchars(substr($c['resposta_professor'] ?? 'Nenhuma', 0, 50)) ?>..."
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <button type="button" class="btn btn-sm btn-danger shadow-sm" onclick="convocarComMotivo(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)">
+                                                                    <ion-icon name="megaphone-outline" class="me-1"></ion-icon> Convocar Partes
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- 🏆 QUADRO DE MÉRITO (Ranking Global) -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <?php
+                            $ranking_escola = $data['ranking_escola'] ?? [];
+                            $ranking_nivel = $data['ranking_nivel'] ?? [];
+                            $show_details = true; // No Admin, mostramos todos os detalhes
+                            include __DIR__ . '/../partials/merit_board.php';
+                            ?>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="row g-4 d-flex align-items-stretch">
+                        <div class="col-md-6 h-100">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="fw-bold mb-4">Estatística: Alunos por Ano Letivo</h5>
+                                    <canvas id="barChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 h-100">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="fw-bold mb-4">Estatística: Distribuição por Turno</h5>
+                                    <div style="max-width: 300px; margin: 0 auto;">
+                                        <canvas id="pieChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Histórico Completo de Notificações de Sistema -->
                 <div class="tab-pane fade" id="pane-notificacoes" role="tabpanel">
@@ -1011,7 +963,7 @@
                                                     </td>
                                                     <td class="text-end">
                                                         <div class="dropdown d-inline-block">
-                                                            <button class="btn btn-sm btn-ghs btn-primary-ghs px-3 py-1 dropdown-toggle"
+                                                            <button class="btn btn-sm btn-light border dropdown-toggle"
                                                                 type="button" data-bs-toggle="dropdown">
                                                                 Ações
                                                             </button>
@@ -1040,7 +992,7 @@
                                                                         data-encarregado_telefone="<?= htmlspecialchars($e['encarregado_telefone'] ?? '') ?>"
                                                                         data-sexo="<?= $e['sexo'] ?>" data-bs-toggle="modal"
                                                                         data-bs-target="#studentModal"><ion-icon
-                                                                            name="create-outline" class="me-2 text-success"></ion-icon>
+                                                                            name="create-outline" class="me-2"></ion-icon>
                                                                         Editar</a></li>
 
                                                                 <?php if ($e['user_status'] === 'ativo'): ?>
@@ -1094,11 +1046,13 @@
                                     <h4 class="fw-bold mb-0 text-dark">Corpo Docente</h4>
                                     <p class="text-muted small">Gerencie professores e suas atribuições pedagógicas.</p>
                                 </div>
-                                <button class="btn btn-ghs btn-success-ghs px-4 py-2 shadow-sm rounded-pill" data-bs-toggle="modal"
-                                     data-bs-target="#professorModal"
-                                     onclick="clearProfessorForm()">
-                                     <ion-icon name="person-add-outline"></ion-icon> Novo Professor
-                                 </button>
+                                <button
+                                    class="btn btn-primary px-4 py-2 fw-bold shadow-sm border-0 d-flex align-items-center gap-2"
+                                    style="background: linear-gradient(135deg, #3b82f6, #2563eb);"
+                                    data-bs-toggle="modal" data-bs-target="#professorModal"
+                                    onclick="clearProfessorForm()">
+                                    <ion-icon name="person-add-outline"></ion-icon> Novo Professor
+                                </button>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle datatable-simple">
@@ -1150,80 +1104,11 @@
                                                             <?= ucfirst($p['user_status']) ?>
                                                         </span>
                                                     </td>
-                                                     <td class="text-end">
-                                                         <div class="d-flex justify-content-end gap-2">
-                                                             <button class="btn btn-sm btn-ghs btn-primary-ghs px-3"
-                                                                 onclick='editProfessor(<?= json_encode($p) ?>)'
-                                                                 title="Editar"><ion-icon name="create-outline"></ion-icon> Editar</button>
-                                                             <button class="btn btn-sm btn-ghs btn-danger-ghs px-3"
-                                                                 onclick="if(confirm('Tem certeza?')) window.location.href='<?= URL_ROOT ?>/admin/deleteProfessor/<?= $p['utilizador_id'] ?>'"
-                                                                 title="Excluir"><ion-icon name="trash-outline"></ion-icon></button>
-                                                         </div>
-                                                     </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-                <!-- Equipa da Secretaria (Módulo Restaurado) -->
-                <div class="tab-pane fade" id="pane-secretaria">
-                    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                        <div class="card-header bg-white py-4 border-0 d-flex justify-content-between align-items-center">
-                            <h4 class="fw-bold mb-0">Gestão da Equipa Administrativa</h4>
-                            <button class="btn btn-ghs btn-dark-ghs px-4" data-bs-toggle="modal" data-bs-target="#secretariaModal">
-                                <ion-icon name="person-add-outline" class="me-1"></ion-icon> Novo Secretário
-                            </button>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0 datatable-simple">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th class="ps-4">Membro</th>
-                                            <th>Email</th>
-                                            <th>Estado</th>
-                                            <th class="text-end pe-4">Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (empty($data['secretarios'])): ?>
-                                            <tr><td colspan="4" class="p-5 text-center text-muted">Nenhum membro da secretaria registado.</td></tr>
-                                        <?php else: ?>
-                                            <?php foreach ($data['secretarios'] as $s): ?>
-                                                <tr>
-                                                    <td class="ps-4">
-                                                        <div class="d-flex align-items-center gap-3">
-                                                            <div class="avatar-sm bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                                <ion-icon name="person" class="fs-5"></ion-icon>
-                                                            </div>
-                                                            <div class="fw-bold text-dark"><?= htmlspecialchars($s['nome_completo']) ?></div>
-                                                        </div>
-                                                    </td>
-                                                    <td><?= htmlspecialchars($s['email']) ?></td>
-                                                    <td>
-                                                        <span class="badge bg-<?= ($s['user_status'] ?? $s['status'] ?? 'ativo') === 'ativo' ? 'success' : 'danger' ?> bg-opacity-10 text-<?= ($s['user_status'] ?? $s['status'] ?? 'ativo') === 'ativo' ? 'success' : 'danger' ?> rounded-pill px-3">
-                                                            <?= ucfirst($s['user_status'] ?? $s['status'] ?? 'Ativo') ?>
-                                                        </span>
-                                                    </td>
                                                     <td class="text-end">
-                                                        <div class="dropdown d-inline-block">
-                                                            <button class="btn btn-sm btn-ghs btn-primary-ghs dropdown-toggle" type="button"
-                                                                data-bs-toggle="dropdown">Ações</button>
-                                                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                                                                <li><a class="dropdown-item" href="javascript:viewSecretaria(<?= $s['utilizador_id'] ?>)"><ion-icon name="eye-outline" class="me-2 text-primary"></ion-icon> Ver Perfil</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:editSecretaria(<?= $s['utilizador_id'] ?>)"><ion-icon name="create-outline" class="me-2 text-success"></ion-icon> Editar</a></li>
-                                                                <li><hr class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item text-danger" href="javascript:confirmDeleteSecretaria(<?= $s['utilizador_id'] ?>)"><ion-icon name="trash-outline" class="me-2"></ion-icon> Remover</a></li>
-                                                            </ul>
-                                                        </div>
+                                                        <button class="btn btn-sm btn-light border shadow-sm"
+                                                            onclick="editProfessor(<?= $p['id'] ?>)" title="Editar Professor">
+                                                            <ion-icon name="create-outline" class="text-primary"></ion-icon>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
@@ -1234,6 +1119,8 @@
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- Matrículas & Document Viewer -->
                 <div class="tab-pane fade" id="pane-matriculas">
@@ -1242,11 +1129,11 @@
                             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                                 <div class="card-header bg-white py-4 border-0 d-flex justify-content-between align-items-center">
                                     <h4 class="fw-bold mb-0">Fila de Triagem (Matrículas Pendentes)</h4>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <span class="badge bg-warning-ghs text-white rounded-pill px-3 py-2 shadow-sm" style="font-size: 0.75rem;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
                                             <?= count($data['matriculas'] ?? []) ?> Processos Pendentes
                                         </span>
-                                        <button class="btn btn-ghs btn-primary-ghs btn-sm px-3" style="border-radius: 50px !important;" data-bs-toggle="modal" data-bs-target="#matriculaManualModal">
+                                        <button class="btn btn-success btn-sm fw-bold rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#matriculaManualModal">
                                             <ion-icon name="person-add-outline" class="me-1"></ion-icon> Nova Matrícula
                                         </button>
                                     </div>
@@ -1283,7 +1170,7 @@
                                                                 </span>
                                                             </td>
                                                             <td class="text-center">
-                                                                <button class="btn btn-ghs btn-primary-ghs btn-sm px-3" style="font-size: 0.75rem; border-radius: 50px !important;"
+                                                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3 btn-view-docs"
                                                                     data-bs-toggle="modal" data-bs-target="#documentViewerModal"
                                                                     data-id="<?= $m['id'] ?>" data-nome="<?= htmlspecialchars($m['nome']) ?>"
                                                                     data-bi="<?= $m['bi_arquivo'] ?? '' ?>"
@@ -1294,12 +1181,9 @@
                                                                 </button>
                                                             </td>
                                                             <td class="text-end pe-4">
-                                                                <div class="d-flex justify-content-end gap-2">
-                                                                    <button class="btn btn-ghs btn-success-ghs btn-sm px-3 btn-approve-matricula" data-id="<?= $m['id'] ?>">Aprovar</button>
-                                                                    <button class="btn btn-ghs btn-danger-ghs btn-sm px-3 btn-reject-matricula" 
-                                                                         data-id="<?= $m['id'] ?>" 
-                                                                         data-nome="<?= htmlspecialchars($m['nome']) ?>"
-                                                                         data-email="<?= htmlspecialchars($m['email'] ?? 'n/d') ?>">Rejeitar</button>
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <button class="btn btn-success fw-bold btn-approve-matricula" data-id="<?= $m['id'] ?>">Aprovar</button>
+                                                                    <button class="btn btn-danger fw-bold btn-reject-matricula" data-id="<?= $m['id'] ?>">Rejeitar</button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -1344,25 +1228,25 @@
                                                         <td><?= htmlspecialchars($t['turno']) ?></td>
                                                         <td><?= $t['vagas'] ?></td>
                                                         <td class="text-end">
-                                                            <div class="d-flex justify-content-end gap-1">
-                                                                <button class="btn btn-sm btn-ghs btn-light-ghs"
+                                                            <div class="btn-group">
+                                                                <button class="btn btn-sm btn-light"
                                                                     onclick="viewTurma(<?= $t['id'] ?>)"
                                                                     title="Visualizar Detalhes"><ion-icon
                                                                         name="eye-outline"></ion-icon></button>
-                                                                <button class="btn btn-sm btn-ghs btn-info-ghs"
+                                                                <button class="btn btn-sm btn-info text-white"
                                                                     onclick="viewTurmaStudents(<?= $t['id'] ?>, '<?= $t['codigo'] ?>')"
                                                                     title="Ver Alunos"><ion-icon
                                                                         name="people-outline"></ion-icon></button>
-                                                                <button class="btn btn-sm btn-ghs btn-primary-ghs"
+                                                                <button class="btn btn-sm btn-primary"
                                                                     onclick="showHorario(<?= $t['id'] ?>, '<?= htmlspecialchars($t['codigo']) ?>')"
                                                                     title="Gerir Horário"><ion-icon
                                                                         name="time-outline"></ion-icon></button>
-                                                                <button class="btn btn-sm btn-ghs btn-success-ghs" data-bs-toggle="modal"
+                                                                <button class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                                     data-bs-target="#alocarEstudanteModal"
                                                                     onclick="prepareAllocation(<?= $t['id'] ?>, '<?= htmlspecialchars($t['codigo']) ?>')"
                                                                     title="Alocar Aluno"><ion-icon
                                                                         name="person-add-outline"></ion-icon></button>
-                                                                <button class="btn btn-sm btn-ghs btn-danger-ghs"
+                                                                <button class="btn btn-sm btn-outline-danger"
                                                                     onclick="if(confirm('Tem certeza que deseja excluir esta turma?')) window.location.href='<?= URL_ROOT ?>/admin/deleteTurma/<?= $t['id'] ?>'"
                                                                     title="Excluir"><ion-icon
                                                                         name="trash-outline"></ion-icon></button>
@@ -1412,11 +1296,10 @@
                                         <!-- Aba Anos -->
                                         <div class="tab-pane fade show active" id="pills-anos">
                                             <div class="d-flex justify-content-between mb-3">
-                                                <h5>Configuração de Ciclos e Mensalidades</h5>
-                                                 <button class="btn btn-sm btn-ghs btn-dark-ghs px-4" data-bs-toggle="modal"
-                                                     data-bs-target="#anoModal" onclick="clearAnoForm()">
-                                                     <ion-icon name="add-circle-outline"></ion-icon> Novo Ano
-                                                 </button>
+                                                <h5>Configuração de Ciclos e Mensalidades</h5><button
+                                                    class="btn btn-sm btn-dark" data-bs-toggle="modal"
+                                                    data-bs-target="#anoModal" onclick="clearAnoForm()">+ Novo
+                                                    Ano</button>
                                             </div>
                                             <table class="table table-sm bg-white shadow-sm rounded">
                                                 <thead>
@@ -1878,10 +1761,6 @@
                                             <tr><td colspan="7" class="text-center py-5 text-muted">Ainda não há dados de aproveitamento registados.</td></tr>
                                         <?php else: ?>
                                             <?php foreach($data['notas_report'] as $r): ?>
-                                                <?php 
-                                                    $notas = $r['notas'] ?? []; 
-                                                    $exame = $notas[5] ?? null;
-                                                ?>
                                                 <tr>
                                                     <td class="ps-4 fw-bold">
                                                         <span class="badge bg-light text-dark border"><?= $r['turma'] ?></span>
@@ -1892,18 +1771,18 @@
                                                         <div class="text-muted" style="font-size: 0.7rem;">ID: #<?= $r['estudante_id'] ?></div>
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="fw-bold <?= ($r['total_ac'] ?? 0) < 10 ? 'text-danger' : 'text-success' ?>">
-                                                            <?= number_format($r['total_ac'] ?? 0, 1) ?>
+                                                        <span class="fw-bold <?= $r['total_ac'] < 10 ? 'text-danger' : 'text-success' ?>">
+                                                            <?= number_format($r['total_ac'], 1) ?>
                                                         </span>
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="fw-bold text-primary">
-                                                            <?= ($exame !== null) ? number_format($exame, 1) : '<span class="text-muted">---</span>' ?>
+                                                        <span class="fw-bold">
+                                                            <?= ($r['notas'][5] !== null) ? number_format($r['notas'][5], 1) : '<span class="text-muted">---</span>' ?>
                                                         </span>
                                                     </td>
                                                     <td class="text-center bg-light fw-bold fs-5">
-                                                        <?php if(($r['media_final'] ?? null) !== null): ?>
-                                                            <span class="<?= $r['media_final'] < 8 ? 'text-danger' : 'text-success' ?>">
+                                                        <?php if($r['media_final'] !== null): ?>
+                                                            <span class="<?= $r['media_final'] < 10 ? 'text-danger' : 'text-success' ?>">
                                                                 <?= number_format($r['media_final'], 1) ?>
                                                             </span>
                                                         <?php else: ?>
@@ -1912,15 +1791,17 @@
                                                     </td>
                                                     <td class="text-center">
                                                         <?php 
-                                                            $ac = (float)($r['total_ac'] ?? 0);
-                                                            $media = $r['media_final'] ?? null;
+                                                            $ac = (float)$r['total_ac'];
+                                                            $media = $r['media_final'];
                                                             
                                                             if($ac < 8): ?>
-                                                                <span class="badge bg-danger">Reprovado (AC < 8)</span>
+                                                                <span class="badge bg-danger">Reprovado (Nota AC < 8)</span>
                                                             <?php elseif($media === null): ?>
-                                                                <span class="badge bg-secondary">Pendente Exame</span>
-                                                            <?php elseif(round($media, 1) >= 8): ?>
+                                                                <span class="badge bg-secondary">Admitido ao Exame</span>
+                                                            <?php elseif(round($media, 1) >= 11.5): ?>
                                                                 <span class="badge bg-success">Aprovado</span>
+                                                            <?php elseif(round($media, 1) >= 8): ?>
+                                                                <span class="badge bg-warning text-dark">Recurso</span>
                                                             <?php else: ?>
                                                                 <span class="badge bg-danger">Reprovado</span>
                                                             <?php endif; ?>
@@ -2470,57 +2351,6 @@
                     </div>
                 </div>
 
-                <!-- Auditoria de Acessos (Módulo Restaurado) -->
-                <div class="tab-pane fade" id="pane-auditoria">
-                    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                        <div class="card-header bg-white py-4 border-0">
-                            <h4 class="fw-bold mb-0">Logs de Segurança e Acesso</h4>
-                            <p class="text-muted small mb-0">Rastreio de entradas, saídas e ações críticas no sistema.</p>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0 datatable-simple">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th class="ps-4">Data/Hora</th>
-                                            <th>Utilizador</th>
-                                            <th>Ação Realizada</th>
-                                            <th>Endereço IP</th>
-                                            <th class="text-end pe-4">Detalhes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (empty($data['logs_acesso'])): ?>
-                                            <tr><td colspan="5" class="p-5 text-center text-muted">Sem registos de auditoria recentes.</td></tr>
-                                        <?php else: ?>
-                                            <?php foreach ($data['logs_acesso'] as $log): ?>
-                                                <tr>
-                                                    <td class="ps-4 small text-dark fw-medium">
-                                                        <?= date('d/m/Y H:i:s', strtotime($log['data_acesso'] ?? $log['timestamp'] ?? 'now')) ?>
-                                                    </td>
-                                                    <td>
-                                                        <div class="fw-bold"><?= htmlspecialchars($log['nome_completo'] ?? $log['user_name'] ?? 'Sistema') ?></div>
-                                                        <small class="text-muted"><?= htmlspecialchars($log['role'] ?? 'N/D') ?></small>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-secondary bg-opacity-10 text-dark border-0">
-                                                            <?= htmlspecialchars($log['acao'] ?? 'Login/Acesso') ?>
-                                                        </span>
-                                                    </td>
-                                                    <td class="small text-muted font-monospace"><?= $log['ip_address'] ?? '127.0.0.1' ?></td>
-                                                    <td class="text-end pe-4">
-                                                        <button class="btn btn-sm btn-ghs btn-light-ghs" title="Ver MetaDados"><ion-icon name="information-circle-outline"></ion-icon></button>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Centro de Backup em Tempo Real -->
                 <div class="tab-pane fade" id="pane-backup" role="tabpanel">
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -2605,109 +2435,109 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Painel de Mediação -->
-                <div class="tab-pane fade" id="pane-mediacao">
-                    <div class="card shadow-sm border-0 border-top border-4 border-danger">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div>
-                                    <h4 class="fw-bold mb-0">Centro de Mediação Escolar</h4>
-                                    <p class="text-muted small mb-0">Gestão de impasses e contestações que requeiram intervenção administrativa.</p>
-                                </div>
+            </div>
+            <!-- Painel de Mediação -->
+            <div class="tab-pane fade" id="pane-mediacao">
+                <div class="card shadow-sm border-0 border-top border-4 border-danger">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="fw-bold mb-0">Centro de Mediação Escolar</h4>
+                                <p class="text-muted small mb-0">Gestão de impasses e contestações que requeiram intervenção administrativa.</p>
                             </div>
+                        </div>
 
-                            <ul class="nav nav-tabs mb-4">
-                                <li class="nav-item">
-                                    <button class="nav-link active fw-bold text-danger" data-bs-toggle="tab" data-bs-target="#sub-med-ativos">
-                                        <ion-icon name="warning-outline" class="me-1"></ion-icon> Processos Ativos
-                                    </button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link fw-bold text-secondary" data-bs-toggle="tab" data-bs-target="#sub-med-historico">
-                                        <ion-icon name="archive-outline" class="me-1"></ion-icon> Auditoria Global
-                                    </button>
-                                </li>
-                            </ul>
+                        <ul class="nav nav-tabs mb-4">
+                            <li class="nav-item">
+                                <button class="nav-link active fw-bold text-danger" data-bs-toggle="tab" data-bs-target="#sub-med-ativos">
+                                    <ion-icon name="warning-outline" class="me-1"></ion-icon> Processos Ativos
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link fw-bold text-secondary" data-bs-toggle="tab" data-bs-target="#sub-med-historico">
+                                    <ion-icon name="archive-outline" class="me-1"></ion-icon> Auditoria Global
+                                </button>
+                            </li>
+                        </ul>
 
-                            <div class="tab-content">
-                                <!-- Processos Ativos -->
-                                <div class="tab-pane fade show active" id="sub-med-ativos">
-                                    <?php if (empty($data['contestacoes_mediacao'])): ?>
-                                        <div class="text-center py-5">
-                                            <ion-icon name="checkmark-done-circle-outline" style="font-size:3rem; color:#22c55e;"></ion-icon>
-                                            <p class="text-muted mt-3">Nenhum impasse ativo requer mediação neste momento.</p>
-                                        </div>
-                                    <?php else: ?>
-                                        <div class="table-responsive">
-                                            <table class="table table-hover align-middle datatable-simple">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Envolvidos</th>
-                                                        <th>Disciplina</th>
-                                                        <th>Estado</th>
-                                                        <th class="text-end">Ações</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php foreach ($data['contestacoes_mediacao'] as $c): ?>
-                                                        <tr>
-                                                            <td><strong><?= $c['id'] ?></strong></td>
-                                                            <td>
-                                                                <div class="small fw-bold text-dark">A: <?= htmlspecialchars($c['estudante_nome']) ?></div>
-                                                                <div class="small text-muted">D: <?= htmlspecialchars($c['professor_nome'] ?? 'N/D') ?></div>
-                                                            </td>
-                                                            <td><span class="badge bg-secondary"><?= htmlspecialchars($c['disciplina_nome']) ?></span></td>
-                                                            <td><span class="badge bg-danger"><?= $c['status'] ?></span></td>
-                                                            <td class="text-end gap-2 d-flex justify-content-end">
-                                                                <button class="btn btn-sm btn-info fw-bold" onclick="verDetalhesContestacao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="eye"></ion-icon></button>
-                                                                <?php if($c['status'] == 'Impasse' || $c['status'] == 'Em_Mediacao'): ?>
-                                                                    <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="abrirModalConvocatoria(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="calendar"></ion-icon> Convocar</button>
-                                                                <?php elseif($c['status'] == 'Aguardando_Comparecimento'): ?>
-                                                                    <button class="btn btn-sm btn-success fw-bold" onclick="abrirModalDecisao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="checkmark-done"></ion-icon> Decidir</button>
-                                                                <?php endif; ?>
-                                                            </td>
-                                                        </tr>
-                                                    <?php endforeach; ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-
-                                <!-- Auditoria Global -->
-                                <div class="tab-pane fade" id="sub-med-historico">
+                        <div class="tab-content">
+                            <!-- Processos Ativos -->
+                            <div class="tab-pane fade show active" id="sub-med-ativos">
+                                <?php if (empty($data['contestacoes_mediacao'])): ?>
+                                    <div class="text-center py-5">
+                                        <ion-icon name="checkmark-done-circle-outline" style="font-size:3rem; color:#22c55e;"></ion-icon>
+                                        <p class="text-muted mt-3">Nenhum impasse ativo requer mediação neste momento.</p>
+                                    </div>
+                                <?php else: ?>
                                     <div class="table-responsive">
                                         <table class="table table-hover align-middle datatable-simple">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>Data</th>
-                                                    <th>Aluno</th>
+                                                    <th>ID</th>
+                                                    <th>Envolvidos</th>
                                                     <th>Disciplina</th>
-                                                    <th>Estado Final</th>
-                                                    <th>Ação</th>
+                                                    <th>Estado</th>
+                                                    <th class="text-end">Ações</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php foreach ($data['contestacoes_admin_all'] as $c): ?>
+                                                <?php foreach ($data['contestacoes_mediacao'] as $c): ?>
                                                     <tr>
-                                                        <td><?= date('d/m/Y', strtotime($c['data_abertura'] ?? $c['data_resposta'])) ?></td>
-                                                        <td><?= htmlspecialchars($c['estudante_nome']) ?></td>
-                                                        <td><?= htmlspecialchars($c['disciplina_nome']) ?></td>
-                                                        <td><span class="badge bg-secondary"><?= $c['status'] ?></span></td>
-                                                        <td><button class="btn btn-sm btn-outline-dark" onclick="verDetalhesContestacao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="eye"></ion-icon></button></td>
+                                                        <td><strong><?= $c['id'] ?></strong></td>
+                                                        <td>
+                                                            <div class="small fw-bold text-dark">A: <?= htmlspecialchars($c['estudante_nome']) ?></div>
+                                                            <div class="small text-muted">D: <?= htmlspecialchars($c['professor_nome'] ?? 'N/D') ?></div>
+                                                        </td>
+                                                        <td><span class="badge bg-secondary"><?= htmlspecialchars($c['disciplina_nome']) ?></span></td>
+                                                        <td><span class="badge bg-danger"><?= $c['status'] ?></span></td>
+                                                        <td class="text-end gap-2 d-flex justify-content-end">
+                                                            <button class="btn btn-sm btn-info fw-bold" onclick="verDetalhesContestacao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="eye"></ion-icon></button>
+                                                            <?php if($c['status'] == 'Impasse' || $c['status'] == 'Em_Mediacao'): ?>
+                                                                <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="abrirModalConvocatoria(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="calendar"></ion-icon> Convocar</button>
+                                                            <?php elseif($c['status'] == 'Aguardando_Comparecimento'): ?>
+                                                                <button class="btn btn-sm btn-success fw-bold" onclick="abrirModalDecisao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="checkmark-done"></ion-icon> Decidir</button>
+                                                            <?php endif; ?>
+                                                        </td>
                                                     </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
                                         </table>
                                     </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Auditoria Global -->
+                            <div class="tab-pane fade" id="sub-med-historico">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle datatable-simple">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Aluno</th>
+                                                <th>Disciplina</th>
+                                                <th>Estado Final</th>
+                                                <th>Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($data['contestacoes_admin_all'] as $c): ?>
+                                                <tr>
+                                                    <td><?= date('d/m/Y', strtotime($c['data_abertura'] ?? $c['data_resposta'])) ?></td>
+                                                    <td><?= htmlspecialchars($c['estudante_nome']) ?></td>
+                                                    <td><?= htmlspecialchars($c['disciplina_nome']) ?></td>
+                                                    <td><span class="badge bg-secondary"><?= $c['status'] ?></span></td>
+                                                    <td><button class="btn btn-sm btn-outline-dark" onclick="verDetalhesContestacao(<?= $c['estudante_id'] ?>, <?= $c['disciplina_id'] ?>)"><ion-icon name="eye"></ion-icon></button></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 
@@ -2812,126 +2642,6 @@
         </div>
     </div>
 
-    <!-- Modal Turma -->
-    <div class="modal fade" id="turmaModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="<?= URL_ROOT ?>/admin/saveTurma" method="POST" id="turmaForm" class="modal-content border-0 shadow-lg">
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="id" id="turma_id_field">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title fw-bold" id="turmaModalTitle">Gerir Turma</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Código da Turma (Ex: G1-A)</label>
-                        <input type="text" name="codigo" id="turma_codigo_field" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Ano Curricular</label>
-                        <select name="ano_id" id="turma_ano_field" class="form-select" required>
-                            <?php foreach ($data['anos'] as $ano): ?>
-                                <option value="<?= $ano['id'] ?>"><?= $ano['nome'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold">Turno</label>
-                            <select name="turno" id="turma_turno_field" class="form-select">
-                                <option value="Manhã">Manhã</option>
-                                <option value="Tarde">Tarde</option>
-                                <option value="Noite">Noite</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold">Vagas</label>
-                            <input type="number" name="vagas" id="turma_vagas_field" class="form-control" value="30">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Sala</label>
-                        <input type="text" name="sala" id="turma_sala_field" class="form-control">
-                    </div>
-                </div>
-                <div class="modal-footer bg-light border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success fw-bold">Salvar Turma</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Ano Curricular -->
-    <div class="modal fade" id="anoModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="<?= URL_ROOT ?>/admin/saveAno" method="POST" class="modal-content border-0 shadow-lg">
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="id" id="ano_id_field">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold" id="anoModalTitle">Gerir Ano Curricular</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Nome do Ano (Ex: 1º Ano, Graduação I)</label>
-                        <input type="text" name="nome" id="ano_nome_field" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Ordem</label>
-                        <input type="number" name="ordem" id="ano_ordem_field" class="form-control" value="1">
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-dark fw-bold">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Disciplina -->
-    <div class="modal fade" id="disciplinaModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="<?= URL_ROOT ?>/admin/saveDisciplina" method="POST" class="modal-content border-0 shadow-lg">
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="id" id="disc_id_field">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold" id="discModalTitle">Gerir Disciplina</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Nome da Disciplina</label>
-                        <input type="text" name="nome" id="disc_nome_field" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Ano Curricular</label>
-                        <select name="ano_id" id="disc_ano_field" class="form-select" required>
-                            <?php foreach ($data['anos'] as $ano): ?>
-                                <option value="<?= $ano['id'] ?>"><?= $ano['nome'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold">Sigla</label>
-                            <input type="text" name="sigla" id="disc_sigla_field" class="form-control" placeholder="Ex: MAT-I">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold">Créditos / Carga</label>
-                            <input type="number" name="creditos" id="disc_creditos_field" class="form-control" value="4">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary fw-bold">Salvar Disciplina</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Fim da Parte 1 -->
 
 
@@ -2970,7 +2680,28 @@
         </div>
     </div>
 
-    <!-- Modal Rejeitar Matrícula: definido abaixo (linha ~4836) — removida duplicata aqui -->
+    <!-- Modal Rejeitar Matrícula -->
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="<?= URL_ROOT ?>/admin/rejectMatricula" method="POST" class="modal-content border-0 shadow-lg">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="id" id="reject_matricula_id">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold">Rejeitar Matrícula</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-danger fw-bold">Deseja rejeitar esta matrícula?</p>
+                    <textarea name="motivo" class="form-control" rows="3" placeholder="Motivo da rejeição..."
+                        required></textarea>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-danger fw-bold">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Modal Professor -->
     <div class="modal fade" id="professorModal" tabindex="-1" aria-hidden="true">
@@ -3496,7 +3227,7 @@
             $('#student_bairro').val('');
             $('#student_morada').val('');
             $('#student_escola').val('');
-            $('#student_ano_conclusao').val(<?= date('Y') ?>);
+            $('#student_ano_conclusao').val('<?= date('Y') ?>');
             $('#student_media').val('');
             $('#student_encarregado_nome').val('');
             $('#student_encarregado_telefone').val('');
@@ -3592,6 +3323,12 @@
             }
         });
 
+        $(document).on('click', '.btn-approve-matricula', function () {
+            const id = $(this).data('id');
+            if (id && confirm('Confirmar aprovação desta matrícula e criação de conta de aluno?')) {
+                window.location.href = '<?= URL_ROOT ?>/admin/approveMatricula/' + id;
+            }
+        });
     </script>
 
 
@@ -3647,33 +3384,6 @@
             </form>
         </div>
     </div>
-
-    <!-- Modal Estatísticas de Comunicado -->
-    <div class="modal fade" id="statsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title fw-bold" id="statsTitle">Estatísticas do Comunicado</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div id="statsEmptyMessage" class="alert alert-light text-center d-none">Nenhuma leitura registada ainda.</div>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
-                                <tr><th>Nome</th><th>Tipo</th><th>Data de Leitura</th></tr>
-                            </thead>
-                            <tbody id="statsTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         function showStats(id, titulo) {
             document.getElementById('statsTitle').innerText = titulo;
@@ -3813,7 +3523,69 @@
             }
         }
 
-        // showHorario is defined in the main script block — no override needed here.
+        // Sobrescrever showHorario para incluir o link do modelo dinâmico
+        var originalShowHorario = showHorario;
+        showHorario = function (id, codigo) {
+            originalShowHorario(id, codigo);
+
+            fetch('<?= URL_ROOT ?>/admin/getTurmaInfo/' + id)
+                .then(r => r.json())
+                .then(turma => {
+                    $('#btn_apply_modelo').attr('href', '<?= URL_ROOT ?>/admin/replicateModeloToTurma/' + turma.ano_id + '/' + id);
+                    if (turma.has_horario) {
+                        $('#btn_apply_modelo').addClass('disabled').text('Horário já Populado');
+                    } else {
+                        $('#btn_apply_modelo').removeClass('disabled').html('<ion-icon name="copy-outline"></ion-icon> Carregar Modelo do Ano ' + turma.ano_nome);
+                    }
+                }).catch(err => console.error(err));
+        };
+
+        function viewTurma(id) {
+            $('#viewTurmaContent').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
+            const modal = new bootstrap.Modal(document.getElementById('viewTurmaModal'));
+            modal.show();
+
+            fetch('<?= URL_ROOT ?>/admin/getTurmaInfo/' + id)
+                .then(r => r.json())
+                .then(t => {
+                    let html = `
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-bold">CÓDIGO DA TURMA</span>
+                        <span class="fw-bold">${t.codigo}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-bold">ANO CURRICULAR</span>
+                        <span>${t.ano_nome}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-bold">TURNO</span>
+                        <span class="badge bg-secondary">${t.turno}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-bold">VAGAS TOTAIS</span>
+                        <span>${t.vagas}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-bold">ESTADO DO HORÁRIO</span>
+                        <span class="badge bg-${t.has_horario > 0 ? 'success' : 'warning'}">${t.has_horario > 0 ? 'Definido' : 'Pendente'}</span>
+                    </div>
+                </div>
+            `;
+                    $('#viewTurmaContent').html(html);
+                });
+        }
+
+        function viewTurmaStudents(id, codigo) {
+            $('#turmaAlunos_codigo').text(codigo);
+            $('#turmaStudentsContent').html('<div class="text-center py-4"><div class="spinner-border text-info"></div></div>');
+            const modal = new bootstrap.Modal(document.getElementById('turmaStudentsModal'));
+            modal.show();
+
+            fetch('<?= URL_ROOT ?>/admin/getTurmaStudentsAjax/' + id)
+                .then(r => r.text())
+                .then(html => $('#turmaStudentsContent').html(html));
+        }
 
         function viewProfessor(id) {
             $('#viewProfessorContent').html('<div class="text-center py-4"><div class="spinner-border text-dark"></div></div>');
@@ -3940,162 +3712,82 @@
             clearSecretariaForm();
         });
 
-        // ── Funções de Limpeza de Formulários ────
-        function clearStudentForm() {
-            $('#modalTitle').text('Novo Aluno Interno');
-            $('#btnSubmit').text('Criar Aluno');
-            $('#student_id').val('');
-            $('#studentModal form')[0].reset();
-            $('#studentModal input[name="password"]').attr('required', true);
-        }
+        function viewStudent(id) {
+            $('#viewStudentContent').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
+            const modal = new bootstrap.Modal(document.getElementById('viewStudentModal'));
+            modal.show();
 
-        function clearProfessorForm() {
-            $('#profModalTitle').text('Registar Novo Professor');
-            $('#btnProfSubmit').text('Adicionar Professor');
-            $('#profForm').attr('action', '<?= URL_ROOT ?>/admin/createProfessor');
-            $('#prof_id').val('');
-            $('#profForm')[0].reset();
-            $('#atribuicoes-container').empty();
-            addAtribuicaoRow();
-            $('#professorModal input[name="senha"]').attr('required', true);
-            $('#professorModal .form-text').text('Padrão: 123456');
-        }
-
-        function clearTurmaForm() {
-            $('#turmaModalTitle').text('Criar Nova Turma');
-            $('#turma_id_field').val('');
-            $('#turmaForm')[0].reset();
-        }
-
-        function clearAnoForm() {
-            $('#anoModalTitle').text('Novo Ano Curricular');
-            $('#ano_id_field').val('');
-            $('#anoModal form')[0].reset();
-        }
-
-        function clearDisciplinaForm() {
-            $('#discModalTitle').text('Nova Disciplina');
-            $('#disc_id_field').val('');
-            $('#disciplinaModal form')[0].reset();
-        }
-
-        // ── Funções de Visualização e Gestão de Turmas ────
-        window.viewTurma = function(id) {
-            $('#viewTurmaContent').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
-            new bootstrap.Modal(document.getElementById('viewTurmaModal')).show();
-            fetch('<?= URL_ROOT ?>/admin/getTurmaData/' + id)
+            fetch('<?= URL_ROOT ?>/admin/getStudentDetails/' + id)
                 .then(r => r.json())
-                .then(data => {
-                    const t = data.turma;
-                    $('#viewTurmaContent').html(`
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item"><strong>Código:</strong> ${t.codigo}</div>
-                            <div class="list-group-item"><strong>Nível:</strong> ${t.ano_nome}</div>
-                            <div class="list-group-item"><strong>Turno:</strong> ${t.turno}</div>
-                            <div class="list-group-item"><strong>Sala:</strong> ${t.sala || 'N/A'}</div>
-                            <div class="list-group-item"><strong>Estado:</strong> <span class="badge bg-success">${t.status}</span></div>
-                        </div>
-                    `);
-                });
-        };
-
-        window.viewTurmaStudents = function(id, codigo) {
-            $('#turmaAlunos_codigo').text(codigo);
-            $('#turmaStudentsContent').html('<div class="text-center py-4"><div class="spinner-border text-info"></div></div>');
-            new bootstrap.Modal(document.getElementById('turmaStudentsModal')).show();
-            fetch('<?= URL_ROOT ?>/admin/getTurmaStudents/' + id)
-                .then(r => r.json())
-                .then(data => {
-                    if(!data || data.length === 0) {
-                        $('#turmaStudentsContent').html('<p class="text-center text-muted">Nenhum aluno nesta turma.</p>');
-                        return;
-                    }
-                    let html = '<div class="list-group list-group-flush">';
-                    data.forEach(s => {
-                        html += `<div class="list-group-item d-flex justify-content-between align-items-center">${s.nome_completo} <span class="badge bg-light text-dark border">#${s.id}</span></div>`;
-                    });
-                    $('#turmaStudentsContent').html(html + '</div>');
-                });
-        };
-
-        window.showHorario = function(id, codigo) {
-            $('#horario_turma_codigo').text(codigo);
-            $('#horario_turma_id').val(id);
-            $('#btn_apply_modelo').attr('onclick', `applyModelo(${id})`);
-            new bootstrap.Modal(document.getElementById('horarioModal')).show();
-            loadHorarios(id);
-        };
-
-        function loadHorarios(turmaId) {
-            $('#horarios_list').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
-            fetch('<?= URL_ROOT ?>/admin/getHorariosAjax/' + turmaId)
-                .then(r => r.json())
-                .then(data => {
-                    if (!data || data.length === 0) {
-                        $('#horarios_list').html('<p class="text-center text-muted py-5">Nenhum horário definido.</p>');
-                        return;
-                    }
-                    let html = '<table class="table table-sm table-bordered"><thead><tr><th>Dia</th><th>Hora</th><th>Disc.</th><th>Prof.</th><th></th></tr></thead><tbody>';
-                    data.forEach(h => {
-                        html += `<tr><td class="fw-bold">${h.dia_semana}</td><td>${h.hora_inicio}-${h.hora_fim}</td><td>${h.disciplina_nome}</td><td>${h.professor_nome}</td><td class="text-end"><button class="btn btn-sm btn-light text-danger" onclick="deleteHorario(${h.id})"><ion-icon name="trash-outline"></ion-icon></button></td></tr>`;
-                    });
-                    $('#horarios_list').html(html + '</tbody></table>');
+                .then(s => {
+                    let html = `
+                <div class="text-center mb-4">
+                    <ion-icon name="person-circle" style="font-size: 5rem;" class="text-primary"></ion-icon>
+                    <h4 class="fw-bold mb-0">${s.nome_completo}</h4>
+                    <span class="badge bg-light text-dark border">${s.turma || 'Sem Turma'}</span>
+                </div>
+                <div class="list-group list-group-flush small">
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Processo Nº:</span>
+                        <span class="fw-bold">#${s.id}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Email:</span>
+                        <span class="fw-bold">${s.email}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">BI / Passaporte:</span>
+                        <span class="fw-bold">${s.bi}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Nascimento:</span>
+                        <span class="fw-bold">${new Date(s.data_nascimento).toLocaleDateString()}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Telefone:</span>
+                        <span class="fw-bold">${s.telefone || 'N/A'}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Morada:</span>
+                        <span class="fw-bold">${s.cidade || ''}, ${s.bairro || ''} - ${s.morada || 'N/A'}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Estado Civil:</span>
+                        <span class="fw-bold">${s.estado_civil || 'Solteiro'}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Tel. Alternativo:</span>
+                        <span class="fw-bold">${s.telefone_alternativo || 'N/A'}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Escola Origem:</span>
+                        <span class="fw-bold">${s.escola || 'N/A'} (${s.ano_conclusao || ''})</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Média Final:</span>
+                        <span class="fw-bold text-success">${s.media || '0'}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Encarregado:</span>
+                        <span class="fw-bold">${s.encarregado_nome || 'N/A'} (${s.encarregado_telefone || ''})</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="text-muted">Estado da Conta:</span>
+                        <span class="badge bg-${s.user_status === 'ativo' ? 'success' : 'warning'}">${s.user_status.toUpperCase()}</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h6 class="fw-bold border-bottom pb-2">Opções de Gestão</h6>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="bootstrap.Modal.getInstance(document.getElementById('viewStudentModal')).hide(); $('.btn-edit-student[data-id=\\'${s.utilizador_id}\\']').click();">Editar Informações</button>
+                    </div>
+                </div>
+            `;
+                    $('#viewStudentContent').html(html);
                 });
         }
 
-        window.deleteHorario = function(id) {
-            if (confirm('Remover este slot de aula?')) {
-                fetch('<?= URL_ROOT ?>/admin/deleteHorario/' + id)
-                    .then(r => r.json())
-                    .then(res => { if (res.success) loadHorarios($('#horario_turma_id').val()); });
-            }
-        };
-
-        window.applyModelo = function(turmaId) {
-            if (confirm('Importar horários padrão?')) { window.location.href = '<?= URL_ROOT ?>/admin/applyModeloHorario/' + turmaId; }
-        };
-
-        window.prepareAllocation = function(id, codigo) {
-            $('#aloca_turma_id').val(id);
-            $('#aloca_turma_codigo').text(codigo);
-            new bootstrap.Modal(document.getElementById('alocarEstudanteModal')).show();
-        };
-
-        // ── Funções de Edição Académica ────
-        window.editTurma = function(t) {
-            $('#turmaModalTitle').text('Editar Turma: ' + t.codigo);
-            $('#turma_id_field').val(t.id);
-            $('#turma_codigo_field').val(t.codigo);
-            $('#turma_ano_field').val(t.ano_id);
-            $('#turma_turno_field').val(t.turno);
-            $('#turma_sala_field').val(t.sala);
-            $('#turma_vagas_field').val(t.vagas);
-            new bootstrap.Modal(document.getElementById('turmaModal')).show();
-        };
-
-        window.editAno = function(a) {
-            $('#anoModalTitle').text('Editar Ano: ' + a.nome);
-            $('#ano_id_field').val(a.id);
-            $('#ano_nome_field').val(a.nome);
-            $('#ano_ordem_field').val(a.ordem);
-            new bootstrap.Modal(document.getElementById('anoModal')).show();
-        };
-
-        window.editDisciplina = function(d) {
-            $('#discModalTitle').text('Editar Disciplina: ' + d.nome);
-            $('#disc_id_field').val(d.id);
-            $('#disc_nome_field').val(d.nome);
-            $('#disc_ano_field').val(d.ano_id);
-            $('#disc_sigla_field').val(d.sigla);
-            $('#disc_creditos_field').val(d.creditos);
-            new bootstrap.Modal(document.getElementById('disciplinaModal')).show();
-        };
-
-
-
-        function editProfessor(input) {
-            const id = (typeof input === 'object' && input !== null) ? (input.utilizador_id || input.id) : input;
-            
+        function editProfessor(id) {
             $('#profModalTitle').text('Editar Perfil do Professor');
             $('#btnProfSubmit').text('Salvar Alterações');
             $('#profForm').attr('action', '<?= URL_ROOT ?>/admin/updateProfessor');
@@ -4131,10 +3823,6 @@
 
                     const modal = new bootstrap.Modal(document.getElementById('professorModal'));
                     modal.show();
-                })
-                .catch(err => {
-                    console.error('Erro ao carregar dados do professor:', err);
-                    alert("Erro ao carregar dados do docente.");
                 });
         }
 
@@ -4497,21 +4185,14 @@ $(document).ready(function () {
         pageLength: 10,
         bLengthChange: false,
         destroy: true,
-        searching: true,
-        bFilter: true,
         order: []
     };
-    $('.datatable-simple, .datatable-export').each(function () {
+    $('.datatable-simple').each(function () {
         const $tbl = $(this);
+        // Só inicializar se a tabela tem colunas definidas no thead
         if ($tbl.find('thead tr th').length > 0) {
-            try { 
-                $tbl.DataTable({
-                    ...dtConfig,
-                    dom: '<"d-flex justify-content-between align-items-center mb-3"f>rt<"d-flex justify-content-between align-items-center mt-3"ip>'
-                }); 
-                console.log('DataTable init OK for', $tbl.attr('id') || 'unnamed');
-            }
-            catch (e) { console.error('DataTable init failed for #' + ($tbl.attr('id') || '?'), e.message); }
+            try { $tbl.DataTable(dtConfig); }
+            catch (e) { console.warn('DataTable init failed for #' + ($tbl.attr('id') || '?'), e.message); }
         }
     });
 
@@ -4598,15 +4279,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.btn-reject-matricula', function () {
         const id = $(this).data('id');
-        const nome = $(this).data('nome') || 'Estudante';
-        const email = $(this).data('email') || 'n/d';
-        
         if (id) {
-            $('#reject_item_id').val(id);
-            $('#reject_item_id_short').val(id);
-            $('#reject_student_email_hidden').val(email);
-            $('#reject_student_name').text(nome);
-            $('#reject_student_email').text(email);
             $('#rejectForm').attr('action', '<?= URL_ROOT ?>/admin/rejectMatricula/' + id);
             new bootstrap.Modal(document.getElementById('rejectModal')).show();
         }
@@ -4615,21 +4288,26 @@ $(document).ready(function () {
     // ── Edição de Itens via data-atributos ────────────────
     $(document).on('click', '.btn-edit-ano', function () {
         const d = $(this).data();
-        $('#ano_id_field').val(d.id);
-        $('#ano_nome_field').val(d.nome);
-        $('#ano_ordem_field').val(d.ordem);
+        $('#ano_id').val(d.id);
+        $('#ano_numero').val(d.numero);
+        $('#ano_nome').val(d.nome);
+        $('#ano_descricao').val(d.desc);
+        $('#ano_mensalidade').val(d.valor);
+        $('#ano_ordem').val(d.ordem);
         $('#anoModalTitle').text('Editar Ano Curricular');
         new bootstrap.Modal(document.getElementById('anoModal')).show();
     });
 
     $(document).on('click', '.btn-edit-disciplina', function () {
         const d = $(this).data();
-        $('#disc_id_field').val(d.id);
-        $('#disc_nome_field').val(d.nome);
-        $('#disc_ano_field').val(d.ano);
-        $('#disc_sigla_field').val(d.codigo);
-        $('#disc_creditos_field').val(d.credito);
-        $('#discModalTitle').text('Editar Disciplina');
+        $('#disc_id').val(d.id);
+        $('#disc_codigo').val(d.codigo);
+        $('#disc_nome').val(d.nome);
+        $('#disc_ano').val(d.ano);
+        $('#disc_carga').val(d.carga);
+        $('#disc_credito').val(d.credito);
+        $('#disc_desc').val(d.desc);
+        $('#disciplinaModalTitle').text('Editar Disciplina');
         new bootstrap.Modal(document.getElementById('disciplinaModal')).show();
     });
 
@@ -4801,21 +4479,15 @@ function convocarComMotivo(eid, did) {
         <div class="modal-dialog modal-dialog-centered">
             <form id="rejectForm" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="matricula_id" id="reject_item_id">
-                <input type="hidden" name="id" id="reject_item_id_short">
-                <input type="hidden" name="email_candidato" id="reject_student_email_hidden">
                 <div class="modal-header bg-danger text-white border-0 py-3">
                     <h5 class="modal-title fw-bold"><ion-icon name="alert-circle-outline" class="me-2"></ion-icon> Rejeitar Matrícula</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4 text-center">
-                    <p class="text-muted small mb-1">Deseja rejeitar a matrícula de:</p>
-                    <h6 class="fw-bold text-dark mb-0" id="reject_student_name">...</h6>
-                    <p class="text-primary small mb-3" id="reject_student_email">...</p>
-                    
-                    <div class="form-floating text-start">
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">Indique o motivo da rejeição. Esta informação será enviada ao estudante.</p>
+                    <div class="form-floating">
                         <textarea class="form-control" name="motivo" placeholder="Motivo da Rejeição" id="rejection_motivo" style="height: 120px" required></textarea>
-                        <label for="rejection_motivo">Motivo da Rejeição (Será enviado por email)</label>
+                        <label for="rejection_motivo">Motivo detalhado...</label>
                     </div>
                 </div>
                 <div class="modal-footer border-0 pb-4">

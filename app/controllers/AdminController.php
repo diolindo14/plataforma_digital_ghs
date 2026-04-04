@@ -85,7 +85,6 @@ class AdminController extends Controller {
         $data['backups'] = BackupManager::getLatestBackups(10);
 
         // --- ⚖️ CONTESTAÇÕES EM MEDIAÇÃO (Impasse / Admin) ---
-        $data['contestacoes_mediacao'] = $this->model('Contestacao')->getEmMediacao();
         $data['contestacoes_admin_all'] = $this->model('Contestacao')->getAllParaAdmin();
 
         // --- POINT 4: GESTÃO DE PRAZOS (Monitor de Atrasos nas Correções) ---
@@ -284,41 +283,50 @@ class AdminController extends Controller {
         exit;
     }
 
-    public function rejectMatricula($id = null) {
-        $id = $id ?? ($_POST['id'] ?? ($_POST['matricula_id'] ?? null));
-        $email_direto = $_POST['email_candidato'] ?? null;
-        $motivo = $_POST['motivo'] ?? 'Documentação incompleta';
-
+    public function rejectMatricula($id) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();
+            $motivo = $_POST['motivo'] ?? 'Documentação incompleta';
             
-            // 1. NOTIFICAR O ALUNO (PRIORIDADE: EMAIL QUE ELE PREENCHEU NO FORMULÁRIO)
-            if ($email_direto) {
-                Mailer::sendMatriculaRejeitada($email_direto, 'Candidato', $motivo);
-            }
+            $db = Database::getInstance();
+            // Busca dados para notificação antes de apagar
+            $stmt = $db->prepare("SELECT u.email, u.nome_completo, m.tipo, e.id as estudante_id, u.id as user_id 
+                                 FROM matriculas m 
+                                 JOIN estudantes e ON m.estudante_id = e.id 
+                                 JOIN utilizadores u ON e.utilizador_id = u.id 
+                                 WHERE m.id = :id");
+            $stmt->execute([':id' => $id]);
+            $m = $stmt->fetch();
 
-            // 2. ATUALIZAR BASE DE DADOS (SE TIVER ID)
-            if ($id) {
-                $db = Database::getInstance();
-                // Busca nome para a mensagem interna
-                $stmt = $db->prepare("SELECT u.nome_completo, u.id as user_id FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
-                $stmt->execute([':id' => $id]);
-                $m = $stmt->fetch();
-
-                if ($m) {
-                    // Notificação interna no sistema
-                    $this->model('Mensagem')->send($_SESSION['user_id'], $m['user_id'], "🚨 Matrícula Rejeitada", "A sua matrícula foi rejeitada pelo seguinte motivo: $motivo.");
-                    
-                    // Limpeza de documentos e registo de intenção
-                    $db->prepare("DELETE FROM documentos_matricula WHERE matricula_id = ?")->execute([$id]);
-                    $db->prepare("DELETE FROM matriculas WHERE id = ?")->execute([$id]);
+            if ($m) {
+                // Notifica o aluno sobre a rejeição antes de remover
+                if (!empty($m['email'])) {
+                    Mailer::sendMatriculaRejeitada($m['email'], $m['nome_completo'] ?? 'Candidato', $motivo);
                 }
-            }
 
-            $_SESSION['flash_success'] = "Operação concluída. Notificação enviada para o e-mail do formulário: $email_direto";
-            header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
-            exit;
+                // REMOÇÃO FÍSICA: Não armazenar se for rejeitada (Pilar 1)
+                $db->prepare("DELETE FROM documentos_matricula WHERE matricula_id = ?")->execute([$id]);
+                $db->prepare("DELETE FROM matriculas WHERE id = ?")->execute([$id]);
+
+                // Se era um "Novo Ingresso", limpamos o perfil temporário também
+                if ($m['tipo'] === 'Novo Ingresso') {
+                    // Verifica se tem outras matrículas (segurança)
+                    $outras = $db->prepare("SELECT COUNT(*) FROM matriculas WHERE estudante_id = ?");
+                    $outras->execute([$m['estudante_id']]);
+                    if ($outras->fetchColumn() == 0) {
+                        $db->prepare("DELETE FROM estudantes WHERE id = ?")->execute([$m['estudante_id']]);
+                        $db->prepare("DELETE FROM utilizadores WHERE id = ? AND tipo = 'aluno'")->execute([$m['user_id']]);
+                    }
+                }
+
+                $this->logActivity('Rejeitar e Apagar Matrícula', ['id' => $id, 'aluno' => $m['nome_completo']]);
+                $_SESSION['flash_success'] = "Matrícula rejeitada e registo removido com sucesso.";
+            } else {
+                $_SESSION['flash_error'] = "Registo não encontrado.";
+            }
         }
+        header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
+        exit;
     }
 
     /**
