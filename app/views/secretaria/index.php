@@ -20,10 +20,32 @@
         .card-stat { background: white; border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 20px; height: 100%; }
         .icon-box { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
         .tab-pane { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive Mobile Styles (GHS) */
+        @media (max-width: 991.98px) {
+            .sidebar { left: -260px; transition: left 0.3s ease-in-out; z-index: 1050; }
+            .sidebar.active { left: 0; }
+            .main-content { margin-left: 0 !important; width: 100% !important; padding: 1rem !important; padding-top: 80px !important; }
+            .mobile-toggle { display: flex !important; }
+        }
+        .mobile-toggle { position: fixed; top: 15px; left: 15px; z-index: 1051; background: #0f172a; width: 45px; height: 45px; border-radius: 8px; display: none; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.1); color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
+            .mobile-header { position: fixed; top: 0; left: 0; right: 0; height: 65px; background: #0f172a; z-index: 1051; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .mobile-logo { display: flex; align-items: center; gap: 10px; margin-left: 55px; color: white; font-weight: bold; }
+        .mobile-logo img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #10b981; }
+        .mobile-toggle { position: relative; top: 0; left: 0; display: flex; margin-right: 0; }
     </style>
 </head>
 <body>
+        <div class="mobile-header d-lg-none">
+        <button class="mobile-toggle" id="sidebarToggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </button>
+        <div class="mobile-logo">
+            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo">
+            <span>Secretaria GHS</span>
+        </div>
+    </div>
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar">
@@ -708,5 +730,18 @@
             </form>
         </div>
     </div>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (window.innerWidth <= 991.98 && !sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

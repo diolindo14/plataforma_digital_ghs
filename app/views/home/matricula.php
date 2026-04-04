@@ -62,7 +62,7 @@
             
             <div class="d-flex align-items-center gap-3 ms-md-5 ps-md-4 mt-3 mt-md-0">
                 <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 bg-white p-1" style="height: 60px;">
-                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="height: 100%; object-fit: contain;">
+                    <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo GHS" style="height: 100%; object-fit: contain;">
                 </div>
                 <div>
                     <h3 class="fw-bold mb-0 text-white fs-4">Inscrição Online</h3>

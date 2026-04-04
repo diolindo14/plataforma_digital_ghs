@@ -43,11 +43,25 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    display: block;
     position: relative;
+    overflow-x: hidden;
+}
+
+/* Global Responsive Transitions */
+* {
+    transition: margin 0.3s ease, padding 0.3s ease, width 0.3s ease, left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .container, .container-fluid {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    h1 { font-size: 1.75rem !important; }
+    h2 { font-size: 1.5rem !important; }
+    h3 { font-size: 1.25rem !important; }
 }
 
 /* React/Vite Logo Animations (From user payload) */

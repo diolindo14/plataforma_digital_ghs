@@ -245,13 +245,23 @@
             display: inline-block;
             margin-right: 6px;
         }
+            .mobile-header { position: fixed; top: 0; left: 0; right: 0; height: 65px; background: white; z-index: 1051; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .mobile-logo { display: flex; align-items: center; gap: 10px; margin-left: 55px; color: var(--ghs-primary); font-weight: bold; }
+        .mobile-logo img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid var(--ghs-primary); }
+        .mobile-toggle { position: relative; top: 0; left: 0; display: flex; margin-right: 0; background: transparent; box-shadow: none; }
     </style>
 </head>
 
 <body>
-    <button class="mobile-toggle" id="sidebarToggle">
-        <ion-icon name="menu-outline"></ion-icon>
-    </button>
+        <div class="mobile-header d-lg-none">
+        <button class="mobile-toggle" id="sidebarToggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </button>
+        <div class="mobile-logo">
+            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo">
+            <span>Portal Aluno</span>
+        </div>
+    </div>
 
     <!-- Sidebar -->
     <nav class="sidebar shadow-lg d-flex flex-column justify-content-between">
@@ -259,7 +269,7 @@
             <div class="sidebar-brand text-center mb-4 mt-2 border-bottom border-light border-opacity-10 pb-3">
                 <div
                     style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--ghs-primary); display: flex; align-items: center; justify-content: center; background: #fff; margin: 0 auto; overflow: hidden;">
-                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS"
+                    <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo GHS"
                         style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="fw-bold text-white mb-1 mt-3" style="font-size: .95rem;">Green Hard & Softh</h5>

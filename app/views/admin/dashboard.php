@@ -169,10 +169,70 @@
         .hover-scale:hover {
             transform: scale(1.05);
         }
+
+        /* Responsive Mobile Styles (GHS) */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                left: -270px;
+                transition: left 0.3s ease-in-out;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .content {
+                margin-left: 0 !important;
+                padding: 1.5rem !important;
+                padding-top: 80px !important;
+            }
+
+            .mobile-toggle {
+                display: flex !important;
+            }
+
+            .sidebar-brand {
+                padding-top: 2rem;
+            }
+        }
+
+        .mobile-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1051;
+            background: #0B1120;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+            .mobile-header { position: fixed; top: 0; left: 0; right: 0; height: 65px; background: #0B1120; z-index: 1051; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .mobile-logo { display: flex; align-items: center; gap: 10px; margin-left: 55px; color: white; font-weight: bold; }
+        .mobile-logo img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid var(--ghs-primary); }
+        .mobile-toggle { position: relative; top: 0; left: 0; display: flex; margin-right: 0; }
     </style>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 
 <body>
+        <div class="mobile-header d-lg-none">
+        <button class="mobile-toggle" id="sidebarToggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </button>
+        <div class="mobile-logo">
+            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo">
+            <span>Portal GHS</span>
+        </div>
+    </div>
 
 
     <div class="d-flex">
@@ -4752,6 +4812,23 @@ function convocarComMotivo(eid, did) {
             const win = window.open(url, '_blank', 'width=400,height=600');
             win.focus();
         }
+    </script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (window.innerWidth <= 991.98 && 
+                !sidebar.contains(event.target) && 
+                !toggle.contains(event.target) && 
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>

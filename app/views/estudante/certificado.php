@@ -126,7 +126,7 @@
         <div class="corner bottom-right"></div>
 
         <div class="header">
-            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" class="logo">
+            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo GHS" class="logo">
             <div class="institution">Green Hard & Softh</div>
             <div class="sub-header">Excelência Académica e Reconhecimento</div>
         </div>
