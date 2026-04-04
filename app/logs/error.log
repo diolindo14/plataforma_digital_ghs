@@ -197,3 +197,6 @@
 [2026-04-03 10:49:25] PROD ERROR: REJEIÇÃO FALHOU: ID não recebido. REQUEST_DATA: {"url":"admin\/rejectMatricula","csrf_token":"64807fc1ae41214ffbc2f0c16c56fe5e6eed6ded0d42b0c15269c92aa78b966b","id":"","motivo":"Falta de documentos exigidos pela escola"}
 [2026-04-04 01:12:02] CRITICAL ERROR: Call to undefined method Nota::getNotaEstudante() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 143
 [2026-04-04 01:12:12] CRITICAL ERROR: Call to undefined method Nota::getNotaEstudante() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 143
+[2026-04-04 01:27:01] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
+[2026-04-04 01:30:18] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
+[2026-04-04 01:30:32] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
