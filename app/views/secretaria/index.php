@@ -42,7 +42,7 @@
             <ion-icon name="menu-outline"></ion-icon>
         </button>
         <div class="mobile-logo">
-            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo">
             <span>Secretaria GHS</span>
         </div>
     </div>
@@ -51,7 +51,7 @@
         <div class="sidebar">
             <div class="d-flex align-items-center gap-3 mb-5 px-2">
                 <div style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #10b981; background: white; overflow: hidden;">
-                    <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="mb-0 fw-bold">Secretaria</h5>
             </div>

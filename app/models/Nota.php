@@ -28,7 +28,9 @@ class Nota {
             $this->db->beginTransaction();
 
             // Map types to IDs from tipos_avaliacao
-            $map = [
+            // Suporte a múltiplos slots (Pilar 4: Modernização)
+            $slotsCount = 3;
+            $mapping = [
                 'tpc' => 1,
                 'ap' => 2,
                 'tpi' => 3,
@@ -36,54 +38,61 @@ class Nota {
                 'exame' => 5
             ];
 
-            foreach ($map as $key => $tipo_id) {
-                if (!isset($data[$key]) || $data[$key] === '') continue;
-                
-                $valor = $data[$key];
+            foreach ($mapping as $key => $tipo_id) {
+                // Para exames, só existe 1. Para AC, existem 3.
+                $iterations = ($tipo_id == 5) ? 1 : $slotsCount;
 
-                // 1. Find or create the avaliacao record for this class/type
-                $stmt = $this->db->prepare("SELECT id FROM avaliacoes WHERE turma_id = :tid AND disciplina_id = :did AND tipo_avaliacao_id = :tipo_id LIMIT 1");
-                $stmt->execute([':tid' => $turma_id, ':did' => $disciplina_id, ':tipo_id' => $tipo_id]);
-                $avali = $stmt->fetch();
-                
-                if ($avali) {
-                    $avaliacao_id = $avali['id'];
-                } else {
-                    $stmtIns = $this->db->prepare("INSERT INTO avaliacoes (turma_id, disciplina_id, tipo_avaliacao_id, descricao) VALUES (:tid, :did, :tipo_id, :desc)");
-                    $stmtIns->execute([':tid' => $turma_id, ':did' => $disciplina_id, ':tipo_id' => $tipo_id, ':desc' => 'Lançamento Automático']);
-                    $avaliacao_id = $this->db->lastInsertId();
-                }
+                for ($i = 1; $i <= $iterations; $i++) {
+                    $field = ($iterations > 1) ? $key . $i : $key;
+                    
+                    if (!isset($data[$field]) || $data[$field] === '') continue;
+                    
+                    $valor = $data[$field];
+                    $descSlot = ($iterations > 1) ? "Slot $i" : "Avaliação Final";
 
-                // 2. Upsert the grade
-                $stmtCheck = $this->db->prepare("SELECT id FROM notas WHERE estudante_id = :eid AND avaliacao_id = :aid LIMIT 1");
-                $stmtCheck->execute([':eid' => $estudante_id, ':aid' => $avaliacao_id]);
-                $notaExist = $stmtCheck->fetch();
+                    // 1. Encontrar ou criar a avaliação específica para este slot
+                    // Se descriptor for vazio ou "Lançamento Automático", tratamos como Slot 1 retroativamente
+                    $queryAval = "SELECT id FROM avaliacoes WHERE turma_id = :tid AND disciplina_id = :did AND tipo_avaliacao_id = :tipo_id";
+                    if ($iterations > 1) {
+                        $queryAval .= " AND (descricao = :desc OR (descricao = 'Lançamento Automático' AND :i = 1))";
+                    }
+                    $queryAval .= " LIMIT 1";
 
-                if ($notaExist) {
-                    // --- POINT 5: AUDITORIA DE NOTAS ---
-                    $stmtGetOld = $this->db->prepare("SELECT nota FROM notas WHERE id = :nid");
-                    $stmtGetOld->execute([':nid' => $notaExist['id']]);
-                    $oldVal = $stmtGetOld->fetchColumn();
+                    $stmt = $this->db->prepare($queryAval);
+                    $paramsAval = [':tid' => $turma_id, ':did' => $disciplina_id, ':tipo_id' => $tipo_id];
+                    if ($iterations > 1) {
+                        $paramsAval[':desc'] = $descSlot;
+                        $paramsAval[':i'] = $i;
+                    }
+                    $stmt->execute($paramsAval);
+                    $avali = $stmt->fetch();
+                    
+                    if ($avali) {
+                        $avaliacao_id = $avali['id'];
+                    } else {
+                        $stmtIns = $this->db->prepare("INSERT INTO avaliacoes (turma_id, disciplina_id, tipo_avaliacao_id, descricao) VALUES (:tid, :did, :tipo_id, :desc)");
+                        $stmtIns->execute([':tid' => $turma_id, ':did' => $disciplina_id, ':tipo_id' => $tipo_id, ':desc' => $descSlot]);
+                        $avaliacao_id = $this->db->lastInsertId();
+                    }
 
-                    $stmtLog = $this->db->prepare("INSERT INTO logs_notas (nota_id, estudante_id, turma_id, disciplina_id, tipo_avaliacao_id, valor_anterior, valor_novo, alterado_por, motivo)
-                                                 VALUES (:nid, :eid, :tid, :did, :taid, :va, :vn, :lpor, :mot)");
-                    $stmtLog->execute([
-                        ':nid' => $notaExist['id'],
-                        ':eid' => $estudante_id,
-                        ':tid' => $turma_id,
-                        ':did' => $disciplina_id,
-                        ':taid' => $tipo_id,
-                        ':va' => $oldVal,
-                        ':vn' => $valor,
-                        ':lpor' => $professor_id,
-                        ':mot' => $data['motivo_correcao'] ?? 'Lançamento/Correção Professor'
-                    ]);
+                    // 2. Upsert da nota
+                    $stmtCheck = $this->db->prepare("SELECT id FROM notas WHERE estudante_id = :eid AND avaliacao_id = :aid LIMIT 1");
+                    $stmtCheck->execute([':eid' => $estudante_id, ':aid' => $avaliacao_id]);
+                    $notaExist = $stmtCheck->fetch();
 
-                    $stmtUpd = $this->db->prepare("UPDATE notas SET nota = :val, lancado_por = :lpor, data_atualizacao = NOW() WHERE id = :nid");
-                    $stmtUpd->execute([':val' => $valor, ':lpor' => $professor_id, ':nid' => $notaExist['id']]);
-                } else {
-                    $stmtAdd = $this->db->prepare("INSERT INTO notas (estudante_id, avaliacao_id, nota, lancado_por) VALUES (:eid, :aid, :val, :lpor)");
-                    $stmtAdd->execute([':eid' => $estudante_id, ':aid' => $avaliacao_id, ':val' => $valor, ':lpor' => $professor_id]);
+                    if ($notaExist) {
+                        $stmtLog = $this->db->prepare("INSERT INTO logs_notas (nota_id, estudante_id, turma_id, disciplina_id, tipo_avaliacao_id, valor_anterior, valor_novo, alterado_por, motivo)
+                                                     SELECT id, estudante_id, :tid, :did, :taid, nota, :vn, :lpor, :mot FROM notas WHERE id = :nid");
+                        $stmtLog->execute([
+                            ':tid' => $turma_id, ':did' => $disciplina_id, ':taid' => $tipo_id, ':vn' => $valor, ':lpor' => $professor_id, ':mot' => $data['motivo_correcao'] ?? 'Atualização de Slot', ':nid' => $notaExist['id']
+                        ]);
+
+                        $stmtUpd = $this->db->prepare("UPDATE notas SET nota = :val, lancado_por = :lpor, data_atualizacao = NOW() WHERE id = :nid");
+                        $stmtUpd->execute([':val' => $valor, ':lpor' => $professor_id, ':nid' => $notaExist['id']]);
+                    } else {
+                        $stmtAdd = $this->db->prepare("INSERT INTO notas (estudante_id, avaliacao_id, nota, lancado_por) VALUES (:eid, :aid, :val, :lpor)");
+                        $stmtAdd->execute([':eid' => $estudante_id, ':aid' => $avaliacao_id, ':val' => $valor, ':lpor' => $professor_id]);
+                    }
                 }
             }
             
@@ -117,8 +126,8 @@ class Nota {
 
     public function getNotasByTurma($turma_id, $disciplina_id) {
         $stmt = $this->db->prepare("
-            SELECT n.estudante_id, ta.nome as tipo_nome, n.nota as valor, ta.id as tipo_id,
-                   cn.status as feedback_status, cn.comentario as feedback_comentario
+            SELECT n.estudante_id, ta.nome as tipo_nome, n.nota as valor, ta.id as tipo_id, a.descricao,
+                   cn.status as feedback_status, cn.comentario as feedback_comentario, cn.resposta_professor
             FROM notas n
             JOIN avaliacoes a ON n.avaliacao_id = a.id
             JOIN tipos_avaliacao ta ON a.tipo_avaliacao_id = ta.id
@@ -137,10 +146,22 @@ class Nota {
                 $packed[$eid] = [
                     'notas' => [],
                     'feedback_status' => $r['feedback_status'],
-                    'feedback_comentario' => $r['feedback_comentario']
+                    'feedback_comentario' => $r['feedback_comentario'],
+                    'resposta_professor' => $r['resposta_professor']
                 ];
             }
-            $packed[$eid]['notas'][$r['tipo_id']] = $r['valor'];
+            
+            // Map types 1-4 (AC) to their slots
+            if ($r['tipo_id'] < 5) {
+                $slot = 1;
+                if (preg_match('/Slot (\d+)/', $r['descricao'], $m)) {
+                    $slot = (int)$m[1];
+                }
+                $packed[$eid]['notas_slots'][$r['tipo_id']][$slot] = $r['valor'];
+            } else {
+                // Exame
+                $packed[$eid]['notas'][$r['tipo_id']] = $r['valor'];
+            }
         }
         return $packed;
     }
@@ -192,15 +213,25 @@ class Nota {
                     'disciplina' => $r['disciplina_nome'],
                     'turma_id' => $r['turma_id'],
                     'disciplina_id' => $r['disciplina_id'],
-                    'confirmado_admin' => (bool)$r['confirmado_admin'],
-                    'notas' => [1=>0, 2=>0, 3=>0, 4=>0, 5=>null]
+                    'confirmado_admin' => (bool)$r['confirmado_admin']
                 ];
             }
-            $report[$key]['notas'][$r['tipo_id']] = $r['nota'];
+            $report[$key]['notas_agg'][$r['tipo_id']][] = $r['nota'];
         }
 
         // Calculate totals and averages
         foreach ($report as &$row) {
+            // Transform back to simple 'notas' array but averaged for AC
+            $newNotas = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => null];
+            foreach ($row['notas_agg'] as $tid => $vals) {
+                if ($tid == 5) {
+                    $newNotas[$tid] = $vals[0]; // Exame
+                } else {
+                    $newNotas[$tid] = array_sum($vals) / count($vals); // Average for AC
+                }
+            }
+            $row['notas'] = $newNotas;
+            
             $ac_total = $row['notas'][1] + $row['notas'][2] + $row['notas'][3] + $row['notas'][4];
             $row['total_ac'] = $ac_total;
             $row['media_final'] = ($row['notas'][5] !== null) ? ($ac_total + $row['notas'][5]) / 2 : null;

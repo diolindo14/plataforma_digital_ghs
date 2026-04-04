@@ -229,7 +229,7 @@
             <ion-icon name="menu-outline"></ion-icon>
         </button>
         <div class="mobile-logo">
-            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo">
             <span>Portal GHS</span>
         </div>
     </div>
@@ -242,7 +242,7 @@
             <!-- Brand / Logo -->
             <div class="sidebar-brand">
                 <div class="logo-wrap">
-                    <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo GHS">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS">
                 </div>
                 <h5 class="text-white mb-1">Portal GHS</h5>
                 <span class="badge mb-1"

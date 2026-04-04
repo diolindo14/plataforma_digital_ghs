@@ -217,3 +217,12 @@
 [2026-04-04 03:21:09] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1780
 [2026-04-04 03:27:59] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
 [2026-04-04 03:28:11] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+[2026-04-04 14:08:49] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
+                FROM notas n
+                JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388
+[2026-04-04 14:08:51] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
+                FROM notas n
+                JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388
+[2026-04-04 14:09:00] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
+                FROM notas n
+                JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388

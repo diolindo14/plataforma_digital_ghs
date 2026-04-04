@@ -42,7 +42,7 @@
 
             <!-- Branding -->
             <div class="brand" style="margin-bottom: 1.5rem;">
-                <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Green Hard & Softh" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
+                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
             </div>
 
             <!-- Login View -->

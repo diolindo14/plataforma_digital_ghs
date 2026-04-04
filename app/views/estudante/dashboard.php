@@ -258,7 +258,7 @@
             <ion-icon name="menu-outline"></ion-icon>
         </button>
         <div class="mobile-logo">
-            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo">
             <span>Portal Aluno</span>
         </div>
     </div>
@@ -269,7 +269,7 @@
             <div class="sidebar-brand text-center mb-4 mt-2 border-bottom border-light border-opacity-10 pb-3">
                 <div
                     style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--ghs-primary); display: flex; align-items: center; justify-content: center; background: #fff; margin: 0 auto; overflow: hidden;">
-                    <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo GHS"
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS"
                         style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="fw-bold text-white mb-1 mt-3" style="font-size: .95rem;">Green Hard & Softh</h5>

@@ -195,7 +195,7 @@
 
     <div class="thermal-receipt">
         <div class="header">
-            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo" class="logo-img">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" class="logo-img">
             <div class="brand-info">
                 <h2>GHS ÉDUCATION</h2>
                 <p>Ensino Digital & Tecnologia</p>
