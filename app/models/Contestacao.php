@@ -413,21 +413,16 @@ class Contestacao {
             // Notificar ambas as partes sobre o encerramento
             $info = $this->_getInfoByContestacaoId($contestacao['id']);
             if ($info) {
-                // --- 📄 GERAÇÃO AUTOMÁTICA DA ACTA DE MEDIAÇÃO ---
-                $this->_gerarActaMediacao($contestacao['id'], $decisao, $admin_user_id);
-
                 if ($novoStatus === 'Aguardando_Correcao') {
                     $assunto = "⚠️ ORDEM DE CORRECÇÃO — Contestação de Nota: {$info['disciplina_nome']}";
                     $msgEncerramento = "A Administração Académica deliberou a favor do aluno.\n\n"
                                      . "O Professor deve proceder à CORRECÇÃO da nota imediatamente no seu portal.\n\n"
-                                     . "Decisão:\n{$decisao}\n\n"
-                                     . "A Acta de Mediação Oficial foi gerada e arquivada para consulta institucional.";
+                                     . "Decisão:\n{$decisao}";
                 } else {
                     $assunto = "✅ Processo de Contestação Encerrado";
                     $msgEncerramento = "✅ Processo de Contestação Encerrado\n\n"
                                      . "Disciplina: {$info['disciplina_nome']}\n"
-                                     . "Decisão da Administração:\n\n{$decisao}\n\n"
-                                     . "A Acta de Mediação Oficial foi gerada e arquivada.";
+                                     . "Decisão da Administração:\n\n{$decisao}";
                 }
 
                 $this->_enviarMensagem($admin_user_id, $info['estudante_user_id'],
@@ -652,54 +647,5 @@ class Contestacao {
     private function _getAdminId() {
         $stmt = $this->db->query("SELECT id FROM utilizadores WHERE tipo='admin' AND status='ativo' LIMIT 1");
         return $stmt->fetchColumn() ?: 1;
-    }
-
-    /**
-     * Gera um documento oficial (Acta de Mediação) consolidando todo o histórico.
-     * Salva o arquivo no sistema de arquivos para fins de auditoria.
-     */
-    private function _gerarActaMediacao($id, $decisaoFinal, $adminId) {
-        $info = $this->_getInfoByContestacaoId($id);
-        if (!$info) return;
-
-        $mediadorNome = $this->db->query("SELECT nome_completo FROM utilizadores WHERE id = {$adminId}")->fetchColumn();
-
-        $caminho = "public/uploads/mediacao/";
-        if (!is_dir($caminho)) mkdir($caminho, 0755, true);
-
-        $nomeArquivo = "ACTA_MEDIACAO_{$id}_" . date('Ymd_His') . ".txt";
-        
-        $conteudo = "====================================================\n"
-             . "       GREEN HARD & SOFTH - PORTAL ACADÉMICO       \n"
-             . "              ACTA DE MEDIAÇÃO OFICIAL             \n"
-             . "====================================================\n\n"
-             . "DATA DA DECISÃO: " . date('d/m/Y H:i') . "\n"
-             . "ID CONTESTAÇÃO:  " . $id . "\n"
-             . "MEDIADOR:        " . ($mediadorNome ?: 'Administração Académica') . "\n\n"
-             
-             . "--- IDENTIFICAÇÃO ---\n"
-             . "ALUNO:           " . ($info['estudante_nome'] ?? 'N/A') . "\n"
-             . "DISCIPLINA:      " . ($info['disciplina_nome'] ?? 'N/A') . "\n"
-             . "TURMA:           " . ($info['turma_codigo'] ?? 'N/A') . "\n\n"
-
-             . "--- HISTÓRICO DO IMPASSE ---\n"
-             . "1. RECLAMAÇÃO DO ALUNO:\n   \"" . ($info['comentario'] ?? 'N/A') . "\"\n\n"
-             . "2. RESPOSTA DO PROFESSOR:\n   \"" . ($info['resposta_professor'] ?? 'N/A') . "\"\n\n"
-             . "3. CONTRA-ARGUMENTAÇÃO (ESCALAÇÃO):\n   \"" . ($info['contra_argumentacao'] ?? 'N/A') . "\"\n\n"
-
-             . "--- DADOS DA REUNIÃO PREZENCIAL ---\n"
-             . "DATA: " . ($info['data_reuniao'] ?? 'N/A') . " às " . ($info['hora_reuniao'] ?? 'N/A') . "\n"
-             . "LOCAL: " . ($info['local_reuniao'] ?? 'Direção') . "\n"
-             . "PRESENÇA ALUNO: " . (isset($info['presenca_aluno']) && $info['presenca_aluno'] ? 'SIM' : 'NÃO') . "\n"
-             . "PRESENÇA PROFESSOR: " . (isset($info['presenca_professor']) && $info['presenca_professor'] ? 'SIM' : 'NÃO') . "\n\n"
-
-             . "--- DELIBERAÇÃO FINAL DA ADMINISTRAÇÃO ---\n"
-             . "DECISÃO: " . $decisaoFinal . "\n\n"
-             . "STATUS FINAL: " . $info['status'] . "\n\n"
-             . "====================================================\n"
-             . "Este documento foi gerado automaticamente pelo sistema de Mediação do GHS.\n"
-             . "A decisão aqui registada é irrecorrível nos termos do Regulamento Interno.\n";
-
-        file_put_contents($caminho . $nomeArquivo, $conteudo);
     }
 }

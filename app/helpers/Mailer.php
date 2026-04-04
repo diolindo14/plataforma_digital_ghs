@@ -17,20 +17,15 @@ class Mailer {
      * @param string|null $from Remetente (opcional)
      * @return bool
      */
-    /**
-     * Envia um email formatado com template HTML institucional.
-     * Suporta SMTP com TLS/SSL se as constantes estiverem preenchidas em core/config.php.
-     *
-     * @param string $to      Email do destinatário
-     * @param string $subject Assunto do email
-     * @param string $message Corpo da mensagem (texto ou HTML parcial)
-     * @param string|null $from Remetente (opcional)
-     * @return bool
-     */
     public static function send($to, $subject, $message, $from = null) {
         $appName = defined('APP_NAME') ? APP_NAME : 'GHS';
-        $from    = $from ?? (defined('MAIL_FROM') && !empty(MAIL_FROM) ? MAIL_FROM : 'no-reply@ghs.edu.gw');
+        $from    = $from ?? (defined('MAIL_FROM') ? MAIL_FROM : 'no-reply@green.edu.gw');
         $year    = date('Y');
+
+        $headers  = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
+        $headers .= "From: {$appName} <{$from}>\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 
         $htmlContent = "
         <!DOCTYPE html>
@@ -70,118 +65,17 @@ class Mailer {
         </body>
         </html>";
 
-        $sent = false;
+        // Tenta envio real via mail()
+        $sent = @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $htmlContent, $headers);
 
-        // 🟢 MODO 1: SMTP Real (se configurado)
-        if (defined('MAIL_SMTP_HOST') && !empty(MAIL_SMTP_HOST)) {
-            $sent = self::sendSMTP($to, $subject, $htmlContent, $from);
-        } 
-        
-        // 🟡 MODO 2: Fallback Interno e Ferramenta de Teste Local (Localhost Intercept)
+        // Fallback: regista no log se mail() falhar (ambiente local / sem SMTP)
         if (!$sent) {
-            $headers  = "MIME-Version: 1.0\r\n";
-            $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-            $headers .= "From: {$appName} <{$from}>\r\n";
-            $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
-            
-            // Tenta enviar via função do Windows (pode ser silenciado)
-            @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $htmlContent, $headers);
-            
-            // Ficheiro Fisico Local de Prova do Erro do SMTP
-            $proofFile = dirname(__DIR__) . '/logs/emails_localhost_intercetados.txt';
-            $dump = "\n[" . date('Y-m-d H:i:s') . "] EMAIL SIMULADO (Sem Configurações SMTP ativas)\n";
-            $dump .= "PARA: " . $to . "\n";
-            $dump .= "ASSUNTO: " . $subject . "\n";
-            $dump .= "CONTEUDO: " . strip_tags(str_replace(['<br>', '</p>'], "\n", $message)) . "\n";
-            $dump .= "----------------------------------------------------";
-            // Grava o ficheiro na pasta logs da App
-            file_put_contents($proofFile, $dump, FILE_APPEND);
-            
-            // Informa visualmente o administrador (Simulador Visual)
-            if (session_status() === PHP_SESSION_NONE) session_start();
-            $_SESSION['flash_info'] = "<strong>Simulação de Email GHS:</strong><br>A plataforma construiu e enviou o email para <b>{$to}</b> com sucesso.<br><i class='small'>Nota: Como está num servidor local XAMPP sem SMTP configurado, o email não saiu para a internet. Verifique o ficheiro <u>app/logs/emails_localhost_intercetados.txt</u> para ler a mensagem real!</i>";
-            
-            $sent = true; // Forçar "sucesso" para que o fluxo da aplicação prossiga normalmente
-        }
-
-        // 🔥 LOG DE ACTIVIDADE
-        if ($sent) {
-            error_log("[GHS Mailer OK] Email rotulado para {$to}");
+            error_log("[GHS Mailer] Email NÃO enviado para {$to} | Assunto: {$subject}");
+        } else {
+            error_log("[GHS Mailer] Email enviado para {$to} | Assunto: {$subject}");
         }
 
         return $sent;
-    }
-
-    /**
-     * Envio via Protocolo SMTP Nativo (Socket) — Independente de PHPMailer
-     * Útil para ambientes como XAMPP ou Servidores Sem mail() configurado.
-     */
-    private static function sendSMTP($to, $subject, $body, $from) {
-        try {
-            $host = MAIL_SMTP_HOST;
-            $port = MAIL_SMTP_PORT;
-            $user = MAIL_SMTP_USER;
-            $pass = MAIL_SMTP_PASS;
-
-            // Define se deve usar SSL (465) ou TLS (587)
-            $ssl = ($port == 465) ? 'ssl://' : '';
-            $socket = @fsockopen($ssl . $host, $port, $errno, $errstr, 15);
-            
-            if (!$socket) throw new Exception("Não foi possível conectar ao SMTP: $errstr");
-
-            $getResponse = function($socket) {
-                $response = "";
-                while ($str = fgets($socket, 515)) {
-                    $response .= $str;
-                    if (substr($str, 3, 1) == " ") break;
-                }
-                return $response;
-            };
-
-            $getResponse($socket);
-            fwrite($socket, "EHLO " . $_SERVER['HTTP_HOST'] . "\r\n");
-            $getResponse($socket);
-
-            if ($port == 587) {
-                fwrite($socket, "STARTTLS\r\n");
-                $getResponse($socket);
-                if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
-                    throw new Exception("Falha ao iniciar encriptação TLS.");
-                }
-                fwrite($socket, "EHLO " . $_SERVER['HTTP_HOST'] . "\r\n");
-                $getResponse($socket);
-            }
-
-            fwrite($socket, "AUTH LOGIN\r\n");
-            $getResponse($socket);
-            fwrite($socket, base64_encode($user) . "\r\n");
-            $getResponse($socket);
-            fwrite($socket, base64_encode($pass) . "\r\n");
-            $getResponse($socket);
-
-            fwrite($socket, "MAIL FROM: <$from>\r\n");
-            $getResponse($socket);
-            fwrite($socket, "RCPT TO: <$to>\r\n");
-            $getResponse($socket);
-            fwrite($socket, "DATA\r\n");
-            $getResponse($socket);
-
-            $headers  = "MIME-Version: 1.0\r\n";
-            $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-            $headers .= "From: " . APP_NAME . " <$from>\r\n";
-            $headers .= "To: <$to>\r\n";
-            $headers .= "Subject: =?UTF-8?B?" . base64_encode($subject) . "?=\r\n";
-            $headers .= "Date: " . date('r') . "\r\n";
-
-            fwrite($socket, $headers . "\r\n" . $body . "\r\n.\r\n");
-            $getResponse($socket);
-            fwrite($socket, "QUIT\r\n");
-            fclose($socket);
-            return true;
-        } catch (Exception $e) {
-            error_log("[SMTP ERROR] " . $e->getMessage());
-            return false;
-        }
     }
 
     /**

@@ -213,7 +213,7 @@ class Academico {
             
             if ($row['nota_final'] !== null) {
                 // Point 3: Aprovado only when there is consent.
-                $has_consent = (isset($row['feedback_status']) && in_array($row['feedback_status'], ['Concordado', 'Encerrado']));
+                $has_consent = (isset($row['feedback_status']) && in_array($row['feedback_status'], ['Concordado', 'Resolvido']));
                 
                 if (!$has_consent) {
                     $row['status'] = 'Pendente Acordo';
@@ -256,41 +256,50 @@ class Academico {
     public function getRankingByNivel() {
         $sql = "
             SELECT 
-                ano_id, nivel_nome, nivel_ordem, estudante_id, nome, foto_perfil,
-                SUM(nota_final_disciplina) / COUNT(disciplina_id) AS media_geral,
+                ano_id,
+                nivel_nome,
+                nivel_ordem,
+                estudante_id,
+                nome,
+                foto_perfil,
+                SUM(nota_disciplina) / GREATEST(1, (SELECT COUNT(DISTINCT h.disciplina_id) FROM horarios h WHERE h.turma_id = notas_finais.turma_id)) AS media_geral,
                 COUNT(disciplina_id) AS num_disciplinas
             FROM (
-                SELECT 
-                    a.id AS ano_id, a.nome AS nivel_nome, a.ordem AS nivel_ordem,
-                    e.id AS estudante_id, u.nome_completo AS nome, e.foto_perfil,
-                    m.turma_id, d_id AS disciplina_id,
+                SELECT
+                    a.id          AS ano_id,
+                    a.nome        AS nivel_nome,
+                    a.ordem       AS nivel_ordem,
+                    e.id          AS estudante_id,
+                    u.nome_completo AS nome,
+                    e.foto_perfil,
+                    m.turma_id,
+                    av.disciplina_id,
                     (
-                        COALESCE(MAX(CASE WHEN tipo_id = 1 THEN media_tipo END), 0) +
-                        COALESCE(MAX(CASE WHEN tipo_id = 2 THEN media_tipo END), 0) +
-                        COALESCE(MAX(CASE WHEN tipo_id = 3 THEN media_tipo END), 0) +
-                        COALESCE(MAX(CASE WHEN tipo_id = 4 THEN media_tipo END), 0) +
-                        COALESCE(MAX(CASE WHEN tipo_id = 5 THEN media_tipo END), 0)
-                    ) / 2.0 AS nota_final_disciplina
-                FROM (
-                    SELECT n.estudante_id, av.disciplina_id as d_id, av.tipo_avaliacao_id as tipo_id, AVG(n.nota) as media_tipo
-                    FROM notas n
-                    JOIN avaliacoes av ON n.avaliacao_id = av.id
-                    GROUP BY n.estudante_id, av.disciplina_id, av.tipo_avaliacao_id
-                ) AS medias_parciais
-                JOIN estudantes e ON medias_parciais.estudante_id = e.id
+                        COALESCE(MAX(CASE WHEN ta.id = 1 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 2 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 3 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 4 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
+                    ) / 2 AS nota_disciplina
+                FROM notas n
+                JOIN avaliacoes av ON n.avaliacao_id = av.id
+                JOIN tipos_avaliacao ta ON av.tipo_avaliacao_id = ta.id
+                JOIN estudantes e ON n.estudante_id = e.id
                 JOIN utilizadores u ON e.utilizador_id = u.id
                 JOIN matriculas m ON m.estudante_id = e.id AND m.status = 'Aprovada'
                 JOIN anos a ON m.ano_curso_id = a.id
-                GROUP BY a.id, a.nome, a.ordem, e.id, u.nome_completo, e.foto_perfil, m.turma_id, d_id
-                HAVING MAX(CASE WHEN tipo_id = 5 THEN 1 ELSE 0 END) > 0
-            ) AS consolidado
-            GROUP BY ano_id, nivel_nome, nivel_ordem, estudante_id, nome, foto_perfil
+                GROUP BY a.id, a.nome, a.ordem, e.id, u.nome_completo, e.foto_perfil, m.turma_id, av.disciplina_id
+                HAVING MAX(CASE WHEN ta.id = 5 THEN 1 ELSE 0 END) > 0
+            ) AS notas_finais
+            GROUP BY ano_id, nivel_nome, nivel_ordem, estudante_id, nome, foto_perfil, turma_id
+            HAVING num_disciplinas >= 1
             ORDER BY nivel_ordem ASC, media_geral DESC
         ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        // Agrupar por nível e pegar apenas o 1.º de cada
         $ranking = [];
         foreach ($rows as $row) {
             if (!isset($ranking[$row['ano_id']])) {
@@ -301,37 +310,48 @@ class Academico {
         return array_values($ranking);
     }
 
+    /**
+     * Retorna o melhor aluno absoluto de toda a escola (Top 3).
+     *
+     * @param int $limit  Número de alunos a retornar (padrão: 3)
+     * @return array
+     */
     public function getRankingEscola($limit = 3) {
         $sql = "
             SELECT 
-                estudante_id, nome, foto_perfil, nivel_nome,
-                SUM(nota_final_disciplina) / COUNT(disciplina_id) AS media_geral,
+                estudante_id,
+                nome,
+                foto_perfil,
+                nivel_nome,
+                SUM(nota_disciplina) / GREATEST(1, (SELECT COUNT(DISTINCT h.disciplina_id) FROM horarios h WHERE h.turma_id = notas_finais.turma_id)) AS media_geral,
                 COUNT(disciplina_id) AS num_disciplinas
             FROM (
-                SELECT 
-                    e.id AS estudante_id, u.nome_completo AS nome, e.foto_perfil, a.nome AS nivel_nome,
-                    m.turma_id, d_id AS disciplina_id,
+                SELECT
+                    e.id          AS estudante_id,
+                    u.nome_completo AS nome,
+                    e.foto_perfil,
+                    a.nome        AS nivel_nome,
+                    m.turma_id,
+                    av.disciplina_id,
                     (
-                        COALESCE(MAX(CASE WHEN tipo_id = 1 THEN media_tipo END), 0) +
-                        COALESCE(MAX(CASE WHEN tipo_id = 2 THEN media_tipo END), 0) +
-                        COALESCE(MAX(CASE WHEN tipo_id = 3 THEN media_tipo END), 0) +
-                        COALESCE(MAX(CASE WHEN tipo_id = 4 THEN media_tipo END), 0) +
-                        COALESCE(MAX(CASE WHEN tipo_id = 5 THEN media_tipo END), 0)
-                    ) / 2.0 AS nota_final_disciplina
-                FROM (
-                    SELECT n.estudante_id, av.disciplina_id as d_id, av.tipo_avaliacao_id as tipo_id, AVG(n.nota) as media_tipo
-                    FROM notas n
-                    JOIN avaliacoes av ON n.avaliacao_id = av.id
-                    GROUP BY n.estudante_id, av.disciplina_id, av.tipo_avaliacao_id
-                ) AS medias_parciais
-                JOIN estudantes e ON medias_parciais.estudante_id = e.id
+                        COALESCE(MAX(CASE WHEN ta.id = 1 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 2 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 3 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 4 THEN n.nota END), 0) +
+                        COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
+                    ) / 2 AS nota_disciplina
+                FROM notas n
+                JOIN avaliacoes av ON n.avaliacao_id = av.id
+                JOIN tipos_avaliacao ta ON av.tipo_avaliacao_id = ta.id
+                JOIN estudantes e ON n.estudante_id = e.id
                 JOIN utilizadores u ON e.utilizador_id = u.id
                 JOIN matriculas m ON m.estudante_id = e.id AND m.status = 'Aprovada'
                 JOIN anos a ON m.ano_curso_id = a.id
-                GROUP BY e.id, u.nome_completo, e.foto_perfil, a.nome, m.turma_id, d_id
-                HAVING MAX(CASE WHEN tipo_id = 5 THEN 1 ELSE 0 END) > 0
-            ) AS consolidado
-            GROUP BY estudante_id, nome, foto_perfil, nivel_nome
+                GROUP BY e.id, u.nome_completo, e.foto_perfil, a.nome, m.turma_id, av.disciplina_id
+                HAVING MAX(CASE WHEN ta.id = 5 THEN 1 ELSE 0 END) > 0
+            ) AS notas_finais
+            GROUP BY estudante_id, nome, foto_perfil, nivel_nome, turma_id
+            HAVING num_disciplinas >= 1
             ORDER BY media_geral DESC
             LIMIT :lim
         ";
@@ -340,6 +360,7 @@ class Academico {
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        // Adicionar medalha/posição
         foreach ($rows as $i => &$r) {
             $r['posicao'] = $i + 1;
             $r['medalha'] = ['🥇', '🥈', '🥉'][$i] ?? '🏅';

@@ -334,49 +334,6 @@
                 </div>
             </div>
         <?php endif; ?>
-
-        <!-- ⚖️ ALERTAS DE CONTESTAÇÃO / MEDIAÇÃO (Pilar 8) -->
-        <?php if (!empty($data['contestacoes'])): ?>
-            <?php foreach($data['contestacoes'] as $con): ?>
-                <?php if ($con['status'] === 'Aguardando_Comparecimento'): ?>
-                    <div class="alert alert-warning border-0 border-start border-4 border-warning shadow-sm rounded-4 mb-4 p-4 animate__animated animate__pulse animate__infinite">
-                        <div class="d-flex align-items-center gap-4">
-                            <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
-                                <ion-icon name="calendar-outline" class="fs-1 text-warning"></ion-icon>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h5 class="fw-bold mb-1 text-dark">📋 CONVOCATÓRIA DE MEDIAÇÃO</h5>
-                                <p class="mb-2 text-muted">Foi agendada uma reunião de mediação para resolver o seu impasse na disciplina de <strong><?= htmlspecialchars($con['disciplina_nome']) ?></strong>.</p>
-                                <div class="d-flex flex-wrap gap-4 mt-3">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <ion-icon name="time" class="text-warning"></ion-icon>
-                                        <span class="fw-bold"><?= date('d/m/Y H:i', strtotime($con['data_reuniao'])) ?></span>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <ion-icon name="location" class="text-warning"></ion-icon>
-                                        <span class="fw-bold">Gabinete da Direção GHS</span>
-                                    </div>
-                                </div>
-                                <p class="small text-danger mt-3 mb-0"><strong>Importante:</strong> O seu comparecimento é obrigatório para a resolução da nota final.</p>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($con['status'] === 'Respondida'): ?>
-                    <div class="alert alert-info border-0 border-start border-4 border-info shadow-sm rounded-4 mb-4 p-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <ion-icon name="chatbubbles-outline" class="fs-2 text-info"></ion-icon>
-                            <div class="flex-grow-1">
-                                <h6 class="fw-bold mb-1">Feedback de Contestação: <?= htmlspecialchars($con['disciplina_nome']) ?></h6>
-                                <p class="mb-0 small text-muted">O Professor respondeu à sua solicitação. Verifique o histórico no separador "Avaliação".</p>
-                            </div>
-                            <button onclick="document.getElementById('tab-notas').click()" class="btn btn-sm btn-info text-white rounded-pill px-3 fw-bold">Ver Resposta</button>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        <?php endif; ?>
         <?php
         $uploadErrors = [
             'size' => 'O ficheiro é demasiado grande. Máximo permitido: 5MB.',

@@ -400,7 +400,7 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <span class="fw-bold">
-                                                        <?= ($r['exame'] !== null) ? number_format($r['exame'], 1) : '<span class="text-muted">---</span>' ?>
+                                                        <?= ($r['notas'][5] !== null) ? number_format($r['notas'][5], 1) : '<span class="text-muted">---</span>' ?>
                                                     </span>
                                                 </td>
                                                 <td class="text-center bg-light fw-bold fs-5">
@@ -414,18 +414,20 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <?php 
+                                                        $ac = (float)$r['total_ac'];
                                                         $media = $r['media_final'];
-                                                        $media_r = round($media, 1);
+                                                        $exame = $r['notas'][5];
                                                         
-                                                        if($media === null): ?>
-                                                            <span class="badge bg-secondary">Admitido ao Exame</span>
-                                                        <?php elseif($media_r >= 11.5): ?>
-                                                            <span class="badge bg-success">Aprovado</span>
-                                                        <?php elseif($media_r >= 8): ?>
-                                                            <span class="badge bg-warning text-dark">Recurso</span>
-                                                        <?php else: ?>
-                                                            <span class="badge bg-danger">Reprovado</span>
-                                                        <?php endif; ?>
+                                                            $media_r = round($media, 1);
+                                                            if($media === null): ?>
+                                                                <span class="badge bg-secondary">Admitido ao Exame</span>
+                                                            <?php elseif($media_r >= 11.5): ?>
+                                                                <span class="badge bg-success">Aprovado</span>
+                                                            <?php elseif($media_r >= 8): ?>
+                                                                <span class="badge bg-warning text-dark">Recurso</span>
+                                                            <?php else: ?>
+                                                                <span class="badge bg-danger">Reprovado</span>
+                                                            <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -479,9 +481,8 @@
                                         <tr><td colspan="9" class="text-center">Nenhum aluno matriculado nesta turma.</td></tr>
                                     <?php else: ?>
                                         <?php 
-                                            // Usar os IDs seleccionados no filtro para garantir o contexto correcto
-                                            $turma_id = (int)($data['selected_turma'] ?? ($data['classes'][0]['turma_id'] ?? 0));
-                                            $disc_id  = (int)($data['selected_disciplina'] ?? ($data['classes'][0]['disciplina_id'] ?? 0));
+                                            $turma_id = $data['classes'][0]['turma_id'] ?? 0;
+                                            $disc_id = $data['classes'][0]['disciplina_id'] ?? 0;
                                         ?>
                                         <?php foreach($data['students'] as $s): ?>
                                             <?php $sn = $data['notas'][$s['id']] ?? []; ?>
@@ -496,57 +497,30 @@
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="fw-bold"><?= $this->e($s['nome_completo']) ?></td>
-                                                <td class="small-inputs">
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpc-1" value="<?= $sn['notas'][1]['1º TPC'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1º">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpc-2" value="<?= $sn['notas'][1]['2º TPC'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2º">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpc-3" value="<?= $sn['notas'][1]['3º TPC'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3º">
-                                                    </div>
-                                                </td>
-                                                <td class="small-inputs">
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ap-1" value="<?= $sn['notas'][2]['1º AP'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1º">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ap-2" value="<?= $sn['notas'][2]['2º AP'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2º">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ap-3" value="<?= $sn['notas'][2]['3º AP'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3º">
-                                                    </div>
-                                                </td>
-                                                <td class="small-inputs">
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpi-1" value="<?= $sn['notas'][3]['1º TPI'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1º">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpi-2" value="<?= $sn['notas'][3]['2º TPI'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2º">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-tpi-3" value="<?= $sn['notas'][3]['3º TPI'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3º">
-                                                    </div>
-                                                </td>
-                                                <td class="small-inputs">
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ce-1" value="<?= $sn['notas'][4]['1º CE'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="1º">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ce-2" value="<?= $sn['notas'][4]['2º CE'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="2º">
-                                                        <input type="number" step="0.1" class="form-control form-control-xs text-center val-ce-3" value="<?= $sn['notas'][4]['3º CE'] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?> placeholder="3º">
-                                                    </div>
-                                                </td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc" value="<?= $sn[1] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ap" value="<?= $sn[2] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi" value="<?= $sn[3] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ce" value="<?= $sn[4] ?? '' ?>" <?= $is_locked ? 'readonly disabled' : '' ?>></td>
                                                 <td class="fw-bold text-success text-center fs-5 text-total-ac">
                                                     <?php 
-                                                        $ac_total = 0;
-                                                        foreach([1,2,3,4] as $tid) {
-                                                            if(!empty($sn['notas'][$tid])) {
-                                                                $vals = array_filter($sn['notas'][$tid], fn($v) => $v !== null && $v !== '');
-                                                                if(!empty($vals)) $ac_total += array_sum($vals) / count($vals);
-                                                            }
-                                                        }
-                                                        echo number_format($ac_total, 1);
+                                                        $total = floatval($sn[1]??0) + floatval($sn[2]??0) + floatval($sn[3]??0) + floatval($sn[4]??0);
+                                                        echo number_format($total, 1);
                                                     ?>
                                                 </td>
                                                 <td class="border-start border-primary">
+                                                    <?php $pode_fazer_exame = $total >= 8; ?>
                                                     <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" 
-                                                           value="<?= $sn['notas'][5]['Exame Final'] ?? '' ?>" 
-                                                           <?= ($is_locked) ? 'readonly disabled' : '' ?>
-                                                           placeholder="Exame">
+                                                           value="<?= $sn[5] ?? '' ?>" 
+                                                           <?= ($is_locked || !$pode_fazer_exame) ? 'readonly disabled' : '' ?>
+                                                           placeholder="<?= !$pode_fazer_exame ? 'Reprovado' : '' ?>">
                                                 </td>
                                                 <td class="text-center fw-bold fs-5 text-media-final">
                                                     <?php 
-                                                        $exame = $sn['notas'][5]['Exame Final'] ?? null;
-                                                        if($exame !== null && $exame !== '') {
-                                                            echo number_format(($ac_total + floatval($exame)) / 2, 1);
+                                                        $exame = $sn[5] ?? null;
+                                                        if($total < 8) {
+                                                            echo '<span class="text-danger" style="font-size: 0.7rem;">Reprovado</span>';
+                                                        } elseif($exame !== null && $exame !== '') {
+                                                            echo number_format(($total + floatval($exame)) / 2, 1);
                                                         } else {
                                                             echo '-';
                                                         }
@@ -1038,7 +1012,7 @@
                                             <p class="mb-0 small italic">"<?= nl2br(htmlspecialchars($h['decisao_final'])) ?>"</p>
                                         </div>
                                         <div class="mt-3 text-end">
-                                            <a href="<?= URL_ROOT ?>/professor?turma_id=<?= $h['turma_id'] ?>&disciplina_id=<?= $h['disciplina_id'] ?>&tab=notas" class="btn btn-sm btn-danger fw-bold rounded-pill px-4">
+                                            <a href="#pane-notas" class="btn btn-sm btn-danger fw-bold rounded-pill px-4" onclick="switchClass('<?= $h['turma_id'] ?>|<?= $h['disciplina_id'] ?>'); $('#tab-notas').tab('show');">
                                                 <ion-icon name="create-outline"></ion-icon> Corrigir Notas Agora
                                             </a>
                                         </div>
@@ -1058,12 +1032,8 @@
                                             </div>
                                             <div>
                                                 <h5 class="fw-bold mb-0 text-dark">Convocação Administrativa: Mediação Acadêmica</h5>
-                                                <span class="small text-muted">A administração convocou as partes. Referente ao aluno: <strong><?= htmlspecialchars($h['estudante_nome']) ?></strong></span>
+                                                <span class="small text-muted">Referente ao aluno: <strong><?= htmlspecialchars($h['estudante_nome']) ?></strong> (<?= htmlspecialchars($h['disciplina_nome']) ?>)</span>
                                             </div>
-                                        </div>
-                                        <div class="mt-2 p-3 bg-white bg-opacity-50 rounded-4 border mb-3">
-                                            <small class="fw-bold text-warning text-uppercase small d-block mb-1">Motivo da Convocatória:</small>
-                                            <p class="mb-0 small italic">"<?= nl2br(htmlspecialchars($h['motivo_convocacao'])) ?>"</p>
                                         </div>
                                         <div class="row g-3 bg-white bg-opacity-50 p-3 rounded-4 border">
                                             <div class="col-md-3">
@@ -1130,9 +1100,9 @@
                                                                 </div>
                                                             </div>
                                                             <div class="d-flex gap-2">
-                                                                <a href="<?= URL_ROOT ?>/professor?turma_id=<?= $c['turma_id'] ?>&disciplina_id=<?= $c['disciplina_id'] ?>&tab=notas" class="btn btn-sm btn-primary fw-bold rounded-pill">
+                                                                <button class="btn btn-sm btn-primary fw-bold rounded-pill" onclick="switchClass('<?= $c['turma_id'] ?>|<?= $c['disciplina_id'] ?>'); $('#tab-notas').tab('show');">
                                                                     <ion-icon name="create-outline"></ion-icon> Corrigir Nota
-                                                                </a>
+                                                                </button>
                                                                 <button class="btn btn-sm btn-danger fw-bold rounded-pill"
                                                                     onclick="abrirRespostaContestacao(<?= $c['estudante_id_real'] ?>, '<?= htmlspecialchars($c['estudante_nome']) ?>', <?= $c['turma_id'] ?>, <?= $c['disciplina_id'] ?>)">
                                                                     <ion-icon name="chatbubble-ellipses-outline"></ion-icon> Responder
@@ -1543,23 +1513,13 @@ function publicarMaterial() {
             }
         }
 
-        // Live Calculation for Grades (Arithmetic Mean per Component)
-        $('.val-tpc-1, .val-tpc-2, .val-tpc-3, .val-ap-1, .val-ap-2, .val-ap-3, .val-tpi-1, .val-tpi-2, .val-tpi-3, .val-ce-1, .val-ce-2, .val-ce-3, .val-exame').on('input', function() {
+        // Live Calculation for Grades
+        $('.val-tpc, .val-ap, .val-tpi, .val-ce, .val-exame').on('input', function() {
             const row = $(this).closest('tr');
-            
-            const getMean = (prefix) => {
-                let sum = 0, count = 0;
-                for(let i=1; i<=3; i++) {
-                    let val = parseFloat(row.find(`.val-${prefix}-${i}`).val());
-                    if(!isNaN(val)) { sum += val; count++; }
-                }
-                return count > 0 ? (sum / count) : 0;
-            };
-
-            const tpc = getMean('tpc');
-            const ap = getMean('ap');
-            const tpi = getMean('tpi');
-            const ce = getMean('ce');
+            const tpc = parseFloat(row.find('.val-tpc').val()) || 0;
+            const ap = parseFloat(row.find('.val-ap').val()) || 0;
+            const tpi = parseFloat(row.find('.val-tpi').val()) || 0;
+            const ce = parseFloat(row.find('.val-ce').val()) || 0;
             const exameInput = row.find('.val-exame').val();
             
             const totalAc = (tpc + ap + tpi + ce);
@@ -1790,53 +1750,5 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
-    <script>
-        function saveNota(btn) {
-            const tr = $(btn).closest('tr');
-            const studentId = tr.data('student-id');
-            const turmaId = tr.data('turma-id');
-            const discId = tr.data('disc-id');
-            
-            const data = {
-                csrf_token: '<?= $_SESSION['csrf_token'] ?>',
-                estudante_id: studentId,
-                turma_id: turmaId,
-                disciplina_id: discId,
-                tpc_1: tr.find('.val-tpc-1').val(),
-                tpc_2: tr.find('.val-tpc-2').val(),
-                tpc_3: tr.find('.val-tpc-3').val(),
-                ap_1:  tr.find('.val-ap-1').val(),
-                ap_2:  tr.find('.val-ap-2').val(),
-                ap_3:  tr.find('.val-ap-3').val(),
-                tpi_1: tr.find('.val-tpi-1').val(),
-                tpi_2: tr.find('.val-tpi-2').val(),
-                tpi_3: tr.find('.val-tpi-3').val(),
-                ce_1:  tr.find('.val-ce-1').val(),
-                ce_2:  tr.find('.val-ce-2').val(),
-                ce_3:  tr.find('.val-ce-3').val(),
-                exame: tr.find('.val-exame').val(),
-                resposta: tr.find('.val-resposta').val()
-            };
-
-            const originalBtnText = $(btn).html();
-            $(btn).prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
-
-            $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
-                if(res.success) {
-                    // Update the average in the UI
-                    tr.find('td:nth-last-child(2)').html(res.media_final || '-');
-                    // Small visual feedback
-                    $(btn).removeClass('btn-success').addClass('btn-secondary').text('Guardado!');
-                    setTimeout(() => { $(btn).removeClass('btn-secondary').addClass('btn-success').html(originalBtnText).prop('disabled', false); }, 1500);
-                } else {
-                    alert('Erro: ' + (res.message || 'Falha ao guardar.'));
-                    $(btn).prop('disabled', false).html(originalBtnText);
-                }
-            }, 'json').fail(function() {
-                alert('Erro crítico ao comunicar com o servidor.');
-                $(btn).prop('disabled', false).html(originalBtnText);
-            });
-        }
-    </script>
 </body>
 </html>

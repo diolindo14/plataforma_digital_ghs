@@ -103,11 +103,10 @@ class ProfessorController extends Controller {
         $data['gridData'] = $horarioModel->buildWeeklyGridForProfessor($data['professor']['id']);
         $data['dias_semana'] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-        // --- 📨 SISTEMA DE MENSAGENS E CONVOCATÓRIAS (Notificações de Sistema) ---
-        $mensagemModel = $this->model('Mensagem');
-        $comunicadoModel = $this->model('Comunicado');
-        $data['mensagens_unread'] = $mensagemModel->getUnreadMessages($_SESSION['user_id']);
-        $data['unread_count'] = $comunicadoModel->getNotificacoesNaoLidas($_SESSION['user_id'], 'professor') + count($data['mensagens_unread']);
+        // --- 🏆 MÉRITO ACADÉMICO ---
+        $acadRank = $this->model('Academico');
+        $data['ranking_escola'] = $acadRank->getRankingEscola(3);
+        $data['ranking_nivel']  = $acadRank->getRankingByNivel();
 
         $this->view('professor/dashboard', $data);
     }
@@ -117,36 +116,10 @@ class ProfessorController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->verifyCsrfToken();
             $notaModel = $this->model('Nota');
-            
-            // Lógica unificada para salvar notas e feedbacks
-            $_POST['resposta_professor'] = $_POST['resposta'] ?? null;
             $res = $notaModel->saveNotasRow($_POST);
-            
             if ($res) {
-                // Notificação automática se houver resposta
-                if (!empty($_POST['resposta'])) {
-                    $estudanteModel = $this->model('Estudante');
-                    $est = $estudanteModel->findById($_POST['estudante_id']);
-                    if ($est && !empty($est['utilizador_id'])) {
-                        $msgModel = $this->model('Mensagem');
-                        $msgModel->send(
-                            $_SESSION['user_id'], 
-                            $est['utilizador_id'], 
-                            "Feedback sobre Avaliação", 
-                            "O Professor respondeu à sua contestação ou actualizou as suas notas. Resposta: \"" . $_POST['resposta'] . "\""
-                        );
-                    }
-                }
-
-                $this->logActivity('Lançar Nota', ['estudante_id' => $_POST['estudante_id'] ?? 'N/A']);
-                
-                // Retornar a média recalculada para o UI (Opcional, mas melhora UX)
-                $novaNota = $notaModel->getNotaEstudante($_POST['estudante_id'], $_POST['disciplina_id']);
-                
-                echo json_encode([
-                    'success' => true,
-                    'media_final' => $novaNota['media_final'] ?? null
-                ]);
+                $this->logActivity('Lançar Nota', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
+                echo json_encode(['success' => true]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Erro ao guardar notas na base de dados.']);
             }
@@ -356,8 +329,6 @@ class ProfessorController extends Controller {
         }
         header('Location: ' . URL_ROOT . '/professor/dashboard');
     }
-
-
 
     public function getCalendarEvents() {
         $events = $this->model('Evento')->getAll();
