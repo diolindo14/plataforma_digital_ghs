@@ -395,4 +395,28 @@ class Nota {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getNotaEstudante($estudante_id, $disciplina_id) {
+        $stmt = $this->db->prepare("
+            SELECT n.nota, a.tipo_avaliacao_id as tipo_id
+            FROM notas n
+            JOIN avaliacoes a ON n.avaliacao_id = a.id
+            WHERE n.estudante_id = :eid AND a.disciplina_id = :did
+        ");
+        $stmt->execute([':eid' => $estudante_id, ':did' => $disciplina_id]);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $notas = [1=>0, 2=>0, 3=>0, 4=>0, 5=>null];
+        foreach ($results as $r) {
+            $notas[$r['tipo_id']] = $r['nota'];
+        }
+
+        $ac_total = $notas[1] + $notas[2] + $notas[3] + $notas[4];
+        $media_final = ($notas[5] !== null) ? ($ac_total + $notas[5]) / 2 : null;
+
+        return [
+            'total_ac' => $ac_total,
+            'media_final' => $media_final
+        ];
+    }
 }

@@ -119,6 +119,7 @@ class ProfessorController extends Controller {
             $notaModel = $this->model('Nota');
             
             // Lógica unificada para salvar notas e feedbacks
+            $_POST['resposta_professor'] = $_POST['resposta'] ?? null;
             $res = $notaModel->saveNotasRow($_POST);
             
             if ($res) {
