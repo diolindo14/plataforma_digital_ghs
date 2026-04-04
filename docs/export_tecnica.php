@@ -85,8 +85,8 @@
             <p>Arquitetura, Instalação, Segurança e Motores de Lógica de Negócio</p>
         </div>
         <div class="cover-right">
-            <div class="version">v1.0</div><br>
-            <strong>Data:</strong> Março 2026<br>
+            <div class="version">v1.1</div><br>
+            <strong>Data:</strong> Abril 2026<br>
             <strong>Público-Alvo:</strong> Desenvolvedores / DevOps<br>
             <strong>Autor:</strong> Diosives Crobute
         </div>
@@ -195,9 +195,15 @@ green/
 </pre>
         <ol start="4">
             <li>Certifique-se que o <code>mod_rewrite</code> está ativo no Apache e que o <code>.htaccess</code> está a
-                ser
-                lido (<code>AllowOverride All</code>).</li>
+                ser lido (<code>AllowOverride All</code>).</li>
             <li>Aceda no browser: <code>http://localhost/green/auth</code></li>
+        </ol>
+
+        <h3>3.1 Adaptação para Produção (Cloud / InfinityFree)</h3>
+        <p>Para hospedar a plataforma num servidor em produção raiz ou cPanel alojamento Web compartilhado:</p>
+        <ol>
+            <li>No ficheiro <code>core/config.php</code>, altere <code>define('URL_ROOT', '/green');</code> para <code>define('URL_ROOT', '');</code> para garantir que as folhas de estilos e AJAX requests funcionam na raiz do domínio.</li>
+            <li>No ficheiro <code>.htaccess</code> raiz, adicione <code>RewriteBase /</code> imediatamente abaixo de <code>RewriteEngine On</code> para evitar erros de loop HTTP 500 do Apache.</li>
         </ol>
 
         <h2>4. Roteamento e Front Controller</h2>
@@ -445,12 +451,13 @@ $existing = $estudanteModel->findByUserId($user_id);
         </pre>
         <p>No frontend, a função <code>toggleInternalFields()</code> oculta/mostra elementos e remove/adiciona o atributo <code>required</code> conforme o tipo de candidato selecionado (ou detetado via sessão).</p>
 
-        <h3>7.5 Motor de Recibos Térmicos POS (recibo_print.php)</h3>
-        <p>Sistema de geração de documentos em formato 80mm para impressoras POS térmicas, injetando metadados de autenticação visual:</p>
+        <h3>7.5 Motor de Recibos Térmicos POS (recibo_print.php / recibo_termico.php)</h3>
+        <p>Sistema de geração de documentos em formato 80mm para impressoras POS térmicas, agora unificado entre a Secretaria e Alunos, com as seguintes correções estabilizadas na v1.1:</p>
         <ul>
+            <li><strong>Resolvido Array Error:</strong> O controlador foi atualizado para referenciar corretamente <code>getPagamentoById()</code> em vez de um método base indefinido, resolvendo os Null Pointers na geração via Admin.</li>
             <li><strong>QR Code Encoder:</strong> Gera um hash contendo <code>ID_PAGAMENTO | VALOR | ID_ESTUDANTE</code> via API externa para validação rápida por scanner.</li>
-            <li><strong>CSS Thermal Optimization:</strong> Uso de <code>print-color-adjust: exact</code> e remoção de escalas de cinza para máxima legibilidade em cabeças térmicas.</li>
-            <li><strong>Guia de Corte:</strong> Delimitação visual por bordas pontilhadas simétricas (esquerda/direita) para ajuste manual de papel.</li>
+            <li><strong>Branding:</strong> Injeção padronizada do logo "O futuro é hoje!".</li>
+            <li><strong>Guia de Corte:</strong> Delimitação visual melhorada para leitura em cabeças da impressora térmica.</li>
         </ul>
 
         <h2>8. Sistema de Auditoria</h2>
@@ -503,7 +510,7 @@ $existing = $estudanteModel->findByUserId($user_id);
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Segurança de Nível Profissional. <strong>By Diosives
                 Crobute</strong></span>
-        <span>README Técnico v1.0</span>
+        <span>README Técnico v1.1</span>
     </div>
 
 </body>

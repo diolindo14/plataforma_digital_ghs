@@ -410,8 +410,8 @@
             <p>Documento de visão estratégica para Direção e Gestão Institucional</p>
         </div>
         <div class="cover-right">
-            <div class="version">v1.0</div><br>
-            <strong>Data:</strong> Março 2026<br>
+            <div class="version">v1.1</div><br>
+            <strong>Data:</strong> Abril 2026<br>
             <strong>Classificação:</strong> Uso Interno<br>
             <strong>Autor:</strong> Diosives Crobute
         </div>
@@ -602,8 +602,10 @@
     <h3>4.7 Transparência Académica: Ciclo de Confirmação de Notas</h3>
     <p>A plataforma introduziu um fluxo de "Acordo de Notas" onde o aluno deve validar ativamente o resultado final. Isto reduz drasticamente os erros de lançamento e as reclamações presenciais, movendo o debate pedagógico para um ambiente digital auditável (Pendente -> Respondido -> Resolvido).</p>
 
+    <h3>4.8 Deploy em Produção e Otimização para Web</h3>
+    <p>A plataforma está agora configurada via <strong>.htaccess e core/config.php</strong> para suporte nativo em servidores Cloud e cPanel standard (ex: InfinityFree). Qualquer instituição pode instalar os ficheiros do GHS facilmente na raiz do servidor web sem precisar refatorizar as rotas do motor MVC. Adicionalmente, os <strong>Recibos Térmicos (POS 80mm)</strong> foram universalizados com a marca "O futuro é hoje!" unificando os portais da Secretaria e do Aluno sob as mesmas variáveis de impressão.</p>
 
-    <p>A plataforma implementa proteção multicamada, garantindo conformidade com as melhores práticas internacionais
+    <h2>5. Arquitetura de Segurança</h2>
         de
         segurança de dados:</p>
     <ul>
@@ -653,14 +655,14 @@
             </tr>
             <tr>
                 <td><strong>Versão Atual</strong></td>
-                <td>1.0 — Março 2026</td>
+                <td>1.1 — Abril 2026</td>
             </tr>
         </tbody>
     </table>
 
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Escola Superior de Informática. Documento de Uso Interno.</span>
-        <span>Resumo Executivo v1.0</span>
+        <span>Resumo Executivo v1.1</span>
     </div>
 
 </body>

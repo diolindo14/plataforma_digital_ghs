@@ -83,8 +83,8 @@
             <p>Guia completo de uso para Estudantes, Professores e Secretaria</p>
         </div>
         <div class="cover-right">
-            <div class="version">v1.0</div><br>
-            <strong>Data:</strong> Março 2026<br>
+            <div class="version">v1.1</div><br>
+            <strong>Data:</strong> Abril 2026<br>
             <strong>Público-Alvo:</strong> Todos os Utilizadores<br>
             <strong>Autor:</strong> Diosives Crobute
         </div>
@@ -277,7 +277,7 @@
             </li>
             <li>
                 <div><strong>Aceda ao Recibo Térmico (POS)</strong> Após a validação, poderá descarregar um recibo 
-                em formato térmico (80mm), otimizado para impressão rápida, contendo um <strong>QR Code</strong> de 
+                em formato térmico (80mm) com a imagem oficial institucional "O futuro é hoje!". Este formato é unificado entre a Secretaria e o Aluno e contém um <strong>QR Code</strong> de 
                 autenticação digital para prova oficial.</div>
             </li>
         </ol>
@@ -396,7 +396,7 @@
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Escola Superior de Informática. <strong>By Diosives
                 Crobute</strong></span>
-        <span>Manual do Utilizador v1.0</span>
+        <span>Manual do Utilizador v1.1</span>
     </div>
 
 </body>
