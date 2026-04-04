@@ -2970,28 +2970,7 @@
         </div>
     </div>
 
-    <!-- Modal Rejeitar Matrícula -->
-    <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="<?= URL_ROOT ?>/admin/rejectMatricula" method="POST" class="modal-content border-0 shadow-lg">
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="id" id="reject_matricula_id">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title fw-bold">Rejeitar Matrícula</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <p class="text-danger fw-bold">Deseja rejeitar esta matrícula?</p>
-                    <textarea name="motivo" class="form-control" rows="3" placeholder="Motivo da rejeição..."
-                        required></textarea>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-danger fw-bold">Confirmar</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- Modal Rejeitar Matrícula: definido abaixo (linha ~4836) — removida duplicata aqui -->
 
     <!-- Modal Professor -->
     <div class="modal fade" id="professorModal" tabindex="-1" aria-hidden="true">
@@ -3517,7 +3496,7 @@
             $('#student_bairro').val('');
             $('#student_morada').val('');
             $('#student_escola').val('');
-            $('#student_ano_conclusao').val('<?= date('Y') ?>');
+            $('#student_ano_conclusao').val(<?= date('Y') ?>);
             $('#student_media').val('');
             $('#student_encarregado_nome').val('');
             $('#student_encarregado_telefone').val('');
@@ -3613,12 +3592,6 @@
             }
         });
 
-        $(document).on('click', '.btn-approve-matricula', function () {
-            const id = $(this).data('id');
-            if (id && confirm('Confirmar aprovação desta matrícula e criação de conta de aluno?')) {
-                window.location.href = '<?= URL_ROOT ?>/admin/approveMatricula/' + id;
-            }
-        });
     </script>
 
 
@@ -3674,6 +3647,33 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal Estatísticas de Comunicado -->
+    <div class="modal fade" id="statsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title fw-bold" id="statsTitle">Estatísticas do Comunicado</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="statsEmptyMessage" class="alert alert-light text-center d-none">Nenhuma leitura registada ainda.</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr><th>Nome</th><th>Tipo</th><th>Data de Leitura</th></tr>
+                            </thead>
+                            <tbody id="statsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function showStats(id, titulo) {
             document.getElementById('statsTitle').innerText = titulo;
@@ -3813,39 +3813,7 @@
             }
         }
 
-        // Sobrescrever showHorario para incluir o link do modelo dinâmico
-        var originalShowHorario = showHorario;
-        showHorario = function (id, codigo) {
-            originalShowHorario(id, codigo);
-
-            fetch('<?= URL_ROOT ?>/admin/getTurmaInfo/' + id)
-                .then(r => r.json())
-                .then(turma => {
-                    $('#btn_apply_modelo').attr('href', '<?= URL_ROOT ?>/admin/replicateModeloToTurma/' + turma.ano_id + '/' + id);
-                    if (turma.has_horario) {
-                        $('#btn_apply_modelo').addClass('disabled').text('Horário já Populado');
-                    } else {
-                        $('#btn_apply_modelo').removeClass('disabled').html('<ion-icon name="copy-outline"></ion-icon> Carregar Modelo do Ano ' + turma.ano_nome);
-                    }
-                }).catch(err => console.error(err));
-        };
-
-        // window.showHorario override is maintained here
-        var originalShowHorario = showHorario;
-        showHorario = function (id, codigo) {
-            originalShowHorario(id, codigo);
-
-            fetch('<?= URL_ROOT ?>/admin/getTurmaInfo/' + id)
-                .then(r => r.json())
-                .then(turma => {
-                    $('#btn_apply_modelo').attr('href', '<?= URL_ROOT ?>/admin/replicateModeloToTurma/' + turma.ano_id + '/' + id);
-                    if (turma.has_horario) {
-                        $('#btn_apply_modelo').addClass('disabled').text('Horário já Populado');
-                    } else {
-                        $('#btn_apply_modelo').removeClass('disabled').html('<ion-icon name="copy-outline"></ion-icon> Carregar Modelo do Ano ' + turma.ano_nome);
-                    }
-                }).catch(err => console.error(err));
-        };
+        // showHorario is defined in the main script block — no override needed here.
 
         function viewProfessor(id) {
             $('#viewProfessorContent').html('<div class="text-center py-4"><div class="spinner-border text-dark"></div></div>');
@@ -4647,26 +4615,21 @@ $(document).ready(function () {
     // ── Edição de Itens via data-atributos ────────────────
     $(document).on('click', '.btn-edit-ano', function () {
         const d = $(this).data();
-        $('#ano_id').val(d.id);
-        $('#ano_numero').val(d.numero);
-        $('#ano_nome').val(d.nome);
-        $('#ano_descricao').val(d.desc);
-        $('#ano_mensalidade').val(d.valor);
-        $('#ano_ordem').val(d.ordem);
+        $('#ano_id_field').val(d.id);
+        $('#ano_nome_field').val(d.nome);
+        $('#ano_ordem_field').val(d.ordem);
         $('#anoModalTitle').text('Editar Ano Curricular');
         new bootstrap.Modal(document.getElementById('anoModal')).show();
     });
 
     $(document).on('click', '.btn-edit-disciplina', function () {
         const d = $(this).data();
-        $('#disc_id').val(d.id);
-        $('#disc_codigo').val(d.codigo);
-        $('#disc_nome').val(d.nome);
-        $('#disc_ano').val(d.ano);
-        $('#disc_carga').val(d.carga);
-        $('#disc_credito').val(d.credito);
-        $('#disc_desc').val(d.desc);
-        $('#disciplinaModalTitle').text('Editar Disciplina');
+        $('#disc_id_field').val(d.id);
+        $('#disc_nome_field').val(d.nome);
+        $('#disc_ano_field').val(d.ano);
+        $('#disc_sigla_field').val(d.codigo);
+        $('#disc_creditos_field').val(d.credito);
+        $('#discModalTitle').text('Editar Disciplina');
         new bootstrap.Modal(document.getElementById('disciplinaModal')).show();
     });
 
