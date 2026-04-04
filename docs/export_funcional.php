@@ -101,8 +101,7 @@
         <h3>1.1 Como Fazer Login</h3>
         <ol class="steps">
             <li>
-                <div><strong>Aceda ao Endereço Institucional</strong> Abra o browser e navegue para o endereço fornecido
-                    pela secretaria (ex: <code>http://localhost/green/auth</code>).</div>
+                <div><strong>Aceda ao Endereço Institucional Oficial</strong> Abra o browser e navegue diretamente para o novo domínio de produção da escola: <code><a href="https://escola-ghs.wuaze.com" target="_blank" style="color:var(--accent); text-decoration:none;">https://escola-ghs.wuaze.com</a></code>.</div>
             </li>
             <div style="text-align: center; margin: 15px 0;">
                 <img src="../public/img/login_screen.png" alt="Interface de Login GHS" style="max-width: 300px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">

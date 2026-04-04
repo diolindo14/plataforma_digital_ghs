@@ -634,8 +634,12 @@
                 <td>PHP 8.2 Nativo — Padrão MVC sem frameworks</td>
             </tr>
             <tr>
+                <td><strong>Domínio de Produção</strong></td>
+                <td><a href="https://escola-ghs.wuaze.com" style="color:var(--accent); text-decoration:none;">https://escola-ghs.wuaze.com</a></td>
+            </tr>
+            <tr>
                 <td><strong>Servidor</strong></td>
-                <td>Apache 2.4+ com mod_rewrite (XAMPP compatível)</td>
+                <td>Apache 2.4+ com mod_rewrite (Cloud/InfinityFree e XAMPP)</td>
             </tr>
             <tr>
                 <td><strong>Base de Dados</strong></td>

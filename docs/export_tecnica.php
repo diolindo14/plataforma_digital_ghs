@@ -196,10 +196,11 @@ green/
         <ol start="4">
             <li>Certifique-se que o <code>mod_rewrite</code> está ativo no Apache e que o <code>.htaccess</code> está a
                 ser lido (<code>AllowOverride All</code>).</li>
-            <li>Aceda no browser: <code>http://localhost/green/auth</code></li>
+            <li>Aceda no browser (Teste Local): <code>http://localhost/green/auth</code></li>
         </ol>
 
         <h3>3.1 Adaptação para Produção (Cloud / InfinityFree)</h3>
+        <p>Acesso Global à Plataforma: <strong><a href="https://escola-ghs.wuaze.com" target="_blank" style="color:var(--accent); text-decoration:none;">https://escola-ghs.wuaze.com</a></strong></p>
         <p>Para hospedar a plataforma num servidor em produção raiz ou cPanel alojamento Web compartilhado:</p>
         <ol>
             <li>No ficheiro <code>core/config.php</code>, altere <code>define('URL_ROOT', '/green');</code> para <code>define('URL_ROOT', '');</code> para garantir que as folhas de estilos e AJAX requests funcionam na raiz do domínio.</li>
