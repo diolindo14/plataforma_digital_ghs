@@ -169,7 +169,7 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 450px;
+    max-width: 380px;
     padding: 2rem;
     perspective: 1000px;
 }
