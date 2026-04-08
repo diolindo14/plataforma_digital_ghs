@@ -193,3 +193,6 @@
 [2026-04-01 16:39:25] CRITICAL ERROR: Unclosed '{' on line 358 does not match ']' em C:\xampp\htdocs\green\app\models\Nota.php na linha 376
 [2026-04-01 17:15:33] PROD ERROR: FALHA MATRÍCULA ONLINE: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'BI67081' for key 'bi' | Ficheiro: C:\xampp\htdocs\green\app\models\Estudante.php:155
 [2026-04-01 17:21:52] PROD ERROR: FALHA MATRÍCULA ONLINE: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'BI50754' for key 'bi' | Ficheiro: C:\xampp\htdocs\green\app\models\Estudante.php:155
+[2026-04-08 00:54:47] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+[2026-04-08 00:55:18] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+[2026-04-08 01:02:50] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110

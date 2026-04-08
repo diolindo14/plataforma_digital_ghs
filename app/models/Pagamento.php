@@ -116,6 +116,10 @@ class Pagamento {
      * Busca um pagamento específico por ID para visualização detalhada ou edição.
      */
     public function getPagamentoById($id) {
+        return $this->getById($id);
+    }
+
+    public function getById($id) {
         $stmt = $this->db->prepare('SELECT p.*, ue.nome_completo as estudante_nome, e.bi, ua.nome_completo as registado_por_nome 
                                      FROM pagamentos p 
                                      JOIN estudantes e ON p.estudante_id = e.id 
