@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Ionicons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
     <style>
         body { font-family: 'Outfit', sans-serif; background-color: #f8f9fa; scroll-behavior: smooth; color: #334155; }
         
@@ -106,7 +107,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
         <div class="container">            <a class="navbar-brand d-flex align-items-center" href="<?= URL_ROOT ?>/">
-                <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
+                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <ion-icon name="menu" class="text-dark fs-1"></ion-icon>
@@ -487,7 +488,7 @@
                 <div class="col-lg-4 pe-lg-5">
                     <div class="footer-logo">
                         <div class="footer-logo-circle">
-                            <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
+                            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Green Hard & Softh" style="height: 60px; object-fit: contain;">
                         </div>
                         Green Hard & Softh
                     </div>

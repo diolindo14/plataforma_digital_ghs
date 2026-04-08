@@ -53,7 +53,8 @@ class Comunicado {
                   (SELECT COUNT(*) FROM leitura_comunicados cl WHERE cl.comunicado_id = c.id AND cl.utilizador_id = :user_id_lido) as lido 
                   FROM comunicados c 
                   JOIN utilizadores u ON c.criado_por = u.id 
-                  WHERE c.data_publicacao >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND (c.tipo = 'Geral' ";
+                  WHERE c.data_publicacao >= DATE_SUB(NOW(), INTERVAL 30 DAY) AND 
+                  (c.tipo = 'Geral' OR (c.destinatario_tipo = 'Individual' AND c.destinatario_id = :user_id_lido2)";
         
         if ($tipoUser == 'professor') {
             $query .= " OR c.tipo = 'Professores' ";
@@ -69,6 +70,7 @@ class Comunicado {
 
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':user_id_lido', $utilizadorId);
+        $stmt->bindValue(':user_id_lido2', $utilizadorId);
         $stmt->bindValue(':user_id_excluido', $utilizadorId);
         
         if ($tipoUser == 'professor') {

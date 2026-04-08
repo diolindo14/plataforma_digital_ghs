@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <title>Recibo GHS - #<?= str_pad($data['pagamento']['id'] ?? 0, 6, '0', STR_PAD_LEFT) ?></title>
+    <title>Recibo Matrícula - <?= $data['ano_letivo'] ?></title>
     <style>
         /* ── Thermal POS Printer Optimizer (80mm) ─────────────────── */
         @page { 
@@ -28,10 +28,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            border-left: 1px dotted #999; /* Guia de corte esquerda */
-            border-right: 1px dotted #999; /* Guia de corte direita */
-            padding: 0 2mm; /* Afasta das bordas laterais */
-            margin-left: 1mm; /* Afasta o bloco inteiro da esquerda */
+            border-left: 1px dotted #999;
+            border-right: 1px dotted #999;
+            padding: 0 2mm;
+            margin-left: 1mm;
         }
 
         .header {
@@ -43,7 +43,6 @@
         .logo-img {
             width: 32mm;
             margin-bottom: 2mm;
-            /* grayscale removed to keep it colorful */
         }
 
         .brand-info h2 {
@@ -90,6 +89,23 @@
         .item-table {
             width: 100%;
             margin: 2mm 0;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5mm;
+        }
+        
+        .item-desc {
+            font-size: 8.5pt;
+            max-width: 45mm;
+            word-wrap: break-word;
+        }
+
+        .item-val {
+            font-size: 9pt;
+            font-weight: bold;
         }
 
         .item-header {
@@ -165,15 +181,23 @@
         <button class="btn" onclick="fecharRecibo()">FECHAR</button>
     </div>
 
+    <?php 
+        $primeiro = $data['pagamentos'][0];
+        $total = 0;
+        $descricoes = [];
+        $ids = [];
+        foreach($data['pagamentos'] as $p) {
+            $total += $p['valor'];
+            $ids[] = $p['id'];
+        }
+        $idsStr = implode("-", $ids);
+    ?>
+
     <div class="thermal-receipt">
         <div class="header">
             <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" class="logo-img">
             <div class="brand-info">
-<<<<<<< HEAD
-                <h2>GHS "O futuro é hoje"</h2>
-=======
-                <h2>GHS "O futuro é hoje!"</h2>
->>>>>>> 8fe8280cea4398b4d49fc29d1867b817f3ad00fa
+                <h2>GHS ÉDUCATION</h2>
                 <p>Ensino Digital & Tecnologia</p>
                 <p>Tel: +245 95529 54 75</p>
             </div>
@@ -182,18 +206,18 @@
         <div class="divider"></div>
 
         <div class="receipt-info">
-            <div class="receipt-title">RECIBO DE PAGAMENTO</div>
+            <div class="receipt-title">RECIBO DE MATRÍCULA</div>
             <div class="info-row">
-                <span class="label">N.º RECIBO:</span>
-                <span class="value">#<?= str_pad($data['pagamento']['id'] ?? 0, 6, '0', STR_PAD_LEFT) ?></span>
+                <span class="label">ANO LECTIVO:</span>
+                <span class="value"><?= htmlspecialchars($data['ano_letivo']) ?></span>
             </div>
             <div class="info-row">
                 <span class="label">DATA:</span>
-                <span class="value"><?= date('d/m/Y H:i', strtotime($data['pagamento']['data_pagamento'] ?? 'now')) ?></span>
+                <span class="value"><?= date('d/m/Y H:i', strtotime($primeiro['data_pagamento'])) ?></span>
             </div>
             <div class="info-row">
                 <span class="label">OPERADOR:</span>
-                <span class="value"><?= htmlspecialchars($data['pagamento']['registado_por_nome'] ?? 'Secretaria') ?></span>
+                <span class="value"><?= htmlspecialchars($primeiro['registado_por_nome'] ?? 'Secretaria Automática') ?></span>
             </div>
         </div>
 
@@ -202,11 +226,11 @@
         <div class="receipt-info">
             <div class="info-row">
                 <span class="label">ALUNO:</span>
-                <span class="value"><?= strtoupper(htmlspecialchars($data['pagamento']['estudante_nome'] ?? '---')) ?></span>
+                <span class="value"><?= strtoupper(htmlspecialchars($primeiro['estudante_nome'] ?? '---')) ?></span>
             </div>
             <div class="info-row">
                 <span class="label">ID ALUNO:</span>
-                <span class="value">#<?= $data['pagamento']['estudante_id'] ?? '---' ?></span>
+                <span class="value">#<?= $primeiro['estudante_id'] ?? '---' ?></span>
             </div>
         </div>
 
@@ -215,35 +239,30 @@
         <div class="item-table">
             <div class="item-header">
                 <span>DESCRIÇÃO</span>
-                <span>TOTAL</span>
+                <span>VALOR</span>
             </div>
-            <div class="info-row" style="margin-top: 1mm;">
-                <span style="font-size: 9pt; width: 45mm; font-weight: bold;"><?= htmlspecialchars($data['pagamento']['descricao'] ?? 'Serviço Académico') ?></span>
-                <span class="value fw-bold"><?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?></span>
+            
+            <?php foreach($data['pagamentos'] as $p): ?>
+            <div class="item-row">
+                <span class="item-desc"><?= htmlspecialchars(str_replace(' - Acto de Matrícula', '', $p['descricao'])) ?></span>
+                <span class="item-val"><?= number_format($p['valor'] ?? 0, 0, ',', '.') ?></span>
             </div>
-            <?php if(!empty($data['pagamento']['mes_referencia'])): ?>
-            <div class="info-row">
-                <span class="label">MÊS:</span>
-                <span class="value"><?= htmlspecialchars($data['pagamento']['mes_referencia']) ?></span>
-            </div>
-            <?php endif; ?>
+            <?php endforeach; ?>
         </div>
 
         <div class="total-section">
             <div style="font-size: 9pt; font-weight: bold;">TOTAL PAGO (XOF)</div>
-            <div class="total-amount"><?= number_format($data['pagamento']['valor'] ?? 0, 0, ',', '.') ?></div>
+            <div class="total-amount"><?= number_format($total, 0, ',', '.') ?></div>
         </div>
 
         <div class="info-row" style="width: 100%;">
             <span class="label">MÉTODO:</span>
-            <span class="value"><?= htmlspecialchars($data['pagamento']['forma_pagamento'] ?? 'Numerário') ?></span>
+            <span class="value"><?= htmlspecialchars($primeiro['forma_pagamento'] ?? 'Numerário') ?></span>
         </div>
 
         <div class="qr-section">
             <?php 
-                $qrData = "RECIBO:#" . str_pad($data['pagamento']['id'] ?? 0, 6, '0', STR_PAD_LEFT) . 
-                         "|VALOR:" . ($data['pagamento']['valor'] ?? 0) . 
-                         "|ALUNO:" . ($data['pagamento']['estudante_id'] ?? 0);
+                $qrData = "RECIBOMATRICULA:{$idsStr}|VALOR:{$total}|ALUNO:{$primeiro['estudante_id']}";
                 $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" . urlencode($qrData);
             ?>
             <img src="<?= $qrUrl ?>" alt="QR Code" class="qr-code" style="width: 25mm; height: 25mm;">
@@ -266,7 +285,6 @@
         function fecharRecibo() {
             if (window.opener || window.history.length > 1) {
                 window.close();
-                // Fallback to history back if close fails
                 setTimeout(() => { history.back(); }, 100);
             } else {
                 window.location.href = '<?= URL_ROOT ?>/estudante';

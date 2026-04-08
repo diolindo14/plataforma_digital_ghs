@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Ionicons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
     <style>
         body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; color: #334155; }
         .step { display: none; }
@@ -19,12 +20,19 @@
         .back-link { position: absolute; top: 25px; right: 15px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; transition: 0.3s; }
         .back-link:hover { color: white; transform: translateX(-3px); }
         
-        /* Stepper Pills */
-        .stepper-container { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; margin-top: 30px; margin-bottom: 30px; }
-        .stepper-pill { background-color: #f1f5f9; color: #94a3b8; padding: 8px 20px; border-radius: 30px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #e2e8f0; transition: 0.3s; }
-        .stepper-pill.active { background-color: #1a5632; color: white; border-color: #1a5632; box-shadow: 0 4px 10px rgba(26, 86, 50, 0.2); }
+        /* Stepper Pills Responsivos */
+        .stepper-container { display: flex; justify-content: center; align-items: center; gap: 0.9375rem; flex-wrap: nowrap; overflow-x: auto; padding: 1rem 0; margin-top: 1.875rem; margin-bottom: 1.875rem; -webkit-overflow-scrolling: touch; }
+        .stepper-pill { flex-shrink: 0; background-color: #f1f5f9; color: #94a3b8; padding: 0.5rem 1.25rem; border-radius: 1.875rem; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid #e2e8f0; transition: 0.3s; white-space: nowrap; }
+        .stepper-pill.active { background-color: #1a5632; color: white; border-color: #1a5632; box-shadow: 0 0.25rem 0.625rem rgba(26, 86, 50, 0.2); }
         .stepper-pill.completed { background-color: #d1fae5; color: #10b981; border-color: #d1fae5; }
-        .stepper-line { height: 2px; width: 40px; background-color: #e2e8f0; }
+        .stepper-line { height: 2px; min-width: 1.5rem; background-color: #e2e8f0; flex-grow: 1; max-width: 2.5rem; }
+        
+        @media (max-width: 600px) {
+            .stepper-pill span { display: none; } /* Esconder texto no mobile pequeno se necessário, mas aqui manteremos o scroll */
+            .top-header { padding: 1.5rem 0; text-align: center; }
+            .back-link { position: static; display: inline-flex; margin-bottom: 1rem; }
+            .top-header .d-flex { flex-direction: column; align-items: center; text-align: center; }
+        }
 
         /* Form Details */
         .form-label { font-weight: 700; color: #0f172a; font-size: 0.85rem; margin-bottom: 8px; }
@@ -356,30 +364,27 @@
                 </div> <!-- End Card -->
                 
                 <!-- Bottom Informational Grids (Documentos e Taxas) -->
-                <div class="row g-4 mt-1">
-                    <div class="col-md-6">
-                        <div class="info-box">
-                            <h6><ion-icon name="document-text" class="text-danger fs-5"></ion-icon> Documentos Necessários</h6>
-                            <ul>
-                                <li>Cópia do B.I.</li>
-                                <li>2 fotografias tipo passe</li>
-                                <li>Certificado de Habilitações</li>
-                                <li>Comprovativo de pagamento</li>
-                            </ul>
-                        </div>
+                <!-- Mobile: 1 col | Tablet: 2 cols | Desktop: 2 cols -->
+                <div class="ghs-grid mt-4">
+                    <div class="info-box">
+                        <h6><ion-icon name="document-text" class="text-danger fs-5"></ion-icon> Documentos Necessários</h6>
+                        <ul>
+                            <li>Cópia do B.I.</li>
+                            <li>2 fotografias tipo passe</li>
+                            <li>Certificado de Habilitações</li>
+                            <li>Comprovativo de pagamento</li>
+                        </ul>
                     </div>
-                    <div class="col-md-6">
-                        <div class="info-box">
-                            <h6><ion-icon name="wallet" class="text-warning fs-5"></ion-icon> Taxas de Inscrição</h6>
-                            <ul>
-                                <li>Novo Ingresso: <strong>15.000 XOF</strong></li>
-                                <li>Estudante Interno: <strong>10.000 XOF</strong></li>
-                                <li>Cartão de Estudante: <strong>2.500 XOF/Ano</strong></li>
-                                <li>Caderneta de Notas: <strong>3.000 XOF/Ano</strong></li>
-                            </ul>
-                            <div class="mt-3 small pt-2 border-top border-light text-muted">
-                                BAO Nº <strong>18044010166</strong>
-                            </div>
+                    <div class="info-box">
+                        <h6><ion-icon name="wallet" class="text-warning fs-5"></ion-icon> Taxas de Inscrição</h6>
+                        <ul>
+                            <li>Novo Ingresso: <strong>15.000 XOF</strong></li>
+                            <li>Estudante Interno: <strong>10.000 XOF</strong></li>
+                            <li>Cartão de Estudante: <strong>2.500 XOF/Ano</strong></li>
+                            <li>Caderneta de Notas: <strong>3.000 XOF/Ano</strong></li>
+                        </ul>
+                        <div class="mt-3 small pt-2 border-top border-light text-muted">
+                            BAO Nº <strong>18044010166</strong>
                         </div>
                     </div>
                 </div>

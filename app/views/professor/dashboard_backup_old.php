@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área Docente - GHS</title>
+    <title>├ürea Docente - GHS</title>
     <!-- CSS Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font -->
@@ -11,80 +11,14 @@
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
     <style>
-        :root {
-            --sidebar-bg: #0F172A;
-            --sidebar-width: 260px;
-            --primary-color: #10B981;
-            --text-dark: #1E293B;
-            --bg-body: #f1f5f9;
-        }
-
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; }
-        
-        /* Layout Mobile First */
-        .sidebar { 
-            background-color: var(--sidebar-bg); 
-            min-height: 100vh; 
-            color: white; 
-            padding-top: 1.5rem; 
-            position: fixed; 
-            width: var(--sidebar-width); 
-            z-index: 1000; 
-            left: calc(-1 * var(--sidebar-width));
-            transition: left 0.3s ease;
-        }
-        .sidebar.show { left: 0; }
-        
-        .sidebar .nav-link { 
-            color: #cbd5e1; 
-            text-decoration: none; 
-            padding: 0.75rem 1.25rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.625rem; 
-            transition: 0.3s; 
-            font-weight: 500; 
-            cursor: pointer; 
-            border-radius: 0; 
-            border-left: 4px solid transparent; 
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #1E293B; color: var(--primary-color); border-left: 4px solid var(--primary-color); }
-        
-        .content { margin-left: 0; padding: 1.25rem; transition: margin-left 0.3s ease; width: 100%; }
-        
-        .mobile-header { display: flex; align-items: center; justify-content: space-between; background: white; padding: 0.75rem 1rem; position: sticky; top: 0; z-index: 900; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .btn-toggle-sidebar { background: none; border: none; color: var(--sidebar-bg); font-size: 1.875rem; display: flex; align-items: center; }
-
+        body { font-family: 'Outfit', sans-serif; background-color: #f1f5f9; }
+        .sidebar { background-color: #0F172A; min-height: 100vh; color: white; padding-top: 1.5rem; position: fixed; width: 260px; z-index: 10; }
+        .sidebar .nav-link { color: #cbd5e1; text-decoration: none; padding: 12px 20px; display: flex; align-items: center; gap: 10px; transition: 0.3s; font-weight: 500; cursor: pointer; border-radius:0; border-left: 4px solid transparent;}
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #1E293B; color: #10B981; border-left: 4px solid #10B981; }
+        .content { margin-left: 260px; padding: 40px; }
         .tab-pane { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Responsive Breakpoints */
-        @media (min-width: 1025px) {
-            .sidebar { left: 0; }
-            .content { margin-left: var(--sidebar-width); padding: 2.5rem; width: calc(100% - var(--sidebar-width)); }
-            .mobile-header { display: none; }
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar-overlay { 
-                display: none; 
-                position: fixed; 
-                top: 0; left: 0; 
-                right: 0; bottom: 0; 
-                background: rgba(0,0,0,0.5); 
-                z-index: 999; 
-            }
-            .sidebar-overlay.show { display: block; }
-            .content-header-pc { display: none !important; }
-        }
-
-        /* Tabela Responsiva */
-        .table-responsive { border-radius: 0.75rem; border: none; }
-        
-        /* Garantir que imagens sejam responsivas */
-        img { max-width: 100%; height: auto; }
     </style>
 </head>
 <body>
@@ -104,8 +38,8 @@
             <div class="modal-body p-4">
                 <div class="row g-3">
                     <div class="col-12">
-                        <label class="form-label small fw-bold">Título da Atividade</label>
-                        <input type="text" name="titulo" class="form-control" placeholder="Ex: Mini-Teste 01 / Aula de Revisão" required>
+                        <label class="form-label small fw-bold">T├¡tulo da Atividade</label>
+                        <input type="text" name="titulo" class="form-control" placeholder="Ex: Mini-Teste 01 / Aula de Revis├úo" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small fw-bold">Data e Hora</label>
@@ -134,14 +68,14 @@
                         <select name="cor" class="form-select">
                             <option value="#ef4444" style="background:#ef4444; color:white;">Vermelho: Exames Semestrais</option>
                             <option value="#60a5fa" style="background:#60a5fa; color:white;">Azul Claro: Prova de Recurso</option>
-                            <option value="#14532d" style="background:#14532d; color:white;">Verde Escuro: Semana Transitória</option>
+                            <option value="#14532d" style="background:#14532d; color:white;">Verde Escuro: Semana Transit├│ria</option>
                             <option value="#4ade80" style="background:#4ade80; color:white;">Verde Claro: Palestras AAESHS</option>
-                            <option value="#78350f" style="background:#78350f; color:white;">Marrom: Futebol / Excursão</option>
+                            <option value="#78350f" style="background:#78350f; color:white;">Marrom: Futebol / Excurs├úo</option>
                             <option value="#f59e0b" style="background:#f59e0b; color:white;">Laranja: Outros Eventos</option>
                         </select>
                     </div>
                     <div class="col-12">
-                        <label class="form-label small fw-bold">Descrição Adicional</label>
+                        <label class="form-label small fw-bold">Descri├º├úo Adicional</label>
                         <textarea name="descricao" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
@@ -154,60 +88,9 @@
     </div>
 </div>
 
-    <!-- Overlay p/ Mobile -->
-    <div class="ghs-sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <?php 
-    // Detetar convocatórias activas para o professor
-    $temConvocatoriaProf = false;
-    $infoConvocatoriaProf = null;
-    if (!empty($data['contestacoes_pendentes'])) {
-        foreach($data['contestacoes_pendentes'] as $cp) {
-            if ($cp['status'] === 'Aguardando_Comparecimento') {
-                $temConvocatoriaProf = true;
-                $infoConvocatoriaProf = $cp;
-                break;
-            }
-        }
-    }
-    ?>
-
-    <?php if ($temConvocatoriaProf): ?>
-    <div class="alert alert-danger border-0 rounded-0 m-0 py-3 shadow-lg position-sticky top-0 w-100 d-flex align-items-center justify-content-center gap-3" style="z-index: 1050; background: linear-gradient(90deg, #dc3545, #b02a37);">
-        <div class="d-flex align-items-center gap-2 text-white">
-            <ion-icon name="calendar-clear" style="font-size: 1.8rem;"></ion-icon>
-            <div class="fw-bold">
-                <span class="d-block text-uppercase small opacity-75">Convocatória de Mediação</span>
-                Reunião com Aluno(a) <?= htmlspecialchars($infoConvocatoriaProf['estudante_nome']) ?>: <?= date('d/m/Y', strtotime($infoConvocatoriaProf['data_reuniao'])) ?> - <?= substr($infoConvocatoriaProf['hora_reuniao'], 0, 5) ?> (<?= htmlspecialchars($infoConvocatoriaProf['local_reuniao']) ?>)
-            </div>
-        </div>
-        <button class="btn btn-sm btn-light fw-bold rounded-pill px-3" onclick="$('#tab-reclamacoes').tab('show'); document.getElementById('tab-reclamacoes').scrollIntoView();">Ver Detalhes</button>
-    </div>
-    <?php endif; ?>
-
-    <div class="d-flex flex-column h-100">
-    <!-- Cabeçalho Mobile -->
-    <header class="ghs-mobile-header shadow-sm">
-        <button class="btn btn-link text-dark p-0 border-0" onclick="toggleSidebar()">
-            <ion-icon name="menu-outline" style="font-size: 2rem;"></ion-icon>
-        </button>
-        <div class="d-flex align-items-center gap-2">
-            <img src="/green/img/logo.jpg" alt="GHS" style="width: 32px; height: 32px; border-radius: 50%;">
-            <span class="fw-bold fs-6">GHS Docente</span>
-        </div>
-        <div class="dropdown">
-            <div class="dropdown-toggle" data-bs-toggle="dropdown">
-                <ion-icon name="person-circle" style="font-size: 1.6rem; color: #10B981;"></ion-icon>
-            </div>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
-                <li><a class="dropdown-item fw-bold" href="/green/auth/logout">Sair</a></li>
-            </ul>
-        </div>
-    </header>
-
-    <div class="d-flex flex-grow-1">
+<div class="d-flex">
     <!-- Sidebar -->
-    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
+    <nav class="sidebar shadow-lg d-flex flex-column justify-content-between">
         <div>
             <div class="text-center mb-4 mt-2">
                 <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
@@ -219,13 +102,13 @@
             
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                 <a class="nav-link active" id="tab-home" data-bs-toggle="pill" href="#pane-home"><ion-icon name="grid-outline"></ion-icon> Dashboard Resumo</a>
-                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" href="#pane-notas"><ion-icon name="create-outline"></ion-icon> Lançamento de Notas</a>
-                <a class="nav-link" id="tab-chamada" data-bs-toggle="pill" href="#pane-chamada"><ion-icon name="people-outline"></ion-icon> Frequência / Chamada</a>
+                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" href="#pane-notas"><ion-icon name="create-outline"></ion-icon> Lan├ºamento de Notas</a>
+                <a class="nav-link" id="tab-chamada" data-bs-toggle="pill" href="#pane-chamada"><ion-icon name="people-outline"></ion-icon> Frequ├¬ncia / Chamada</a>
                 <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" href="#pane-materiais"><ion-icon name="cloud-upload-outline"></ion-icon> Upload de Materiais</a>
-                <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" href="#pane-calendario"><ion-icon name="calendar-outline"></ion-icon> Calendário Acadêmico</a>
+                <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" href="#pane-calendario"><ion-icon name="calendar-outline"></ion-icon> Calend├írio Acad├¬mico</a>
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" href="#pane-comunicados"><ion-icon name="chatbubbles-outline"></ion-icon> Comunicados & Alertas</a>
                 <a class="nav-link text-danger fw-bold position-relative" id="tab-reclamacoes" data-bs-toggle="pill" href="#pane-reclamacoes">
-                    <ion-icon name="warning-outline"></ion-icon> Reclamações de Notas
+                    <ion-icon name="warning-outline"></ion-icon> Reclama├º├Áes de Notas
                     <?php if(count($data['reclamacoes']) > 0): ?>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
                             <?= count($data['reclamacoes']) ?>
@@ -240,29 +123,27 @@
 
         <div class="pb-4 w-100">
             <a class="nav-link text-warning mb-1" href="/green/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
-            <a class="nav-link text-danger fw-bold" href="/green/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
+            <a class="nav-link text-danger fw-bold" href="/green/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sess├úo</a>
         </div>
     </nav>
     
     <!-- Main Content -->
-    <main class="content ghs-content flex-grow-1">
+    <main class="content flex-grow-1">
         
-        <div class="content-header-pc d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
             <div>
                 <h2 class="fw-bold text-dark">Portal do Professor</h2>
-                <p class="text-muted mb-0">Gestão Pedagógica - Ano Letivo 2026/2027</p>
+                <p class="text-muted mb-0">Gest├úo Pedag├│gica - Ano Letivo 2026/2027</p>
             </div>
             <div class="d-flex gap-3 align-items-center">
-                <div class="dropdown">
-                    <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm">
                         <ion-icon name="person-circle" style="font-size: 1.8rem; color: #10B981;"></ion-icon>
                         <span class="fw-bold text-dark"><?= $this->e($_SESSION['user_name']) ?></span>
                     </div>
-                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 12px; margin-top: 10px; min-width: 200px;">
-                        <li><a class="dropdown-item fw-bold text-dark py-2" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><ion-icon name="key-outline" class="me-2 fs-5 align-middle"></ion-icon> Alterar Senha</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item fw-bold text-danger py-2" href="/green/auth/logout"><ion-icon name="log-out-outline" class="me-2 fs-5 align-middle"></ion-icon> Sair</a></li>
-                    </ul>
+                    <a href="/green/auth/logout" class="btn btn-sm btn-outline-danger border-0 d-flex align-items-center gap-1 fw-bold">
+                        <ion-icon name="log-out-outline"></ion-icon> Sair
+                    </a>
                 </div>
             </div>
         </div>
@@ -275,7 +156,7 @@
                     <div class="col-md-4">
                         <div class="card border-0 shadow-sm" style="border-left: 5px solid #10B981 !important;">
                             <div class="card-body">
-                                <p class="text-muted fw-bold mb-1 text-uppercase small">Disciplinas Atribuídas</p>
+                                <p class="text-muted fw-bold mb-1 text-uppercase small">Disciplinas Atribu├¡das</p>
                                 <h3 class="fw-bold mb-0 text-dark"><?= count($data['classes']) ?> <small class="text-muted fs-6">Turmas</small></h3>
                             </div>
                         </div>
@@ -283,7 +164,7 @@
                     <div class="col-md-4">
                         <div class="card border-0 shadow-sm" style="border-left: 5px solid #3B82F6 !important;">
                             <div class="card-body">
-                                <p class="text-muted fw-bold mb-1 text-uppercase small">Alocação de Turmas</p>
+                                <p class="text-muted fw-bold mb-1 text-uppercase small">Aloca├º├úo de Turmas</p>
                                 <div class="d-flex flex-wrap gap-1">
                                     <?php foreach($data['classes'] as $c): ?>
                                         <span class="badge bg-primary bg-opacity-10 text-primary" title="<?= $this->e($c['disciplina_nome']) ?>"><?= $this->e($c['turma_codigo']) ?></span>
@@ -306,13 +187,13 @@
                 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                     <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
                         <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-                            <ion-icon name="today" class="text-primary"></ion-icon> O Seu Horário (Hoje, <?= $data['hoje'] ?>)
+                            <ion-icon name="today" class="text-primary"></ion-icon> O Seu Hor├írio (Hoje, <?= $data['hoje'] ?>)
                         </h5>
                         <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3"><?= count($data['horario_hoje']) ?> Aulas</span>
                     </div>
                     <div class="card-footer bg-white border-0 text-center pb-3">
                         <button class="btn btn-sm btn-outline-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#horarioCompletoModal">
-                            <ion-icon name="calendar" class="me-1"></ion-icon> Ver Grade Horária Completa
+                            <ion-icon name="calendar" class="me-1"></ion-icon> Ver Grade Hor├íria Completa
                         </button>
                     </div>
                     <div class="card-body p-0">
@@ -331,10 +212,10 @@
                                                     <?php 
                                                     $h_inicio = substr($h['hora_inicio'],0,5);
                                                     $tempo_nome = "Aula";
-                                                    if (in_array($h_inicio, ['07:20', '17:45'])) $tempo_nome = "1º Tempo";
-                                                    else if (in_array($h_inicio, ['08:55', '19:20'])) $tempo_nome = "2º Tempo";
-                                                    else if (in_array($h_inicio, ['10:45', '21:00'])) $tempo_nome = "3º Tempo";
-                                                    else if (in_array($h_inicio, ['12:20', '22:35'])) $tempo_nome = "4º Tempo";
+                                                    if (in_array($h_inicio, ['07:20', '17:45'])) $tempo_nome = "1┬║ Tempo";
+                                                    else if (in_array($h_inicio, ['08:55', '19:20'])) $tempo_nome = "2┬║ Tempo";
+                                                    else if (in_array($h_inicio, ['10:45', '21:00'])) $tempo_nome = "3┬║ Tempo";
+                                                    else if (in_array($h_inicio, ['12:20', '22:35'])) $tempo_nome = "4┬║ Tempo";
                                                     ?>
                                                     <ion-icon name="time-outline" class="fs-4 mb-1"></ion-icon>
                                                     <span class="fw-bold small"><?= $tempo_nome ?></span>
@@ -343,7 +224,7 @@
                                                     <h6 class="fw-bold text-dark mb-1"><?= $this->e($h['nome_display']) ?> (<?= $this->e($h['sigla']) ?>)</h6>
                                                     <div class="d-flex flex-wrap gap-2 mt-2">
                                                         <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="time"></ion-icon> <?= substr($h['hora_inicio'],0,5) ?> - <?= substr($h['hora_fim'],0,5) ?></span>
-                                                        <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="sunny"></ion-icon> Período: <?= $h['turno'] ?? 'N/A' ?></span>
+                                                        <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="sunny"></ion-icon> Per├¡odo: <?= $h['turno'] ?? 'N/A' ?></span>
                                                         <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="people"></ion-icon> Turma <?= $this->e($h['turma_codigo']) ?></span>
                                                         <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="location"></ion-icon> Sala <?= $this->e($h['sala']) ?></span>
                                                     </div>
@@ -364,7 +245,7 @@
             <!-- Notas -->
             <div class="tab-pane fade" id="pane-notas">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">Lançamento de Avaliações</h4>
+                    <h4 class="fw-bold mb-0">Lan├ºamento de Avalia├º├Áes</h4>
                     <div class="d-flex gap-2">
                         <select class="form-select form-select-sm" onchange="switchClass(this.value)">
                             <?php foreach($data['classes'] as $c): ?>
@@ -379,23 +260,23 @@
                 
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold text-success mb-2">IA4 - Avaliação Contínua (20 pontos)</h5>
-                        <p class="text-muted small border-bottom pb-3">A Métrica Institucional define: TPC (2) | AP (3) | TPI (5) | CE (10)</p>
+                        <h5 class="fw-bold text-success mb-2">IA4 - Avalia├º├úo Cont├¡nua (20 pontos)</h5>
+                        <p class="text-muted small border-bottom pb-3">A M├®trica Institucional define: TPC (2) | AP (3) | TPI (5) | CE (10)</p>
 
                         <div class="table-responsive mt-3">
                             <table class="table table-hover align-middle datatable-simple">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Matrícula</th>
+                                        <th>Matr├¡cula</th>
                                         <th>Nome do Estudante</th>
-                                        <th class="text-center" style="width: 100px;">TPC<br><small>(Máx 2)</small></th>
-                                        <th class="text-center" style="width: 100px;">AP<br><small>(Máx 3)</small></th>
-                                        <th class="text-center" style="width: 100px;">TPI<br><small>(Máx 5)</small></th>
-                                        <th class="text-center" style="width: 100px;">CE<br><small>(Máx 10)</small></th>
-                                        <th class="text-center text-white bg-success">Média AC<br><small>(20 pts)</small></th>
+                                        <th class="text-center" style="width: 80px;">TPC<br><small>(M├íx 2)</small></th>
+                                        <th class="text-center" style="width: 80px;">AP<br><small>(M├íx 3)</small></th>
+                                        <th class="text-center" style="width: 80px;">TPI<br><small>(M├íx 5)</small></th>
+                                        <th class="text-center" style="width: 80px;">CE<br><small>(M├íx 10)</small></th>
+                                        <th class="text-center text-white bg-success">Total AC<br><small>(20 pts)</small></th>
                                         <th class="text-center border-start border-primary" style="width: 90px;">Exame</th>
-                                        <th class="text-center text-white bg-dark">Média Final</th>
-                                        <th class="text-center">Ação</th>
+                                        <th class="text-center text-white bg-dark">M├®dia Final</th>
+                                        <th class="text-center">A├º├úo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -411,56 +292,22 @@
                                             <tr data-student-id="<?= $s['id'] ?>" data-turma-id="<?= $turma_id ?>" data-disc-id="<?= $disc_id ?>">
                                                 <td><?= $s['id'] ?></td>
                                                 <td class="fw-bold"><?= $this->e($s['nome_completo']) ?></td>
-                                                <td>
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc1" placeholder="1º" value="<?= $sn['notas_slots'][1][1] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc2" placeholder="2º" value="<?= $sn['notas_slots'][1][2] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc3" placeholder="3º" value="<?= $sn['notas_slots'][1][3] ?? '' ?>" onchange="recalcM(this)">
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap1" placeholder="1º" value="<?= $sn['notas_slots'][2][1] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap2" placeholder="2º" value="<?= $sn['notas_slots'][2][2] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap3" placeholder="3º" value="<?= $sn['notas_slots'][2][3] ?? '' ?>" onchange="recalcM(this)">
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi1" placeholder="1º" value="<?= $sn['notas_slots'][3][1] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi2" placeholder="2º" value="<?= $sn['notas_slots'][3][2] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi3" placeholder="3º" value="<?= $sn['notas_slots'][3][3] ?? '' ?>" onchange="recalcM(this)">
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce1" placeholder="1º" value="<?= $sn['notas_slots'][4][1] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce2" placeholder="2º" value="<?= $sn['notas_slots'][4][2] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce3" placeholder="3º" value="<?= $sn['notas_slots'][4][3] ?? '' ?>" onchange="recalcM(this)">
-                                                    </div>
-                                                </td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc" value="<?= $sn[1] ?? '' ?>"></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ap" value="<?= $sn[2] ?? '' ?>"></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi" value="<?= $sn[3] ?? '' ?>"></td>
+                                                <td><input type="number" step="0.1" class="form-control form-control-sm text-center val-ce" value="<?= $sn[4] ?? '' ?>"></td>
                                                 <td class="fw-bold text-success text-center fs-5 text-total-ac">
                                                     <?php 
-                                                        $total = 0;
-                                                        foreach([1,2,3,4] as $tid) {
-                                                            $sum = 0; $count = 0;
-                                                            for($i=1;$i<=3;$i++){
-                                                                if(isset($sn['notas_slots'][$tid][$i]) && $sn['notas_slots'][$tid][$i] !== '') {
-                                                                    $sum += floatval($sn['notas_slots'][$tid][$i]);
-                                                                    $count++;
-                                                                }
-                                                            }
-                                                            if($count > 0) $total += ($sum / $count);
-                                                        }
+                                                        $total = floatval($sn[1]??0) + floatval($sn[2]??0) + floatval($sn[3]??0) + floatval($sn[4]??0);
                                                         echo number_format($total, 1);
                                                     ?>
                                                 </td>
                                                 <td class="border-start border-primary">
-                                                    <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" value="<?= $sn['notas'][5] ?? ($sn[5] ?? '') ?>" onchange="recalcM(this)">
+                                                    <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" value="<?= $sn[5] ?? '' ?>">
                                                 </td>
                                                 <td class="text-center fw-bold fs-5 text-media-final">
                                                     <?php 
-                                                        $exame = $sn['notas'][5] ?? ($sn[5] ?? null);
+                                                        $exame = $sn[5] ?? null;
                                                         if($exame !== null && $exame !== '') {
                                                             echo number_format(($total + floatval($exame)) / 2, 1);
                                                         } else {
@@ -481,19 +328,19 @@
                 </div>
             </div>
 
-            <!-- Frequência / Chamada -->
+            <!-- Frequ├¬ncia / Chamada -->
             <div class="tab-pane fade" id="pane-chamada">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold mb-0">Livro de Ponto / Frequência</h4>
+                            <h4 class="fw-bold mb-0">Livro de Ponto / Frequ├¬ncia</h4>
                             <input type="date" class="form-control w-25" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-4 mb-4">
                             <label class="form-label small fw-bold">Selecionar Turma & Disciplina</label>
                             <select class="form-select border-0 bg-light shadow-sm" style="border-radius: 8px;" onchange="switchClass(this.value)">
                                 <?php if(empty($data['classes'])): ?>
-                                    <option disabled>Nenhuma turma atribuída</option>
+                                    <option disabled>Nenhuma turma atribu├¡da</option>
                                 <?php else: ?>
                                     <?php foreach($data['classes'] as $c): ?>
                                         <option value="<?= $c['turma_id'] ?>|<?= $c['disciplina_id'] ?>" <?= ($data['selected_turma'] == $c['turma_id'] && $data['selected_disciplina'] == $c['disciplina_id']) ? 'selected' : '' ?>>
@@ -506,10 +353,10 @@
                         <div class="col-md-2 mb-4">
                             <label class="form-label small fw-bold">Tempo / Aula</label>
                             <select id="tempoAula" class="form-select border-0 bg-light shadow-sm" style="border-radius: 8px;">
-                                <option value="1º Tempo">1º Tempo</option>
-                                <option value="2º Tempo">2º Tempo</option>
-                                <option value="3º Tempo">3º Tempo</option>
-                                <option value="4º Tempo">4º Tempo</option>
+                                <option value="1┬║ Tempo">1┬║ Tempo</option>
+                                <option value="2┬║ Tempo">2┬║ Tempo</option>
+                                <option value="3┬║ Tempo">3┬║ Tempo</option>
+                                <option value="4┬║ Tempo">4┬║ Tempo</option>
                             </select>
                         </div>
                     </div>
@@ -519,7 +366,7 @@
                                     <tr>
                                         <th class="border-0">Estudante</th>
                                         <th class="border-0 text-center">Status</th>
-                                        <th class="border-0 text-center">Ações</th>
+                                        <th class="border-0 text-center">A├º├Áes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -556,19 +403,19 @@
                             </table>
                         </div>
                         <div class="mt-4">
-                            <label class="form-label fw-bold small">Conteúdo do Sumário (O que foi lecionado hoje?)</label>
-                            <textarea id="sumarioConteudo" class="form-control bg-light" rows="3" placeholder="Ex: Introdução às Redes Neurais e Backpropagation..."></textarea>
+                            <label class="form-label fw-bold small">Conte├║do do Sum├írio (O que foi lecionado hoje?)</label>
+                            <textarea id="sumarioConteudo" class="form-control bg-light" rows="3" placeholder="Ex: Introdu├º├úo ├ás Redes Neurais e Backpropagation..."></textarea>
                         </div>
                         <div class="mt-4 text-end">
                             <button onclick="submeterSumario(this)" class="btn btn-primary px-5 fw-bold py-2 shadow-sm">
-                                <ion-icon name="checkmark-done-outline"></ion-icon> Submeter Sumário e Chamada
+                                <ion-icon name="checkmark-done-outline"></ion-icon> Submeter Sum├írio e Chamada
                             </button>
                         </div>
 
                         <hr class="my-5">
 
                         <h5 class="fw-bold mb-3 mt-4 text-secondary">
-                            <ion-icon name="list-outline" class="me-2"></ion-icon> Histórico de Sumários Enviados
+                            <ion-icon name="list-outline" class="me-2"></ion-icon> Hist├│rico de Sum├írios Enviados
                         </h5>
                         <div class="table-responsive">
                             <table class="table table-sm table-hover border rounded">
@@ -576,12 +423,12 @@
                                     <tr>
                                         <th>Data</th>
                                         <th>Turma</th>
-                                        <th>Conteúdo do Sumário</th>
+                                        <th>Conte├║do do Sum├írio</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if(empty($data['meus_sumarios'])): ?>
-                                        <tr><td colspan="3" class="text-center text-muted py-3">Nenhum sumário enviado ainda.</td></tr>
+                                        <tr><td colspan="3" class="text-center text-muted py-3">Nenhum sum├írio enviado ainda.</td></tr>
                                     <?php else: ?>
                                         <?php foreach($data['meus_sumarios'] as $ms): ?>
                                             <tr>
@@ -603,8 +450,8 @@
                 <div class="card shadow-sm border-0 border-top border-4 border-primary">
                     <div class="card-body p-5 text-center">
                         <ion-icon name="cloud-upload" style="font-size: 5rem; color: #3B82F6;"></ion-icon>
-                        <h4 class="fw-bold mt-3">Partilha de Material Didático</h4>
-                        <p class="text-muted">Partilhe PDFs, Slides e Exercícios com a turma selecionada.</p>
+                        <h4 class="fw-bold mt-3">Partilha de Material Did├ítico</h4>
+                        <p class="text-muted">Partilhe PDFs, Slides e Exerc├¡cios com a turma selecionada.</p>
                         
                         <div class="row text-start mt-4 justify-content-center">
                             <div class="col-md-6">
@@ -614,7 +461,7 @@
                                         <label class="form-label small fw-bold">Selecionar Turma & Disciplina</label>
                                         <select name="turma_id" class="form-select border-0 bg-light shadow-sm" style="border-radius: 8px;">
                                             <?php if(empty($data['classes'])): ?>
-                                                <option disabled>Nenhuma turma atribuída</option>
+                                                <option disabled>Nenhuma turma atribu├¡da</option>
                                             <?php else: ?>
                                                 <?php foreach($data['classes'] as $c): ?>
                                                     <option value="<?= $c['turma_id'] ?>" data-disc="<?= $c['disciplina_id'] ?>">
@@ -632,8 +479,8 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="fw-bold small">Título Visível para os Estudantes</label>
-                                        <input type="text" name="titulo" class="form-control" placeholder="Ex: Ficha de Exercícios 01" required>
+                                        <label class="fw-bold small">T├¡tulo Vis├¡vel para os Estudantes</label>
+                                        <input type="text" name="titulo" class="form-control" placeholder="Ex: Ficha de Exerc├¡cios 01" required>
                                     </div>
 
                                     <button type="button" onclick="publicarMaterial()" class="btn btn-success w-100 fw-bold py-3 shadow-sm">
@@ -649,7 +496,7 @@
                             <h5 class="fw-bold mb-4">Seus Materiais Publicados</h5>
                             <div class="row g-3">
                                 <?php if(empty($data['meus_materiais'])): ?>
-                                    <div class="col-12 text-center py-4 text-muted">Ainda não publicou nenhum material.</div>
+                                    <div class="col-12 text-center py-4 text-muted">Ainda n├úo publicou nenhum material.</div>
                                 <?php else: ?>
                                     <?php foreach($data['meus_materiais'] as $m): ?>
                                         <div class="col-md-6">
@@ -657,7 +504,7 @@
                                                 <div class="card-body d-flex justify-content-between align-items-center">
                                                     <div>
                                                         <h6 class="fw-bold mb-1"><?= htmlspecialchars($m['titulo']) ?></h6>
-                                                        <small class="text-muted"><?= $m['turma_codigo'] ?> • <?= $m['disciplina_nome'] ?> • <?= strtoupper($m['tipo_ficheiro']) ?></small>
+                                                        <small class="text-muted"><?= $m['turma_codigo'] ?> ÔÇó <?= $m['disciplina_nome'] ?> ÔÇó <?= strtoupper($m['tipo_ficheiro']) ?></small>
                                                     </div>
                                                     <a href="/green/<?= $m['caminho_ficheiro'] ?>" target="_blank" class="btn btn-sm btn-light rounded-circle p-2">
                                                         <ion-icon name="download" class="fs-4 text-dark"></ion-icon>
@@ -673,10 +520,10 @@
                 </div>
             </div>
 
-            <!-- Calendário Acadêmico -->
+            <!-- Calend├írio Acad├¬mico -->
             <div class="tab-pane fade" id="pane-calendario">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">Gestão de Eventos & Avaliações</h4>
+                    <h4 class="fw-bold mb-0">Gest├úo de Eventos & Avalia├º├Áes</h4>
                     <button class="btn btn-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#profEventoModal">
                         <ion-icon name="calendar-number-outline"></ion-icon> Agendar Evento
                     </button>
@@ -692,7 +539,7 @@
                                         <th>Evento</th>
                                         <th>Tipo</th>
                                         <th>Turma / Alvo</th>
-                                        <th class="text-end">Ação</th>
+                                        <th class="text-end">A├º├úo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -706,7 +553,7 @@
                                                 <td><span class="badge bg-light text-dark border"><?= $e['tipo'] ?></span></td>
                                                 <td>
                                                     <span class="badge bg-secondary">
-                                                        <?= ($e['destinatario_tipo'] == 'Global') ? 'Público: Todos' : $e['destinatario_tipo'] . ': ' . ($e['destinatario_id'] ?? 'Geral') ?>
+                                                        <?= ($e['destinatario_tipo'] == 'Global') ? 'P├║blico: Todos' : $e['destinatario_tipo'] . ': ' . ($e['destinatario_id'] ?? 'Geral') ?>
                                                     </span>
                                                 </td>
                                                 <td class="text-end">
@@ -734,7 +581,7 @@
                     <div class="row g-3">
                         <div class="col-md-3 d-flex align-items-center gap-2">
                             <div style="width:18px; height:18px; background:#f59e0b; border-radius:4px;"></div>
-                            <span class="small fw-bold text-dark">Ano Letivo / Férias</span>
+                            <span class="small fw-bold text-dark">Ano Letivo / F├®rias</span>
                         </div>
                         <div class="col-md-3 d-flex align-items-center gap-2">
                             <div style="width:18px; height:18px; background:#ef4444; border-radius:4px;"></div>
@@ -750,7 +597,7 @@
                         </div>
                         <div class="col-md-3 d-flex align-items-center gap-2">
                             <div style="width:18px; height:18px; background:#14532d; border-radius:4px;"></div>
-                            <span class="small fw-bold text-dark">Semana Transitória</span>
+                            <span class="small fw-bold text-dark">Semana Transit├│ria</span>
                         </div>
                         <div class="col-md-3 d-flex align-items-center gap-2">
                             <div style="width:18px; height:18px; background:#4ade80; border-radius:4px;"></div>
@@ -758,7 +605,7 @@
                         </div>
                         <div class="col-md-3 d-flex align-items-center gap-2">
                             <div style="width:18px; height:18px; background:#78350f; border-radius:4px;"></div>
-                            <span class="small fw-bold text-dark">Futebol / Excursão</span>
+                            <span class="small fw-bold text-dark">Futebol / Excurs├úo</span>
                         </div>
                     </div>
                 </div>
@@ -775,7 +622,7 @@
                                 <form id="formEnviarComunicado">
                                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                     <div class="mb-3">
-                                        <label class="form-label small fw-bold">Título</label>
+                                        <label class="form-label small fw-bold">T├¡tulo</label>
                                         <input type="text" name="titulo" class="form-control bg-light" placeholder="Assunto do aviso..." required>
                                     </div>
                                     <div class="mb-3">
@@ -783,7 +630,7 @@
                                         <textarea name="conteudo" class="form-control bg-light" rows="4" placeholder="Escreva a mensagem para a turma..." required></textarea>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label small fw-bold">Destinatário</label>
+                                        <label class="form-label small fw-bold">Destinat├írio</label>
                                         <select name="turma_id" class="form-select bg-light">
                                             <?php foreach($data['classes'] as $c): ?>
                                                 <option value="<?= $c['turma_id'] ?>">Turma <?= $c['turma_codigo'] ?> (<?= $c['disciplina_nome'] ?>)</option>
@@ -820,7 +667,7 @@
                                                             </div>
                                                             <div>
                                                                 <h6 class="fw-bold mb-0 text-dark"><?= htmlspecialchars($c['titulo']) ?></h6>
-                                                                <small class="text-muted"><?= date('d/m/Y', strtotime($c['data_publicacao'])) ?> • Por: <?= htmlspecialchars($c['autor_nome']) ?></small>
+                                                                <small class="text-muted"><?= date('d/m/Y', strtotime($c['data_publicacao'])) ?> ÔÇó Por: <?= htmlspecialchars($c['autor_nome']) ?></small>
                                                             </div>
                                                             <?php if(isset($c['criado_por']) && $c['criado_por'] == $_SESSION['user_id']): ?>
                                                                 <div class="ms-auto align-self-start">
@@ -858,13 +705,13 @@
                 </div>
             </div>
 
-            <!-- Reclamações de Notas -->
+            <!-- Reclama├º├Áes de Notas -->
             <div class="tab-pane fade" id="pane-reclamacoes">
                 <div class="card shadow-sm border-0 border-top border-4 border-danger">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold mb-0">Reclamações de Notas Recebidas</h4>
-                            <span class="badge bg-danger rounded-pill"><?= count($data['contestacoes_pendentes']) ?> Pendentes</span>
+                            <h4 class="fw-bold mb-0">Reclama├º├Áes de Notas Recebidas</h4>
+                            <span class="badge bg-danger rounded-pill"><?= count($data['reclamacoes']) ?> Pendentes</span>
                         </div>
                         
                         <div class="table-responsive">
@@ -875,48 +722,29 @@
                                         <th>Estudante</th>
                                         <th>Turma</th>
                                         <th>Disciplina</th>
-                                        <th>Mensagem / Reclamação</th>
-                                        <th class="text-end">Ações</th>
+                                        <th>Mensagem / Reclama├º├úo</th>
+                                        <th class="text-end">A├º├Áes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if(empty($data['contestacoes_pendentes'])): ?>
-                                        <tr><td colspan="6" class="text-center py-4 text-muted">Nenhuma reclamação ativa.</td></tr>
+                                    <?php if(empty($data['reclamacoes'])): ?>
+                                        <tr><td colspan="6" class="text-center py-4 text-muted">Nenhuma reclama├º├úo ativa.</td></tr>
                                     <?php else: ?>
-                                        <?php foreach($data['contestacoes_pendentes'] as $r): ?>
+                                        <?php foreach($data['reclamacoes'] as $r): ?>
                                             <tr>
                                                 <td class="small"><?= date('d/m/Y H:i', strtotime($r['data_resposta'])) ?></td>
                                                 <td><div class="fw-bold"><?= htmlspecialchars($r['estudante_nome']) ?></div></td>
                                                 <td><span class="badge bg-secondary"><?= $r['turma_codigo'] ?></span></td>
                                                 <td><span class="badge bg-info-subtle text-info border border-info border-opacity-25"><?= htmlspecialchars($r['disciplina_nome']) ?></span></td>
                                                 <td style="max-width: 300px;">
-                                                    <?php if($r['status'] === 'Aguardando_Comparecimento'): ?>
-                                                        <div class="alert alert-danger p-2 mb-0 shadow-sm border-start border-4 border-danger">
-                                                            <div class="fw-bold small text-uppercase mb-1"><ion-icon name="calendar"></ion-icon> Reunião de Mediação Agendada</div>
-                                                            <div class="small">
-                                                                <strong>Data:</strong> <?= date('d/m/Y', strtotime($r['data_reuniao'])) ?> - <?= substr($r['hora_reuniao'], 0, 5) ?><br>
-                                                                <strong>Local:</strong> <?= htmlspecialchars($r['local_reuniao']) ?>
-                                                            </div>
-                                                            <div class="extra-small mt-1 text-muted italic">"<?= htmlspecialchars($r['motivo_convocacao'] ?: 'Motivo não especificado.') ?>"</div>
-                                                        </div>
-                                                    <?php else: ?>
-                                                        <div class="p-2 bg-light rounded shadow-sm small italic">
-                                                            "<?= htmlspecialchars($r['comentario']) ?>"
-                                                        </div>
-                                                        <span class="badge text-bg-warning mt-1"><?= $r['status'] ?></span>
-                                                    <?php endif; ?>
+                                                    <div class="p-2 bg-light rounded shadow-sm small italic">
+                                                        "<?= htmlspecialchars($r['comentario']) ?>"
+                                                    </div>
                                                 </td>
                                                 <td class="text-end">
-                                                    <?php if($r['status'] === 'Aguardando_Comparecimento'): ?>
-                                                        <span class="badge bg-danger p-2"><ion-icon name="lock-closed"></ion-icon> Sob Mediação</span>
-                                                    <?php else: ?>
-                                                        <button onclick="abrirModalResposta(<?= $r['estudante_id'] ?>, <?= $r['turma_id'] ?>, <?= $r['disciplina_id'] ?>)" class="btn btn-sm btn-outline-dark fw-bold rounded-pill me-1" title="Responder informando porque não está errado">
-                                                            <ion-icon name="chatbox-ellipses-outline"></ion-icon> Feedback
-                                                        </button>
-                                                        <a href="#pane-notas" onclick="$('#tab-notas').tab('show')" class="btn btn-sm btn-primary fw-bold rounded-pill">
-                                                            <ion-icon name="create-outline"></ion-icon> Corrigir
-                                                        </a>
-                                                    <?php endif; ?>
+                                                    <a href="#pane-notas" onclick="$('#tab-notas').tab('show')" class="btn btn-sm btn-primary fw-bold rounded-pill">
+                                                        <ion-icon name="create-outline"></ion-icon> Corrigir Nota
+                                                    </a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -927,7 +755,7 @@
                         
                         <div class="mt-4 alert alert-warning border-0 shadow-sm rounded-4">
                             <h6 class="fw-bold"><ion-icon name="information-circle"></ion-icon> Nota do Sistema</h6>
-                            <p class="small mb-0">As reclamações desaparecem desta lista assim que o professor atualizar a nota do estudante ou o estudante aceitar os novos valores.</p>
+                            <p class="small mb-0">As reclama├º├Áes desaparecem desta lista assim que o professor atualizar a nota do estudante ou o estudante aceitar os novos valores.</p>
                         </div>
                     </div>
                 </div>
@@ -935,7 +763,7 @@
             <div class="tab-pane fade" id="pane-assiduidade">
                 <div class="card shadow-sm border-0 border-top border-4 border-info">
                     <div class="card-body p-4">
-                        <h4 class="fw-bold mb-4">Meu Histórico de Assiduidade</h4>
+                        <h4 class="fw-bold mb-4">Meu Hist├│rico de Assiduidade</h4>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle datatable-simple">
                                 <thead class="table-light">
@@ -944,7 +772,7 @@
                                         <th>Tempo</th>
                                         <th>Turma / Disciplina</th>
                                         <th>Status</th>
-                                        <th>Justificativa / Observação</th>
+                                        <th>Justificativa / Observa├º├úo</th>
                                         <th>Validado Por</th>
                                     </tr>
                                 </thead>
@@ -958,7 +786,7 @@
                                                 <td><span class="badge bg-light text-dark border"><?= $a['tempo'] ?></span></td>
                                                 <td><div class="small fw-bold text-primary"><?= $a['turma_codigo'] ?></div><div class="extra-small text-muted"><?= $a['disciplina_nome'] ?></div></td>
                                                 <td>
-                                                    <?php if($a['status'] === 'Presença'): ?>
+                                                    <?php if($a['status'] === 'Presen├ºa'): ?>
                                                         <span class="badge bg-success"><ion-icon name="checkmark-circle"></ion-icon> Presente</span>
                                                     <?php else: ?>
                                                         <span class="badge bg-danger"><ion-icon name="close-circle"></ion-icon> Falta</span>
@@ -970,7 +798,7 @@
                                                             "<?= htmlspecialchars($a['justificacao']) ?>"
                                                         </div>
                                                     <?php else: ?>
-                                                        <span class="text-muted italic">Sem observações</span>
+                                                        <span class="text-muted italic">Sem observa├º├Áes</span>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="small text-muted"><?= htmlspecialchars($a['marcado_por_nome'] ?? 'Admin') ?></td>
@@ -988,109 +816,19 @@
     </main>
 </div>
 
-<!-- Modal Alterar Senha Global -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <form action="/green/auth/changePassword" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-            <div class="modal-header border-0 bg-light pb-2">
-                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
-                    <ion-icon name="lock-closed" class="text-primary"></ion-icon> Alterar Credenciais
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4 pt-3">
-                <div class="alert alert-info border-0 bg-opacity-10 text-primary small rounded-3 mb-4 d-flex align-items-start gap-2">
-                    <ion-icon name="information-circle" class="fs-5 mt-1"></ion-icon>
-                    <span>É necessário alterar a sua senha para garantir a segurança da sua conta após o primeiro login ou se pretender atualizar os seus dados.</span>
-                </div>
-                <!-- Nova Senha -->
-                <div class="col-12 mb-3">
-                    <label class="form-label fw-bold text-muted small">Nova Senha <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><ion-icon name="key-outline" class="text-muted"></ion-icon></span>
-                        <input type="password" name="new_password" class="form-control border-start-0 ps-0" placeholder="Mínimo de 6 caracteres" required minlength="6">
-                    </div>
-                </div>
-                <!-- Confirmar Senha -->
-                <div class="col-12 mb-2">
-                    <label class="form-label fw-bold text-muted small">Confirmar Nova Senha <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><ion-icon name="checkmark-done-outline" class="text-muted"></ion-icon></span>
-                        <input type="password" name="confirm_password" class="form-control border-start-0 ps-0" placeholder="Repita a nova senha" required minlength="6">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer border-0 bg-light pb-4">
-                <button type="button" class="btn btn-secondary px-4 fw-bold rounded-pill" data-bs-dismiss="modal">Mais Tarde</button>
-                <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill d-flex align-items-center gap-2">
-                    <ion-icon name="save-outline"></ion-icon> Salvar Alterações
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Responder Contestacao -->
-<div class="modal fade" id="modalResponderContestacao" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <form onsubmit="enviarRespostaContestacao(event, this)" class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-            <input type="hidden" name="estudante_id" id="resp_estudante_id">
-            <input type="hidden" name="turma_id" id="resp_turma_id">
-            <input type="hidden" name="disciplina_id" id="resp_disciplina_id">
-            <input type="hidden" name="alterou_nota" value="0">
-            
-            <div class="modal-header border-0 bg-dark pb-2">
-                <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2">
-                    <ion-icon name="chatbubbles" class="text-warning"></ion-icon> Prestar Esclarecimento ao Aluno
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4 pt-3">
-                <div class="alert alert-secondary small rounded-3 mb-3 border-0">
-                    <ion-icon name="information-circle-outline"></ion-icon> Utilize este painel para enviar uma resposta formal caso os valores atribuídos estejam <strong>corretos</strong> e não exijam alteração.
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-muted">Resposta Docente <span class="text-danger">*</span></label>
-                    <textarea name="resposta" class="form-control bg-light" rows="5" placeholder="Estimado aluno, após rever os critérios, informo que..." required></textarea>
-                </div>
-            </div>
-            <div class="modal-footer border-0 bg-light pb-4">
-                <button type="button" class="btn btn-secondary px-4 fw-bold rounded-pill" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-dark px-4 fw-bold rounded-pill d-flex align-items-center gap-2">
-                    <ion-icon name="send"></ion-icon> Enviar Resposta
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
+<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<?php if(isset($_SESSION['must_change_password']) && $_SESSION['must_change_password'] === true): ?>
-<script>
-    $(document).ready(function() {
-        var pwModal = new bootstrap.Modal(document.getElementById('changePasswordModal'), {
-            keyboard: false,
-            backdrop: 'static'
-        });
-        pwModal.show();
-        $('#changePasswordModal .btn-secondary').hide();
-        $('#changePasswordModal .btn-close').hide();
-    });
-</script>
-<?php endif; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <!-- DataTables -->
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
-<!-- Modal Horário Completo -->
+<!-- Modal Hor├írio Completo -->
 <div class="modal fade" id="horarioCompletoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content border-0 shadow-lg px-2">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark pt-3">Grade Horária Semanal - Docente</h5>
+                <h5 class="modal-title fw-bold text-dark pt-3">Grade Hor├íria Semanal - Docente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -1109,7 +847,7 @@
                             <?php foreach($data['tempos_aula'] as $t_label => $t_horas): ?>
                                 <tr>
                                     <td class="fw-bold bg-light"><?= $t_label ?></td>
-                                    <td class="small fw-semibold text-muted"><?= $t_horas[0] ?> – <?= $t_horas[1] ?></td>
+                                    <td class="small fw-semibold text-muted"><?= $t_horas[0] ?> ÔÇô <?= $t_horas[1] ?></td>
                                     <?php foreach($data['dias_semana'] as $dia): ?>
                                         <td class="p-3" style="min-width: 140px;">
                                             <?php 
@@ -1139,14 +877,14 @@
                     <div class="col-12">
                         <h6 class="fw-bold small text-muted text-uppercase mb-3">Legenda das Disciplinas & Locais</h6>
                         <div class="d-flex flex-wrap gap-2 mb-4 text-start">
-                            <span class="badge border text-dark fw-normal bg-white">EDP: Ética e Deontologia Profissional</span>
-                            <span class="badge border text-dark fw-normal bg-white">MCG: Multimédia e Computação Gráfica</span>
+                            <span class="badge border text-dark fw-normal bg-white">EDP: ├ëtica e Deontologia Profissional</span>
+                            <span class="badge border text-dark fw-normal bg-white">MCG: Multim├®dia e Computa├º├úo Gr├ífica</span>
                             <span class="badge border text-dark fw-normal bg-white">RD2: Redes Digitais</span>
-                            <span class="badge border text-dark fw-normal bg-white">IA: Inteligência Artificial</span>
-                            <span class="badge border text-dark fw-normal bg-white">MC: Metodologia Científica</span>
+                            <span class="badge border text-dark fw-normal bg-white">IA: Intelig├¬ncia Artificial</span>
+                            <span class="badge border text-dark fw-normal bg-white">MC: Metodologia Cient├¡fica</span>
                             <span class="badge border text-dark fw-normal bg-white">ES: Engenharia de Software</span>
                             <span class="badge border text-dark fw-normal bg-white">TSI: Tecnologia para Sistemas Inteligentes</span>
-                            <span class="badge border text-success fw-bold bg-white">LAB1 / LAB2 / LAB3: Laboratórios Técnicos</span>
+                            <span class="badge border text-success fw-bold bg-white">LAB1 / LAB2 / LAB3: Laborat├│rios T├®cnicos</span>
                         </div>
                     </div>
                 </div>
@@ -1186,56 +924,17 @@ $(document).ready(function() {
     $('#backToTop').click(function() { $('html, body').animate({scrollTop: 0}, 400); return false; });
 });
 
-function calcAvg(cl1, cl2, cl3, row) {
-        let v1 = parseFloat(row.find(cl1).val());
-        let v2 = parseFloat(row.find(cl2).val());
-        let v3 = parseFloat(row.find(cl3).val());
-        let sum = 0; let count = 0;
-        if(!isNaN(v1)) { sum+=v1; count++; }
-        if(!isNaN(v2)) { sum+=v2; count++; }
-        if(!isNaN(v3)) { sum+=v3; count++; }
-        return count > 0 ? (sum / count) : 0;
-}
-
-function recalcM(input) {
-    const row = $(input).closest('tr');
-    let tpcAvg = calcAvg('.val-tpc1', '.val-tpc2', '.val-tpc3', row);
-    let apAvg = calcAvg('.val-ap1', '.val-ap2', '.val-ap3', row);
-    let tpiAvg = calcAvg('.val-tpi1', '.val-tpi2', '.val-tpi3', row);
-    let ceAvg = calcAvg('.val-ce1', '.val-ce2', '.val-ce3', row);
-    
-    let totalAC = tpcAvg + apAvg + tpiAvg + ceAvg;
-    row.find('.text-total-ac').text(totalAC.toFixed(1));
-    
-    let exame = parseFloat(row.find('.val-exame').val());
-    if(!isNaN(exame)) {
-        row.find('.text-media-final').text(((totalAC + exame)/2).toFixed(1));
-    } else {
-        row.find('.text-media-final').text('-');
-    }
-}
-
 function saveNota(btn) {
     const row = $(btn).closest('tr');
     const data = {
         estudante_id: row.data('student-id'),
         turma_id: row.data('turma-id'),
         disciplina_id: row.data('disc-id'),
-        notas: {
-            tpc1: row.find('.val-tpc1').val(),
-            tpc2: row.find('.val-tpc2').val(),
-            tpc3: row.find('.val-tpc3').val(),
-            ap1: row.find('.val-ap1').val(),
-            ap2: row.find('.val-ap2').val(),
-            ap3: row.find('.val-ap3').val(),
-            tpi1: row.find('.val-tpi1').val(),
-            tpi2: row.find('.val-tpi2').val(),
-            tpi3: row.find('.val-tpi3').val(),
-            ce1: row.find('.val-ce1').val(),
-            ce2: row.find('.val-ce2').val(),
-            ce3: row.find('.val-ce3').val(),
-            exame: row.find('.val-exame').val()
-        },
+        tpc: row.find('.val-tpc').val(),
+        ap: row.find('.val-ap').val(),
+        tpi: row.find('.val-tpi').val(),
+        ce: row.find('.val-ce').val(),
+        exame: row.find('.val-exame').val(),
         csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     };
 
@@ -1259,7 +958,7 @@ function enviarComunicado() {
     const data = form.serialize();
 
     if(!form.find('textarea').val() || !form.find('input[name="titulo"]').val()) {
-        alert('Por favor, preencha o título e a mensagem.');
+        alert('Por favor, preencha o t├¡tulo e a mensagem.');
         return;
     }
 
@@ -1278,12 +977,12 @@ function enviarComunicado() {
 }
 
 function excluirComunicado(id) {
-    if (confirm('Tem certeza que deseja excluir este aviso? Ele sumirá para todos os alunos e professores desta turma.')) {
+    if (confirm('Tem certeza que deseja excluir este aviso? Ele sumir├í para todos os alunos e professores desta turma.')) {
         $.post('/green/professor/deleteComunicado', { id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
             if (res.success) {
                 location.reload();
             } else {
-                alert('Erro ao excluir o aviso. Você só pode excluir os avisos criados por você mesmo.');
+                alert('Erro ao excluir o aviso. Voc├¬ s├│ pode excluir os avisos criados por voc├¬ mesmo.');
             }
         }, 'json');
     }
@@ -1310,7 +1009,7 @@ function setPresenca(btn, status) {
 function submeterSumario(btn) {
     const conteudo = $('#sumarioConteudo').val();
     if (!conteudo) {
-        alert('Por favor, preencha o conteúdo do sumário.');
+        alert('Por favor, preencha o conte├║do do sum├írio.');
         return;
     }
 
@@ -1335,13 +1034,13 @@ function submeterSumario(btn) {
 
     $.post('/green/professor/saveSummary', data, function(res) {
         if (res.success) {
-            alert('Sumário e Chamada submetidos com sucesso!');
+            alert('Sum├írio e Chamada submetidos com sucesso!');
             location.reload();
         } else {
             alert('Erro ao submeter. Verifique se preencheu todos os campos.');
         }
     }, 'json').always(function() {
-        $(btn).html('<ion-icon name="checkmark-done-outline"></ion-icon> Submeter Sumário e Chamada').prop('disabled', false);
+        $(btn).html('<ion-icon name="checkmark-done-outline"></ion-icon> Submeter Sum├írio e Chamada').prop('disabled', false);
     });
 }
 
@@ -1368,7 +1067,7 @@ function publicarMaterial() {
     const btn = $(form).find('button');
 
     if (!form.titulo.value || !form.ficheiro.value) {
-        alert('Por favor, preencha o título e selecione um ficheiro.');
+        alert('Por favor, preencha o t├¡tulo e selecione um ficheiro.');
         return;
     }
 
@@ -1390,41 +1089,13 @@ function publicarMaterial() {
             }
         },
         error: function() {
-            alert('Erro crítico ao enviar ficheiro. Verifique o tamanho do ficheiro.');
+            alert('Erro cr├¡tico ao enviar ficheiro. Verifique o tamanho do ficheiro.');
         },
         complete: function() {
              btn.html('<ion-icon name="send"></ion-icon> Publicar Material Online').prop('disabled', false);
         }
     });
 }
-
-function abrirModalResposta(estudante_id, turma_id, disciplina_id) {
-    $('#resp_estudante_id').val(estudante_id);
-    $('#resp_turma_id').val(turma_id);
-    $('#resp_disciplina_id').val(disciplina_id);
-    new bootstrap.Modal(document.getElementById('modalResponderContestacao')).show();
-}
-
-function enviarRespostaContestacao(e, form) {
-    e.preventDefault();
-    const btn = $(form).find('button[type="submit"]');
-    const originalContent = btn.html();
-    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> A enviar...');
-    
-    $.post('/green/contestacao/responder', $(form).serialize(), function(res) {
-        if (res.success) {
-            alert('Feedback enviado com sucesso!');
-            location.reload();
-        } else {
-            alert('Erro ao enviar feedback: ' + (res.message || 'Desconhecido.'));
-            btn.prop('disabled', false).html(originalContent);
-        }
-    }, 'json').fail(function() {
-        alert('Falha na ligação com o servidor.');
-        btn.prop('disabled', false).html(originalContent);
-    });
-}
-
     // Switch Class Function
     function switchClass(val) {
         if (!val) return;
@@ -1466,23 +1137,6 @@ function enviarRespostaContestacao(e, form) {
             }
         });
     });
-
-function toggleSidebar() {
-    $('.ghs-sidebar').toggleClass('active');
-    $('.ghs-sidebar-overlay').toggleClass('active');
-    $('body').toggleClass('overflow-hidden');
-}
-
-$(document).ready(function() {
-    // Esconder sidebar ao clicar num link em mobile
-    if ($(window).width() <= 1024) {
-        $('.ghs-sidebar .nav-link').on('click', function(e) {
-             if(!$(this).hasClass('logout-btn')) {
-                toggleSidebar();
-             }
-        });
-    }
-});
 
 function deleteEvento(id) {
     if (confirm('Deseja cancelar este agendamento?')) {

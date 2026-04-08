@@ -473,8 +473,8 @@ class Contestacao {
             JOIN disciplinas d ON cn.disciplina_id = d.id
             JOIN professor_disciplina pd ON pd.disciplina_id = cn.disciplina_id AND pd.turma_id = cn.turma_id
             WHERE pd.professor_id = :pid
-              AND cn.status IN ('Pendente', 'Reclamado', 'Aguardando_Correcao')
-            ORDER BY FIELD(cn.status, 'Aguardando_Correcao', 'Reclamado', 'Pendente'), cn.data_abertura ASC
+              AND cn.status IN ('Pendente', 'Reclamado', 'Aguardando_Correcao', 'Aguardando_Comparecimento')
+            ORDER BY FIELD(cn.status, 'Aguardando_Comparecimento', 'Aguardando_Correcao', 'Reclamado', 'Pendente'), cn.data_abertura ASC
         ");
         $stmt->execute([':pid' => $professor_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -635,8 +635,8 @@ class Contestacao {
 
     private function _enviarMensagem($remetente_id, $destinatario_id, $assunto, $mensagem) {
         $stmt = $this->db->prepare("
-            INSERT INTO mensagens (remetente_id, destinatario_id, assunto, mensagem, lida)
-            VALUES (:rid, :did, :assunto, :msg, 0)
+            INSERT INTO comunicados (titulo, mensagem, tipo, prioridade, destinatario_tipo, destinatario_id, data_publicacao, criado_por, ativo, agendado)
+            VALUES (:assunto, :msg, 'Individual', 'Alta', 'Individual', :did, NOW(), :rid, 1, 0)
         ");
         $stmt->execute([
             ':rid' => $remetente_id, ':did' => $destinatario_id,

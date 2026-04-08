@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>GHS — Manual do Utilizador v1.0</title>
+    <title>GHS — Manual do Utilizador v1.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
         :root { --primary: #111827; --accent: #2563eb; --accent-green: #059669; --light: #f9fafb; --border: #e2e8f0; --text: #374151; --muted: #6b7280; }
@@ -83,8 +83,8 @@
             <p>Guia completo de uso para Estudantes, Professores e Secretaria</p>
         </div>
         <div class="cover-right">
-            <div class="version">v1.0</div><br>
-            <strong>Data:</strong> Março 2026<br>
+            <div class="version">v1.3</div><br>
+            <strong>Data:</strong> Abril 2026<br>
             <strong>Público-Alvo:</strong> Todos os Utilizadores<br>
             <strong>Autor:</strong> Diosives Crobute
         </div>
@@ -101,8 +101,12 @@
         <h3>1.1 Como Fazer Login</h3>
         <ol class="steps">
             <li>
-                <div><strong>Aceda ao Endereço Institucional</strong> Abra o browser e navegue para o endereço fornecido
-                    pela secretaria (ex: <code>http://localhost/green/auth</code>).</div>
+                <div><strong>Aceda ao Endereço Institucional</strong> A plataforma pode ser acedida de duas formas:
+                    <ul style="margin-top: 8px;">
+                        <li>🌐 <strong>Online (Produção):</strong> <a href="https://escola-ghs.wuaze.com" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:600;">https://escola-ghs.wuaze.com</a> — disponível a qualquer hora, de qualquer dispositivo com internet.</li>
+                        <li>🖥️ <strong>Local (Desenvolvimento):</strong> <code>http://localhost/green/auth</code> — para uso interno com XAMPP, somente na rede local do servidor.</li>
+                    </ul>
+                </div>
             </li>
             <div style="text-align: center; margin: 15px 0;">
                 <img src="../public/img/login_screen.png" alt="Interface de Login GHS" style="max-width: 300px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -133,6 +137,9 @@
         <h3>2.1 Dashboard e Notificações</h3>
         <p>Ao entrar, o aluno vê um painel resumo com o estado atual das propinas, os comunicados não lidos e os alertas
             académicos importantes. Comunicados urgentes da direção aparecem destacados no topo do ecrã.</p>
+        <div class="info-box">
+            <strong>📱 Experiência Mobile & Desktop:</strong> O portal é agora totalmente adaptável. No telemóvel, os cartões e menus ajustam-se automaticamente para uso com o polegar. No computador, o layout expande-se para mostrar mais informação de forma organizada (Grid System v2.0).
+        </div>
 
         <h3>2.2 Submissão de Matrícula (Novo Aluno)</h3>
         <ol class="steps">
@@ -247,6 +254,10 @@
             <strong>✅ Importante:</strong> Assim que clicar em <strong>"Confirmar Nota"</strong> (mesmo sem contestação prévia), a nota é considerada definitiva para efeitos de pauta oficial e o processo é dado como encerrado.
         </div>
 
+        <div class="danger-box">
+            <strong>🚨 Alerta de Convocatória (Novo v1.3):</strong> Se a sua reclamação chegar a um impasse, a Administração agendará uma reunião. Um <strong>Alerta Vermelho</strong> aparecerá no topo do seu portal com a data, hora e local. Este alerta é fixo e só desaparecerá após a conclusão da mediação.
+        </div>
+
         <h3>2.4 Horários Dinâmicos e Interativos (Novo)</h3>
         <p>O separador "Horários" apresenta a grade semanal completa da turma do aluno, com informação sobre a
             disciplina, o
@@ -277,8 +288,8 @@
             </li>
             <li>
                 <div><strong>Aceda ao Recibo Térmico (POS)</strong> Após a validação, poderá descarregar um recibo 
-                em formato térmico (80mm), otimizado para impressão rápida, contendo um <strong>QR Code</strong> de 
-                autenticação digital para prova oficial.</div>
+                em formato térmico (80mm) com a imagem oficial institucional "O futuro é hoje!". 
+                <br><strong>Melhoria v1.2:</strong> Ao clicar em imprimir, o recibo abre automaticamente numa <strong>nova aba do navegador</strong>, permitindo que imprima e feche a aba sem perder a sua posição no portal principal.</div>
             </li>
         </ol>
 
@@ -396,7 +407,7 @@
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Escola Superior de Informática. <strong>By Diosives
                 Crobute</strong></span>
-        <span>Manual do Utilizador v1.0</span>
+        <span>Manual do Utilizador v1.1</span>
     </div>
 
 </body>

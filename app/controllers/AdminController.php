@@ -107,11 +107,60 @@ class AdminController extends Controller {
      * POINT 3: Geração de Recibo Digital (Térmico)
      */
     public function imprimirRecibo($id) {
-        $pagamento = $this->model('Pagamento')->getById($id);
-        if (!$pagamento) die('Pagamento não encontrado.');
+        $items = $this->model('Pagamento')->getClusterByPaymentId($id);
+        if (empty($items)) die('Pagamento não encontrado.');
         
-        $data['p'] = $pagamento;
+        $data['p'] = $items[0];
+        $data['itens'] = $items;
         $this->view('shared/recibo_termico', $data);
+    }
+
+    /**
+     * Insere TAE e Selos de Estado em falta para estudantes matriculados antes da atualização.
+     */
+    public function regularizarTaxas() {
+        $this->verifyCsrfToken();
+        $estudante_id = (int)($_POST['estudante_id'] ?? 0);
+        $pagamento_id = (int)($_POST['pagamento_id'] ?? 0);
+        $ano_letivo   = $_POST['ano_letivo'] ?? date('Y');
+        $admin_id     = $_SESSION['user_id'];
+
+        if (!$estudante_id) {
+            $_SESSION['flash_error'] = "Dados inválidos.";
+            header('Location: ' . URL_ROOT . '/admin');
+            exit;
+        }
+
+        $db = Database::getInstance();
+        $taxas = [
+            ['descricao' => 'Taxa de Associação de Estudante (TAE) - Acto de Matrícula', 'valor' => 1000],
+            ['descricao' => 'Selos de Estado (Legalização) - Acto de Matrícula',          'valor' => 2000],
+        ];
+
+        foreach ($taxas as $taxa) {
+            // Evitar duplicidade
+            $check = $db->prepare("SELECT id FROM pagamentos WHERE estudante_id = :eid AND descricao LIKE :desc");
+            $check->execute([':eid' => $estudante_id, ':desc' => '%' . substr($taxa['descricao'], 0, 20) . '%']);
+            if ($check->fetch()) continue;
+
+            $stmt = $db->prepare("INSERT INTO pagamentos 
+                (estudante_id, descricao, mes_referencia, ano_letivo, valor,
+                 data_pagamento, data_vencimento, forma_pagamento, status, processado_por, observacoes)
+                VALUES 
+                (:eid, :desc, 0, :ano, :val,
+                 NOW(), NOW(), 'Numerário', 'Pago', :admin, 'Regularização manual via recibo.')");
+            $stmt->execute([
+                ':eid'   => $estudante_id,
+                ':desc'  => $taxa['descricao'],
+                ':ano'   => $ano_letivo,
+                ':val'   => $taxa['valor'],
+                ':admin' => $admin_id,
+            ]);
+        }
+
+        $this->logActivity('Regularizar TAE + Selos', ['estudante_id' => $estudante_id]);
+        header('Location: ' . URL_ROOT . '/admin/imprimirRecibo/' . $pagamento_id);
+        exit;
     }
 
     /**

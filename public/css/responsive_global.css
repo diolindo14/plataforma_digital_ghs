@@ -1,0 +1,149 @@
+/* 
+   GHS Responsive Global System 
+   Mobile-First Architecture for Portals and Site
+*/
+
+:root {
+    --sidebar-width: 260px;
+    --header-height: 60px;
+    --ghs-primary: #10B981;
+    --ghs-dark: #0F172A;
+    --transition-speed: 0.3s;
+}
+
+/* Reset Responsivo */
+html { font-size: 15px; } /* Reduzido de 16px para compactação */
+@media (max-width: 768px) { html { font-size: 14px; } }
+
+body { 
+    overflow-x: hidden; 
+    width: 100%;
+}
+
+/* --- Layout de Painéis (Admin, Professor, Estudante) --- */
+
+/* Sidebar Mobile-First (Oculta por padrão) */
+.ghs-sidebar {
+    position: fixed;
+    top: 0;
+    left: calc(-1 * var(--sidebar-width));
+    width: var(--sidebar-width);
+    height: 100vh;
+    z-index: 2000;
+    background-color: #0F172A !important; /* Slate 900 - Cor padrão GHS Dark */
+    color: #f8fafc !important;
+    transition: left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ghs-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    transition: 0.3s;
+}
+
+.ghs-sidebar .nav-link:hover, 
+.ghs-sidebar .nav-link.active {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.ghs-sidebar.active {
+    left: 0 !important;
+}
+
+/* Overlay para fechar menu ao clicar fora */
+.ghs-sidebar-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1050;
+    display: none;
+    backdrop-filter: blur(2px);
+}
+
+.ghs-sidebar-overlay.active {
+    display: block;
+}
+
+/* Conteúdo Principal */
+.ghs-content {
+    margin-left: 0;
+    width: 100%;
+    min-height: 100vh;
+    padding: 0.75rem; /* Reduzido de 1rem */
+    padding-top: calc(var(--header-height) + 1rem);
+    transition: margin-left var(--transition-speed) ease;
+}
+
+.ghs-container {
+    max-width: 1400px; /* Impede que o conteúdo fique 'gigante' em monitores 4K */
+    margin: 0 auto;
+}
+
+/* Cabeçalho Mobile */
+.ghs-mobile-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-height);
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    z-index: 1060;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+
+/* Mostrar Sidebar em Desktop */
+@media (min-width: 1025px) {
+    .ghs-sidebar {
+        left: 0 !important;
+    }
+    .ghs-content {
+        margin-left: var(--sidebar-width) !important;
+        padding-top: 1.5rem !important;
+        width: calc(100% - var(--sidebar-width)) !important;
+    }
+    .ghs-mobile-header {
+        display: none !important;
+    }
+}
+
+/* --- Utilidades de Grelha Responsiva (GHS Grid) --- */
+.ghs-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr; /* Base Mobile (1 coluna) */
+}
+
+@media (min-width: 600px) {
+    .ghs-grid-cols-2-tablet { grid-template-columns: repeat(2, 1fr); }
+    .ghs-grid { grid-template-columns: repeat(2, 1fr); } /* Tablet Default (2 colunas) */
+}
+
+@media (min-width: 1024px) {
+    .ghs-grid-cols-3-desktop { grid-template-columns: repeat(3, 1fr); }
+    .ghs-grid-cols-4-desktop { grid-template-columns: repeat(4, 1fr); }
+    .ghs-grid { grid-template-columns: repeat(3, 1fr); } /* Desktop Default (3 colunas) */
+}
+
+/* --- Ajustes Específicos para o Site Público --- */
+@media (max-width: 768px) {
+    .hero h1 { font-size: calc(1.8rem + 2vw) !important; line-height: 1.2; }
+    .hero p { font-size: 1.1rem !important; }
+    .section-title { font-size: 1.8rem !important; }
+    .section-padding { padding: 3.75rem 0 !important; }
+}
+
+/* Melhorias de Tipografia Responsiva */
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.5rem; }
+
+@media (max-width: 600px) {
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.4rem; }
+    h3 { font-size: 1.2rem; }
+}

@@ -20,16 +20,38 @@
         .card-stat { background: white; border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 20px; height: 100%; }
         .icon-box { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
         .tab-pane { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive Mobile Styles (GHS) */
+        @media (max-width: 991.98px) {
+            .sidebar { left: -260px; transition: left 0.3s ease-in-out; z-index: 1050; }
+            .sidebar.active { left: 0; }
+            .main-content { margin-left: 0 !important; width: 100% !important; padding: 1rem !important; padding-top: 80px !important; }
+            .mobile-toggle { display: flex !important; }
+        }
+        .mobile-toggle { position: fixed; top: 15px; left: 15px; z-index: 1051; background: #0f172a; width: 45px; height: 45px; border-radius: 8px; display: none; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.1); color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
+            .mobile-header { position: fixed; top: 0; left: 0; right: 0; height: 65px; background: #0f172a; z-index: 1051; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .mobile-logo { display: flex; align-items: center; gap: 10px; margin-left: 55px; color: white; font-weight: bold; }
+        .mobile-logo img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #10b981; }
+        .mobile-toggle { position: relative; top: 0; left: 0; display: flex; margin-right: 0; }
     </style>
 </head>
 <body>
+        <div class="mobile-header d-lg-none">
+        <button class="mobile-toggle" id="sidebarToggle">
+            <ion-icon name="menu-outline"></ion-icon>
+        </button>
+        <div class="mobile-logo">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo">
+            <span>Secretaria GHS</span>
+        </div>
+    </div>
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="d-flex align-items-center gap-3 mb-5 px-2">
                 <div style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #10b981; background: white; overflow: hidden;">
-                    <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="mb-0 fw-bold">Secretaria</h5>
             </div>
@@ -97,8 +119,16 @@
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-dark">Bem-vindo(a), <?= htmlspecialchars($data['nome'] ?? 'Colaborador') ?></h2>
-                <div>
-                    <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">Portal Secretaria Ativo</span>
+                <div class="dropdown">
+                    <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer;">
+                        <ion-icon name="person-circle" style="font-size: 1.8rem; color: #10B981;"></ion-icon>
+                        <span class="fw-bold text-dark d-none d-sm-inline"><?= htmlspecialchars($data['nome'] ?? 'Colaborador') ?></span>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 12px; margin-top: 10px; min-width: 200px;">
+                        <li><a class="dropdown-item fw-bold text-dark py-2" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><ion-icon name="key-outline" class="me-2 fs-5 align-middle"></ion-icon> Alterar Senha</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item fw-bold text-danger py-2" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline" class="me-2 fs-5 align-middle"></ion-icon> Sair</a></li>
+                    </ul>
                 </div>
             </div>
 
@@ -708,5 +738,74 @@
             </form>
         </div>
     </div>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (window.innerWidth <= 991.98 && !sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+    <!-- Modal Alterar Senha Global -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="<?= URL_ROOT ?>/auth/changePassword" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <div class="modal-header border-0 bg-light pb-2">
+                    <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+                        <ion-icon name="lock-closed" class="text-primary"></ion-icon> Alterar Credenciais
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-3">
+                    <div class="alert alert-info border-0 bg-opacity-10 text-primary small rounded-3 mb-4 d-flex align-items-start gap-2">
+                        <ion-icon name="information-circle" class="fs-5 mt-1"></ion-icon>
+                        <span>É necessário alterar a sua senha para garantir a segurança da sua conta após o primeiro login ou se pretender atualizar os seus dados.</span>
+                    </div>
+                    <!-- Nova Senha -->
+                    <div class="col-12 mb-3">
+                        <label class="form-label fw-bold text-muted small">Nova Senha <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><ion-icon name="key-outline" class="text-muted"></ion-icon></span>
+                            <input type="password" name="new_password" class="form-control border-start-0 ps-0" placeholder="Mínimo de 6 caracteres" required minlength="6">
+                        </div>
+                    </div>
+                    <!-- Confirmar Senha -->
+                    <div class="col-12 mb-2">
+                        <label class="form-label fw-bold text-muted small">Confirmar Nova Senha <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><ion-icon name="checkmark-done-outline" class="text-muted"></ion-icon></span>
+                            <input type="password" name="confirm_password" class="form-control border-start-0 ps-0" placeholder="Repita a nova senha" required minlength="6">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light pb-4">
+                    <button type="button" class="btn btn-secondary px-4 fw-bold rounded-pill" data-bs-dismiss="modal">Mais Tarde</button>
+                    <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill d-flex align-items-center gap-2">
+                        <ion-icon name="save-outline"></ion-icon> Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <?php if(isset($_SESSION['must_change_password']) && $_SESSION['must_change_password'] === true): ?>
+    <script>
+        $(document).ready(function() {
+            var pwModal = new bootstrap.Modal(document.getElementById('changePasswordModal'), {
+                keyboard: false,
+                backdrop: 'static'
+            });
+            pwModal.show();
+            $('#changePasswordModal .btn-secondary').hide();
+            $('#changePasswordModal .btn-close').hide();
+        });
+    </script>
+    <?php endif; ?>
 </body>
 </html>

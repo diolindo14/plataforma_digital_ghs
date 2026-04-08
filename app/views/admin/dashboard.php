@@ -15,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- FullCalendar -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -169,20 +170,41 @@
         .hover-scale:hover {
             transform: scale(1.05);
         }
+
     </style>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 </head>
 
-<body>
+<body class="bg-light">
 
+    <!-- Overlay p/ Mobile -->
+    <div class="ghs-sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <div class="d-flex">
+    <!-- Cabeçalho Mobile -->
+    <header class="ghs-mobile-header shadow-sm">
+        <button class="btn btn-link text-dark p-0 border-0" onclick="toggleSidebar()">
+            <ion-icon name="menu-outline" style="font-size: 2rem;"></ion-icon>
+        </button>
+        <div class="d-flex align-items-center gap-2">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 35px; height: 35px; border-radius: 50%;">
+            <span class="fw-bold fs-6">GHS Admin</span>
+        </div>
+        <div class="dropdown">
+            <ion-icon name="person-circle-outline" class="fs-3 text-danger dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer;"></ion-icon>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
+                <li><a class="dropdown-item fw-bold" href="<?= URL_ROOT ?>/auth/logout">Terminar Sessão</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="d-flex overflow-hidden">
         <!-- Sidebar -->
-        <nav class="sidebar shadow-lg">
+        <nav class="sidebar ghs-sidebar shadow-lg">
 
             <!-- Brand / Logo -->
             <div class="sidebar-brand">
                 <div class="logo-wrap">
-                    <img src="<?= URL_ROOT ?>/public/img/logo.jpg" alt="Logo GHS">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS">
                 </div>
                 <h5 class="text-white mb-1">Portal GHS</h5>
                 <span class="badge mb-1"
@@ -305,7 +327,7 @@
         </nav>
 
         <!-- Main Content -->
-        <main class="content flex-grow-1">
+        <main class="content ghs-content flex-grow-1">
 
             <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
                 <div>
@@ -4752,6 +4774,44 @@ function convocarComMotivo(eid, did) {
             const win = window.open(url, '_blank', 'width=400,height=600');
             win.focus();
         }
+    </script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (window.innerWidth <= 991.98 && 
+                !sidebar.contains(event.target) && 
+                !toggle.contains(event.target) && 
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+    <script>
+        function toggleSidebar() {
+            $('.ghs-sidebar').toggleClass('active');
+            $('.ghs-sidebar-overlay').toggleClass('active');
+            $('body').toggleClass('overflow-hidden');
+        }
+
+        $(document).ready(function () {
+             // Esconder ao clicar em mobile
+             if($(window).width() <= 1024) {
+                 $('.ghs-sidebar .nav-link').on('click', function() {
+                     toggleSidebar();
+                 });
+             }
+             
+             // Toggle legacy fix
+             $('#sidebarToggle').on('click', function() {
+                 toggleSidebar();
+             });
+        });
     </script>
 </body>
 </html>

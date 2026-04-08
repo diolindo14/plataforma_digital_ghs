@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>GHS — Resumo Executivo v1.0</title>
+    <title>GHS — Resumo Executivo v1.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -410,8 +410,8 @@
             <p>Documento de visão estratégica para Direção e Gestão Institucional</p>
         </div>
         <div class="cover-right">
-            <div class="version">v1.0</div><br>
-            <strong>Data:</strong> Março 2026<br>
+            <div class="version">v1.3</div><br>
+            <strong>Data:</strong> Abril 2026<br>
             <strong>Classificação:</strong> Uso Interno<br>
             <strong>Autor:</strong> Diosives Crobute
         </div>
@@ -602,8 +602,16 @@
     <h3>4.7 Transparência Académica: Ciclo de Confirmação de Notas</h3>
     <p>A plataforma introduziu um fluxo de "Acordo de Notas" onde o aluno deve validar ativamente o resultado final. Isto reduz drasticamente os erros de lançamento e as reclamações presenciais, movendo o debate pedagógico para um ambiente digital auditável (Pendente -> Respondido -> Resolvido).</p>
 
+    <h3>4.8 Deploy em Produção e Responsividade Universal</h3>
+    <p>A plataforma está agora configurada via <strong>.htaccess e core/config.php</strong> para suporte nativo em servidores Cloud e cPanel standard. Na versão 1.2, implementámos um sistema de <strong>Responsividade Mobile-First</strong> unificado (<code>responsive_global.css</code>), garantindo que todos os portais — Admin, Professor e Aluno — ofereçam a mesma experiência premium e profissional em smartphones, tablets e desktops de alta resolução (4K).</p>
 
-    <p>A plataforma implementa proteção multicamada, garantindo conformidade com as melhores práticas internacionais
+    <h3>4.9 Sistema de Alertas de Convocatória (Novo v1.3)</h3>
+    <p>Para garantir que reuniões de mediação de notas não sejam perdidas, implementámos um sistema de <strong>Sticky Alerts</strong> (Cabeçalhos Fixos) de alta visibilidade. Tanto o professor quanto o aluno recebem um alerta vermelho no topo do ecrã assim que a coordenação agenda uma data de reunião, forçando o conhecimento imediato da convocatória.</p>
+
+    <h3>4.9 Consistência Visual e Branding</h3>
+    <p>Padronização total da identidade visual nos quatro portais, com um tema escuro unificado para menus laterais e um sistema de grelha compacta para maximizar a visibilidade de dados financeiros e académicos num único ecrã.</p>
+
+    <h2>5. Arquitetura de Segurança</h2>
         de
         segurança de dados:</p>
     <ul>
@@ -632,8 +640,12 @@
                 <td>PHP 8.2 Nativo — Padrão MVC sem frameworks</td>
             </tr>
             <tr>
+                <td><strong>Domínio de Produção</strong></td>
+                <td><a href="https://escola-ghs.wuaze.com" style="color:var(--accent); text-decoration:none;">https://escola-ghs.wuaze.com</a></td>
+            </tr>
+            <tr>
                 <td><strong>Servidor</strong></td>
-                <td>Apache 2.4+ com mod_rewrite (XAMPP compatível)</td>
+                <td>Apache 2.4+ com mod_rewrite (Cloud/InfinityFree e XAMPP)</td>
             </tr>
             <tr>
                 <td><strong>Base de Dados</strong></td>
@@ -653,14 +665,14 @@
             </tr>
             <tr>
                 <td><strong>Versão Atual</strong></td>
-                <td>1.0 — Março 2026</td>
+                <td>1.2 — Abril 2026</td>
             </tr>
         </tbody>
     </table>
 
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Escola Superior de Informática. Documento de Uso Interno.</span>
-        <span>Resumo Executivo v1.0</span>
+        <span>Resumo Executivo v1.2</span>
     </div>
 
 </body>

@@ -16,6 +16,7 @@
     <!-- FullCalendar JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
     <style>
         :root {
             --ghs-primary: #10B981;
@@ -33,85 +34,8 @@
             overflow-x: hidden;
         }
 
-        .sidebar {
-            background-color: var(--ghs-dark);
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            color: white;
-            padding-top: 1.5rem;
-            width: 260px;
-            z-index: 1050;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .sidebar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-
-        .sidebar .nav-link {
-            color: #94a3b8;
-            text-decoration: none;
-            padding: 14px 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: 0.3s;
-            font-weight: 500;
-            border-left: 4px solid transparent;
-            margin-bottom: 4px;
-        }
-
-        .sidebar .nav-link:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .sidebar .nav-link.active {
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), transparent);
-            color: var(--ghs-primary);
-            border-left-color: var(--ghs-primary);
-            font-weight: 600;
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 30px;
-            min-height: 100vh;
-            transition: all 0.4s ease;
-            background: radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.03), transparent 600px);
-            min-width: 0;
-        }
-
-        @media (max-width: 991.98px) {
-            .sidebar {
-                left: -260px;
-            }
-
-            .sidebar.active {
-                left: 0;
-            }
-
-            .content {
-                margin-left: 0;
-                padding: 20px;
-                padding-top: 80px;
-            }
-
-            .mobile-toggle {
-                display: flex !important;
-            }
-        }
+        /* As definições de .sidebar, .content e Media Queries foram movidas para responsive_global.css 
+           para garantir consistência em todo o sistema. */
 
         .mobile-toggle {
             position: fixed;
@@ -246,15 +170,57 @@
             margin-right: 6px;
         }
     </style>
+
 </head>
 
-<body>
-    <button class="mobile-toggle" id="sidebarToggle">
-        <ion-icon name="menu-outline"></ion-icon>
-    </button>
+<body class="bg-light">
 
+    <!-- Overlay p/ Mobile -->
+    <div class="ghs-sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <?php 
+    // Detetar se há convocatórias activas para alerta de topo
+    $temConvocatoria = false;
+    $infoConvocatoria = null;
+    foreach($data['notas'] as $n) {
+        if ($n['feedback_status'] === 'Aguardando_Comparecimento') {
+            $temConvocatoria = true;
+            $infoConvocatoria = $n;
+            break;
+        }
+    }
+    ?>
+
+    <?php if ($temConvocatoria): ?>
+    <div class="alert alert-danger border-0 rounded-0 m-0 py-3 shadow-lg position-sticky top-0 w-100 d-flex align-items-center justify-content-center gap-3" style="z-index: 1050; background: linear-gradient(90deg, #dc3545, #b02a37);">
+        <div class="d-flex align-items-center gap-2 text-white">
+            <ion-icon name="alert-circle" style="font-size: 1.8rem;"></ion-icon>
+            <div class="fw-bold">
+                <span class="d-block text-uppercase small opacity-75">Convocatória Urgente</span>
+                Reunião de Mediação: <?= date('d/m/Y', strtotime($infoConvocatoria['data_reuniao'])) ?> às <?= substr($infoConvocatoria['hora_reuniao'],0,5) ?> (<?= htmlspecialchars($infoConvocatoria['local_reuniao']) ?>)
+            </div>
+        </div>
+        <button class="btn btn-sm btn-light fw-bold rounded-pill px-3" onclick="$('#tab-notas').tab('show'); document.getElementById('tab-notas').scrollIntoView();">Ver Detalhes</button>
+    </div>
+    <?php endif; ?>
+
+    <!-- Cabeçalho Mobile -->
+    <header class="ghs-mobile-header shadow-sm">
+        <button class="btn btn-link text-dark p-0 border-0" onclick="toggleSidebar()">
+            <ion-icon name="menu-outline" style="font-size: 2rem;"></ion-icon>
+        </button>
+        <div class="d-flex align-items-center gap-2">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 35px; height: 35px; border-radius: 50%;">
+            <span class="fw-bold">GHS Estudante</span>
+        </div>
+        <div>
+            <ion-icon name="notifications-outline" class="fs-4 text-muted"></ion-icon>
+        </div>
+    </header>
+
+    <div class="d-flex overflow-hidden">
     <!-- Sidebar -->
-    <nav class="sidebar shadow-lg d-flex flex-column justify-content-between">
+    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
         <div>
             <div class="sidebar-brand text-center mb-4 mt-2 border-bottom border-light border-opacity-10 pb-3">
                 <div
@@ -281,8 +247,7 @@
                     role="tab"><ion-icon name="folder-open-outline"></ion-icon> Materiais Didáticos</a>
                 <a class="nav-link" id="tab-sumarios" data-bs-toggle="pill" data-bs-target="#pane-sumarios"
                     role="tab"><ion-icon name="reader-outline"></ion-icon> Sumários de Aula</a>
-                <a class="nav-link" id="tab-merito" data-bs-toggle="pill" data-bs-target="#pane-merito"
-                    role="tab"><ion-icon name="ribbon-outline" class="text-warning"></ion-icon> Mérito & Diplomas</a>
+
                 <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro"
                     role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados"
@@ -302,7 +267,9 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="content">
+    <main class="content ghs-content flex-grow-1">
+        <div class="ghs-container">
+            <div class="ghs-content-header d-none d-lg-block mb-4">
 
         <?php if (isset($data['alerta_matricula'])): ?>
             <div class="alert alert-warning alert-dismissible fade show shadow-sm border-0 border-start border-4 border-warning rounded-3 mb-4"
@@ -393,16 +360,23 @@
                     <?php endif; ?>
                 </div>
 
-                <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm">
-                    <div
-                        style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--ghs-primary);">
-                        <img src="<?= (is_array($data['estudante']) && !empty($data['estudante']['foto_perfil'])) ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>"
-                            alt="Perfil" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="dropdown">
+                    <div class="d-flex align-items-center gap-2 border px-3 py-2 rounded-pill bg-white shadow-sm dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer;">
+                        <div
+                            style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--ghs-primary);">
+                            <img src="<?= (is_array($data['estudante']) && !empty($data['estudante']['foto_perfil'])) ? URL_ROOT . '/' . $data['estudante']['foto_perfil'] : URL_ROOT . '/img/user-default.png' ?>"
+                                alt="Perfil" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="d-none d-sm-block">
+                            <div class="fw-bold small text-dark lh-1" style="margin-bottom:2px;"><?= $primeiro_nome ?></div>
+                            <div class="text-muted" style="font-size: 10px; line-height: 1;">Estudante Ativo</div>
+                        </div>
                     </div>
-                    <div class="d-none d-sm-block">
-                        <div class="fw-bold small text-dark lh-1" style="margin-bottom:2px;"><?= $primeiro_nome ?></div>
-                        <div class="text-muted" style="font-size: 10px; line-height: 1;">Estudante Ativo</div>
-                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 12px; margin-top: 10px; min-width: 200px;">
+                        <li><a class="dropdown-item fw-bold text-dark py-2" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><ion-icon name="key-outline" class="me-2 fs-5 align-middle"></ion-icon> Alterar Senha</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item fw-bold text-danger py-2" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline" class="me-2 fs-5 align-middle"></ion-icon> Terminar Sessão</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -465,49 +439,7 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
 
-                <!-- 🏆 RANKING ACADÉMICO UNIVERSAL (Pilar 7) -->
-                <?php if (!empty($data['meu_ranking'])): ?>
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-6">
-                            <div class="glass-card card border-0">
-                                <div class="card-body p-4 d-flex align-items-center gap-4">
-                                    <div class="stat-icon bg-success bg-opacity-10 text-success">
-                                        <ion-icon name="ribbon"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <h6 class="text-muted small fw-bold mb-1 opacity-75">Posição no Nível</h6>
-                                        <h3 class="fw-bold mb-0 text-dark">
-                                            <?= is_array($data['meu_ranking']) ? ($data['meu_ranking']['posicao_nivel'] ?? '-') : '-' ?>º
-                                            <span class="badge bg-light text-success ms-2 fw-medium"
-                                                style="font-size:0.75rem;">de
-                                                <?= is_array($data['meu_ranking']) ? ($data['meu_ranking']['total_nivel'] ?? 0) : 0 ?>
-                                                Alunos</span>
-                                        </h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="glass-card card border-0">
-                                <div class="card-body p-4 d-flex align-items-center gap-4">
-                                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                                        <ion-icon name="school"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <h6 class="text-muted small fw-bold mb-1 opacity-75">Posição na Escola</h6>
-                                        <h3 class="fw-bold mb-0 text-dark">
-                                            <?= is_array($data['meu_ranking']) ? ($data['meu_ranking']['posicao_escola'] ?? '-') : '-' ?>º
-                                            <span class="badge bg-light text-primary ms-2 fw-medium"
-                                                style="font-size:0.75rem;">de
-                                                <?= is_array($data['meu_ranking']) ? ($data['meu_ranking']['total_escola'] ?? 0) : 0 ?>
-                                                Alunos</span>
-                                        </h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
+
 
                 <!-- 🏆 CERTIFICADOS DE MÉRITO EMITIDOS OFICIALMENTE -->
                 <?php if (!empty($data['certificados_emitidos'])): ?>
@@ -848,6 +780,7 @@
                                         <th class="text-end">Acção / Feedback</th>
                                     </tr>
                                 </thead>
+                                <tbody>
                                 <?php if (!empty($data['notas'])): ?>
                                     <?php foreach ($data['notas'] as $n): ?>
                                         <tr>
@@ -893,14 +826,13 @@
                                                     <?php endif; ?>
                                                 </div>
                                             </td>
-                                            <td><?= $n['notas'][1] ?: '-' ?></td>
-                                            <td><?= $n['notas'][2] ?: '-' ?></td>
-                                            <td><?= $n['notas'][3] ?: '-' ?></td>
-                                            <td><?= $n['notas'][4] ?: '-' ?></td>
-                                            <td class="fw-bold text-primary fs-5"><?= number_format($n['total_ac'] ?? 0, 1) ?>
-                                            </td>
+                                            <td><?= isset($n['notas'][1]) && $n['notas'][1] !== null && $n['notas'][1] !== '' ? number_format((float)$n['notas'][1], 1) : '-' ?></td>
+                                            <td><?= isset($n['notas'][2]) && $n['notas'][2] !== null && $n['notas'][2] !== '' ? number_format((float)$n['notas'][2], 1) : '-' ?></td>
+                                            <td><?= isset($n['notas'][3]) && $n['notas'][3] !== null && $n['notas'][3] !== '' ? number_format((float)$n['notas'][3], 1) : '-' ?></td>
+                                            <td><?= isset($n['notas'][4]) && $n['notas'][4] !== null && $n['notas'][4] !== '' ? number_format((float)$n['notas'][4], 1) : '-' ?></td>
+                                            <td class="fw-bold text-primary fs-5"><?= number_format((float)($n['total_ac'] ?? 0), 1) ?></td>
                                             <td class="bg-light-subtle">
-                                                <div class="fw-bold"><?= $n['notas'][5] ?: '-' ?></div>
+                                                <div class="fw-bold"><?= $n['notas'][5] !== null ? number_format((float)$n['notas'][5], 1) : '-' ?></div>
                                                 <small class="text-muted d-block" style="font-size: 0.7rem;">Média:
                                                     <?= $n['nota_final'] ? number_format($n['nota_final'], 1) : '-' ?></small>
                                             </td>
@@ -1037,62 +969,7 @@
             </div>
         </div>
 
-        <!-- Tab: Mérito & Diplomas -->
-        <div class="tab-pane fade" id="pane-merito" role="tabpanel">
-            <div class="card shadow-sm border-0 bg-white rounded-4 overflow-hidden">
-                <div class="card-header bg-warning bg-opacity-10 py-3 border-0">
-                    <div class="d-flex align-items-center">
-                        <ion-icon name="ribbon" class="fs-3 text-warning me-2"></ion-icon>
-                        <h5 class="fw-bold mb-0 text-dark">Galeria de Mérito e Reconhecimento</h5>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-                    <?php if (empty($data['certificados_merito'])): ?>
-                        <div class="text-center py-5">
-                            <ion-icon name="sparkles-outline" style="font-size: 4rem;"
-                                class="text-muted opacity-25 mb-3"></ion-icon>
-                            <h5 class="text-muted">Ainda não possui certificados registados.</h5>
-                            <p class="text-muted small">Os certificados de mérito são atribuídos semestralmente aos alunos
-                                com melhor desempenho académico em cada nível.</p>
-                        </div>
-                    <?php else: ?>
-                        <div class="row g-4">
-                            <?php foreach ($data['certificados_merito'] as $cert): ?>
-                                <div class="col-md-6">
-                                    <div class="card border-warning border-opacity-25 h-100 shadow-sm"
-                                        style="background: linear-gradient(135deg, #fff 0%, #fff9f0 100%);">
-                                        <div class="card-body p-4">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <span class="badge bg-warning text-dark mb-2"><?= $cert['semestre'] ?>º
-                                                        Semestre - <?= $cert['ano_letivo'] ?></span>
-                                                    <h5 class="fw-bold mb-1">Certificado de Mérito: <?= $cert['posicao'] ?>º
-                                                        Lugar</h5>
-                                                    <p class="text-muted small mb-3">Média Final: <strong
-                                                            class="text-success"><?= number_format($cert['media'], 2) ?></strong>
-                                                        valores</p>
-                                                </div>
-                                                <ion-icon name="medal" class="fs-1 text-warning"></ion-icon>
-                                            </div>
-                                            <hr class="opacity-10">
-                                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                                <small class="text-muted">Emitido em:
-                                                    <?= date('d/m/Y', strtotime($cert['data_emissao'])) ?></small>
-                                                <a href="<?= URL_ROOT ?>/estudante/certificado?id=<?= $cert['id'] ?>"
-                                                    target="_blank"
-                                                    class="btn btn-warning btn-sm fw-bold px-3 rounded-pill shadow-sm">
-                                                    <ion-icon name="eye"></ion-icon> Visualizar Diploma
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
+        <!-- Tab: Mérito & Diplomas — removido do portal aluno (apenas Admin/Secretaria) -->
 
         <!-- Materiais Didáticos -->
         <div class="tab-pane fade" id="pane-materiais" role="tabpanel">
@@ -1186,9 +1063,14 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between mb-4">
                         <h4 class="fw-bold">Gestão Financeira</h4>
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalPagamento">
-                            <ion-icon name="cash-outline"></ion-icon> Pagar Mensalidade
-                        </button>
+                        <div>
+                            <a href="<?= URL_ROOT ?>/estudante/downloadReciboMatricula" target="_blank" class="btn btn-outline-primary mb-2 mb-md-0 me-md-2 shadow-sm">
+                                <ion-icon name="print-outline"></ion-icon> Imprimir Recibo 10º Mês (e Inscrição)
+                            </a>
+                            <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#modalPagamento">
+                                <ion-icon name="cash-outline"></ion-icon> Pagar Mensalidade
+                            </button>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle datatable-simple">
@@ -1213,8 +1095,7 @@
                                             <td class="fw-bold text-muted">#<?= str_pad($p['id'], 4, '0', STR_PAD_LEFT) ?></td>
                                             <td><?= $this->e($p['descricao']) ?></td>
                                             <td class="fw-bold"><?= number_format($p['valor'], 0, ',', '.') ?></td>
-                                            <td><?= date('d/m/Y', strtotime($p['data_vencimento'] ?? $p['data_criacao'])) ?>
-                                            </td>
+                                            <td><?= date('d/m/Y', strtotime($p['data_vencimento'] ?? $p['data_criacao'])) ?></td>
                                             <td>
                                                 <?php if ($p['status'] === 'Pago'): ?>
                                                     <span class="badge bg-success">Pago</span>
@@ -1226,7 +1107,7 @@
                                             </td>
                                             <td>
                                                 <?php if ($p['status'] === 'Pago'): ?>
-                                                    <a href="<?= URL_ROOT ?>/estudante/downloadRecibo/<?= $p['id'] ?>"
+                                                    <a href="<?= URL_ROOT ?>/estudante/downloadRecibo/<?= $p['id'] ?>" target="_blank"
                                                         class="btn btn-sm btn-outline-secondary"><ion-icon
                                                             name="document-text"></ion-icon> Baixar</a>
                                                 <?php else: ?>
@@ -1309,13 +1190,72 @@
                 </div>
             </div>
         </div>
+        </div>
 
         </div>
-    </main>
+        </div> <!-- End .ghs-container -->
     </div>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Modal Alterar Senha Global -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="<?= URL_ROOT ?>/auth/changePassword" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            <div class="modal-header border-0 bg-light pb-2">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+                    <ion-icon name="lock-closed" class="text-primary"></ion-icon> Alterar Credenciais
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 pt-3">
+                <div class="alert alert-info border-0 bg-opacity-10 text-primary small rounded-3 mb-4 d-flex align-items-start gap-2">
+                    <ion-icon name="information-circle" class="fs-5 mt-1"></ion-icon>
+                    <span>É necessário alterar a sua senha para garantir a segurança da sua conta após o primeiro login ou se pretender atualizar os seus dados.</span>
+                </div>
+                <!-- Nova Senha -->
+                <div class="col-12 mb-3">
+                    <label class="form-label fw-bold text-muted small">Nova Senha <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><ion-icon name="key-outline" class="text-muted"></ion-icon></span>
+                        <input type="password" name="new_password" class="form-control border-start-0 ps-0" placeholder="Mínimo de 6 caracteres" required minlength="6">
+                    </div>
+                </div>
+                <!-- Confirmar Senha -->
+                <div class="col-12 mb-2">
+                    <label class="form-label fw-bold text-muted small">Confirmar Nova Senha <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><ion-icon name="checkmark-done-outline" class="text-muted"></ion-icon></span>
+                        <input type="password" name="confirm_password" class="form-control border-start-0 ps-0" placeholder="Repita a nova senha" required minlength="6">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light pb-4">
+                <button type="button" class="btn btn-secondary px-4 fw-bold rounded-pill" data-bs-dismiss="modal">Mais Tarde</button>
+                <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill d-flex align-items-center gap-2">
+                    <ion-icon name="save-outline"></ion-icon> Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<?php if(isset($_SESSION['must_change_password']) && $_SESSION['must_change_password'] === true): ?>
+<script>
+    $(document).ready(function() {
+        var pwModal = new bootstrap.Modal(document.getElementById('changePasswordModal'), {
+            keyboard: false,
+            backdrop: 'static'
+        });
+        pwModal.show();
+        // Hide the "Mais Tarde" button since it's mandatory
+        $('#changePasswordModal .btn-secondary').hide();
+        $('#changePasswordModal .btn-close').hide();
+    });
+</script>
+<?php endif; ?>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- DataTables & Export Plugins -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
@@ -1770,35 +1710,20 @@
             });
         <?php endif; ?>
 
+        function toggleSidebar() {
+            $('.ghs-sidebar').toggleClass('active');
+            $('.ghs-sidebar-overlay').toggleClass('active');
+            $('body').toggleClass('overflow-hidden');
+        }
+
         $(document).ready(function () {
-            // Sidebar Mobile Toggle
-            var sidebar = $('.sidebar');
-            var toggleBtn = $('#sidebarToggle');
-
-            if (toggleBtn.length) {
-                toggleBtn.on('click', function (e) {
-                    e.stopPropagation();
-                    sidebar.toggleClass('active');
-                });
-            }
-
-            // Close sidebar on click outside
-            $(document).on('click', function (e) {
-                if (window.innerWidth <= 991 && sidebar.hasClass('active')) {
-                    if (!sidebar.is(e.target) && sidebar.has(e.target).length === 0 && !toggleBtn.is(e.target) && toggleBtn.has(e.target).length === 0) {
-                        sidebar.removeClass('active');
-                    }
-                }
-            });
-
-            // Close when clicking a nav-link on mobile
-            $('.sidebar .nav-link').on('click', function () {
-                if (window.innerWidth <= 991) {
-                    sidebar.removeClass('active');
-                }
-            });
+             // Esconder ao clicar em mobile
+             if($(window).width() <= 1024) {
+                 $('.ghs-sidebar .nav-link').on('click', function() {
+                     toggleSidebar();
+                 });
+             }
         });
-
     </script>
 </body>
 

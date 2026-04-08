@@ -147,14 +147,26 @@ class Academico {
                     'hora_reuniao' => $r['hora_reuniao'],
                     'local_reuniao' => $r['local_reuniao'],
                     'motivo_convocacao' => $r['motivo_convocacao'],
-                    'notas' => [1=>0, 2=>0, 3=>0, 4=>0, 5=>null]
+                    'notas' => [1=>null, 2=>null, 3=>null, 4=>null, 5=>null]
                 ];
             }
-            $grouped[$name]['notas'][$r['tipo_id']] = $r['nota'];
+            $grouped[$name]['notas_agg'][$r['tipo_id']][] = $r['nota'];
         }
 
         foreach ($grouped as &$row) {
-            $ac = $row['notas'][1] + $row['notas'][2] + $row['notas'][3] + $row['notas'][4];
+            // Calculate averages for each type
+            $row['notas'] = [1=>null, 2=>null, 3=>null, 4=>null, 5=>null];
+            if (isset($row['notas_agg'])) {
+                foreach ($row['notas_agg'] as $tid => $vals) {
+                    if ($tid == 5) {
+                        $row['notas'][$tid] = $vals[0]; // Exame
+                    } else {
+                        // User rule: (TPC1 + TPC2 + TPC3) / count_of_filled
+                        $row['notas'][$tid] = array_sum($vals) / count($vals);
+                    }
+                }
+            }
+            $ac = ($row['notas'][1] ?? 0) + ($row['notas'][2] ?? 0) + ($row['notas'][3] ?? 0) + ($row['notas'][4] ?? 0);
             $row['total_ac'] = $ac;
             // Cálculo: Média Aritmética entre AC e Exame Final
             $row['nota_final'] = ($row['notas'][5] !== null) ? ($ac + $row['notas'][5]) / 2 : null;
@@ -197,17 +209,27 @@ class Academico {
                     'ano' => $r['ano_letivo'],
                     'semestre' => $r['semestre'],
                     'disciplina' => $r['disciplina_nome'],
-                    'notas' => [1=>0, 2=>0, 3=>0, 4=>0, 5=>null]
+                    'notas' => [1=>null, 2=>null, 3=>null, 4=>null, 5=>null]
                 ];
             }
-            $history[$key]['notas'][$r['tipo_id']] = $r['nota'];
+            $history[$key]['notas_agg'][$r['tipo_id']][] = $r['nota'];
             if (!empty($r['feedback_status'])) {
                 $history[$key]['feedback_status'] = $r['feedback_status'];
             }
         }
 
         foreach ($history as &$row) {
-            $ac = $row['notas'][1] + $row['notas'][2] + $row['notas'][3] + $row['notas'][4];
+            $row['notas'] = [1=>null, 2=>null, 3=>null, 4=>null, 5=>null];
+            if (isset($row['notas_agg'])) {
+                foreach ($row['notas_agg'] as $tid => $vals) {
+                    if ($tid == 5) {
+                        $row['notas'][$tid] = $vals[0]; // Exame
+                    } else {
+                        $row['notas'][$tid] = array_sum($vals) / count($vals);
+                    }
+                }
+            }
+            $ac = ($row['notas'][1] ?? 0) + ($row['notas'][2] ?? 0) + ($row['notas'][3] ?? 0) + ($row['notas'][4] ?? 0);
             $row['total_ac'] = $ac;
             $row['nota_final'] = ($row['notas'][5] !== null) ? ($ac + $row['notas'][5]) / 2 : null;
             
@@ -274,13 +296,17 @@ class Academico {
                     e.foto_perfil,
                     m.turma_id,
                     av.disciplina_id,
-                    (
-                        COALESCE(MAX(CASE WHEN ta.id = 1 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 2 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 3 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 4 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
-                    ) / 2 AS nota_disciplina
+                    (COALESCE((
+                        SELECT SUM(st.media_tipo) FROM (
+                            SELECT n_sub.estudante_id, a_sub.disciplina_id, a_sub.tipo_avaliacao_id, AVG(n_sub.nota) as media_tipo
+                            FROM notas n_sub
+                            JOIN avaliacoes a_sub ON n_sub.avaliacao_id = a_sub.id
+                            WHERE a_sub.tipo_avaliacao_id <= 4
+                            GROUP BY n_sub.estudante_id, a_sub.disciplina_id, a_sub.tipo_avaliacao_id
+                        ) st
+                        WHERE st.estudante_id = e.id AND st.disciplina_id = av.disciplina_id
+                    ), 0) + COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
+                ) / 2 AS nota_disciplina
                 FROM notas n
                 JOIN avaliacoes av ON n.avaliacao_id = av.id
                 JOIN tipos_avaliacao ta ON av.tipo_avaliacao_id = ta.id
@@ -333,13 +359,17 @@ class Academico {
                     a.nome        AS nivel_nome,
                     m.turma_id,
                     av.disciplina_id,
-                    (
-                        COALESCE(MAX(CASE WHEN ta.id = 1 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 2 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 3 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 4 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
-                    ) / 2 AS nota_disciplina
+                    (COALESCE((
+                        SELECT SUM(st.media_tipo) FROM (
+                            SELECT n_sub.estudante_id, a_sub.disciplina_id, a_sub.tipo_avaliacao_id, AVG(n_sub.nota) as media_tipo
+                            FROM notas n_sub
+                            JOIN avaliacoes a_sub ON n_sub.avaliacao_id = a_sub.id
+                            WHERE a_sub.tipo_avaliacao_id <= 4
+                            GROUP BY n_sub.estudante_id, a_sub.disciplina_id, a_sub.tipo_avaliacao_id
+                        ) st
+                        WHERE st.estudante_id = e.id AND st.disciplina_id = av.disciplina_id
+                    ), 0) + COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
+                ) / 2 AS nota_disciplina
                 FROM notas n
                 JOIN avaliacoes av ON n.avaliacao_id = av.id
                 JOIN tipos_avaliacao ta ON av.tipo_avaliacao_id = ta.id
@@ -386,13 +416,17 @@ class Academico {
                     e.id          AS estudante_id,
                     m.ano_curso_id AS ano_id,
                     av.disciplina_id,
-                    (
-                        COALESCE(MAX(CASE WHEN ta.id = 1 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 2 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 3 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 4 THEN n.nota END), 0) +
-                        COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
-                    ) / 2 AS nota_disciplina
+                    (COALESCE((
+                        SELECT SUM(st.media_tipo) FROM (
+                            SELECT n_sub.estudante_id, a_sub.disciplina_id, a_sub.tipo_avaliacao_id, AVG(n_sub.nota) as media_tipo
+                            FROM notas n_sub
+                            JOIN avaliacoes a_sub ON n_sub.avaliacao_id = a_sub.id
+                            WHERE a_sub.tipo_avaliacao_id <= 4
+                            GROUP BY n_sub.estudante_id, a_sub.disciplina_id, a_sub.tipo_avaliacao_id
+                        ) st
+                        WHERE st.estudante_id = e.id AND st.disciplina_id = av.disciplina_id
+                    ), 0) + COALESCE(MAX(CASE WHEN ta.id = 5 THEN n.nota END), 0)
+                ) / 2 AS nota_disciplina
                 FROM notas n
                 JOIN avaliacoes av ON n.avaliacao_id = av.id
                 JOIN tipos_avaliacao ta ON av.tipo_avaliacao_id = ta.id
@@ -495,7 +529,10 @@ class Academico {
                     av.disciplina_id,
                     m.turma_id,
                     (
-                        SUM(CASE WHEN av.tipo_avaliacao_id IN (1,2,3,4) THEN n.nota ELSE 0 END) + 
+                        COALESCE((SELECT AVG(n_s.nota) FROM notas n_s JOIN avaliacoes a_s ON n_s.avaliacao_id = a_s.id WHERE n_s.estudante_id = n.estudante_id AND a_s.disciplina_id = av.disciplina_id AND a_s.tipo_avaliacao_id = 1), 0) +
+                        COALESCE((SELECT AVG(n_s.nota) FROM notas n_s JOIN avaliacoes a_s ON n_s.avaliacao_id = a_s.id WHERE n_s.estudante_id = n.estudante_id AND a_s.disciplina_id = av.disciplina_id AND a_s.tipo_avaliacao_id = 2), 0) +
+                        COALESCE((SELECT AVG(n_s.nota) FROM notas n_s JOIN avaliacoes a_s ON n_s.avaliacao_id = a_s.id WHERE n_s.estudante_id = n.estudante_id AND a_s.disciplina_id = av.disciplina_id AND a_s.tipo_avaliacao_id = 3), 0) +
+                        COALESCE((SELECT AVG(n_s.nota) FROM notas n_s JOIN avaliacoes a_s ON n_s.avaliacao_id = a_s.id WHERE n_s.estudante_id = n.estudante_id AND a_s.disciplina_id = av.disciplina_id AND a_s.tipo_avaliacao_id = 4), 0) +
                         MAX(CASE WHEN av.tipo_avaliacao_id = 5 THEN n.nota ELSE 0 END)
                     ) / 2.0 AS media_disciplina
                 FROM notas n

@@ -204,9 +204,52 @@ class AuthController extends Controller {
     /**
      * Encerramento de Sessão.
      */
+    /**
+     * Encerramento de Sessão.
+     */
     public function logout() {
         session_destroy();
         header('Location: ' . URL_ROOT . '/auth');
+    }
+
+    /**
+     * Alterar Senha (Para Professores, Estudantes e Secretaria)
+     */
+    public function changePassword() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
+            $this->verifyCsrfToken();
+            
+            // Administradores não usam esta via
+            if ($_SESSION['user_role'] === 'admin') {
+                header('Location: ' . URL_ROOT . '/admin');
+                exit;
+            }
+
+            $newPw = $_POST['new_password'] ?? '';
+            $confirmPw = $_POST['confirm_password'] ?? '';
+
+            if (strlen($newPw) < 6) {
+                $_SESSION['flash_error'] = "A nova password deve ter pelo menos 6 caracteres.";
+                $this->redirectBasedOnRole($_SESSION['user_role']);
+                exit;
+            }
+
+            if ($newPw !== $confirmPw) {
+                $_SESSION['flash_error'] = "As passwords não coincidem.";
+                $this->redirectBasedOnRole($_SESSION['user_role']);
+                exit;
+            }
+
+            $userModel = $this->model('User');
+            if ($userModel->updateUser($_SESSION['user_id'], ['senha' => $newPw])) {
+                $_SESSION['must_change_password'] = false;
+                $_SESSION['flash_success'] = "Credenciais alteradas com sucesso!";
+            } else {
+                $_SESSION['flash_error'] = "Erro ao alterar as credenciais.";
+            }
+            $this->redirectBasedOnRole($_SESSION['user_role']);
+            exit;
+        }
     }
 
     /**

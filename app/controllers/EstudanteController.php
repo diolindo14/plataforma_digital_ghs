@@ -309,36 +309,7 @@ class EstudanteController extends Controller {
         exit;
     }
 
-    public function changePassword() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->verifyCsrfToken();
-            $newPw = $_POST['new_password'] ?? '';
-            $confirmPw = $_POST['confirm_password'] ?? '';
 
-            if (strlen($newPw) < 6) {
-                $_SESSION['flash_error'] = "A nova password deve ter pelo menos 6 caracteres.";
-                header('Location: ' . URL_ROOT . '/estudante');
-                exit;
-            }
-
-            if ($newPw !== $confirmPw) {
-                $_SESSION['flash_error'] = "As passwords não coincidem.";
-                header('Location: ' . URL_ROOT . '/estudante');
-                exit;
-            }
-
-            $userModel = $this->model('User');
-            if ($userModel->updatePassword($_SESSION['user_id'], $newPw)) {
-                $_SESSION['must_change_password'] = false;
-                $this->logActivity('Estudante Alterar Password');
-                $_SESSION['flash_success'] = "Password alterada com sucesso!";
-            } else {
-                $_SESSION['flash_error'] = "Erro ao alterar a password.";
-            }
-            header('Location: ' . URL_ROOT . '/estudante');
-            exit;
-        }
-    }
 
     public function registarFeedbackNota() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -505,6 +476,77 @@ class EstudanteController extends Controller {
 
         $data = ['pagamento' => $p];
         $this->view('estudante/recibo_print', $data);
+        exit;
+    }
+
+    public function downloadReciboMatricula() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . URL_ROOT . '/auth');
+            exit;
+        }
+
+        $db = Database::getInstance();
+        $estudanteModel = $this->model('Estudante');
+        $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
+        
+        if (!$estudanteData) {
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        // Buscar o ano letivo mais recente associado a uma matrícula ou mensalidade inicial
+        $stmtAno = $db->prepare("SELECT MAX(ano_letivo) FROM pagamentos WHERE estudante_id = :eid AND (descricao LIKE '%Matrícula%' OR descricao LIKE '%10º%')");
+        $stmtAno->execute([':eid' => $estudanteData['id']]);
+        $maxAno = $stmtAno->fetchColumn();
+
+        if (!$maxAno) {
+            $_SESSION['flash_error'] = "Ainda não existem taxas de matrícula registadas para o seu perfil.";
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        $stmt = $db->prepare("
+            SELECT p.*, ue.nome_completo as estudante_nome, e.bi, ue.id as utilizador_id, ua.nome_completo as registado_por_nome
+            FROM pagamentos p
+            JOIN estudantes e ON p.estudante_id = e.id
+            JOIN utilizadores ue ON e.utilizador_id = ue.id
+            LEFT JOIN utilizadores ua ON p.processado_por = ua.id
+            WHERE p.estudante_id = :eid 
+            AND p.ano_letivo = :ano 
+            AND (p.descricao LIKE '%Acto de Matrícula%' 
+                 OR p.descricao LIKE '%Matrícula%' 
+                 OR p.descricao LIKE '%10º%' 
+                 OR p.descricao LIKE '%Inscrição%')
+            AND p.status = 'Pago'
+        ");
+        $stmt->execute([':eid' => $estudanteData['id'], ':ano' => $maxAno]);
+        $pagamentos = $stmt->fetchAll();
+
+        // Fallback: Se não encontrou nada com os filtros específicos, pega o pagamento mais recente deste ano
+        if (empty($pagamentos)) {
+            $stmtFallback = $db->prepare("
+                SELECT p.*, ue.nome_completo as estudante_nome, e.bi, ue.id as utilizador_id, ua.nome_completo as registado_por_nome
+                FROM pagamentos p
+                JOIN estudantes e ON p.estudante_id = e.id
+                JOIN utilizadores ue ON e.utilizador_id = ue.id
+                LEFT JOIN utilizadores ua ON p.processado_por = ua.id
+                WHERE p.estudante_id = :eid AND p.ano_letivo = :ano AND p.status = 'Pago'
+                ORDER BY p.id DESC LIMIT 1
+            ");
+            $stmtFallback->execute([':eid' => $estudanteData['id'], ':ano' => $maxAno]);
+            $pagamentos = $stmtFallback->fetchAll();
+        }
+
+        if (empty($pagamentos)) {
+            $_SESSION['flash_error'] = "Não foi possível encontrar nenhum recibo de pagamento para o ano letivo " . $maxAno;
+            header('Location: ' . URL_ROOT . '/estudante');
+            exit;
+        }
+
+        // Mitigação de IDOR implícita, já que consultamos pelo `estudante_id` pertencente à sessão
+
+        $data = ['pagamentos' => $pagamentos, 'ano_letivo' => $maxAno];
+        $this->view('estudante/recibo_matricula_print', $data);
         exit;
     }
 

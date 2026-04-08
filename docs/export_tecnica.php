@@ -85,8 +85,8 @@
             <p>Arquitetura, Instalação, Segurança e Motores de Lógica de Negócio</p>
         </div>
         <div class="cover-right">
-            <div class="version">v1.0</div><br>
-            <strong>Data:</strong> Março 2026<br>
+            <div class="version">v1.3</div><br>
+            <strong>Data:</strong> Abril 2026<br>
             <strong>Público-Alvo:</strong> Desenvolvedores / DevOps<br>
             <strong>Autor:</strong> Diosives Crobute
         </div>
@@ -139,8 +139,13 @@
                 </tr>
                 <tr>
                     <td><strong>UI Framework</strong></td>
-                    <td>Bootstrap 5 + FontAwesome 6</td>
-                    <td>5.x</td>
+                    <td>Bootstrap 5 + Ionicons + FontAwesome</td>
+                    <td>5.3 / 7.x</td>
+                </tr>
+                <tr>
+                    <td><strong>Sistema de Estilos</strong></td>
+                    <td>CSS Nativo (Mobile-First) + Global Responsive CSS</td>
+                    <td>v1.0 (Custom)</td>
                 </tr>
             </tbody>
         </table>
@@ -176,7 +181,9 @@ green/
 │       └── secretaria/
 ├── public/
 │   ├── uploads/        <span class="comment"># Documentos enviados pelos alunos</span>
-│   └── assets/         <span class="comment"># CSS, JS, imagens estáticas</span>
+│   ├── css/            <span class="comment"># Estilos globais e responsivos</span>
+│   │   └── <span class="key">responsive_global.css</span> <span class="comment"># Núcleo da Responsividade Mobile-First</span>
+│   └── assets/         <span class="comment"># Imagens estáticas e bibliotecas</span>
 └── docs/               <span class="comment"># Documentação e manuais exportáveis</span>
 </pre>
 
@@ -195,9 +202,16 @@ green/
 </pre>
         <ol start="4">
             <li>Certifique-se que o <code>mod_rewrite</code> está ativo no Apache e que o <code>.htaccess</code> está a
-                ser
-                lido (<code>AllowOverride All</code>).</li>
-            <li>Aceda no browser: <code>http://localhost/green/auth</code></li>
+                ser lido (<code>AllowOverride All</code>).</li>
+            <li>Aceda no browser (Teste Local): <code>http://localhost/green/auth</code></li>
+        </ol>
+
+        <h3>3.1 Adaptação para Produção (Cloud / InfinityFree)</h3>
+        <p>Acesso Global à Plataforma: <strong><a href="https://escola-ghs.wuaze.com" target="_blank" style="color:var(--accent); text-decoration:none;">https://escola-ghs.wuaze.com</a></strong></p>
+        <p>Para hospedar a plataforma num servidor em produção raiz ou cPanel alojamento Web compartilhado:</p>
+        <ol>
+            <li>No ficheiro <code>core/config.php</code>, altere <code>define('URL_ROOT', '/green');</code> para <code>define('URL_ROOT', '');</code> para garantir que as folhas de estilos e AJAX requests funcionam na raiz do domínio.</li>
+            <li>No ficheiro <code>.htaccess</code> raiz, adicione <code>RewriteBase /</code> imediatamente abaixo de <code>RewriteEngine On</code> para evitar erros de loop HTTP 500 do Apache.</li>
         </ol>
 
         <h2>4. Roteamento e Front Controller</h2>
@@ -403,7 +417,11 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
             <tr><td><b>Pendente</b></td><td>Professor Responde</td><td><code>Respondido</code></td></tr>
             <tr><td><b>Respondido</b></td><td>Aceitar</td><td><code>Resolvido</code> (Encerrado)</td></tr>
             <tr><td><b>Respondido</b></td><td>Escalar (Discordar)</td><td><code>Impasse</code> (Aguarda Admin)</td></tr>
+            <tr><td><b>Impasse</b></td><td>Admin Convoca</td><td><code>Aguardando_Comparecimento</code> (Alertas Ativos)</td></tr>
         </table>
+
+        <h3>7.3 Sistema de Convocatórias de Alta Prioridade (v1.3)</h3>
+        <p>Implementação de um mecanismo de injeção de alertas no topo do viewport (Sticky Header) para ambos os portais (Aluno e Professor). Quando o Admin define uma data de reunião, o sistema detecta o estado <code>Aguardando_Comparecimento</code> e força a exibição dos detalhes da reunião em gradiente de perigo (Danger Gradient), garantindo que nenhuma convocatória passe despercebida.</p>
 
         <h3>7.2 Motor de Ranking e Mérito (Academico.php)</h3>
         <p>Os métodos <code>getRankingByNivel()</code> e <code>getRankingEscola()</code> calculam dinamicamente as
@@ -445,13 +463,46 @@ $existing = $estudanteModel->findByUserId($user_id);
         </pre>
         <p>No frontend, a função <code>toggleInternalFields()</code> oculta/mostra elementos e remove/adiciona o atributo <code>required</code> conforme o tipo de candidato selecionado (ou detetado via sessão).</p>
 
-        <h3>7.5 Motor de Recibos Térmicos POS (recibo_print.php)</h3>
-        <p>Sistema de geração de documentos em formato 80mm para impressoras POS térmicas, injetando metadados de autenticação visual:</p>
+        <p>Sistema de geração de documentos em formato 80mm para impressoras POS térmicas, agora unificado entre a Secretaria e Alunos, com as seguintes correções estabilizadas na v1.2:</p>
         <ul>
+            <li><strong>Resolvido Array Error:</strong> O controlador foi atualizado para referenciar corretamente <code>getPagamentoById()</code> em vez de um método base indefinido, resolvendo os Null Pointers na geração via Admin.</li>
             <li><strong>QR Code Encoder:</strong> Gera um hash contendo <code>ID_PAGAMENTO | VALOR | ID_ESTUDANTE</code> via API externa para validação rápida por scanner.</li>
-            <li><strong>CSS Thermal Optimization:</strong> Uso de <code>print-color-adjust: exact</code> e remoção de escalas de cinza para máxima legibilidade em cabeças térmicas.</li>
-            <li><strong>Guia de Corte:</strong> Delimitação visual por bordas pontilhadas simétricas (esquerda/direita) para ajuste manual de papel.</li>
+            <li><strong>Fallback Inteligente:</strong> Se o recibo específico de matrícula não for encontrado pelo termo exato, o controlador agora busca o pagamento mais recente do mesmo ano letivo para garantir que o utilizador nunca receba um erro ou redirecionamento nulo.</li>
+            <li><strong>Abertura em Nova Aba:</strong> Implementação sistemática de <code>target="_blank"</code> em todas as referências de recibos para facilitar a impressão sem perda de contexto da sessão.</li>
         </ul>
+
+        <h2>9. UI Architecture — Responsividade Global</h2>
+        <h3>9.1 Estratégia Mobile-First</h3>
+        <p>A plataforma adota uma abordagem <strong>Mobile-First</strong> centralizada no ficheiro <code>public/css/responsive_global.css</code>. Esta arquitetura remove a necessidade de estilos inline ou ficheiros CSS duplicados por portal.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Breakpoints</th>
+                    <th>Design Goal</th>
+                    <th>Container Max-Width</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>< 600px</td>
+                    <td>Smartphones (Stacked columns)</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>600px - 1024px</td>
+                    <td>Tablets (Compact grid)</td>
+                    <td>95%</td>
+                </tr>
+                <tr>
+                    <td>> 1024px</td>
+                    <td>Desktop (Dashboard standard)</td>
+                    <td>1400px (<code>.ghs-container</code>)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>9.2 O Contentor <code>.ghs-container</code></h3>
+        <p>Para evitar distorção visual em ecrãs UltraWide (2K/4K), o conteúdo principal é envolvido na classe <code>.ghs-container</code>, que limita a largura máxima a 1400px e centraliza o dashboard, mantendo a densidade de informação ideal para profissionais.</p>
 
         <h2>8. Sistema de Auditoria</h2>
         <p>Todas as ações críticas do sistema são registadas na tabela <code>logs_auditoria</code> com os seguintes
@@ -503,7 +554,7 @@ $existing = $estudanteModel->findByUserId($user_id);
     <div class="footer">
         <span>&copy; 2026 Green Hard &amp; Softh — Segurança de Nível Profissional. <strong>By Diosives
                 Crobute</strong></span>
-        <span>README Técnico v1.0</span>
+        <span>README Técnico v1.1</span>
     </div>
 
 </body>
