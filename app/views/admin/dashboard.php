@@ -16,6 +16,7 @@
     <!-- FullCalendar -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
+    <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/mobile_premium.css">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -180,22 +181,53 @@
     <!-- Overlay p/ Mobile -->
     <div class="ghs-sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Cabeçalho Mobile -->
-    <header class="ghs-mobile-header shadow-sm">
+    <!-- Cabeçalho Mobile Premium -->
+    <header class="ghs-mobile-header shadow-sm border-bottom py-3">
         <button class="btn btn-link text-dark p-0 border-0" onclick="toggleSidebar()">
-            <ion-icon name="menu-outline" style="font-size: 2rem;"></ion-icon>
+            <ion-icon name="apps-outline" style="font-size: 1.8rem;"></ion-icon>
         </button>
         <div class="d-flex align-items-center gap-2">
-            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 35px; height: 35px; border-radius: 50%;">
-            <span class="fw-bold fs-6">GHS Admin</span>
+            <h1 class="fs-5 fw-bold mb-0 text-primary">GHS Portal</h1>
         </div>
         <div class="dropdown">
-            <ion-icon name="person-circle-outline" class="fs-3 text-danger dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer;"></ion-icon>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
-                <li><a class="dropdown-item fw-bold" href="<?= URL_ROOT ?>/auth/logout">Terminar Sessão</a></li>
+            <div class="dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown" style="cursor: pointer;">
+                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2 mt-2">
+                <li class="p-3 border-bottom mb-2">
+                    <span class="d-block fw-bold small"><?= $_SESSION['user_name'] ?></span>
+                    <span class="d-block text-muted" style="font-size: 0.7rem;">Administrador</span>
+                </li>
+                <li><a class="dropdown-item rounded-3 py-2 fw-bold text-danger d-flex align-items-center gap-2" href="<?= URL_ROOT ?>/auth/logout">
+                    <ion-icon name="log-out-outline"></ion-icon> Terminar Sessão
+                </a></li>
             </ul>
         </div>
     </header>
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <nav class="ghs-bottom-nav px-2">
+        <a href="javascript:void(0)" onclick="document.getElementById('tab-home').click()" class="ghs-nav-item active" id="nav-item-home">
+            <ion-icon name="grid-outline"></ion-icon>
+            <span>Início</span>
+        </a>
+        <a href="javascript:void(0)" onclick="document.getElementById('tab-alunos').click()" class="ghs-nav-item" id="nav-item-alunos">
+            <ion-icon name="people-outline"></ion-icon>
+            <span>Alunos</span>
+        </a>
+        <a href="javascript:void(0)" onclick="document.getElementById('tab-turmas').click()" class="ghs-nav-item" id="nav-item-turmas">
+            <ion-icon name="business-outline"></ion-icon>
+            <span>Turmas</span>
+        </a>
+        <a href="javascript:void(0)" onclick="document.getElementById('tab-financeiro').click()" class="ghs-nav-item" id="nav-item-financeiro">
+            <ion-icon name="cash-outline"></ion-icon>
+            <span>Tesouraria</span>
+        </a>
+        <a href="javascript:void(0)" onclick="toggleSidebar()" class="ghs-nav-item">
+            <ion-icon name="menu-outline"></ion-icon>
+            <span>Menu</span>
+        </a>
+    </nav>
 
     <div class="d-flex overflow-hidden">
         <!-- Sidebar -->
@@ -513,7 +545,7 @@
                                 </div>
                             <?php else: ?>
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle datatable-simple">
+                                    <table class="table table-hover align-middle datatable-simple table-mobile-cards">
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Nome Completo</th>
@@ -525,11 +557,11 @@
                                         <tbody>
                                             <?php foreach ($data['pendentes'] as $u): ?>
                                                 <tr>
-                                                    <td class="fw-bold text-dark"><?= htmlspecialchars($u['nome_completo']) ?>
+                                                    <td class="fw-bold text-dark" data-label="Nome"><?= htmlspecialchars($u['nome_completo']) ?>
                                                     </td>
-                                                    <td><?= htmlspecialchars($u['email']) ?></td>
-                                                    <td><?= date('d/m/Y H:i', strtotime($u['data_criacao'])) ?></td>
-                                                    <td class="text-end">
+                                                    <td data-label="E-mail"><?= htmlspecialchars($u['email']) ?></td>
+                                                    <td data-label="Data"><?= date('d/m/Y H:i', strtotime($u['data_criacao'])) ?></td>
+                                                    <td class="text-end actions">
                                                         <form action="<?= URL_ROOT ?>/admin/approveAccount/<?= $u['id'] ?>"
                                                             method="POST" class="d-inline">
                                                             <input type="hidden" name="csrf_token"
@@ -657,72 +689,61 @@
                 <!-- Dashboard Home (Chart.js) -->
                 <div class="tab-pane fade show active" id="pane-home">
                     <!-- Cards -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-4">
-                            <div class="card shadow-sm border-0 bg-white p-3 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-success bg-opacity-10 text-success p-3 rounded-3 me-3">
-                                        <ion-icon name="people" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Alunos Ativos</p>
-                                        <h2 class="fw-bold mb-0"><?= $data['stats']['alunos_ativos'] ?></h2>
-                                    </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-md-4">
+                            <div class="ghs-card ghs-stat-card">
+                                <div class="ghs-stat-icon bg-success bg-opacity-10 text-success">
+                                    <ion-icon name="people"></ion-icon>
+                                </div>
+                                <div>
+                                    <p class="text-muted small fw-bold text-uppercase mb-0">Alunos Ativos</p>
+                                    <h2 class="fw-bold mb-0"><?= $data['stats']['alunos_ativos'] ?></h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card shadow-sm border-0 bg-white p-3 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3">
-                                        <ion-icon name="calendar" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Turmas Ativas</p>
-                                        <h2 class="fw-bold mb-0"><?= $data['stats']['turmas_abertas'] ?></h2>
-                                    </div>
+                        <div class="col-12 col-md-4">
+                            <div class="ghs-card ghs-stat-card">
+                                <div class="ghs-stat-icon bg-primary bg-opacity-10 text-primary">
+                                    <ion-icon name="calendar"></ion-icon>
+                                </div>
+                                <div>
+                                    <p class="text-muted small fw-bold text-uppercase mb-0">Turmas Ativas</p>
+                                    <h2 class="fw-bold mb-0"><?= $data['stats']['turmas_abertas'] ?></h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card shadow-sm border-0 bg-white p-3 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3">
-                                        <ion-icon name="document-text" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Matrículas Pendentes</p>
-                                        <h2 class="fw-bold mb-0"><?= $data['stats']['matriculas_pendentes'] ?></h2>
-                                    </div>
+                        <div class="col-12 col-md-4">
+                            <div class="ghs-card ghs-stat-card">
+                                <div class="ghs-stat-icon bg-warning bg-opacity-10 text-warning">
+                                    <ion-icon name="document-text"></ion-icon>
+                                </div>
+                                <div>
+                                    <p class="text-muted small fw-bold text-uppercase mb-0">Matrículas</p>
+                                    <h2 class="fw-bold mb-0"><?= $data['stats']['matriculas_pendentes'] ?></h2>
                                 </div>
                             </div>
                         </div>
-                        <!-- Novos Indicadores Financeiros -->
-                        <div class="col-md-6">
-                            <div class="card shadow-sm border-0 bg-white p-3 mb-3 border-start border-success border-4">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-success text-white p-3 rounded-3 me-3 shadow-sm">
-                                        <ion-icon name="cash" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Receita do Mês (XOF)</p>
-                                        <h2 class="fw-bold mb-0 text-success">
-                                            <?= number_format($data['stats']['pagamentos_mes'], 0, ',', '.') ?></h2>
-                                    </div>
+                        <!-- Indicadores Financeiros Premium -->
+                        <div class="col-12 col-md-6">
+                            <div class="ghs-card ghs-stat-card border-start border-success border-4">
+                                <div class="ghs-stat-icon bg-success text-white">
+                                    <ion-icon name="cash"></ion-icon>
+                                </div>
+                                <div>
+                                    <p class="text-muted small fw-bold text-uppercase mb-0">Receita do Mês</p>
+                                    <h2 class="fw-bold mb-0 text-success">
+                                        <?= number_format($data['stats']['pagamentos_mes'], 0, ',', '.') ?> <small style="font-size: 0.6em;">XOF</small></h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card shadow-sm border-0 bg-white p-3 mb-3 border-start border-danger border-4">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-box bg-danger text-white p-3 rounded-3 me-3 shadow-sm">
-                                        <ion-icon name="alert-circle" class="fs-1"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <p class="text-muted small fw-bold text-uppercase mb-0">Atraso de pagamento (Alunos)
-                                        </p>
-                                        <h2 class="fw-bold mb-0 text-danger"><?= $data['stats']['inadimplencia'] ?></h2>
-                                    </div>
+                        <div class="col-12 col-md-6">
+                            <div class="ghs-card ghs-stat-card border-start border-danger border-4">
+                                <div class="ghs-stat-icon bg-danger text-white">
+                                    <ion-icon name="alert-circle"></ion-icon>
+                                </div>
+                                <div>
+                                    <p class="text-muted small fw-bold text-uppercase mb-0">Inadimplência</p>
+                                    <h2 class="fw-bold mb-0 text-danger"><?= $data['stats']['inadimplencia'] ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -951,7 +972,7 @@
                                     Interno</button>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle datatable-simple">
+                                <table class="table table-hover align-middle datatable-simple table-mobile-cards">
                                     <thead class="table-dark">
                                         <tr>
                                             <th>Nº Proc.</th>
@@ -969,21 +990,21 @@
                                         <?php if (!empty($data['estudantes'])): ?>
                                             <?php foreach ($data['estudantes'] as $e): ?>
                                                 <tr>
-                                                    <td class="fw-bold"><?= $e['id'] ?></td>
-                                                    <td><?= htmlspecialchars($e['nome_completo']) ?></td>
-                                                    <td><?= htmlspecialchars($e['bi']) ?></td>
-                                                    <td><?= date('d/m/Y', strtotime($e['data_nascimento'])) ?></td>
-                                                    <td><?= htmlspecialchars($e['telefone']) ?></td>
-                                                    <td><?= htmlspecialchars($e['nivel'] ?? 'N/A') ?></td>
-                                                    <td><?= htmlspecialchars(($e['turma'] ?? 'Externo') . ' / ' . ($e['nivel'] ?? 'Pendente')) ?>
+                                                    <td class="fw-bold" data-label="Processo"><?= $e['id'] ?></td>
+                                                    <td data-label="Nome"><?= htmlspecialchars($e['nome_completo']) ?></td>
+                                                    <td data-label="BI"><?= htmlspecialchars($e['bi']) ?></td>
+                                                    <td data-label="Nasc."><?= date('d/m/Y', strtotime($e['data_nascimento'])) ?></td>
+                                                    <td data-label="Telefone"><?= htmlspecialchars($e['telefone']) ?></td>
+                                                    <td data-label="Nível"><?= htmlspecialchars($e['nivel'] ?? 'N/A') ?></td>
+                                                    <td data-label="Turma/Ano"><?= htmlspecialchars(($e['turma'] ?? 'Externo') . ' / ' . ($e['nivel'] ?? 'Pendente')) ?>
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Estado">
                                                         <span
                                                             class="badge bg-<?= $e['user_status'] === 'ativo' ? 'success' : 'warning' ?>">
                                                             <?= ucfirst($e['user_status'] ?? 'Pendente') ?>
                                                         </span>
                                                     </td>
-                                                    <td class="text-end">
+                                                    <td class="text-end actions">
                                                         <div class="dropdown d-inline-block">
                                                             <button class="btn btn-sm btn-light border dropdown-toggle"
                                                                 type="button" data-bs-toggle="dropdown">
@@ -1077,7 +1098,7 @@
                                 </button>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle datatable-simple">
+                                <table class="table table-hover align-middle datatable-simple table-mobile-cards">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Nome Completo / Email</th>
@@ -1092,20 +1113,20 @@
                                         <?php if (!empty($data['professores'])): ?>
                                             <?php foreach ($data['professores'] as $p): ?>
                                                 <tr>
-                                                    <td>
+                                                    <td data-label="Professor">
                                                         <div class="fw-bold text-dark">
                                                             <?= htmlspecialchars($p['nome_completo']) ?></div>
                                                         <div class="small text-muted"><?= htmlspecialchars($p['email']) ?></div>
                                                     </td>
-                                                    <td><span
+                                                    <td data-label="Área"><span
                                                             class="badge bg-light text-primary"><?= htmlspecialchars($p['especialidade']) ?></span>
                                                     </td>
-                                                    <td><span
+                                                    <td data-label="Grau"><span
                                                             class="small fw-semibold"><?= htmlspecialchars($p['grau_academico'] ?? 'N/A') ?></span>
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Atribuições">
                                                         <?php if (!empty($p['atribuicoes_info'])): ?>
-                                                            <div class="d-flex flex-wrap gap-1">
+                                                            <div class="d-flex flex-wrap gap-1 justify-content-end justify-content-md-start">
                                                                 <?php $ats = explode(' | ', $p['atribuicoes_info']); ?>
                                                                 <?php foreach ($ats as $at): ?>
                                                                     <span
@@ -1120,13 +1141,13 @@
                                                             <span class="text-muted small italic">Sem turmas</span>
                                                         <?php endif; ?>
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Estado">
                                                         <span
                                                             class="badge rounded-pill bg-<?= $p['user_status'] === 'ativo' ? 'success' : 'danger' ?> bg-opacity-10 text-<?= $p['user_status'] === 'ativo' ? 'success' : 'danger' ?>">
                                                             <?= ucfirst($p['user_status']) ?>
                                                         </span>
                                                     </td>
-                                                    <td class="text-end">
+                                                    <td class="text-end actions">
                                                         <button class="btn btn-sm btn-light border shadow-sm"
                                                             onclick="editProfessor(<?= $p['id'] ?>)" title="Editar Professor">
                                                             <ion-icon name="create-outline" class="text-primary"></ion-icon>
@@ -1178,31 +1199,31 @@
                                                 <?php else: ?>
                                                     <?php foreach ($data['matriculas'] as $m): ?>
                                                         <tr>
-                                                            <td class="ps-4">
-                                                                <div class="fw-bold text-dark"><?= htmlspecialchars($m['nome']) ?></div>
-                                                                <small class="text-muted">Proc: #<?= $m['id'] ?></small>
-                                                            </td>
-                                                            <td>
-                                                                <div class="small fw-medium"><?= htmlspecialchars($m['ano_letivo']) ?></div>
-                                                                <div class="text-muted" style="font-size: 0.75rem;"><?= htmlspecialchars($m['ano_nome'] ?? 'Ano n/d') ?></div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="badge bg-<?= ($m['tipo'] == 'Renovação') ? 'info' : 'secondary px-2' ?> small" style="font-size: 0.7rem;">
-                                                                    <?= htmlspecialchars($m['tipo'] ?? 'Novo') ?>
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3 btn-view-docs"
-                                                                    data-bs-toggle="modal" data-bs-target="#documentViewerModal"
-                                                                    data-id="<?= $m['id'] ?>" data-nome="<?= htmlspecialchars($m['nome']) ?>"
-                                                                    data-bi="<?= $m['bi_arquivo'] ?? '' ?>"
-                                                                    data-foto="<?= $m['foto_arquivo'] ?? '' ?>"
-                                                                    data-cert="<?= $m['certificado_arquivo'] ?? '' ?>"
-                                                                    data-comp="<?= $m['comprovativo_arquivo'] ?? '' ?>">
-                                                                    <ion-icon name="documents-outline" class="me-1"></ion-icon> Ficheiros
-                                                                </button>
-                                                            </td>
-                                                            <td class="text-end pe-4">
+                                                            <td class="ps-4" data-label="Estudante">
+                                                                 <div class="fw-bold text-dark"><?= htmlspecialchars($m['nome']) ?></div>
+                                                                 <small class="text-muted">Proc: #<?= $m['id'] ?></small>
+                                                             </td>
+                                                             <td data-label="Ano/Curso">
+                                                                 <div class="small fw-medium"><?= htmlspecialchars($m['ano_letivo']) ?></div>
+                                                                 <div class="text-muted" style="font-size: 0.75rem;"><?= htmlspecialchars($m['ano_nome'] ?? 'Ano n/d') ?></div>
+                                                             </td>
+                                                             <td class="text-center" data-label="Tipo">
+                                                                 <span class="badge bg-<?= ($m['tipo'] == 'Renovação') ? 'info' : 'secondary px-2' ?> small" style="font-size: 0.7rem;">
+                                                                     <?= htmlspecialchars($m['tipo'] ?? 'Novo') ?>
+                                                                 </span>
+                                                             </td>
+                                                             <td class="text-center" data-label="Docs">
+                                                                 <button class="btn btn-sm btn-outline-primary rounded-pill px-3 btn-view-docs w-100 w-md-auto"
+                                                                     data-bs-toggle="modal" data-bs-target="#documentViewerModal"
+                                                                     data-id="<?= $m['id'] ?>" data-nome="<?= htmlspecialchars($m['nome']) ?>"
+                                                                     data-bi="<?= $m['bi_arquivo'] ?? '' ?>"
+                                                                     data-foto="<?= $m['foto_arquivo'] ?? '' ?>"
+                                                                     data-cert="<?= $m['certificado_arquivo'] ?? '' ?>"
+                                                                     data-comp="<?= $m['comprovativo_arquivo'] ?? '' ?>">
+                                                                     <ion-icon name="documents-outline" class="me-1"></ion-icon> Ficheiros
+                                                                 </button>
+                                                             </td>
+                                                             <td class="text-end pe-4 actions">
                                                                 <div class="btn-group btn-group-sm">
                                                                     <button class="btn btn-success fw-bold btn-approve-matricula" data-id="<?= $m['id'] ?>">Aprovar</button>
                                                                     <button class="btn btn-danger fw-bold btn-reject-matricula" data-id="<?= $m['id'] ?>">Rejeitar</button>
@@ -1231,7 +1252,7 @@
                                             class="btn btn-sm btn-success" data-bs-toggle="modal"
                                             data-bs-target="#turmaModal">+ Nova Turma</button>
                                     </div>
-                                    <table class="table table-hover datatable-simple">
+                                    <table class="table table-hover datatable-simple table-mobile-cards">
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Cód. Turma</th>
@@ -1245,11 +1266,11 @@
                                             <?php if (!empty($data['turmas'])): ?>
                                                 <?php foreach ($data['turmas'] as $t): ?>
                                                     <tr>
-                                                        <td class="fw-bold"><?= htmlspecialchars($t['codigo']) ?></td>
-                                                        <td><?= htmlspecialchars($t['ano_nome']) ?></td>
-                                                        <td><?= htmlspecialchars($t['turno']) ?></td>
-                                                        <td><?= $t['vagas'] ?></td>
-                                                        <td class="text-end">
+                                                        <td class="fw-bold" data-label="Código"><?= htmlspecialchars($t['codigo']) ?></td>
+                                                        <td data-label="Ano"><?= htmlspecialchars($t['ano_nome']) ?></td>
+                                                        <td data-label="Turno"><?= htmlspecialchars($t['turno']) ?></td>
+                                                        <td data-label="Vagas"><?= $t['vagas'] ?></td>
+                                                        <td class="text-end actions">
                                                             <div class="btn-group">
                                                                 <button class="btn btn-sm btn-light"
                                                                     onclick="viewTurma(<?= $t['id'] ?>)"
@@ -4810,6 +4831,17 @@ function convocarComMotivo(eid, did) {
              // Toggle legacy fix
              $('#sidebarToggle').on('click', function() {
                  toggleSidebar();
+             });
+
+             // Sync Bottom Nav with Tabs
+             $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+                 const targetId = $(e.target).attr('id');
+                 $('.ghs-nav-item').removeClass('active');
+                 
+                 if (targetId === 'tab-home') $('#nav-item-home').addClass('active');
+                 else if (targetId === 'tab-alunos') $('#nav-item-alunos').addClass('active');
+                 else if (targetId === 'tab-turmas') $('#nav-item-turmas').addClass('active');
+                 else if (targetId === 'tab-financeiro') $('#nav-item-financeiro').addClass('active');
              });
         });
     </script>
