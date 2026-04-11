@@ -30,7 +30,7 @@
             color: white;
             position: fixed;
             width: 270px;
-            z-index: 10;
+            
             display: flex;
             flex-direction: column;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -143,9 +143,11 @@
         }
 
         /* ── Content ────────────────────────────────────── */
-        .content {
+        @media (min-width: 1025px) {
+            .content {
             margin-left: 270px;
             padding: 36px 40px;
+        }
         }
 
         .tab-pane {
@@ -177,61 +179,7 @@
 </head>
 
 <body class="bg-light">
-
-    <!-- Overlay p/ Mobile -->
-    <div class="ghs-sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Cabeçalho Mobile Premium -->
-    <header class="ghs-mobile-header shadow-sm border-bottom py-3">
-        <button class="btn btn-link text-dark p-0 border-0" onclick="toggleSidebar()">
-            <ion-icon name="apps-outline" style="font-size: 1.8rem;"></ion-icon>
-        </button>
-        <div class="d-flex align-items-center gap-2">
-            <h1 class="fs-5 fw-bold mb-0 text-primary">GHS Portal</h1>
-        </div>
-        <div class="dropdown">
-            <div class="dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown" style="cursor: pointer;">
-                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
-            </div>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2 mt-2">
-                <li class="p-3 border-bottom mb-2">
-                    <span class="d-block fw-bold small"><?= $_SESSION['user_name'] ?></span>
-                    <span class="d-block text-muted" style="font-size: 0.7rem;">Administrador</span>
-                </li>
-                <li><a class="dropdown-item rounded-3 py-2 fw-bold text-danger d-flex align-items-center gap-2" href="<?= URL_ROOT ?>/auth/logout">
-                    <ion-icon name="log-out-outline"></ion-icon> Terminar Sessão
-                </a></li>
-            </ul>
-        </div>
-    </header>
-
-    <!-- Bottom Navigation (Mobile Only) -->
-    <nav class="ghs-bottom-nav px-2">
-        <a href="javascript:void(0)" onclick="document.getElementById('tab-home').click()" class="ghs-nav-item active" id="nav-item-home">
-            <ion-icon name="grid-outline"></ion-icon>
-            <span>Início</span>
-        </a>
-        <a href="javascript:void(0)" onclick="document.getElementById('tab-alunos').click()" class="ghs-nav-item" id="nav-item-alunos">
-            <ion-icon name="people-outline"></ion-icon>
-            <span>Alunos</span>
-        </a>
-        <a href="javascript:void(0)" onclick="document.getElementById('tab-turmas').click()" class="ghs-nav-item" id="nav-item-turmas">
-            <ion-icon name="business-outline"></ion-icon>
-            <span>Turmas</span>
-        </a>
-        <a href="javascript:void(0)" onclick="document.getElementById('tab-financeiro').click()" class="ghs-nav-item" id="nav-item-financeiro">
-            <ion-icon name="cash-outline"></ion-icon>
-            <span>Tesouraria</span>
-        </a>
-        <a href="javascript:void(0)" onclick="toggleSidebar()" class="ghs-nav-item">
-            <ion-icon name="menu-outline"></ion-icon>
-            <span>Menu</span>
-        </a>
-    </nav>
-
-    <div class="d-flex overflow-hidden">
-        <!-- Sidebar -->
-        <nav class="sidebar ghs-sidebar shadow-lg">
+<nav class="sidebar ghs-sidebar shadow-lg">
 
             <!-- Brand / Logo -->
             <div class="sidebar-brand">
@@ -357,6 +305,61 @@
             </div>
 
         </nav>
+
+    <!-- Overlay p/ Mobile -->
+    <div class="ghs-sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Cabeçalho Mobile Premium -->
+    <header class="ghs-mobile-header shadow-sm border-bottom py-3">
+        <button class="btn btn-link text-dark p-0 border-0" onclick="toggleSidebar()">
+            <ion-icon name="apps-outline" style="font-size: 1.8rem;"></ion-icon>
+        </button>
+        <div class="d-flex align-items-center gap-2">
+            <h1 class="fs-5 fw-bold mb-0 text-primary">GHS Portal</h1>
+        </div>
+        <div class="dropdown">
+            <div class="dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown" style="cursor: pointer;">
+                <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2 mt-2">
+                <li class="p-3 border-bottom mb-2">
+                    <span class="d-block fw-bold small"><?= $_SESSION['user_name'] ?></span>
+                    <span class="d-block text-muted" style="font-size: 0.7rem;">Administrador</span>
+                </li>
+                <li><a class="dropdown-item rounded-3 py-2 fw-bold text-danger d-flex align-items-center gap-2" href="<?= URL_ROOT ?>/auth/logout">
+                    <ion-icon name="log-out-outline"></ion-icon> Terminar Sessão
+                </a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <nav class="ghs-bottom-nav px-2">
+        <a href="javascript:void(0)" onclick="document.getElementById('tab-home').click()" class="ghs-nav-item active" id="nav-item-home">
+            <ion-icon name="grid-outline"></ion-icon>
+            <span>Início</span>
+        </a>
+        <a href="javascript:void(0)" onclick="document.getElementById('tab-alunos').click()" class="ghs-nav-item" id="nav-item-alunos">
+            <ion-icon name="people-outline"></ion-icon>
+            <span>Alunos</span>
+        </a>
+        <a href="javascript:void(0)" onclick="document.getElementById('tab-turmas').click()" class="ghs-nav-item" id="nav-item-turmas">
+            <ion-icon name="business-outline"></ion-icon>
+            <span>Turmas</span>
+        </a>
+        <a href="javascript:void(0)" onclick="document.getElementById('tab-financeiro').click()" class="ghs-nav-item" id="nav-item-financeiro">
+            <ion-icon name="cash-outline"></ion-icon>
+            <span>Tesouraria</span>
+        </a>
+        <a href="javascript:void(0)" onclick="toggleSidebar()" class="ghs-nav-item">
+            <ion-icon name="menu-outline"></ion-icon>
+            <span>Menu</span>
+        </a>
+    </nav>
+
+    <div class="d-flex overflow-hidden">
+        <!-- Sidebar -->
+        
 
         <!-- Main Content -->
         <main class="content ghs-content flex-grow-1">
@@ -4824,7 +4827,9 @@ function convocarComMotivo(eid, did) {
              // Esconder ao clicar em mobile
              if($(window).width() <= 1024) {
                  $('.ghs-sidebar .nav-link').on('click', function() {
-                     toggleSidebar();
+                     if ($('.ghs-sidebar').hasClass('active')) {
+                         toggleSidebar();
+                     }
                  });
              }
              

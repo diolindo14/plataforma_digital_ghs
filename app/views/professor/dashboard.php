@@ -13,85 +13,54 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
     <style>
-        :root {
-            --sidebar-bg: #0F172A;
-            --sidebar-width: 260px;
-            --primary-color: #10B981;
-            --text-dark: #1E293B;
-            --bg-body: #f1f5f9;
-        }
-
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; }
-        
-        /* Layout Mobile First */
-        .sidebar { 
-            background-color: var(--sidebar-bg); 
-            min-height: 100vh; 
-            color: white; 
-            padding-top: 1.5rem; 
-            position: fixed; 
-            width: var(--sidebar-width); 
-            z-index: 1000; 
-            left: calc(-1 * var(--sidebar-width));
-            transition: left 0.3s ease;
-        }
-        .sidebar.show { left: 0; }
-        
-        .sidebar .nav-link { 
-            color: #cbd5e1; 
-            text-decoration: none; 
-            padding: 0.75rem 1.25rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.625rem; 
-            transition: 0.3s; 
-            font-weight: 500; 
-            cursor: pointer; 
-            border-radius: 0; 
-            border-left: 4px solid transparent; 
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #1E293B; color: var(--primary-color); border-left: 4px solid var(--primary-color); }
-        
-        .content { margin-left: 0; padding: 1.25rem; transition: margin-left 0.3s ease; width: 100%; }
-        
-        .mobile-header { display: flex; align-items: center; justify-content: space-between; background: white; padding: 0.75rem 1rem; position: sticky; top: 0; z-index: 900; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .btn-toggle-sidebar { background: none; border: none; color: var(--sidebar-bg); font-size: 1.875rem; display: flex; align-items: center; }
-
+        body { font-family: "Outfit", sans-serif; background-color: #f1f5f9; color: #1E293B; overflow-x: hidden; }
         .tab-pane { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Responsive Breakpoints */
-        @media (min-width: 1025px) {
-            .sidebar { left: 0; }
-            .content { margin-left: var(--sidebar-width); padding: 2.5rem; width: calc(100% - var(--sidebar-width)); }
-            .mobile-header { display: none; }
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar-overlay { 
-                display: none; 
-                position: fixed; 
-                top: 0; left: 0; 
-                right: 0; bottom: 0; 
-                background: rgba(0,0,0,0.5); 
-                z-index: 999; 
-            }
-            .sidebar-overlay.show { display: block; }
-            .content-header-pc { display: none !important; }
-        }
-
-        /* Tabela Responsiva */
         .table-responsive { border-radius: 0.75rem; border: none; }
-        
-        /* Garantir que imagens sejam responsivas */
         img { max-width: 100%; height: auto; }
     </style>
 </head>
 <body>
+<nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
+        <div>
+            <div class="text-center mb-4 mt-2">
+                <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <h5 class="fw-bold mt-2 text-white">Portal GHS</h5>
+                <span class="badge bg-secondary mb-3">Docente</span>
+            </div>
+            
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                <a class="nav-link active" id="tab-home" data-bs-toggle="pill" href="#pane-home"><ion-icon name="grid-outline"></ion-icon> Dashboard Resumo</a>
+                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" href="#pane-notas"><ion-icon name="create-outline"></ion-icon> Lançamento de Notas</a>
+                <a class="nav-link" id="tab-chamada" data-bs-toggle="pill" href="#pane-chamada"><ion-icon name="people-outline"></ion-icon> Frequência / Chamada</a>
+                <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" href="#pane-materiais"><ion-icon name="cloud-upload-outline"></ion-icon> Upload de Materiais</a>
+                <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" href="#pane-calendario"><ion-icon name="calendar-outline"></ion-icon> Calendário Acadêmico</a>
+                <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" href="#pane-comunicados"><ion-icon name="chatbubbles-outline"></ion-icon> Comunicados & Alertas</a>
+                <a class="nav-link text-danger fw-bold position-relative" id="tab-reclamacoes" data-bs-toggle="pill" href="#pane-reclamacoes">
+                    <ion-icon name="warning-outline"></ion-icon> Reclamações de Notas
+                    <?php if(count($data['reclamacoes']) > 0): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
+                            <?= count($data['reclamacoes']) ?>
+                        </span>
+                    <?php endif; ?>
+                </a>
+                <a class="nav-link text-info fw-bold" id="tab-assiduidade" data-bs-toggle="pill" href="#pane-assiduidade">
+                    <ion-icon name="calendar-check-outline"></ion-icon> Minha Assiduidade
+                </a>
+            </div>
+        </div>
+
+        <div class="pb-4 w-100">
+            <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
+            <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
+        </div>
+    </nav>
 <!-- Modal Agendar Evento (Professor) -->
 <div class="modal fade" id="profEventoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/green/professor/saveEvento" method="POST" class="modal-content border-0 shadow-lg">
+        <form action="<?= URL_ROOT ?>/professor/saveEvento" method="POST" class="modal-content border-0 shadow-lg">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
     
@@ -192,7 +161,7 @@
             <ion-icon name="menu-outline" style="font-size: 2rem;"></ion-icon>
         </button>
         <div class="d-flex align-items-center gap-2">
-            <img src="/green/img/logo.jpg" alt="GHS" style="width: 32px; height: 32px; border-radius: 50%;">
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="GHS" style="width: 32px; height: 32px; border-radius: 50%;">
             <span class="fw-bold fs-6">GHS Docente</span>
         </div>
         <div class="dropdown">
@@ -200,49 +169,14 @@
                 <ion-icon name="person-circle" style="font-size: 1.6rem; color: #10B981;"></ion-icon>
             </div>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
-                <li><a class="dropdown-item fw-bold" href="/green/auth/logout">Sair</a></li>
+                <li><a class="dropdown-item fw-bold" href="<?= URL_ROOT ?>/auth/logout">Sair</a></li>
             </ul>
         </div>
     </header>
 
     <div class="d-flex flex-grow-1">
     <!-- Sidebar -->
-    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
-        <div>
-            <div class="text-center mb-4 mt-2">
-                <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
-                    <img src="/green/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <h5 class="fw-bold mt-2 text-white">Portal GHS</h5>
-                <span class="badge bg-secondary mb-3">Docente</span>
-            </div>
-            
-            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-                <a class="nav-link active" id="tab-home" data-bs-toggle="pill" href="#pane-home"><ion-icon name="grid-outline"></ion-icon> Dashboard Resumo</a>
-                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" href="#pane-notas"><ion-icon name="create-outline"></ion-icon> Lançamento de Notas</a>
-                <a class="nav-link" id="tab-chamada" data-bs-toggle="pill" href="#pane-chamada"><ion-icon name="people-outline"></ion-icon> Frequência / Chamada</a>
-                <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" href="#pane-materiais"><ion-icon name="cloud-upload-outline"></ion-icon> Upload de Materiais</a>
-                <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" href="#pane-calendario"><ion-icon name="calendar-outline"></ion-icon> Calendário Acadêmico</a>
-                <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" href="#pane-comunicados"><ion-icon name="chatbubbles-outline"></ion-icon> Comunicados & Alertas</a>
-                <a class="nav-link text-danger fw-bold position-relative" id="tab-reclamacoes" data-bs-toggle="pill" href="#pane-reclamacoes">
-                    <ion-icon name="warning-outline"></ion-icon> Reclamações de Notas
-                    <?php if(count($data['reclamacoes']) > 0): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
-                            <?= count($data['reclamacoes']) ?>
-                        </span>
-                    <?php endif; ?>
-                </a>
-                <a class="nav-link text-info fw-bold" id="tab-assiduidade" data-bs-toggle="pill" href="#pane-assiduidade">
-                    <ion-icon name="calendar-check-outline"></ion-icon> Minha Assiduidade
-                </a>
-            </div>
-        </div>
-
-        <div class="pb-4 w-100">
-            <a class="nav-link text-warning mb-1" href="/green/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
-            <a class="nav-link text-danger fw-bold" href="/green/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
-        </div>
-    </nav>
+    
     
     <!-- Main Content -->
     <main class="content ghs-content flex-grow-1">
@@ -261,7 +195,7 @@
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 12px; margin-top: 10px; min-width: 200px;">
                         <li><a class="dropdown-item fw-bold text-dark py-2" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><ion-icon name="key-outline" class="me-2 fs-5 align-middle"></ion-icon> Alterar Senha</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item fw-bold text-danger py-2" href="/green/auth/logout"><ion-icon name="log-out-outline" class="me-2 fs-5 align-middle"></ion-icon> Sair</a></li>
+                        <li><a class="dropdown-item fw-bold text-danger py-2" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline" class="me-2 fs-5 align-middle"></ion-icon> Sair</a></li>
                     </ul>
                 </div>
             </div>
@@ -659,7 +593,7 @@
                                                         <h6 class="fw-bold mb-1"><?= htmlspecialchars($m['titulo']) ?></h6>
                                                         <small class="text-muted"><?= $m['turma_codigo'] ?> • <?= $m['disciplina_nome'] ?> • <?= strtoupper($m['tipo_ficheiro']) ?></small>
                                                     </div>
-                                                    <a href="/green/<?= $m['caminho_ficheiro'] ?>" target="_blank" class="btn btn-sm btn-light rounded-circle p-2">
+                                                    <a href="<?= URL_ROOT ?>/<?= $m['caminho_ficheiro'] ?>" target="_blank" class="btn btn-sm btn-light rounded-circle p-2">
                                                         <ion-icon name="download" class="fs-4 text-dark"></ion-icon>
                                                     </a>
                                                 </div>
@@ -991,7 +925,7 @@
 <!-- Modal Alterar Senha Global -->
 <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <form action="/green/auth/changePassword" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+        <form action="<?= URL_ROOT ?>/auth/changePassword" method="POST" class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <div class="modal-header border-0 bg-light pb-2">
                 <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
@@ -1241,7 +1175,7 @@ function saveNota(btn) {
 
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    $.post('/green/professor/saveNota', data, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
         if(res.success) {
             alert('Notas salvas com sucesso!');
             location.reload(); // Recarregar para ver o total atualizado
@@ -1265,7 +1199,7 @@ function enviarComunicado() {
 
     btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    $.post('/green/professor/saveComunicado', data, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/saveComunicado', data, function(res) {
         if(res.success) {
             alert('Comunicado enviado com sucesso!');
             location.reload();
@@ -1279,7 +1213,7 @@ function enviarComunicado() {
 
 function excluirComunicado(id) {
     if (confirm('Tem certeza que deseja excluir este aviso? Ele sumirá para todos os alunos e professores desta turma.')) {
-        $.post('/green/professor/deleteComunicado', { id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
+        $.post('<?= URL_ROOT ?>/professor/deleteComunicado', { id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
             if (res.success) {
                 location.reload();
             } else {
@@ -1333,7 +1267,7 @@ function submeterSumario(btn) {
 
     $(btn).html('<span class="spinner-border spinner-border-sm"></span> Submetendo...').prop('disabled', true);
 
-    $.post('/green/professor/saveSummary', data, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/saveSummary', data, function(res) {
         if (res.success) {
             alert('Sumário e Chamada submetidos com sucesso!');
             location.reload();
@@ -1349,7 +1283,7 @@ function marcarComoLido(id, btn) {
     const card = $(btn).closest('.card');
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>...').prop('disabled', true);
     
-    $.post('/green/professor/marcarLido', { comunicado_id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
+    $.post('<?= URL_ROOT ?>/professor/marcarLido', { comunicado_id: id, csrf_token: '<?php echo $_SESSION['csrf_token']; ?>' }, function(res) {
         if (res.success) {
             // Remove unread badge
             card.find('.badge.bg-danger').fadeOut();
@@ -1375,7 +1309,7 @@ function publicarMaterial() {
     btn.html('<span class="spinner-border spinner-border-sm"></span> A publicar...').prop('disabled', true);
 
     $.ajax({
-        url: '/green/professor/uploadMaterial',
+        url: '<?= URL_ROOT ?>/professor/uploadMaterial',
         type: 'POST',
         data: formData,
         processData: false,
@@ -1411,7 +1345,7 @@ function enviarRespostaContestacao(e, form) {
     const originalContent = btn.html();
     btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> A enviar...');
     
-    $.post('/green/contestacao/responder', $(form).serialize(), function(res) {
+    $.post('<?= URL_ROOT ?>/contestacao/responder', $(form).serialize(), function(res) {
         if (res.success) {
             alert('Feedback enviado com sucesso!');
             location.reload();
@@ -1430,7 +1364,7 @@ function enviarRespostaContestacao(e, form) {
         if (!val) return;
         const parts = val.split('|');
         const activeTab = $('.nav-link.active').attr('href').replace('#', '');
-        window.location.href = `/green/professor?turma_id=${parts[0]}&disciplina_id=${parts[1]}&tab=${activeTab}`;
+        window.location.href = `<?= URL_ROOT ?>/professor?turma_id=${parts[0]}&disciplina_id=${parts[1]}&tab=${activeTab}`;
     }
 
     // Restore Tab and Live Grades
@@ -1486,7 +1420,7 @@ $(document).ready(function() {
 
 function deleteEvento(id) {
     if (confirm('Deseja cancelar este agendamento?')) {
-        window.location.href = '/green/professor/deleteEvento/' + id;
+        window.location.href = '<?= URL_ROOT ?>/professor/deleteEvento/' + id;
     }
 }
 </script>

@@ -1,0 +1,15 @@
+professor_id	professor_nome	disciplina_id	sigla
+12	Samba Djob	4	TEC1
+12	Samba Djob	4	TEC1
+12	Samba Djob	4	TEC1
+12	Samba Djob	5	API1
+12	Samba Djob	5	API1
+12	Samba Djob	5	API1
+12	Samba Djob	29	MCG4
+12	Samba Djob	38	MET4
+13	Domingos Correia	25	RD13
+13	Domingos Correia	25	RD13
+13	Domingos Correia	25	RD13
+13	Domingos Correia	30	RD24
+13	Domingos Correia	30	RD24
+13	Domingos Correia	70	RD1

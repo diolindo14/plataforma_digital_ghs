@@ -1,0 +1,250 @@
+[2026-03-24 14:51:11] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 14:53:10] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 18:35:33] DB Connection Error: SQLSTATE[HY000] [2002] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente
+[2026-03-24 19:17:10] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 19:22:34] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 19:24:46] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 19:29:00] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 19:29:54] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 19:41:54] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 19:58:07] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 19:59:20] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 19:59:22] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:02:13] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:03:40] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:09:27] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:09:28] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:09:42] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:10:09] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:10:16] CRITICAL ERROR: Class "Horario" not found em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 263
+[2026-03-24 20:21:39] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 20:21:47] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'h.disciplina_sigla' in 'field list' em C:\xampp\htdocs\green\app\models\Horario.php na linha 16
+[2026-03-24 21:41:29] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-24 21:41:38] PROD ERROR: Tentativa de ataque CSRF ou sessão expirada no IP: ::1
+[2026-03-25 19:09:17] DB Connection Error: SQLSTATE[HY000] [2002] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente
+[2026-03-25 19:09:45] DB Connection Error: SQLSTATE[HY000] [2002] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente
+[2026-03-26 07:32:30] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 147
+[2026-03-26 07:34:37] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 147
+[2026-03-26 15:07:43] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 147
+[2026-03-27 02:49:31] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.data_envio' in 'order clause' em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 52
+[2026-03-27 02:50:07] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.data_envio' in 'order clause' em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 52
+[2026-03-27 02:50:51] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.data_envio' in 'order clause' em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 52
+[2026-03-27 03:34:16] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:34:30] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:34:42] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:34:43] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:49] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:51] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:52] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:57] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:42:59] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:43:02] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:04] CRITICAL ERROR: Class "AdminController" not found em C:\xampp\htdocs\green\core\App.php na linha 50
+[2026-03-27 03:43:05] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\AuthController.php na linha 9
+[2026-03-27 03:43:06] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 2
+[2026-03-27 03:43:08] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:11] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:12] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:13] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:14] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:43:15] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:32] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:34] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:36] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:37] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:50:39] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:32] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:33] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:35] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:36] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 03:53:38] CRITICAL ERROR: Class "Controller" not found em C:\xampp\htdocs\green\app\controllers\HomeController.php na linha 2
+[2026-03-27 05:03:06] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:03:41] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 05:04:13] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:09:03] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:09:08] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:17:53] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:17:58] CRITICAL ERROR: SQLSTATE[HY000]: General error: 1111 Invalid use of group function em C:\xampp\htdocs\green\app\models\Academico.php na linha 307
+[2026-03-27 05:25:50] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 05:25:55] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 05:25:56] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 05:38:24] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 76
+[2026-03-27 11:43:27] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 11:46:09] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 11:53:37] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 11:53:43] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 11:58:49] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 12:08:47] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 12:12:52] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 12:13:00] CRITICAL ERROR: Call to undefined method Academico::getStudentRankPosition() em C:\xampp\htdocs\green\app\controllers\EstudanteController.php na linha 161
+[2026-03-27 21:27:30] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 21:50:24] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 21:50:34] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 21:53:25] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 22:38:40] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-27 22:38:52] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.tpc' in 'field list' em C:\xampp\htdocs\green\app\models\Academico.php na linha 465
+[2026-03-28 18:02:10] CRITICAL ERROR: Call to undefined method Frequencia::getDetailedAttendanceForProfessor() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 42
+[2026-03-28 18:02:12] CRITICAL ERROR: Call to undefined method Frequencia::getDetailedAttendanceForProfessor() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 42
+[2026-03-28 19:16:27] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 19:20:12] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 20:18:18] CRITICAL ERROR: in_array(): Argument #2 ($haystack) must be of type array, int given em C:\xampp\htdocs\green\app\helpers\FileHelper.php na linha 19
+[2026-03-28 20:21:18] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 20:21:27] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 20:21:37] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 20:21:40] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-28 21:46:35] CRITICAL ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cm.status' in 'where clause' em C:\xampp\htdocs\green\app\models\Academico.php na linha 499
+[2026-03-29 02:33:28] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`ghsespf_db`.`mensagens`, CONSTRAINT `mensagens_ibfk_1` FOREIGN KEY (`remetente_id`) REFERENCES `utilizadores` (`id`) ON DELETE CASCADE) em C:\xampp\htdocs\green\app\models\Mensagem.php na linha 35
+[2026-03-29 03:13:03] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 81
+[2026-03-29 03:13:16] CRITICAL ERROR: SQLSTATE[HY093]: Invalid parameter number em C:\xampp\htdocs\green\app\models\Comunicado.php na linha 81
+[2026-03-29 03:34:40] CRITICAL ERROR: in_array(): Argument #2 ($haystack) must be of type array, int given em C:\xampp\htdocs\green\app\helpers\FileHelper.php na linha 19
+[2026-03-29 13:19:44] CRITICAL ERROR: Too few arguments to function AdminController::rejectMatricula(), 0 passed in C:\xampp\htdocs\green\core\App.php on line 62 and exactly 1 expected em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 205
+[2026-03-29 23:43:27] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'juliana@gmail.com' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 204
+[2026-03-29 23:45:04] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'juliana@gmail.com' for key 'email' em C:\xampp\htdocs\green\app\models\User.php na linha 204
+[2026-03-30 01:39:45] CRITICAL ERROR: in_array(): Argument #2 ($haystack) must be of type array, int given em C:\xampp\htdocs\green\app\helpers\FileHelper.php na linha 19
+[2026-03-30 17:47:41] CRITICAL ERROR: Call to undefined method Estudante::findById() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 273
+[2026-03-30 17:47:45] CRITICAL ERROR: Call to undefined method Estudante::findById() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 273
+[2026-03-30 18:32:35] CRITICAL ERROR: Class "AdminFinanceiroController" not found em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 98
+[2026-03-31 11:49:42] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
+[2026-03-31 11:50:09] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
+[2026-03-31 11:50:14] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
+[2026-03-31 11:50:20] CRITICAL ERROR: syntax error, unexpected token "elseif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 864
+[2026-03-31 16:31:48] CRITICAL ERROR: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'REG-33287FF3' for key 'bi' em C:\xampp\htdocs\green\app\models\Estudante.php na linha 42
+[2026-04-01 01:16:52] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:17:00] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:17:06] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:17:50] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:38] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:39] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:46] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:48] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:24:53] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:25:11] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:30:19] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:32:18] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 01:32:58] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'estudante_id,
+                nome,
+                foto_perfil,
+            ...' at line 1 em C:\xampp\htdocs\green\app\models\Academico.php na linha 343
+[2026-04-01 03:05:23] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:15:25] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:17:55] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:22:45] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:22:47] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:22:51] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:03] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:03] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:04] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:05] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:06] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:10] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:12] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:13] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:13] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:14] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:31:14] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:34:46] CRITICAL ERROR: Call to undefined method User::getPendingUsers() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 51
+[2026-04-01 03:46:07] CRITICAL ERROR: Call to undefined method User::isAccountLocked() em C:\xampp\htdocs\green\app\controllers\AuthController.php na linha 51
+[2026-04-01 04:25:51] CRITICAL ERROR: Undefined constant "MAX_FILE_SIZE" em C:\xampp\htdocs\green\app\helpers\FileHelper.php na linha 14
+[2026-04-01 06:31:02] CRITICAL ERROR: Call to a member function prepare() on null em C:\xampp\htdocs\green\app\controllers\ContestacaoController.php na linha 176
+[2026-04-01 06:31:07] CRITICAL ERROR: Call to a member function prepare() on null em C:\xampp\htdocs\green\app\controllers\ContestacaoController.php na linha 176
+[2026-04-01 06:31:49] CRITICAL ERROR: Call to a member function prepare() on null em C:\xampp\htdocs\green\app\controllers\ContestacaoController.php na linha 176
+[2026-04-01 06:42:46] CRITICAL ERROR: SQLSTATE[42S02]: Base table or view not found: 1051 Unknown table 'ghsespf_db.estudante_user_id_view' em C:\xampp\htdocs\green\app\models\Contestacao.php na linha 358
+[2026-04-01 06:43:12] CRITICAL ERROR: SQLSTATE[42S02]: Base table or view not found: 1051 Unknown table 'ghsespf_db.estudante_user_id_view' em C:\xampp\htdocs\green\app\models\Contestacao.php na linha 358
+[2026-04-01 06:48:12] CRITICAL ERROR: SQLSTATE[42S02]: Base table or view not found: 1051 Unknown table 'ghsespf_db.estudante_user_id_view' em C:\xampp\htdocs\green\app\models\Contestacao.php na linha 358
+[2026-04-01 16:17:44] CRITICAL ERROR: Call to undefined method Pagamento::getTiposPagamento() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 47
+[2026-04-01 16:17:46] CRITICAL ERROR: Call to undefined method Pagamento::getTiposPagamento() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 47
+[2026-04-01 16:39:19] CRITICAL ERROR: Unclosed '{' on line 358 does not match ']' em C:\xampp\htdocs\green\app\models\Nota.php na linha 376
+[2026-04-01 16:39:25] CRITICAL ERROR: Unclosed '{' on line 358 does not match ']' em C:\xampp\htdocs\green\app\models\Nota.php na linha 376
+[2026-04-01 17:15:33] PROD ERROR: FALHA MATRÍCULA ONLINE: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'BI67081' for key 'bi' | Ficheiro: C:\xampp\htdocs\green\app\models\Estudante.php:155
+[2026-04-01 17:21:52] PROD ERROR: FALHA MATRÍCULA ONLINE: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'BI50754' for key 'bi' | Ficheiro: C:\xampp\htdocs\green\app\models\Estudante.php:155
+<<<<<<< HEAD
+[2026-04-08 00:54:47] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+[2026-04-08 00:55:18] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+[2026-04-08 01:02:50] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+=======
+[2026-04-03 10:18:42] CRITICAL ERROR: Too few arguments to function AdminController::rejectMatricula(), 0 passed in C:\xampp\htdocs\green\core\App.php on line 62 and exactly 1 expected em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 287
+[2026-04-03 10:49:25] PROD ERROR: REJEIÇÃO FALHOU: ID não recebido. REQUEST_DATA: {"url":"admin\/rejectMatricula","csrf_token":"64807fc1ae41214ffbc2f0c16c56fe5e6eed6ded0d42b0c15269c92aa78b966b","id":"","motivo":"Falta de documentos exigidos pela escola"}
+[2026-04-04 01:12:02] CRITICAL ERROR: Call to undefined method Nota::getNotaEstudante() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 143
+[2026-04-04 01:12:12] CRITICAL ERROR: Call to undefined method Nota::getNotaEstudante() em C:\xampp\htdocs\green\app\controllers\ProfessorController.php na linha 143
+[2026-04-04 01:27:01] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
+[2026-04-04 01:30:18] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
+[2026-04-04 01:30:32] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1783
+[2026-04-04 01:32:54] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1777
+[2026-04-04 01:37:02] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1837
+[2026-04-04 01:45:33] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1834
+[2026-04-04 02:00:57] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1897
+[2026-04-04 02:23:16] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 02:26:06] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 02:26:12] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 02:26:16] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 02:49:49] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 02:57:03] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 02:59:48] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 03:02:49] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 03:05:08] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1901
+[2026-04-04 03:18:41] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1780
+[2026-04-04 03:21:09] CRITICAL ERROR: number_format(): Argument #1 ($num) must be of type float, array given em C:\xampp\htdocs\green\app\views\admin\dashboard.php na linha 1780
+[2026-04-04 03:27:59] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+[2026-04-04 03:28:11] CRITICAL ERROR: Call to undefined method Pagamento::getById() em C:\xampp\htdocs\green\app\controllers\AdminController.php na linha 110
+[2026-04-04 14:08:49] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
+                FROM notas n
+                JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388
+[2026-04-04 14:08:51] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
+                FROM notas n
+                JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388
+[2026-04-04 14:09:00] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
+                FROM notas n
+                JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388
+[2026-04-04 14:11:09] CRITICAL ERROR: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '/ 2 AS nota_disciplina
+                FROM notas n
+                JOIN av...' at line 26 em C:\xampp\htdocs\green\app\models\Academico.php na linha 388
+[2026-04-04 14:19:06] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:19:09] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:23:06] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:23:13] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:29:59] CRITICAL ERROR: syntax error, unexpected token "\" em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 1436
+[2026-04-04 14:34:55] CRITICAL ERROR: Value of type null is not callable em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 526
+[2026-04-04 14:43:39] CRITICAL ERROR: syntax error, unexpected token ";", expecting "(" em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 484
+[2026-04-04 14:43:41] CRITICAL ERROR: syntax error, unexpected token ";", expecting "(" em C:\xampp\htdocs\green\app\views\professor\dashboard.php na linha 484
+>>>>>>> 8fe8280cea4398b4d49fc29d1867b817f3ad00fa
+[2026-04-08 04:48:47] CRITICAL ERROR: syntax error, unexpected token "endforeach", expecting "elseif" or "else" or "endif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 1078
+[2026-04-08 04:48:48] CRITICAL ERROR: syntax error, unexpected token "endforeach", expecting "elseif" or "else" or "endif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 1078
+[2026-04-08 04:48:49] CRITICAL ERROR: syntax error, unexpected token "endforeach", expecting "elseif" or "else" or "endif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 1078
+[2026-04-08 04:48:50] CRITICAL ERROR: syntax error, unexpected token "endforeach", expecting "elseif" or "else" or "endif" em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 1078
+[2026-04-08 04:52:04] CRITICAL ERROR: syntax error, unexpected end of file em C:\xampp\htdocs\green\app\views\estudante\dashboard.php na linha 1560

@@ -1,0 +1,5 @@
+PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'nivel' in 'field list' in C:\xampp\htdocs\green\export_metadata.php:6
+Stack trace:
+#0 C:\xampp\htdocs\green\export_metadata.php(6): PDO->query('SELECT id, codi...')
+#1 {main}
+  thrown in C:\xampp\htdocs\green\export_metadata.php on line 6

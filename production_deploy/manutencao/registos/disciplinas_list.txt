@@ -1,0 +1,82 @@
+id	codigo	nome
+1	MAT1	Matem†tica
+2	FIS1	F°sica
+3	POR1	Portuguàs
+4	TEC1	Tecnologias Inform†ticas
+5	API1	Aplicaá‰es Inform†ticas
+6	GEO1	GeomÇtrica Descritivas A e B
+7	ING1	Inglàs
+8	QUI1	Qu°mica
+9	MET1	Metodologia Cient°fica ? Guia para Eficiàncias nos Estudos
+10	AMA2	An†lise Matem†tica
+11	ARC2	Fundamentos de Arquitetura de Computadores
+12	ALG2	µlgebra Linear, GeomÇtrica Anal°tica Vetorial
+13	MEC2	MecÉnica e Electricidade
+14	IPR2	Introduá∆o a Programaá∆o
+15	CIR2	Circuitos para Comunicaá‰es
+16	POO2	Programaá∆o Orientada a Objectos
+17	AED2	Algoritmos e Estruturas de Dados
+18	POR2	Portuguàs
+19	ING2	Inglàs
+20	GCE3	Gest∆o e Contabilidade Empresarial
+21	BD3	Bases de Dados
+22	SO3	Sistemas Operativos
+23	TC3	Teoria da Computaá∆o
+24	HARD3	Hardware e Microprocessador
+25	RD13	Redes Digitais ? Fundamentos
+26	CDS3	Concepá∆o e Desenvolvimento de Sistemas
+27	PR3	Programaá∆o em Rede - HTML e CSS
+28	EDP4	EDP
+29	MCG4	MultimÇdia e Computaá∆o Gr†fica
+30	RD24	Redes Digitais ? Sistemas, Aplicaá∆o e Serviáos
+31	IA4	Inteligància Artificial
+32	MC4	MC
+33	ES4	Engenharia de Software
+34	TSI4	Tecnologia para Sistemas Inteligentes
+35	CDSI4	Concepá∆o e Desenvolvimento de Sistemas Inform†ticos
+36	IPM4	Interaá∆o Pessoa?M†quina
+37	PI4	Processamento de Informaá∆o
+38	MET4	Metodologia Cient°fica
+39		êtica e Deontologia Profissional
+40	IGE	Introduá∆o Ö Gest∆o Empresarial
+41	JAVASCR	Programaá∆o em Rede - JavaScript
+42	PHP	Programaá∆o em Rede - PHP
+43	RD2	Redes Digitais ? Sistemas e Serviáos
+44	SID	Sistemas de Informaá∆o e Decis∆o
+45	SQLSRV	Administraá∆o de SQL Server
+46	AO	Arquitetura de Operaá‰es
+47	JAVASTD	Programaá∆o Java Standard
+48	VBNET	Programaá∆o em VB.NET
+49	MA	Manutená∆o Avanáada
+50	IS	Infraestrutura de Servidores
+51	AD	Active Directory
+52	SR	Seguranáa de Redes
+53	LINUX	Administraá∆o Linux
+54	WT	Web Technologies
+55	QUIM	QUIM
+56	TI	TI
+57	POR	POR
+58	FIS	FIS
+59	MAT	MAT
+60	ING	ING
+61	APL	APL
+62	GDA	GDA
+63	AED	AED
+64	POO	POO
+65	ALGA	ALGA
+66	ECC	ECC
+67	HM	HM
+68	FBD	FBD
+69	TC	TC
+70	RD1	RD1
+71	CDSI	CDSI
+72	JS	JS
+73	SO	SO
+74	IA	IA
+75	MC	MC
+76	ES	ES
+77	MCG	MCG
+78	PI	PI
+79	TSI	TSI
+80	IPM	IPM
+81	SQL Server	SQL Server

@@ -1,0 +1,37 @@
+[
+    {
+        "TABLE_NAME": "matriculas",
+        "COLUMN_NAME": "estudante_id",
+        "CONSTRAINT_NAME": "matriculas_ibfk_1",
+        "REFERENCED_TABLE_NAME": "estudantes",
+        "REFERENCED_COLUMN_NAME": "id"
+    },
+    {
+        "TABLE_NAME": "matriculas",
+        "COLUMN_NAME": "ano_curso_id",
+        "CONSTRAINT_NAME": "matriculas_ibfk_2",
+        "REFERENCED_TABLE_NAME": "anos",
+        "REFERENCED_COLUMN_NAME": "id"
+    },
+    {
+        "TABLE_NAME": "matriculas",
+        "COLUMN_NAME": "turma_id",
+        "CONSTRAINT_NAME": "matriculas_ibfk_3",
+        "REFERENCED_TABLE_NAME": "turmas",
+        "REFERENCED_COLUMN_NAME": "id"
+    },
+    {
+        "TABLE_NAME": "matriculas",
+        "COLUMN_NAME": "especializacao_id",
+        "CONSTRAINT_NAME": "matriculas_ibfk_4",
+        "REFERENCED_TABLE_NAME": "especializacoes",
+        "REFERENCED_COLUMN_NAME": "id"
+    },
+    {
+        "TABLE_NAME": "matriculas",
+        "COLUMN_NAME": "aprovado_por",
+        "CONSTRAINT_NAME": "matriculas_ibfk_5",
+        "REFERENCED_TABLE_NAME": "utilizadores",
+        "REFERENCED_COLUMN_NAME": "id"
+    }
+]

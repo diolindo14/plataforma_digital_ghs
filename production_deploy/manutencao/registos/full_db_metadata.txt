@@ -1,0 +1,362 @@
+--- TABLE: administradores ---
+id | int(11) | NO | PRI |  | auto_increment
+utilizador_id | int(11) | NO | MUL |  | 
+cargo | enum('Administrador','Secretaria','Coordenador') | NO |  |  | 
+bi | varchar(20) | YES |  |  | 
+telefone | varchar(20) | NO |  |  | 
+data_contratacao | date | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_atualizacao | timestamp | NO |  | current_timestamp() | on update current_timestamp()
+
+--- TABLE: anos ---
+id | int(11) | NO | PRI |  | auto_increment
+numero | tinyint(4) | NO | UNI |  | 
+nome | varchar(20) | NO |  |  | 
+descricao | varchar(100) | YES |  |  | 
+mensalidade | decimal(10,2) | NO |  |  | 
+ordem | tinyint(4) | NO |  |  | 
+
+--- TABLE: assiduidade_professores ---
+id | int(11) | NO | PRI |  | auto_increment
+professor_id | int(11) | YES | MUL |  | 
+turma_id | int(11) | YES |  |  | 
+disciplina_id | int(11) | YES |  |  | 
+data | date | YES |  |  | 
+tempo | varchar(20) | YES |  |  | 
+status | varchar(20) | YES |  |  | 
+justificacao | text | YES |  |  | 
+marcado_por | int(11) | YES |  |  | 
+criado_em | timestamp | NO |  | curdate() | 
+
+--- TABLE: avaliacoes ---
+id | int(11) | NO | PRI |  | auto_increment
+disciplina_id | int(11) | NO | MUL |  | 
+turma_id | int(11) | NO | MUL |  | 
+tipo_avaliacao_id | int(11) | NO | MUL |  | 
+descricao | varchar(200) | NO |  |  | 
+data_prevista | date | YES |  |  | 
+data_realizacao | date | YES |  |  | 
+peso | decimal(3,2) | YES |  | 1.00 | 
+ano_letivo | year(4) | NO |  |  | 
+semestre | tinyint(4) | YES |  | 1 | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: comunicados ---
+id | int(11) | NO | PRI |  | auto_increment
+titulo | varchar(200) | NO |  |  | 
+mensagem | text | NO |  |  | 
+tipo | enum('Geral','Alunos','Professores','Turma','Urgente') | NO | MUL |  | 
+prioridade | enum('Baixa','Normal','Alta','Urgente') | YES | MUL | Normal | 
+destinatario_tipo | enum('Todos','Ano','Turma','Curso') | NO | MUL |  | 
+destinatario_id | int(11) | YES |  |  | 
+anexo | varchar(255) | YES |  |  | 
+criado_por | int(11) | NO | MUL |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_publicacao | datetime | NO | MUL |  | 
+data_expiracao | date | YES |  |  | 
+agendado | tinyint(1) | YES |  | 0 | 
+ativo | tinyint(1) | YES |  | 1 | 
+
+--- TABLE: comunicados_leituras ---
+comunicado_id | int(11) | NO | PRI |  | 
+utilizador_id | int(11) | NO | PRI |  | 
+data_leitura | datetime | NO |  |  | 
+
+--- TABLE: concordancia_notas ---
+id | int(11) | NO | PRI |  | auto_increment
+estudante_id | int(11) | NO | MUL |  | 
+turma_id | int(11) | NO | MUL |  | 
+disciplina_id | int(11) | NO | MUL |  | 
+status | enum('Pendente','Concordado','Reclamado','Resolvido') | YES |  | Pendente | 
+comentario | text | YES |  |  | 
+resposta_professor | text | YES |  |  | 
+data_resposta | datetime | YES |  | current_timestamp() | 
+
+--- TABLE: disciplinas ---
+id | int(11) | NO | PRI |  | auto_increment
+codigo | varchar(10) | NO | UNI |  | 
+nome | varchar(100) | NO |  |  | 
+ano_id | int(11) | NO | MUL |  | 
+carga_horaria | int(11) | YES |  |  | 
+credito | decimal(3,1) | YES |  |  | 
+descricao | text | YES |  |  | 
+ativa | tinyint(1) | YES |  | 1 | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: documentos_matricula ---
+id | int(11) | NO | PRI |  | auto_increment
+matricula_id | int(11) | NO | MUL |  | 
+tipo_documento | enum('BI','Fotografia','Certificado','Comprovativo_Pagamento') | NO |  |  | 
+nome_arquivo | varchar(255) | NO |  |  | 
+caminho_arquivo | varchar(500) | NO |  |  | 
+tamanho | int(11) | YES |  |  | 
+mime_type | varchar(100) | YES |  |  | 
+data_upload | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: especializacoes ---
+id | int(11) | NO | PRI |  | auto_increment
+codigo | varchar(10) | NO | UNI |  | 
+nome | varchar(50) | NO |  |  | 
+descricao | text | YES |  |  | 
+vagas | int(11) | YES |  | 30 | 
+ativa | tinyint(1) | YES |  | 1 | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: estudantes ---
+id | int(11) | NO | PRI |  | auto_increment
+utilizador_id | int(11) | NO | MUL |  | 
+bi | varchar(20) | NO | UNI |  | 
+data_nascimento | date | NO |  |  | 
+nacionalidade | varchar(50) | YES |  | Guineense | 
+sexo | enum('Masculino','Feminino') | NO |  |  | 
+estado_civil | enum('Solteiro','Casado','Divorciado','Viúvo') | YES |  | Solteiro | 
+telefone | varchar(20) | NO | MUL |  | 
+telefone_alternativo | varchar(20) | YES |  |  | 
+morada | text | YES |  |  | 
+bairro | varchar(100) | YES |  |  | 
+cidade | varchar(100) | YES |  | Bissau | 
+nome_encarregado | varchar(100) | YES |  |  | 
+telefone_encarregado | varchar(20) | YES |  |  | 
+escola_proveniencia | varchar(100) | YES |  |  | 
+ano_conclusao | int(11) | YES |  |  | 
+media_final | decimal(4,2) | YES |  |  | 
+foto_perfil | varchar(255) | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_atualizacao | timestamp | NO |  | current_timestamp() | on update current_timestamp()
+
+--- TABLE: eventos ---
+id | int(11) | NO | PRI |  | auto_increment
+titulo | varchar(255) | NO |  |  | 
+descricao | text | YES |  |  | 
+data_evento | datetime | NO |  |  | 
+tipo | enum('Aula Extra','Exame','Trabalho','Reuniao','Feriado','Outro') | YES |  | Outro | 
+cor | varchar(10) | YES |  | #3b82f6 | 
+destinatario_tipo | enum('Global','Ano','Turma','Individual') | YES |  | Global | 
+destinatario_id | int(11) | YES |  |  | 
+criado_por | int(11) | NO |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: eventos_calendario ---
+id | int(11) | NO | PRI |  | auto_increment
+titulo | varchar(200) | NO |  |  | 
+descricao | text | YES |  |  | 
+tipo | enum('Aula','Prova','Feriado','Workshop','Seminário','Evento','Prazo') | NO | MUL |  | 
+data_inicio | datetime | NO | MUL |  | 
+data_fim | datetime | NO | MUL |  | 
+dia_inteiro | tinyint(1) | YES |  | 0 | 
+cor | varchar(20) | YES |  |  | 
+local_evento | varchar(100) | YES |  |  | 
+anos_envolvidos | varchar(50) | YES |  |  | 
+turmas_envolvidas | varchar(100) | YES |  |  | 
+criado_por | int(11) | NO | MUL |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_atualizacao | timestamp | NO |  | current_timestamp() | on update current_timestamp()
+
+--- TABLE: frequencias ---
+id | int(11) | NO | PRI |  | auto_increment
+sumario_id | int(11) | YES |  |  | 
+estudante_id | int(11) | NO | MUL |  | 
+turma_id | int(11) | NO | MUL |  | 
+disciplina_id | int(11) | NO | MUL |  | 
+data | date | NO |  |  | 
+status | enum('P','F','J') | YES |  | P | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+confirmado_admin | tinyint(1) | YES |  | 0 | 
+
+--- TABLE: horarios ---
+id | int(11) | NO | PRI |  | auto_increment
+turma_id | int(11) | NO | MUL |  | 
+disciplina_id | int(11) | NO | MUL |  | 
+professor_id | int(11) | NO | MUL |  | 
+dia_semana | enum('Segunda','Terça','Quarta','Quinta','Sexta','Sábado') | NO | MUL |  | 
+hora_inicio | time | NO |  |  | 
+hora_fim | time | NO |  |  | 
+sala | varchar(20) | NO |  |  | 
+tempo_aula | tinyint(4) | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: horarios_modelo ---
+id | int(11) | NO | PRI |  | auto_increment
+ano_id | int(11) | NO | MUL |  | 
+dia_semana | varchar(20) | NO |  |  | 
+hora_inicio | time | NO |  |  | 
+hora_fim | time | NO |  |  | 
+disciplina_id | int(11) | YES |  |  | 
+sala | varchar(50) | YES |  |  | 
+
+--- TABLE: leitura_comunicados ---
+id | int(11) | NO | PRI |  | auto_increment
+comunicado_id | int(11) | NO | MUL |  | 
+utilizador_id | int(11) | NO | MUL |  | 
+data_leitura | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: logs_acesso ---
+id | int(11) | NO | PRI |  | auto_increment
+utilizador_id | int(11) | YES | MUL |  | 
+acao | varchar(100) | NO | MUL |  | 
+ip | varchar(45) | NO |  |  | 
+user_agent | text | YES |  |  | 
+detalhes | text | YES |  |  | 
+data_criacao | timestamp | NO | MUL | current_timestamp() | 
+
+--- TABLE: logs_atividades ---
+id | int(11) | NO | PRI |  | auto_increment
+utilizador_id | int(11) | NO | MUL |  | 
+acao | varchar(255) | NO |  |  | 
+detalhes | text | YES |  |  | 
+ip_address | varchar(45) | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: materiais ---
+id | int(11) | NO | PRI |  | auto_increment
+turma_id | int(11) | NO | MUL |  | 
+disciplina_id | int(11) | NO | MUL |  | 
+professor_id | int(11) | NO | MUL |  | 
+titulo | varchar(255) | NO |  |  | 
+nome_ficheiro | varchar(255) | NO |  |  | 
+caminho_ficheiro | varchar(255) | NO |  |  | 
+tipo_ficheiro | varchar(50) | YES |  |  | 
+data_upload | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: matriculas ---
+id | int(11) | NO | PRI |  | auto_increment
+estudante_id | int(11) | NO | MUL |  | 
+ano_letivo | year(4) | NO |  |  | 
+ano_curso_id | int(11) | NO | MUL |  | 
+turma_id | int(11) | YES | MUL |  | 
+especializacao_id | int(11) | YES | MUL |  | 
+turno | enum('Manhã','Tarde','Noite') | NO |  |  | 
+tipo | enum('Novo Ingresso','Estudante Interno') | NO |  |  | 
+status | enum('Pendente','Em validacao','Aprovada','Rejeitada') | YES | MUL | Pendente | 
+numero_processo | varchar(20) | YES | UNI |  | 
+data_matricula | date | NO |  |  | 
+observacoes | text | YES |  |  | 
+aprovado_por | int(11) | YES | MUL |  | 
+data_aprovacao | date | YES |  |  | 
+motivo_rejeicao | text | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_atualizacao | timestamp | NO |  | current_timestamp() | on update current_timestamp()
+
+--- TABLE: mensagens ---
+id | int(11) | NO | PRI |  | auto_increment
+remetente_id | int(11) | NO | MUL |  | 
+destinatario_id | int(11) | NO | MUL |  | 
+assunto | varchar(200) | NO |  |  | 
+mensagem | text | NO |  |  | 
+lida | tinyint(1) | YES | MUL | 0 | 
+data_leitura | datetime | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: notas ---
+id | int(11) | NO | PRI |  | auto_increment
+estudante_id | int(11) | NO | MUL |  | 
+avaliacao_id | int(11) | NO | MUL |  | 
+nota | decimal(5,2) | YES |  |  | 
+observacoes | text | YES |  |  | 
+data_lancamento | timestamp | YES |  |  | 
+lancado_por | int(11) | YES | MUL |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_atualizacao | timestamp | NO |  | current_timestamp() | on update current_timestamp()
+confirmado_admin | tinyint(1) | YES |  | 0 | 
+
+--- TABLE: pagamentos ---
+id | int(11) | NO | PRI |  | auto_increment
+estudante_id | int(11) | NO | MUL |  | 
+matricula_id | int(11) | YES | MUL |  | 
+tipo_pagamento_id | int(11) | YES | MUL |  | 
+ano_letivo | year(4) | YES |  |  | 
+mes_referencia | tinyint(4) | YES |  |  | 
+descricao | varchar(200) | NO |  |  | 
+valor | decimal(10,2) | NO |  |  | 
+comprovativo_path | varchar(500) | YES |  |  | 
+data_vencimento | date | NO | MUL |  | 
+data_pagamento | date | YES |  |  | 
+status | enum('Pendente','Pago','Vencido','Cancelado') | YES | MUL | Pendente | 
+forma_pagamento | enum('Dinheiro','Transferência','Mobile Money') | YES |  |  | 
+comprovativo_arquivo | varchar(255) | YES |  |  | 
+referencia_bancaria | varchar(100) | YES |  |  | 
+processado_por | int(11) | YES | MUL |  | 
+observacoes | text | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_atualizacao | timestamp | NO |  | current_timestamp() | on update current_timestamp()
+
+--- TABLE: professor_disciplina ---
+id | int(11) | NO | PRI |  | auto_increment
+professor_id | int(11) | NO | MUL |  | 
+disciplina_id | int(11) | NO | MUL |  | 
+turma_id | int(11) | YES | MUL |  | 
+ano_letivo | year(4) | NO |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: professores ---
+id | int(11) | NO | PRI |  | auto_increment
+utilizador_id | int(11) | NO | MUL |  | 
+bi | varchar(20) | NO | UNI |  | 
+telefone | varchar(20) | NO |  |  | 
+especialidade | varchar(100) | YES |  |  | 
+grau_academico | varchar(50) | YES |  |  | 
+data_contratacao | date | YES |  |  | 
+foto_perfil | varchar(255) | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_atualizacao | timestamp | NO |  | current_timestamp() | on update current_timestamp()
+
+--- TABLE: sumarios ---
+id | int(11) | NO | PRI |  | auto_increment
+professor_id | int(11) | NO |  |  | 
+turma_id | int(11) | NO |  |  | 
+disciplina_id | int(11) | NO |  |  | 
+tempo | varchar(20) | YES |  |  | 
+data | date | NO |  |  | 
+conteudo | text | NO |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+confirmado_admin | tinyint(1) | YES |  | 0 | 
+
+--- TABLE: tipos_avaliacao ---
+id | int(11) | NO | PRI |  | auto_increment
+codigo | varchar(10) | NO | UNI |  | 
+nome | varchar(50) | NO |  |  | 
+pontuacao_maxima | decimal(5,2) | NO |  |  | 
+peso_relativo | decimal(5,2) | YES |  |  | 
+ordem | tinyint(4) | NO |  |  | 
+ativo | tinyint(1) | YES |  | 1 | 
+
+--- TABLE: tipos_pagamento ---
+id | int(11) | NO | PRI |  | auto_increment
+codigo | varchar(20) | NO | UNI |  | 
+nome | varchar(100) | NO |  |  | 
+valor | decimal(10,2) | NO |  |  | 
+recorrente | tinyint(1) | YES |  | 0 | 
+obrigatorio | tinyint(1) | YES |  | 1 | 
+descricao | text | YES |  |  | 
+
+--- TABLE: turmas ---
+id | int(11) | NO | PRI |  | auto_increment
+codigo | varchar(20) | NO | UNI |  | 
+ano_id | int(11) | NO | MUL |  | 
+turno | enum('Manhã','Tarde','Noite') | NO |  |  | 
+numero_turma | tinyint(4) | NO |  |  | 
+sala_principal | varchar(20) | YES |  |  | 
+vagas | int(11) | YES |  | 30 | 
+ativa | tinyint(1) | YES |  | 1 | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+
+--- TABLE: utilizadores ---
+id | int(11) | NO | PRI |  | auto_increment
+nome_completo | varchar(100) | NO |  |  | 
+email | varchar(100) | NO | UNI |  | 
+senha | varchar(255) | NO |  |  | 
+tipo | enum('admin','secretaria','professor','aluno') | NO | MUL |  | 
+status | enum('ativo','inativo','pendente') | YES | MUL | pendente | 
+token_confirmacao | varchar(100) | YES |  |  | 
+token_recuperacao | varchar(100) | YES |  |  | 
+token_expira | datetime | YES |  |  | 
+ultimo_acesso | datetime | YES |  |  | 
+ip_registo | varchar(45) | YES |  |  | 
+data_criacao | timestamp | NO |  | current_timestamp() | 
+data_atualizacao | timestamp | NO |  | current_timestamp() | on update current_timestamp()
+tentativas_login | int(11) | YES |  | 0 | 
+bloqueado_ate | datetime | YES |  |  | 
+codigo_2fa | varchar(10) | YES |  |  | 
+expiracao_2fa | datetime | YES |  |  | 
+requires_pw_change | tinyint(1) | YES |  | 0 | 
+

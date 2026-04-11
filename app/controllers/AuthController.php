@@ -134,7 +134,7 @@ class AuthController extends Controller {
             $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS);
             $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
             $senha = $_POST['password'];
-            $tipo = 'estudante'; 
+            $tipo = 'aluno'; 
 
             if (!$email) {
                 $_SESSION['flash_error'] = "E-mail inválido.";

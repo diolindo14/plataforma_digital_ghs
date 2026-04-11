@@ -345,13 +345,7 @@
                         <p class="feature-desc">Acesso a notas, horários, materiais didáticos e histórico académico num só lugar.</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-box">
-                        <div class="feature-icon"><ion-icon name="card-outline"></ion-icon></div>
-                        <h3 class="feature-title">Pagamentos Digitais</h3>
-                        <p class="feature-desc">Gestão de propinas e pagamentos online com geração automática de comprovativos mensais.</p>
-                    </div>
-                </div>
+
                 <div class="col-lg-4 col-md-6">
                     <div class="feature-box">
                         <div class="feature-icon"><ion-icon name="stats-chart-outline"></ion-icon></div>

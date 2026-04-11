@@ -134,7 +134,7 @@
                                 <div class="row g-4 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">Nome Completo *</label>
-                                        <input type="text" name="nome" class="form-control" placeholder="Ex: Mamadu Baldé" value="<?= $data['student_profile']['nome_completo'] ?? '' ?>" required>
+                                        <input type="text" name="nome" class="form-control" placeholder="Ex: Diolindo Nababo" value="<?= $data['student_profile']['nome_completo'] ?? '' ?>" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Data de Nascimento *</label>

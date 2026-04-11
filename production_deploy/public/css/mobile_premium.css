@@ -1,0 +1,243 @@
+/* 
+    GHS Mobile Premium UX Overhaul
+    Focus: Mobile-First, App-like experience, Professional Aesthetics
+*/
+
+:root {
+    --ghs-primary: #10B981;
+    --ghs-primary-hover: #059669;
+    --ghs-secondary: #0B1120;
+    --ghs-accent: #3B82F6;
+    --ghs-danger: #EF4444;
+    --ghs-warning: #F59E0B;
+    --ghs-success: #10B981;
+    --ghs-background: #F8FAFC;
+    --ghs-card-bg: #FFFFFF;
+    --ghs-text-main: #1E293B;
+    --ghs-text-muted: #64748B;
+    --ghs-border: #E2E8F0;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --bottom-nav-height: 70px;
+}
+
+/* --- Base Mobile Reset --- */
+body {
+    background-color: var(--ghs-background);
+    color: var(--ghs-text-main);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Standard Padding for Sections */
+.ghs-mobile-section {
+    padding: 16px;
+}
+
+/* --- Premium Cards --- */
+.ghs-card {
+    background: var(--ghs-card-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--ghs-border);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.ghs-card:active {
+    transform: scale(0.98);
+}
+
+.ghs-card-body {
+    padding: 20px;
+}
+
+/* Dashboard Statistics Cards */
+.ghs-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+}
+
+.ghs-stat-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    font-size: 1.75rem;
+}
+
+/* --- Mobile Bottom Navigation --- */
+.ghs-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--bottom-nav-height);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid var(--ghs-border);
+    z-index: 1050;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.ghs-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--ghs-text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.ghs-nav-item ion-icon {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+}
+
+.ghs-nav-item.active {
+    color: var(--ghs-primary);
+}
+
+/* Hide bottom nav on desktop */
+@media (min-width: 1025px) {
+    .ghs-bottom-nav {
+        display: none;
+    }
+}
+
+/* --- Tables-to-Cards Transformation --- */
+@media (max-width: 767.98px) {
+    .table-mobile-cards thead {
+        display: none; /* Hide header on mobile */
+    }
+
+    .table-mobile-cards tr {
+        display: block;
+        background: white;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--ghs-border);
+        margin-bottom: 16px;
+        padding: 12px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .table-mobile-cards td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        padding: 8px 0;
+        text-align: right;
+    }
+
+    .table-mobile-cards td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        color: var(--ghs-text-muted);
+        text-align: left;
+        flex: 1;
+    }
+
+    /* Exceptions for action buttons in cards */
+    .table-mobile-cards td.actions {
+        margin-top: 8px;
+        border-top: 1px solid var(--ghs-border);
+        padding-top: 12px;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .table-mobile-cards td.actions::before {
+        display: none;
+    }
+}
+
+/* --- Optimized Forms (Global Overrides) --- */
+.form-control, .form-select {
+    height: 48px !important;
+    border-radius: var(--radius-md) !important;
+    border: 1.5px solid var(--ghs-border) !important;
+    padding: 10px 16px !important;
+    font-size: 1rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--ghs-primary) !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
+}
+
+.form-label {
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    color: var(--ghs-text-muted) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 8px !important;
+}
+
+.modal-content {
+    border-radius: var(--radius-lg) !important;
+    border: none !important;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--ghs-border) !important;
+    padding: 20px 24px !important;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--ghs-border) !important;
+    padding: 16px 24px !important;
+}
+
+/* Big touch-friendly buttons */
+.btn {
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    padding: 0 20px;
+    transition: all 0.2s;
+}
+
+.btn-lg {
+    height: 56px;
+    padding: 0 32px;
+}
+
+/* --- Accessibility & UX --- */
+.touch-target {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Skeleton/Loading State */
+.ghs-loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

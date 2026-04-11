@@ -1,0 +1,58 @@
+[
+    {
+        "Field": "id",
+        "Type": "int(11)",
+        "Null": "NO",
+        "Key": "PRI",
+        "Default": null,
+        "Extra": "auto_increment"
+    },
+    {
+        "Field": "estudante_id",
+        "Type": "int(11)",
+        "Null": "NO",
+        "Key": "MUL",
+        "Default": null,
+        "Extra": ""
+    },
+    {
+        "Field": "turma_id",
+        "Type": "int(11)",
+        "Null": "NO",
+        "Key": "MUL",
+        "Default": null,
+        "Extra": ""
+    },
+    {
+        "Field": "disciplina_id",
+        "Type": "int(11)",
+        "Null": "NO",
+        "Key": "MUL",
+        "Default": null,
+        "Extra": ""
+    },
+    {
+        "Field": "status",
+        "Type": "enum('Pendente','Concordado','Reclamado')",
+        "Null": "YES",
+        "Key": "",
+        "Default": "Pendente",
+        "Extra": ""
+    },
+    {
+        "Field": "comentario",
+        "Type": "text",
+        "Null": "YES",
+        "Key": "",
+        "Default": null,
+        "Extra": ""
+    },
+    {
+        "Field": "data_resposta",
+        "Type": "datetime",
+        "Null": "YES",
+        "Key": "",
+        "Default": "current_timestamp()",
+        "Extra": ""
+    }
+]

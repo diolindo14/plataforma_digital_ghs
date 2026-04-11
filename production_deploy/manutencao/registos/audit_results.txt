@@ -1,0 +1,16 @@
+Auditoria para Professor 13 (Domingos Correia)
+Atribuições em professor_disciplina:
+  - GHS-3T1 | Redes Digitais — Fundamentos (T:9 D:25)
+    !!! SEM HORÁRIO DEFINIDO NA TABELA 'horarios' !!!
+  - GHS-3M1 | Redes Digitais — Fundamentos (T:16 D:25)
+    !!! SEM HORÁRIO DEFINIDO NA TABELA 'horarios' !!!
+  - GHS-3N1 | Redes Digitais — Fundamentos (T:17 D:25)
+    !!! SEM HORÁRIO DEFINIDO NA TABELA 'horarios' !!!
+  - GHS-4T1 | Redes Digitais — Sistemas, Aplicação e Serviços (T:7 D:30)
+    !!! SEM HORÁRIO DEFINIDO NA TABELA 'horarios' !!!
+  - GHS-4N1 | Redes Digitais — Sistemas, Aplicação e Serviços (T:18 D:30)
+    !!! SEM HORÁRIO DEFINIDO NA TABELA 'horarios' !!!
+  - GHS-5TRD1 | RD1 (T:20 D:70)
+    !!! SEM HORÁRIO DEFINIDO NA TABELA 'horarios' !!!
+
+Fim da Auditoria.
