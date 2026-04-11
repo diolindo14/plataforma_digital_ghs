@@ -399,49 +399,44 @@
             <div class="tab-pane fade show active" id="pane-home" role="tabpanel">
 
                 <!-- 📢 ALERTAS DE CONVOCATÓRIA (Mediação) -->
-                <?php if (!empty($data['notas'])): ?>
-                    <?php foreach ($data['notas'] as $n): ?>
-                        <?php if ($n['feedback_status'] === 'Aguardando_Comparecimento'): ?>
-                            <div class="alert alert-danger shadow-sm border-0 border-start border-4 border-danger rounded-4 mb-4 p-4" role="alert">
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger">
-                                        <ion-icon name="calendar" class="fs-2"></ion-icon>
-                                    </div>
-                                    <div>
-                                        <h4 class="fw-bold mb-1 text-danger">Convocatória de Mediação Presencial</h4>
-                                        <p class="mb-0 text-muted">A sua contestação da disciplina <strong><?= htmlspecialchars($n['disciplina']) ?></strong> foi escalada para mediação.</p>
-                                    </div>
+                <?php if (!empty($data['convocatorias'])): ?>
+                    <?php foreach ($data['convocatorias'] as $conv): ?>
+                        <div class="alert alert-danger shadow-sm border-0 border-start border-4 border-danger rounded-4 mb-4 p-4" role="alert">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger">
+                                    <ion-icon name="calendar" class="fs-2"></ion-icon>
                                 </div>
-                                <div class="row g-3 bg-white bg-opacity-50 p-3 rounded-4 border">
-                                    <div class="col-md-3">
-                                        <div class="small fw-bold text-muted text-uppercase mb-1">Data Agendada</div>
-                                        <div class="fw-bold fs-5 text-dark"><?= date('d/m/Y', strtotime($n['data_reuniao'])) ?></div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="small fw-bold text-muted text-uppercase mb-1">Hora</div>
-                                        <div class="fw-bold fs-5 text-dark"><?= substr($n['hora_reuniao'], 0, 5) ?></div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="small fw-bold text-muted text-uppercase mb-1">Local / Gabinete</div>
-                                        <div class="fw-bold fs-5 text-dark"><?= htmlspecialchars($n['local_reuniao']) ?></div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="small fw-bold text-muted text-uppercase mb-1">Referência</div>
-                                        <div class="badge bg-danger rounded-pill px-3">OBRIGATÓRIO</div>
-                                    </div>
-                                    <div class="col-12 mt-3 pt-3 border-top">
-                                        <small class="fw-bold text-danger d-block mb-1">Motivo da Convocação:</small>
-                                        <p class="mb-0 small italic text-muted">"<?= nl2br(htmlspecialchars($n['motivo_convocacao'])) ?>"</p>
-                                    </div>
+                                <div>
+                                    <h4 class="fw-bold mb-1 text-danger">Convocatória de Mediação Presencial</h4>
+                                    <p class="mb-0 text-muted">A sua contestação da disciplina <strong><?= htmlspecialchars($conv['disciplina'] ?? 'N/A') ?></strong> foi escalada para mediação presencial.</p>
                                 </div>
                             </div>
-                        <?php endif; ?>
+                            <div class="row g-3 bg-white bg-opacity-50 p-3 rounded-4 border">
+                                <div class="col-md-3">
+                                    <div class="small fw-bold text-muted text-uppercase mb-1">Data Agendada</div>
+                                    <div class="fw-bold fs-5 text-dark"><?= !empty($conv['data_reuniao']) ? date('d/m/Y', strtotime($conv['data_reuniao'])) : 'N/A' ?></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="small fw-bold text-muted text-uppercase mb-1">Hora</div>
+                                    <div class="fw-bold fs-5 text-dark"><?= !empty($conv['hora_reuniao']) ? substr($conv['hora_reuniao'], 0, 5) : 'N/A' ?></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="small fw-bold text-muted text-uppercase mb-1">Local / Gabinete</div>
+                                    <div class="fw-bold fs-5 text-dark"><?= htmlspecialchars($conv['local_reuniao'] ?? 'N/A') ?></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="small fw-bold text-muted text-uppercase mb-1">Referência</div>
+                                    <div class="badge bg-danger rounded-pill px-3">OBRIGATÓRIO</div>
+                                </div>
+                                <div class="col-12 mt-3 pt-3 border-top">
+                                    <small class="fw-bold text-danger d-block mb-1">Motivo da Convocação:</small>
+                                    <p class="mb-0 small text-muted">"<?= nl2br(htmlspecialchars($conv['motivo_convocacao'] ?? 'Motivo não especificado.')) ?>"</p>
+                                </div>
+                            </div>
+                        </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
-
-
-
-                <!-- 🏆 CERTIFICADOS DE MÉRITO EMITIDOS OFICIALMENTE -->
+<!-- 🏆 CERTIFICADOS DE MÉRITO EMITIDOS OFICIALMENTE -->
                 <?php if (!empty($data['certificados_emitidos'])): ?>
                     <div class="row g-3 mb-4">
                         <?php foreach ($data['certificados_emitidos'] as $idx => $cert): ?>

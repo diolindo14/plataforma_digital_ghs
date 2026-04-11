@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Resumo Executivo GHS v1.0
 ?>
 <!DOCTYPE html>
@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>GHS — Resumo Executivo v1.3</title>
+    <title>GHS ÔÇö Resumo Executivo v1.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -407,12 +407,12 @@
             <img src="../img/logo.jpg" alt="GREEN HARD &amp; SOFTH"
                 style="height: 60px; border-radius: 6px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             <h1>Resumo Executivo da Plataforma</h1>
-            <p>Documento de visão estratégica para Direção e Gestão Institucional</p>
+            <p>Documento de vis├úo estrat├®gica para Dire├º├úo e Gest├úo Institucional</p>
         </div>
         <div class="cover-right">
             <div class="version">v1.3</div><br>
             <strong>Data:</strong> Abril 2026<br>
-            <strong>Classificação:</strong> Uso Interno<br>
+            <strong>Classifica├º├úo:</strong> Uso Interno<br>
             <strong>Autor:</strong> Diosives Crobute
         </div>
     </div>
@@ -420,66 +420,66 @@
 
 
 
-    <h2>1. Visão Geral do Projeto</h2>
-    <p>O <strong>GHS (Green Hard &amp; Softh)</strong> é uma plataforma de gestão académica e financeira
+    <h2>1. Vis├úo Geral do Projeto</h2>
+    <p>O <strong>GHS (Green Hard &amp; Softh)</strong> ├® uma plataforma de gest├úo acad├®mica e financeira
         desenvolvida em
-        PHP nativo, concebida para eliminar processos manuais e papéis nas escolas superiores de informática. O
+        PHP nativo, concebida para eliminar processos manuais e pap├®is nas escolas superiores de inform├ítica. O
         ecossistema serve quatro perfis de utilizadores com portais independentes, garante a rastreabilidade de
         todas as
-        operações e implementa padrões de segurança de nível empresarial.</p>
-    <p>Na versão 1.0, foram consolidados o motor de regras pedagógicas, o sistema de inteligência visual
+        opera├º├Áes e implementa padr├Áes de seguran├ºa de n├¡vel empresarial.</p>
+    <p>Na vers├úo 1.0, foram consolidados o motor de regras pedag├│gicas, o sistema de intelig├¬ncia visual
         (Dashboards) e
-        as camadas de proteção de dados, resultando num produto robusto e pronto para escala institucional.</p>
+        as camadas de prote├º├úo de dados, resultando num produto robusto e pronto para escala institucional.</p>
 
-    <h2>2. Problema e Solução</h2>
+    <h2>2. Problema e Solu├º├úo</h2>
     <table>
         <thead>
             <tr>
                 <th width="42%">Problema Anterior</th>
-                <th width="58%">Solução Implementada na Plataforma GHS</th>
+                <th width="58%">Solu├º├úo Implementada na Plataforma GHS</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Matrículas presenciais com perda de documentos</td>
+                <td>Matr├¡culas presenciais com perda de documentos</td>
                 <td>Portal de candidatura 100% digital com upload de B.I., Certificados e Comprovativos, validados
                     via
                     <strong>Integrador Visual Documental (PDF.js)</strong>.
                 </td>
             </tr>
             <tr>
-                <td>Cálculo manual de médias e progressão de ano</td>
-                <td><strong>Motor Académico Autónomo</strong>: determina automaticamente Aprovação (≥12), Recurso
+                <td>C├ílculo manual de m├®dias e progress├úo de ano</td>
+                <td><strong>Motor Acad├®mico Aut├│nomo</strong>: determina automaticamente Aprova├º├úo (ÔëÑ12), Recurso
                     (8-11)
-                    ou Repetição de Ano (&lt;8 ou mais de 3 negativas).</td>
+                    ou Repeti├º├úo de Ano (&lt;8 ou mais de 3 negativas).</td>
             </tr>
             <tr>
-                <td>Horários estáticos distribuídos em papel</td>
-                <td>Grade horária interativa e dinâmica por turma, visível no portal do aluno e do professor, com
+                <td>Hor├írios est├íticos distribu├¡dos em papel</td>
+                <td>Grade hor├íria interativa e din├ómica por turma, vis├¡vel no portal do aluno e do professor, com
                     dados
                     em tempo real.</td>
             </tr>
             <tr>
                 <td>Pagamentos sem rastreabilidade ou auditoria</td>
-                <td>Sistema de Tesouraria com validação de comprovativos e <strong>Registo Manual de
+                <td>Sistema de Tesouraria com valida├º├úo de comprovativos e <strong>Registo Manual de
                         Pagamentos</strong>
                     presenciais.</td>
             </tr>
             <tr>
-                <td>Falta de análise visual dos dados da escola</td>
-                <td><strong>Dashboards Estatísticos</strong> com gráficos de crescimento de alunos por ano e
-                    distribuição por turno (ECharts).</td>
+                <td>Falta de an├ílise visual dos dados da escola</td>
+                <td><strong>Dashboards Estat├¡sticos</strong> com gr├íficos de crescimento de alunos por ano e
+                    distribui├º├úo por turno (ECharts).</td>
             </tr>
             <tr>
-                <td>Professores sem ferramentas pedagógicas digitais</td>
-                <td>Portal docente com lançamento de notas, registo de sumários digitais, marcação de faltas e
+                <td>Professores sem ferramentas pedag├│gicas digitais</td>
+                <td>Portal docente com lan├ºamento de notas, registo de sum├írios digitais, marca├º├úo de faltas e
                     resposta
-                    a reclamações de alunos.</td>
+                    a reclama├º├Áes de alunos.</td>
             </tr>
             <tr>
-                <td>Comunicação escolar descentralizada e ineficaz</td>
+                <td>Comunica├º├úo escolar descentralizada e ineficaz</td>
                 <td>Sistema de Comunicados com <strong>Read Tracking</strong> (registo de leitura por utilizador) e
-                    expiração automática de avisos.</td>
+                    expira├º├úo autom├ítica de avisos.</td>
             </tr>
         </tbody>
     </table>
@@ -495,152 +495,152 @@
         </thead>
         <tbody>
             <tr>
-                <td><strong>⚙️ Administração</strong></td>
+                <td><strong>ÔÜÖ´©Å Administra├º├úo</strong></td>
                 <td>Diretor / Gestor</td>
-                <td>Configuração global do sistema, auditoria de logs, gestão de utilizadores, análise de dashboards
-                    estatísticos.</td>
+                <td>Configura├º├úo global do sistema, auditoria de logs, gest├úo de utilizadores, an├ílise de dashboards
+                    estat├¡sticos.</td>
             </tr>
             <tr>
-                <td><strong>🏢 Secretaria/Tesouraria</strong></td>
+                <td><strong>­ƒÅó Secretaria/Tesouraria</strong></td>
                 <td>Administrativos</td>
-                <td>Validação de matrículas e documentos, aprovação/rejeição de pagamentos, emissão de recibos
+                <td>Valida├º├úo de matr├¡culas e documentos, aprova├º├úo/rejei├º├úo de pagamentos, emiss├úo de recibos
                     digitais,
-                    gestão de comunicados.</td>
+                    gest├úo de comunicados.</td>
             </tr>
             <tr>
-                <td><strong>👨‍🏫 Professor</strong></td>
+                <td><strong>­ƒæ¿ÔÇì­ƒÅ½ Professor</strong></td>
                 <td>Docentes</td>
-                <td>Lançamento de pautas e notas, registo de sumários e faltas, resposta a reclamações de alunos,
-                    consulta de horários.</td>
+                <td>Lan├ºamento de pautas e notas, registo de sum├írios e faltas, resposta a reclama├º├Áes de alunos,
+                    consulta de hor├írios.</td>
             </tr>
             <tr>
-                <td><strong>🎓 Estudante</strong></td>
+                <td><strong>­ƒÄô Estudante</strong></td>
                 <td>Alunos</td>
-                <td>Submissão de matrícula, consulta de notas, horários e histórico global, pagamento de propinas,
+                <td>Submiss├úo de matr├¡cula, consulta de notas, hor├írios e hist├│rico global, pagamento de propinas,
                     leitura de comunicados.</td>
             </tr>
         </tbody>
     </table>
 
-    <h2>4. Novas Funcionalidades da Versão 1.0</h2>
+    <h2>4. Novas Funcionalidades da Vers├úo 1.0</h2>
 
-    <h3>4.1 Dashboards de Inteligência Operacional</h3>
-    <p>O painel Administrativo foi equipado com visualizações gráficas em tempo real utilizando a biblioteca
-        <strong>ECharts</strong>. As métricas disponíveis incluem:
+    <h3>4.1 Dashboards de Intelig├¬ncia Operacional</h3>
+    <p>O painel Administrativo foi equipado com visualiza├º├Áes gr├íficas em tempo real utilizando a biblioteca
+        <strong>ECharts</strong>. As m├®tricas dispon├¡veis incluem:
     </p>
     <ul>
-        <li><strong>Densidade Estudantil por Ano Letivo</strong>: evolução do número de matriculados ao longo dos
+        <li><strong>Densidade Estudantil por Ano Letivo</strong>: evolu├º├úo do n├║mero de matriculados ao longo dos
             anos.
         </li>
-        <li><strong>Distribuição por Turno</strong>: análise da ocupação de salas e docentes por turno (Manhã,
+        <li><strong>Distribui├º├úo por Turno</strong>: an├ílise da ocupa├º├úo de salas e docentes por turno (Manh├ú,
             Tarde,
             Noite).</li>
-        <li><strong>Alerta de Propinas</strong>: monitorização em tempo real de propinas em atraso.</li>
+        <li><strong>Alerta de Propinas</strong>: monitoriza├º├úo em tempo real de propinas em atraso.</li>
     </ul>
 
-    <h3>4.2 Motor de Progressão Académica Automática</h3>
+    <h3>4.2 Motor de Progress├úo Acad├®mica Autom├ítica</h3>
     <p>Implementado no modelo <strong>Matricula.php</strong> e validado pelo motor <strong>Academico.php</strong>, o
-        sistema aplica as seguintes regras pedagógicas sem intervenção manual:</p>
+        sistema aplica as seguintes regras pedag├│gicas sem interven├º├úo manual:</p>
     <table>
         <thead>
             <tr>
-                <th>Cenário</th>
-                <th>Condição</th>
-                <th>Resultado Automático</th>
+                <th>Cen├írio</th>
+                <th>Condi├º├úo</th>
+                <th>Resultado Autom├ítico</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Aprovação Direta</td>
-                <td>Média final ≥ 12 em todas as disciplinas</td>
-                <td><span class="badge badge-green">Aprovado ✓</span></td>
+                <td>Aprova├º├úo Direta</td>
+                <td>M├®dia final ÔëÑ 12 em todas as disciplinas</td>
+                <td><span class="badge badge-green">Aprovado Ô£ô</span></td>
             </tr>
             <tr>
                 <td>Acesso a Exame de Recurso</td>
-                <td>Média entre 8 e 11.9 (8.0 mínimo AC)</td>
-                <td><span class="badge badge-yellow">Recurso ⚠</span></td>
+                <td>M├®dia entre 8 e 11.9 (8.0 m├¡nimo AC)</td>
+                <td><span class="badge badge-yellow">Recurso ÔÜá</span></td>
             </tr>
             <tr>
-                <td>Repetição de Disciplina</td>
-                <td>Nota AC < 8 ou Média Final < 8</td>
-                <td><span class="badge badge-red">Reprovado ✗</span></td>
+                <td>Repeti├º├úo de Disciplina</td>
+                <td>Nota AC < 8 ou M├®dia Final < 8</td>
+                <td><span class="badge badge-red">Reprovado Ô£ù</span></td>
             </tr>
         </tbody>
     </table>
 
-    <h3>4.3 Gestão de Tesouraria e Pagamento Manual</h3>
-    <p>Além da submissão e validação digital de comprovativos, a secretaria pode agora registar pagamentos em 
-    pessoa: depósitos bancários diretos são lançados manualmente pelo administrativo, activando imediatamente o status 
-    académico do aluno e gerando um <strong>Recibo Térmico (POS 80mm)</strong> com <strong>QR Code dinâmico</strong> 
-    de autenticação digital instantânea.</p>
+    <h3>4.3 Gest├úo de Tesouraria e Pagamento Manual</h3>
+    <p>Al├®m da submiss├úo e valida├º├úo digital de comprovativos, a secretaria pode agora registar pagamentos em 
+    pessoa: dep├│sitos banc├írios diretos s├úo lan├ºados manualmente pelo administrativo, activando imediatamente o status 
+    acad├®mico do aluno e gerando um <strong>Recibo T├®rmico (POS 80mm)</strong> com <strong>QR Code din├ómico</strong> 
+    de autentica├º├úo digital instant├ónea.</p>
 
-    <h3>4.4 Histórico Académico Global</h3>
-    <p>Cada aluno tem acesso ao seu <strong>Histórico Global</strong>, um registo imutável e vitalício de todas as
-        disciplinas concluídas, com médias, semestres e anos letivos. Este registo serve como base para a emissão de
-        certidões e é gerido pelo modelo <strong>Academico.php > getGlobalHistory()</strong>.</p>
+    <h3>4.4 Hist├│rico Acad├®mico Global</h3>
+    <p>Cada aluno tem acesso ao seu <strong>Hist├│rico Global</strong>, um registo imut├ível e vital├¡cio de todas as
+        disciplinas conclu├¡das, com m├®dias, semestres e anos letivos. Este registo serve como base para a emiss├úo de
+        certid├Áes e ├® gerido pelo modelo <strong>Academico.php > getGlobalHistory()</strong>.</p>
 
-    <h3>4.5 Sistema de Mérito Académico</h3>
-    <p>A plataforma emite automaticamente <strong>Certificados de Mérito</strong> para os melhores alunos por
+    <h3>4.5 Sistema de M├®rito Acad├®mico</h3>
+    <p>A plataforma emite automaticamente <strong>Certificados de M├®rito</strong> para os melhores alunos por
         semestre e
-        por nível. Os rankings são calculados pela média aritmética de todas as disciplinas com exame lançado, e os
-        certificados ficam visíveis no portal do aluno.</p>
+        por n├¡vel. Os rankings s├úo calculados pela m├®dia aritm├®tica de todas as disciplinas com exame lan├ºado, e os
+        certificados ficam vis├¡veis no portal do aluno.</p>
 
-    <h3>4.6 Fluxo de Inscrição Simplificado para Estudantes Internos</h3>
-    <p>O portal público de candidatura foi atualizado com lógica inteligente que distingue automaticamente entre
-        <strong>novos candidatos</strong> e <strong>estudantes internos</strong> (alunos já registados na plataforma).
-        Quando um aluno interno acede ao formulário de candidatura, o sistema:</p>
+    <h3>4.6 Fluxo de Inscri├º├úo Simplificado para Estudantes Internos</h3>
+    <p>O portal p├║blico de candidatura foi atualizado com l├│gica inteligente que distingue automaticamente entre
+        <strong>novos candidatos</strong> e <strong>estudantes internos</strong> (alunos j├í registados na plataforma).
+        Quando um aluno interno acede ao formul├írio de candidatura, o sistema:</p>
     <ul>
-        <li><strong>Oculta campos redundantes</strong>: Escola de Proveniência, Ano de Conclusão, Média Final, Motivação e Certificado de Habilitações são automaticamente escondidos, pois estes dados já existem no sistema.</li>
-        <li><strong>Pré-preenche os dados pessoais</strong>: Nome, B.I., Email, Telefone, Morada e dados do encarregado são preenchidos automaticamente a partir do perfil existente.</li>
-        <li><strong>Reutiliza a conta existente</strong>: O backend identifica o utilizador já autenticado e associa a nova candidatura à conta existente, sem criar duplicados nem gerar novas credenciais.</li>
-        <li><strong>Página de confirmação adaptada</strong>: Após a submissão, a página de sucesso não exibe credenciais (que o aluno já possui), apresentando apenas a confirmação da submissão e os próximos passos.</li>
+        <li><strong>Oculta campos redundantes</strong>: Escola de Proveni├¬ncia, Ano de Conclus├úo, M├®dia Final, Motiva├º├úo e Certificado de Habilita├º├Áes s├úo automaticamente escondidos, pois estes dados j├í existem no sistema.</li>
+        <li><strong>Pr├®-preenche os dados pessoais</strong>: Nome, B.I., Email, Telefone, Morada e dados do encarregado s├úo preenchidos automaticamente a partir do perfil existente.</li>
+        <li><strong>Reutiliza a conta existente</strong>: O backend identifica o utilizador j├í autenticado e associa a nova candidatura ├á conta existente, sem criar duplicados nem gerar novas credenciais.</li>
+        <li><strong>P├ígina de confirma├º├úo adaptada</strong>: Ap├│s a submiss├úo, a p├ígina de sucesso n├úo exibe credenciais (que o aluno j├í possui), apresentando apenas a confirma├º├úo da submiss├úo e os pr├│ximos passos.</li>
     </ul>
     <div class="success-box">
-        <strong>✅ Benefício Institucional:</strong> Este fluxo reduz o tempo de inscrição para estudantes em renovação de ano ou inscrição num novo curso, eliminando burocracia repetitiva e o risco de dados duplicados ou inconsistentes na base de dados.
+        <strong>Ô£à Benef├¡cio Institucional:</strong> Este fluxo reduz o tempo de inscri├º├úo para estudantes em renova├º├úo de ano ou inscri├º├úo num novo curso, eliminando burocracia repetitiva e o risco de dados duplicados ou inconsistentes na base de dados.
     </div>
 
-    <h3>4.7 Transparência Académica: Ciclo de Confirmação de Notas</h3>
-    <p>A plataforma introduziu um fluxo de "Acordo de Notas" onde o aluno deve validar ativamente o resultado final. Isto reduz drasticamente os erros de lançamento e as reclamações presenciais, movendo o debate pedagógico para um ambiente digital auditável (Pendente -> Respondido -> Resolvido).</p>
+    <h3>4.7 Transpar├¬ncia Acad├®mica: Ciclo de Confirma├º├úo de Notas</h3>
+    <p>A plataforma introduziu um fluxo de "Acordo de Notas" onde o aluno deve validar ativamente o resultado final. Isto reduz drasticamente os erros de lan├ºamento e as reclama├º├Áes presenciais, movendo o debate pedag├│gico para um ambiente digital audit├ível (Pendente -> Respondido -> Resolvido).</p>
 
-    <h3>4.8 Deploy em Produção e Responsividade Universal</h3>
-    <p>A plataforma está agora configurada via <strong>.htaccess e core/config.php</strong> para suporte nativo em servidores Cloud e cPanel standard. Na versão 1.2, implementámos um sistema de <strong>Responsividade Mobile-First</strong> unificado (<code>responsive_global.css</code>), garantindo que todos os portais — Admin, Professor e Aluno — ofereçam a mesma experiência premium e profissional em smartphones, tablets e desktops de alta resolução (4K).</p>
+    <h3>4.8 Deploy em Produ├º├úo e Responsividade Universal</h3>
+    <p>A plataforma est├í agora configurada via <strong>.htaccess e core/config.php</strong> para suporte nativo em servidores Cloud e cPanel standard. Na vers├úo 1.2, implement├ímos um sistema de <strong>Responsividade Mobile-First</strong> unificado (<code>responsive_global.css</code>), garantindo que todos os portais ÔÇö Admin, Professor e Aluno ÔÇö ofere├ºam a mesma experi├¬ncia premium e profissional em smartphones, tablets e desktops de alta resolu├º├úo (4K).</p>
 
-    <h3>4.9 Sistema de Alertas de Convocatória (Novo v1.3)</h3>
-    <p>Para garantir que reuniões de mediação de notas não sejam perdidas, implementámos um sistema de <strong>Sticky Alerts</strong> (Cabeçalhos Fixos) de alta visibilidade. Tanto o professor quanto o aluno recebem um alerta vermelho no topo do ecrã assim que a coordenação agenda uma data de reunião, forçando o conhecimento imediato da convocatória.</p>
+    <h3>4.9 Sistema de Alertas de Convocat├│ria (Novo v1.3)</h3>
+    <p>Para garantir que reuni├Áes de media├º├úo de notas n├úo sejam perdidas, implement├ímos um sistema de <strong>Sticky Alerts</strong> (Cabe├ºalhos Fixos) de alta visibilidade. Tanto o professor quanto o aluno recebem um alerta vermelho no topo do ecr├ú assim que a coordena├º├úo agenda uma data de reuni├úo, for├ºando o conhecimento imediato da convocat├│ria.</p>
 
-    <h3>4.9 Consistência Visual e Branding</h3>
-    <p>Padronização total da identidade visual nos quatro portais, com um tema escuro unificado para menus laterais e um sistema de grelha compacta para maximizar a visibilidade de dados financeiros e académicos num único ecrã.</p>
+    <h3>4.9 Consist├¬ncia Visual e Branding</h3>
+    <p>Padroniza├º├úo total da identidade visual nos quatro portais, com um tema escuro unificado para menus laterais e um sistema de grelha compacta para maximizar a visibilidade de dados financeiros e acad├®micos num ├║nico ecr├ú.</p>
 
-    <h2>5. Arquitetura de Segurança</h2>
+    <h2>5. Arquitetura de Seguran├ºa</h2>
         de
-        segurança de dados:</p>
+        seguran├ºa de dados:</p>
     <ul>
-        <li><strong>CSRF</strong>: Token criptográfico único por sessão em todos os formulários e chamadas AJAX.
+        <li><strong>CSRF</strong>: Token criptogr├ífico ├║nico por sess├úo em todos os formul├írios e chamadas AJAX.
         </li>
-        <li><strong>XSS</strong>: Sanitização sistemática de todos os inputs e outputs dinâmicos.</li>
-        <li><strong>SQLi</strong>: PDO Prepared Statements em 100% das consultas à base de dados.</li>
-        <li><strong>IDOR</strong>: Verificação de propriedade antes de servir qualquer ficheiro ou URL sensível.
+        <li><strong>XSS</strong>: Sanitiza├º├úo sistem├ítica de todos os inputs e outputs din├ómicos.</li>
+        <li><strong>SQLi</strong>: PDO Prepared Statements em 100% das consultas ├á base de dados.</li>
+        <li><strong>IDOR</strong>: Verifica├º├úo de propriedade antes de servir qualquer ficheiro ou URL sens├¡vel.
         </li>
-        <li><strong>Auditoria</strong>: Todas as ações críticas são registadas com ID do utilizador, IP e timestamp.
+        <li><strong>Auditoria</strong>: Todas as a├º├Áes cr├¡ticas s├úo registadas com ID do utilizador, IP e timestamp.
         </li>
     </ul>
 
     <div class="alert-box">
-        <strong>🔒 Nota de Segurança Institucional:</strong> As credenciais de Administrador não devem ser
+        <strong>­ƒöÆ Nota de Seguran├ºa Institucional:</strong> As credenciais de Administrador n├úo devem ser
         partilhadas.
-        Todas as ações efetuadas sob a conta administrativa ficam registadas num log inviolável, servindo como prova
+        Todas as a├º├Áes efetuadas sob a conta administrativa ficam registadas num log inviol├ível, servindo como prova
         legal em caso de auditoria.
     </div>
 
-    <h2>6. Ficha Técnica</h2>
+    <h2>6. Ficha T├®cnica</h2>
     <table>
         <tbody>
             <tr>
                 <td width="30%"><strong>Plataforma</strong></td>
-                <td>PHP 8.2 Nativo — Padrão MVC sem frameworks</td>
+                <td>PHP 8.2 Nativo ÔÇö Padr├úo MVC sem frameworks</td>
             </tr>
             <tr>
-                <td><strong>Domínio de Produção</strong></td>
+                <td><strong>Dom├¡nio de Produ├º├úo</strong></td>
                 <td><a href="https://escola-ghs.wuaze.com" style="color:var(--accent); text-decoration:none;">https://escola-ghs.wuaze.com</a></td>
             </tr>
             <tr>
@@ -656,7 +656,7 @@
                 <td>Bootstrap 5, ECharts, PDF.js, FontAwesome</td>
             </tr>
             <tr>
-                <td><strong>Segurança</strong></td>
+                <td><strong>Seguran├ºa</strong></td>
                 <td>CSRF Tokens, XSS Sanitization, IDOR Guards, finfo Upload Validation</td>
             </tr>
             <tr>
@@ -664,14 +664,14 @@
                 <td>Diosives Crobute / Waro Campotcho</td>
             </tr>
             <tr>
-                <td><strong>Versão Atual</strong></td>
-                <td>1.2 — Abril 2026</td>
+                <td><strong>Vers├úo Atual</strong></td>
+                <td>1.2 ÔÇö Abril 2026</td>
             </tr>
         </tbody>
     </table>
 
     <div class="footer">
-        <span>&copy; 2026 Green Hard &amp; Softh — Escola Superior de Informática. Documento de Uso Interno.</span>
+        <span>&copy; 2026 Green Hard &amp; Softh ÔÇö Escola Superior de Inform├ítica. Documento de Uso Interno.</span>
         <span>Resumo Executivo v1.2</span>
     </div>
 
