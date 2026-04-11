@@ -13,81 +13,50 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
     <style>
-        :root {
-            --sidebar-bg: #0F172A;
-            --sidebar-width: 260px;
-            --primary-color: #10B981;
-            --text-dark: #1E293B;
-            --bg-body: #f1f5f9;
-        }
-
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; }
-        
-        /* Layout Mobile First */
-        .sidebar { 
-            background-color: var(--sidebar-bg); 
-            min-height: 100vh; 
-            color: white; 
-            padding-top: 1.5rem; 
-            position: fixed; 
-            width: var(--sidebar-width); 
-            z-index: 1000; 
-            left: calc(-1 * var(--sidebar-width));
-            transition: left 0.3s ease;
-        }
-        .sidebar.show { left: 0; }
-        
-        .sidebar .nav-link { 
-            color: #cbd5e1; 
-            text-decoration: none; 
-            padding: 0.75rem 1.25rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.625rem; 
-            transition: 0.3s; 
-            font-weight: 500; 
-            cursor: pointer; 
-            border-radius: 0; 
-            border-left: 4px solid transparent; 
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #1E293B; color: var(--primary-color); border-left: 4px solid var(--primary-color); }
-        
-        .content { margin-left: 0; padding: 1.25rem; transition: margin-left 0.3s ease; width: 100%; }
-        
-        .mobile-header { display: flex; align-items: center; justify-content: space-between; background: white; padding: 0.75rem 1rem; position: sticky; top: 0; z-index: 900; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .btn-toggle-sidebar { background: none; border: none; color: var(--sidebar-bg); font-size: 1.875rem; display: flex; align-items: center; }
-
+        body { font-family: "Outfit", sans-serif; background-color: #f1f5f9; color: #1E293B; overflow-x: hidden; }
         .tab-pane { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Responsive Breakpoints */
-        @media (min-width: 1025px) {
-            .sidebar { left: 0; }
-            .content { margin-left: var(--sidebar-width); padding: 2.5rem; width: calc(100% - var(--sidebar-width)); }
-            .mobile-header { display: none; }
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar-overlay { 
-                display: none; 
-                position: fixed; 
-                top: 0; left: 0; 
-                right: 0; bottom: 0; 
-                background: rgba(0,0,0,0.5); 
-                z-index: 999; 
-            }
-            .sidebar-overlay.show { display: block; }
-            .content-header-pc { display: none !important; }
-        }
-
-        /* Tabela Responsiva */
         .table-responsive { border-radius: 0.75rem; border: none; }
-        
-        /* Garantir que imagens sejam responsivas */
         img { max-width: 100%; height: auto; }
     </style>
 </head>
 <body>
+<nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
+        <div>
+            <div class="text-center mb-4 mt-2">
+                <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <h5 class="fw-bold mt-2 text-white">Portal GHS</h5>
+                <span class="badge bg-secondary mb-3">Docente</span>
+            </div>
+            
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                <a class="nav-link active" id="tab-home" data-bs-toggle="pill" href="#pane-home"><ion-icon name="grid-outline"></ion-icon> Dashboard Resumo</a>
+                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" href="#pane-notas"><ion-icon name="create-outline"></ion-icon> Lançamento de Notas</a>
+                <a class="nav-link" id="tab-chamada" data-bs-toggle="pill" href="#pane-chamada"><ion-icon name="people-outline"></ion-icon> Frequência / Chamada</a>
+                <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" href="#pane-materiais"><ion-icon name="cloud-upload-outline"></ion-icon> Upload de Materiais</a>
+                <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" href="#pane-calendario"><ion-icon name="calendar-outline"></ion-icon> Calendário Acadêmico</a>
+                <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" href="#pane-comunicados"><ion-icon name="chatbubbles-outline"></ion-icon> Comunicados & Alertas</a>
+                <a class="nav-link text-danger fw-bold position-relative" id="tab-reclamacoes" data-bs-toggle="pill" href="#pane-reclamacoes">
+                    <ion-icon name="warning-outline"></ion-icon> Reclamações de Notas
+                    <?php if(count($data['reclamacoes']) > 0): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
+                            <?= count($data['reclamacoes']) ?>
+                        </span>
+                    <?php endif; ?>
+                </a>
+                <a class="nav-link text-info fw-bold" id="tab-assiduidade" data-bs-toggle="pill" href="#pane-assiduidade">
+                    <ion-icon name="calendar-check-outline"></ion-icon> Minha Assiduidade
+                </a>
+            </div>
+        </div>
+
+        <div class="pb-4 w-100">
+            <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
+            <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
+        </div>
+    </nav>
 <!-- Modal Agendar Evento (Professor) -->
 <div class="modal fade" id="profEventoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -207,42 +176,7 @@
 
     <div class="d-flex flex-grow-1">
     <!-- Sidebar -->
-    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
-        <div>
-            <div class="text-center mb-4 mt-2">
-                <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
-                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <h5 class="fw-bold mt-2 text-white">Portal GHS</h5>
-                <span class="badge bg-secondary mb-3">Docente</span>
-            </div>
-            
-            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-                <a class="nav-link active" id="tab-home" data-bs-toggle="pill" href="#pane-home"><ion-icon name="grid-outline"></ion-icon> Dashboard Resumo</a>
-                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" href="#pane-notas"><ion-icon name="create-outline"></ion-icon> Lançamento de Notas</a>
-                <a class="nav-link" id="tab-chamada" data-bs-toggle="pill" href="#pane-chamada"><ion-icon name="people-outline"></ion-icon> Frequência / Chamada</a>
-                <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" href="#pane-materiais"><ion-icon name="cloud-upload-outline"></ion-icon> Upload de Materiais</a>
-                <a class="nav-link" id="tab-calendario" data-bs-toggle="pill" href="#pane-calendario"><ion-icon name="calendar-outline"></ion-icon> Calendário Acadêmico</a>
-                <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" href="#pane-comunicados"><ion-icon name="chatbubbles-outline"></ion-icon> Comunicados & Alertas</a>
-                <a class="nav-link text-danger fw-bold position-relative" id="tab-reclamacoes" data-bs-toggle="pill" href="#pane-reclamacoes">
-                    <ion-icon name="warning-outline"></ion-icon> Reclamações de Notas
-                    <?php if(count($data['reclamacoes']) > 0): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
-                            <?= count($data['reclamacoes']) ?>
-                        </span>
-                    <?php endif; ?>
-                </a>
-                <a class="nav-link text-info fw-bold" id="tab-assiduidade" data-bs-toggle="pill" href="#pane-assiduidade">
-                    <ion-icon name="calendar-check-outline"></ion-icon> Minha Assiduidade
-                </a>
-            </div>
-        </div>
-
-        <div class="pb-4 w-100">
-            <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
-            <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
-        </div>
-    </nav>
+    
     
     <!-- Main Content -->
     <main class="content ghs-content flex-grow-1">
@@ -271,6 +205,48 @@
             
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home">
+                
+                <!-- 📢 ALERTAS DE CONVOCATÓRIA (Mediação) -->
+                <?php if (!empty($data['contestacoes_pendentes'])): ?>
+                    <?php foreach ($data['contestacoes_pendentes'] as $c): ?>
+                        <?php if ($c['status'] === 'Aguardando_Comparecimento'): ?>
+                            <div class="alert alert-danger shadow-sm border-0 border-start border-4 border-danger rounded-4 mb-4 p-4" role="alert">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger">
+                                        <ion-icon name="calendar" class="fs-2"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="fw-bold mb-1 text-danger">Convocatória de Mediação Presencial</h4>
+                                        <p class="mb-0 text-muted">A administração escalou um impasse na disciplina <strong><?= htmlspecialchars($c['disciplina_nome']) ?></strong> para mediação com o aluno <strong><?= htmlspecialchars($c['estudante_nome']) ?></strong>.</p>
+                                    </div>
+                                </div>
+                                <div class="row g-3 bg-white bg-opacity-50 p-3 rounded-4 border">
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Data Agendada</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= date('d/m/Y', strtotime($c['data_reuniao'])) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Hora</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= substr($c['hora_reuniao'], 0, 5) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Local / Gabinete</div>
+                                        <div class="fw-bold fs-5 text-dark"><?= htmlspecialchars($c['local_reuniao']) ?></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Referência</div>
+                                        <div class="badge bg-danger rounded-pill px-3">OBRIGATÓRIO</div>
+                                    </div>
+                                    <div class="col-12 mt-3 pt-3 border-top">
+                                        <small class="fw-bold text-danger d-block mb-1">Motivo da Convocação:</small>
+                                        <p class="mb-0 small italic text-muted">"<?= nl2br(htmlspecialchars($c['motivo_convocacao'])) ?>"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
                 <div class="row g-4 mb-4">
                     <div class="col-md-4">
                         <div class="card border-0 shadow-sm" style="border-left: 5px solid #10B981 !important;">
@@ -1430,7 +1406,7 @@ function enviarRespostaContestacao(e, form) {
         if (!val) return;
         const parts = val.split('|');
         const activeTab = $('.nav-link.active').attr('href').replace('#', '');
-        window.location.href = `/green/professor?turma_id=${parts[0]}&disciplina_id=${parts[1]}&tab=${activeTab}`;
+        window.location.href = `<?= URL_ROOT ?>/professor?turma_id=${parts[0]}&disciplina_id=${parts[1]}&tab=${activeTab}`;
     }
 
     // Restore Tab and Live Grades

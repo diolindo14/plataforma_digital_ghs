@@ -171,6 +171,17 @@ class EstudanteController extends Controller {
         $contestacaoModel = $this->model('Contestacao');
         $data['contestacoes'] = $contestacaoModel->getDoAluno($estudanteData['id']);
 
+        // --- 📢 CONVOCATÓRIAS DE MEDIAÇÃO (independente de ter notas) ---
+        $stmtConv = Database::getInstance()->prepare("
+            SELECT cn.*, d.nome as disciplina
+            FROM concordancia_notas cn
+            JOIN disciplinas d ON cn.disciplina_id = d.id
+            WHERE cn.estudante_id = :eid AND cn.status = 'Aguardando_Comparecimento'
+            ORDER BY cn.data_reuniao ASC
+        ");
+        $stmtConv->execute([':eid' => $estudanteData['id']]);
+        $data['convocatorias'] = $stmtConv->fetchAll(PDO::FETCH_ASSOC);
+
         $this->view('estudante/dashboard', $data);
 
     }

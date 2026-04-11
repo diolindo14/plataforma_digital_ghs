@@ -139,9 +139,11 @@ class Nota {
     public function getNotasByTurma($turma_id, $disciplina_id) {
         $stmt = $this->db->prepare("
             SELECT n.estudante_id, ta.nome as tipo_nome, n.nota as valor, ta.id as tipo_id, a.descricao,
-                   cn.status as feedback_status, cn.comentario as feedback_comentario, cn.resposta_professor
+                   cn.status as feedback_status, cn.comentario as feedback_comentario, cn.resposta_professor,
+                   cn.data_reuniao, cn.hora_reuniao, cn.local_reuniao, cn.motivo_convocacao, d.nome as disciplina_nome
             FROM notas n
             JOIN avaliacoes a ON n.avaliacao_id = a.id
+            JOIN disciplinas d ON a.disciplina_id = d.id
             JOIN tipos_avaliacao ta ON a.tipo_avaliacao_id = ta.id
             LEFT JOIN concordancia_notas cn ON n.estudante_id = cn.estudante_id 
                 AND a.turma_id = cn.turma_id 
@@ -160,7 +162,12 @@ class Nota {
                     'notas_slots' => [],
                     'feedback_status' => $r['feedback_status'],
                     'feedback_comentario' => $r['feedback_comentario'],
-                    'resposta_professor' => $r['resposta_professor']
+                    'resposta_professor' => $r['resposta_professor'],
+                    'data_reuniao' => $r['data_reuniao'],
+                    'hora_reuniao' => $r['hora_reuniao'],
+                    'local_reuniao' => $r['local_reuniao'],
+                    'motivo_convocacao' => $r['motivo_convocacao'],
+                    'disciplina' => $r['disciplina_nome']
                 ];
             }
             
