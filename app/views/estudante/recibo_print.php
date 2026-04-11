@@ -167,13 +167,8 @@
 
     <div class="thermal-receipt">
         <div class="header">
-            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" class="logo-img">
-            <div class="brand-info">
-<<<<<<< HEAD
+            <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo" class="logo-img">            <div class="brand-info">
                 <h2>GHS "O futuro é hoje"</h2>
-=======
-                <h2>GHS "O futuro é hoje!"</h2>
->>>>>>> 8fe8280cea4398b4d49fc29d1867b817f3ad00fa
                 <p>Ensino Digital & Tecnologia</p>
                 <p>Tel: +245 95529 54 75</p>
             </div>

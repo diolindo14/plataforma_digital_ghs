@@ -220,7 +220,7 @@
 
     <div class="d-flex overflow-hidden">
     <!-- Sidebar -->
-    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
+    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column">
         <div>
             <div class="sidebar-brand text-center mb-4 mt-2 border-bottom border-light border-opacity-10 pb-3">
                 <div
@@ -258,7 +258,7 @@
             </div>
         </div>
 
-        <div class="pb-4 w-100">
+        <div class="mt-5 pt-3 border-top border-white border-opacity-10 pb-4 w-100">
             <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon>
                 Voltar ao Site</a>
             <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon
