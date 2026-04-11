@@ -1,17 +1,17 @@
 <?php
 /**
- * Configurações Gerais do Sistema GHS
+ * Configurações Gerais do Sistema GHS (PRODUÇÃO)
  */
 
 // Configurações da Base de Dados
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'ghsespf_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'sql111.infinityfree.com');
+define('DB_NAME', 'if0_41574650_ghs_sistema');
+define('DB_USER', 'if0_41574650');
+define('DB_PASS', '0svEjAnMHnX');
 
 // Configurações Globais
-define('URL_ROOT', '/green');
-define('APP_NAME', 'GHS - Green Hard & Soft');
+define('URL_ROOT', '');
+define('APP_NAME', 'GHS - Green Hard & Softh');
 
 // Configurações de Segurança
 define('SESSION_LIFETIME', 1800); // 30 minutos

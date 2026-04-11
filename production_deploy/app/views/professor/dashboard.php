@@ -379,8 +379,8 @@
                                         <tr><td colspan="9" class="text-center">Nenhum aluno matriculado nesta turma.</td></tr>
                                     <?php else: ?>
                                         <?php 
-                                            $turma_id = $data['classes'][0]['turma_id'] ?? 0;
-                                            $disc_id = $data['classes'][0]['disciplina_id'] ?? 0;
+                                            $turma_id = $data['selected_turma'] ?? ($data['classes'][0]['turma_id'] ?? 0);
+                                            $disc_id = $data['selected_disciplina'] ?? ($data['classes'][0]['disciplina_id'] ?? 0);
                                         ?>
                                         <?php foreach($data['students'] as $s): ?>
                                             <?php $sn = $data['notas'][$s['id']] ?? []; ?>
