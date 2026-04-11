@@ -348,28 +348,22 @@ class AdminController extends Controller {
             $m = $stmt->fetch();
 
             if ($m) {
-                // Notifica o aluno sobre a rejeição antes de remover
+                // Notifica o aluno sobre a rejeição
                 if (!empty($m['email'])) {
                     Mailer::sendMatriculaRejeitada($m['email'], $m['nome_completo'] ?? 'Candidato', $motivo);
                 }
 
-                // REMOÇÃO FÍSICA: Não armazenar se for rejeitada (Pilar 1)
-                $db->prepare("DELETE FROM documentos_matricula WHERE matricula_id = ?")->execute([$id]);
-                $db->prepare("DELETE FROM matriculas WHERE id = ?")->execute([$id]);
+                // Em vez de REMOÇÃO FÍSICA, atualizamos o status para 'Rejeitada' (Pilar 1 e 5)
+                // Isso permite que o aluno corrija o erro sem perder a conta.
+                $db->prepare("UPDATE matriculas SET status = 'Rejeitada', observacoes = :obs, revisado_por = :admin_id, data_revisao = NOW() WHERE id = :id")
+                   ->execute([
+                       ':obs' => $motivo,
+                       ':admin_id' => $_SESSION['user_id'],
+                       ':id' => $id
+                   ]);
 
-                // Se era um "Novo Ingresso", limpamos o perfil temporário também
-                if ($m['tipo'] === 'Novo Ingresso') {
-                    // Verifica se tem outras matrículas (segurança)
-                    $outras = $db->prepare("SELECT COUNT(*) FROM matriculas WHERE estudante_id = ?");
-                    $outras->execute([$m['estudante_id']]);
-                    if ($outras->fetchColumn() == 0) {
-                        $db->prepare("DELETE FROM estudantes WHERE id = ?")->execute([$m['estudante_id']]);
-                        $db->prepare("DELETE FROM utilizadores WHERE id = ? AND tipo = 'aluno'")->execute([$m['user_id']]);
-                    }
-                }
-
-                $this->logActivity('Rejeitar e Apagar Matrícula', ['id' => $id, 'aluno' => $m['nome_completo']]);
-                $_SESSION['flash_success'] = "Matrícula rejeitada e registo removido com sucesso.";
+                $this->logActivity('Rejeitar Matrícula', ['id' => $id, 'aluno' => $m['nome_completo'], 'motivo' => $motivo]);
+                $_SESSION['flash_success'] = "Matrícula rejeitada com sucesso. O aluno foi notificado para corrigir os dados.";
             } else {
                 $_SESSION['flash_error'] = "Registo não encontrado.";
             }

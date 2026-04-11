@@ -68,6 +68,11 @@
     <li><strong>Clique em "Entrar"</strong> para aceder ao seu portal.</li>
 </ol>
 
+<div style="text-align:center; margin: 20px 0;">
+    <img src="../img/login_screen.png" alt="Ecrã de Login" style="max-width:80%; border:1px solid var(--border); border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1)">
+    <p style="font-size:11px; color:var(--muted); margin-top:8px;">Imagem 1: Interface de Acesso Unificado GHS</p>
+</div>
+
 <h3>1.2 Esqueceu a password?</h3>
 <ol class="steps">
     <li>Clique em <strong>"Esqueceu a password?"</strong> no ecrã de login.</li>
@@ -83,6 +88,17 @@
     <li><strong>Atenção:</strong> Tem <strong>48 horas</strong> para completar a matrícula — caso contrário a conta é eliminada automaticamente conforme a política institucional.</li>
 </ul>
 <div class="warning-box"><strong>⚠ Prazo de Matrícula:</strong> Após a aprovação da conta, o aluno tem exactamente 48 horas para submeter a matrícula. Este prazo é aplicado automaticamente pelo sistema.</div>
+
+<h3>1.4 Cadastro e Inscrição Online (Candidatos)</h3>
+<p>Se ainda não é aluno da GHS, deve realizar o seu cadastro inicial através da <strong>Inscrição Online</strong>:</p>
+<ol class="steps">
+    <li>No ecrã inicial, clique em <strong>"Fazer Matrícula"</strong>.</li>
+    <li>Preencha os <strong>Dados Pessoais</strong> (Nome, BI, Email, Telefone).</li>
+    <li>Indique os <strong>Dados Académicos</strong> e o turno pretendido.</li>
+    <li>Faça o <strong>Upload de Documentos</strong> (BI, Fotos, Certificado e Comprovativo).</li>
+    <li>Leia e aceite os termos de compromisso e clique em <strong>"Finalizar"</strong>.</li>
+</ol>
+<div class="info-box"><strong>ℹ Nota Importante:</strong> Após a submissão, a administração irá validar os seus dados. Receberá um e-mail de confirmação ou rejeição em até 48h úteis.</div>
 
 <h2>2. Portal do Aluno / Estudante</h2>
 
@@ -209,9 +225,11 @@
 
 <h3>4.2 Gestão de Matrículas</h3>
 <ul>
-    <li>Aprovar matrículas submetidas pelos alunos</li>
-    <li>Rejeitar com motivo (aluno recebe email automático com a razão)</li>
-    <li>Processar renovações de ano lectivo</li>
+    <li>Aprovar matrículas submetidas pelos alunos (ativa automaticamente a conta e tenta alocação em turma).</li>
+    <li><strong>Rejeitar Matrícula:</strong> Se houver erro nos dados ou documentos, clique em "Rejeitar".</li>
+    <li>Introduza o motivo da rejeição (o aluno recebe um e-mail automático com esta explicação).</li>
+    <li><strong>Nota:</strong> A conta do aluno permanece ativa para que este possa corrigir a submissão sem ter de se registar novamente.</li>
+    <li>Processar renovações de ano lectivo.</li>
 </ul>
 
 <h3>4.3 Gestão de Turmas e Horários</h3>
