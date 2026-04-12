@@ -122,7 +122,9 @@ class Mailer {
             <p>Olá, <strong>{$nome}</strong>!</p>
             <p>Infelizmente, a sua matrícula foi <strong style='color:#c0392b;'>rejeitada</strong>.</p>
             {$motivoHtml}
-            <p>Por favor, dirija-se à Secretaria ou corrija a documentação e submeta novamente.</p>
+            <p>Pode ver os detalhes e corrigir a sua submissão diretamente no portal:</p>
+            <p><a href='" . (defined('URL_ROOT') ? URL_ROOT : '#') . "/auth' style='color:#0f4c1a;font-weight:bold;text-decoration:none;background:#e8f5e9;padding:10px 20px;border-radius:6px;display:inline-block;'>Aceder ao Portal para Corrigir</a></p>
+            <p>Caso prefira, pode também dirigir-se à Secretaria da instituição.</p>
             <p>Atenciosamente,<br><strong>Secretaria GHS</strong></p>
         ";
         return self::send($to, $subject, $message);
