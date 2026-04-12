@@ -1,7 +1,7 @@
-# Documentação Completa: GHS Educational Platform v5.0
+# Documentação Completa: GHS Educational Platform v1.0
 
 ## 1. Visão Geral
-A plataforma GHS é uma solução robusta de gestão académica e financeira. Na versão 5.0, consolidamos o motor de regras pedagógicas e reforçamos as camadas de proteção de dados, oferecendo uma experiência fluida para administradores, professores e alunos.
+A plataforma GHS é uma solução robusta de gestão académica e financeira. Na versão 1.0, consolidamos o motor de regras pedagógicas e reforçamos as camadas de proteção de dados, oferecendo uma experiência fluida para administradores, professores e alunos.
 
 ---
 

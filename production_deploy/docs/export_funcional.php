@@ -1,9 +1,9 @@
-<?php // Manual do Utilizador GHS v2.0 ?>
+<?php // Manual do Utilizador GHS v1.0 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <title>GHS — Manual do Utilizador v2.0</title>
+    <title>GHS — Manual do Utilizador v1.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root{--primary:#111827;--accent:#2563eb;--accent-green:#059669;--light:#f9fafb;--border:#e2e8f0;--text:#374151;--muted:#6b7280}
@@ -53,7 +53,7 @@
         <p>Guia completo de utilização por perfil — Aluno, Professor e Administração</p>
     </div>
     <div class="cover-right">
-        <div class="version">v2.0</div><br>
+        <div class="version">v1.0</div><br>
         <strong>Data:</strong> Abril 2026<br>
         <strong>Classificação:</strong> Uso Interno<br>
         <strong>Autor:</strong> Diosives Crobute
@@ -271,7 +271,7 @@
 
 <div class="footer">
     <span>&copy; 2026 Green Hard &amp; Soft — Escola Superior de Informática. Documento de Uso Interno.</span>
-    <span>Manual do Utilizador v2.0</span>
+    <span>Manual do Utilizador v1.0</span>
 </div>
 
 </body>

@@ -354,13 +354,9 @@ class AdminController extends Controller {
                 }
 
                 // Em vez de REMOÇÃO FÍSICA, atualizamos o status para 'Rejeitada' (Pilar 1 e 5)
-                // Isso permite que o aluno corrija o erro sem perder a conta.
-                $db->prepare("UPDATE matriculas SET status = 'Rejeitada', observacoes = :obs, revisado_por = :admin_id, data_revisao = NOW() WHERE id = :id")
-                   ->execute([
-                       ':obs' => $motivo,
-                       ':admin_id' => $_SESSION['user_id'],
-                       ':id' => $id
-                   ]);
+                // Usamos o modelo Matricula para garantir que as colunas corretas sejam afetadas
+                $matriculaModel = $this->model('Matricula');
+                $matriculaModel->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo);
 
                 $this->logActivity('Rejeitar Matrícula', ['id' => $id, 'aluno' => $m['nome_completo'], 'motivo' => $motivo]);
                 $_SESSION['flash_success'] = "Matrícula rejeitada com sucesso. O aluno foi notificado para corrigir os dados.";

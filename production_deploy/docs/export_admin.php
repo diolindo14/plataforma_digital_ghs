@@ -1,9 +1,9 @@
-<?php // Resumo Executivo GHS v2.0 ?>
+<?php // Resumo Executivo GHS v1.0 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <title>GHS — Resumo Executivo v2.0</title>
+    <title>GHS — Resumo Executivo v1.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary:#111827;--accent:#2563eb;--accent-green:#059669;--light:#f9fafb;--border:#e2e8f0;--text:#374151;--muted:#6b7280; }
@@ -55,7 +55,7 @@
         <p>Documento de visão estratégica para Direção e Gestão Institucional</p>
     </div>
     <div class="cover-right">
-        <div class="version">v2.0</div><br>
+        <div class="version">v1.0</div><br>
         <strong>Data:</strong> Abril 2026<br>
         <strong>Classificação:</strong> Uso Interno<br>
         <strong>Autor:</strong> Diosives Crobute
@@ -64,7 +64,7 @@
 
 <h2>1. Visão Geral do Projeto</h2>
 <p>O <strong>GHS (Green Hard &amp; Soft)</strong> é uma plataforma integrada de gestão académica, financeira e pedagógica desenvolvida em PHP nativo (padrão MVC), concebida para eliminar processos manuais e papéis nas escolas superiores. O ecossistema serve quatro perfis de utilizadores com portais independentes, garante rastreabilidade total de todas as operações e implementa padrões de segurança de nível empresarial.</p>
-<p>Na versão 2.0, consolidou-se o sistema formal de Mediação Académica com fluxo de 8 etapas, o motor de alertas de convocatória em tempo real para alunos e professores, e a arquitectura Mobile-First com responsividade universal para todos os portais.</p>
+<p>Na versão 1.0, consolidou-se o sistema formal de Mediação Académica com fluxo de 8 etapas, o motor de alertas de convocatória em tempo real para alunos e professores, e a arquitectura Mobile-First com responsividade universal para todos os portais.</p>
 
 <h2>2. Problema e Solução</h2>
 <table>
@@ -90,7 +90,7 @@
     </tbody>
 </table>
 
-<h2>4. Novas Funcionalidades — Versão 2.0</h2>
+<h2>4. Novas Funcionalidades — Versão 1.0</h2>
 
 <h3>4.1 Sistema de Mediação Académica (8 Etapas)</h3>
 <p>Fluxo formal e auditável para resolução de disputas de avaliações entre alunos e professores:</p>
@@ -150,13 +150,13 @@
         <tr><td><strong>Interface</strong></td><td>Bootstrap 5, IonIcons, DataTables, FullCalendar</td></tr>
         <tr><td><strong>Segurança</strong></td><td>CSRF Tokens, XSS Sanitization, IDOR Guards, finfo Upload Validation</td></tr>
         <tr><td><strong>Desenvolvedor</strong></td><td>Diosives Crobute / Waro Campotcho</td></tr>
-        <tr><td><strong>Versão Actual</strong></td><td>2.0 — Abril 2026</td></tr>
+        <tr><td><strong>Versão Actual</strong></td><td>1.0 — Abril 2026</td></tr>
     </tbody>
 </table>
 
 <div class="footer">
     <span>&copy; 2026 Green Hard &amp; Soft — Escola Superior de Informática. Documento de Uso Interno.</span>
-    <span>Resumo Executivo v2.0</span>
+    <span>Resumo Executivo v1.0</span>
 </div>
 
 </body>
