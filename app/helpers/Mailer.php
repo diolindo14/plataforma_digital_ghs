@@ -128,6 +128,7 @@ class Mailer {
             <p>Atenciosamente,<br><strong>Secretaria GHS</strong></p>
         ";
         return self::send($to, $subject, $message);
+    }
     /**
      * Notificação de Receção de Candidatura (Novo Ingresso)
      * Inclui as credenciais de acesso geradas automaticamente.

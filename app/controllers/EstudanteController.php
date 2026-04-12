@@ -74,28 +74,42 @@ class EstudanteController extends Controller {
         $estudanteData['turma_codigo'] = $matricula['turma_codigo'] ?? null;
         $estudanteData['ano_curso_id'] = $matricula['ano_curso_id'] ?? 1;
 
-        $notas = $academicoModel->getGradesByStudent($estudanteData['id']);
-        $pagamentos = $financeiroModel->getPaymentsByStudent($estudanteData['id']);
-        
-        // Calculate Metrics
+        // Só processar métricas e dados financeiros se o aluno estiver aprovado e ativo
+        $notas = [];
+        $pagamentos = [];
         $media_geral = 0;
         $desempenho_ac = 0;
-        if (count($notas) > 0) {
-            $soma = 0;
-            $soma_ac = 0;
-            foreach ($notas as $n) {
-                $soma += ($n['nota_final'] ?? 0);
-                $soma_ac += ($n['total_ac'] ?? 0);
+        $faltas_count = 0;
+        $smart_delinquency = ['is_delinquent' => false];
+
+        if ($data['is_approved']) {
+            $notas = $academicoModel->getGradesByStudent($estudanteData['id']);
+            $pagamentos = $financeiroModel->getPaymentsByStudent($estudanteData['id']);
+            
+            if (count($notas) > 0) {
+                $soma = 0;
+                $soma_ac = 0;
+                foreach ($notas as $n) {
+                    $soma += ($n['nota_final'] ?? 0);
+                    $soma_ac += ($n['total_ac'] ?? 0);
+                }
+                $media_geral = number_format($soma / count($notas), 1);
+                $desempenho_ac = round(($soma_ac / (count($notas) * 20)) * 100);
             }
-            $media_geral = number_format($soma / count($notas), 1);
-            $desempenho_ac = round(($soma_ac / (count($notas) * 20)) * 100);
+
+            $stmtFaltas = Database::getInstance()->prepare("SELECT COUNT(*) FROM frequencias WHERE estudante_id = :eid AND status = 'F'");
+            $stmtFaltas->execute([':eid' => $estudanteData['id']]);
+            $faltas_count = $stmtFaltas->fetchColumn();
+
+            $smart_delinquency = $financeiroModel->getStudentDelinquencyStatus($estudanteData['id']);
         }
 
-        $stmtFaltas = Database::getInstance()->prepare("SELECT COUNT(*) FROM frequencias WHERE estudante_id = :eid AND status = 'F'");
-        $stmtFaltas->execute([':eid' => $estudanteData['id']]);
-        $faltas_count = $stmtFaltas->fetchColumn();
-
-        $smart_delinquency = $financeiroModel->getStudentDelinquencyStatus($estudanteData['id']);
+        $data['notas'] = $notas;
+        $data['pagamentos'] = $pagamentos;
+        $data['media_geral'] = $media_geral;
+        $data['desempenho_ac'] = $desempenho_ac;
+        $data['faltas_count'] = $faltas_count;
+        $data['smart_delinquency'] = $smart_delinquency;
 
         $pendencias = 0;
         foreach ($pagamentos as $p) {

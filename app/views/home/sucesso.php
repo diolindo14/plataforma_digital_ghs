@@ -38,9 +38,9 @@
 
         <div class="mb-4">
             <p class="fw-semibold text-dark mb-2">Próximos Passos:</p>
-            <div class="step-item"><div class="step-num">1</div> Aguarde a validação técnica da secretaria</div>
-            <div class="step-item"><div class="step-num">2</div> Receba a confirmação oficial por email</div>
-            <div class="step-item"><div class="step-num">3</div> Após aprovação, poderá aceder ao seu painel académico completo</div>
+            <div class="step-item"><div class="step-num">1</div> Verifique o seu email para obter a sua <strong>Palavra-passe de Acesso</strong></div>
+            <div class="step-item"><div class="step-num">2</div> Aguarde a validação técnica da secretaria</div>
+            <div class="step-item"><div class="step-num">3</div> Após aprovação, a sua conta será ativada e poderá aceder ao painel completo</div>
         </div>
 
         <div class="d-flex flex-column gap-2">
