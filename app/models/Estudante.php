@@ -56,17 +56,18 @@ class Estudante {
         $stmt = $this->db->prepare("
             SELECT e.*, u.nome_completo, u.email, u.status as user_status,
                    t.codigo as turma,
-                   a.nome as nivel
+                   a.nome as nivel,
+                   m_latest.status as matricula_status
             FROM estudantes e
             JOIN utilizadores u ON e.utilizador_id = u.id
-            LEFT JOIN (
-                SELECT estudante_id, turma_id, ano_curso_id,
+            INNER JOIN (
+                SELECT estudante_id, status, turma_id, ano_curso_id,
                        ROW_NUMBER() OVER(PARTITION BY estudante_id ORDER BY id DESC) as rn
                 FROM matriculas 
-                WHERE status = 'Aprovada'
             ) m_latest ON e.id = m_latest.estudante_id AND m_latest.rn = 1
             LEFT JOIN turmas t ON m_latest.turma_id = t.id
             LEFT JOIN anos a ON m_latest.ano_curso_id = a.id
+            WHERE m_latest.status = 'Aprovada'
             ORDER BY u.nome_completo ASC
             LIMIT :limit OFFSET :offset
         ");
@@ -77,7 +78,7 @@ class Estudante {
     }
 
     public function countAll() {
-        return $this->db->query("SELECT COUNT(*) FROM estudantes")->fetchColumn();
+        return $this->db->query("SELECT COUNT(DISTINCT estudante_id) FROM matriculas WHERE status = 'Aprovada'")->fetchColumn();
     }
 
     /**
