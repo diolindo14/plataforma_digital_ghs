@@ -1,19 +1,48 @@
-# Ignorar ficheiros temporários e desnecessários
+# Ignorar logs e ficheiros de erro
+app/logs/
+*.log
+error_log
+
+# Ignorar pastas de manutenção e scripts internos (Segurança)
+manutencao/
+absolute_purge.php
+apply_db_patch*
+check_tags.php
+cleanup_final.php
+db_*
+debug_tags.php
+deploy_to_live.php
+fix_div_lines.php
+force_purge.php
+ftp_*
+insert_prof_alert.php
+purge_redes.php
+upload_dashboard_fix.php
+
+# Ignorar ficheiros temporários e gerados
 tmp/
 tmp_*
 check_*
-import_data.php
-migrate_horarios.php
-dump_anos.php
-final_check.php
 schema_output.txt
 table_schema.json
 all_disciplinas.json
 prof_disc.json
 verify_*
-.gemini/
-brain/
+
+# Ignorar configurações sensíveis (Se usar .env no futuro)
+.env
+.env.*
+
+# Ignorar uploads e assets gerados
 public/uploads/*
 !public/uploads/.gitkeep
+
+# Ignorar ficheiros de sistema
+.gemini/
+brain/
 .DS_Store
 Thumbs.db
+node_modules/
+vendor/
+.idea/
+.vscode/
