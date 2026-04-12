@@ -237,6 +237,8 @@
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <a class="nav-link active" id="tab-home" data-bs-toggle="pill" data-bs-target="#pane-home"
                     role="tab"><ion-icon name="grid-outline"></ion-icon> Meu Painel</a>
+                
+                <?php if ($data['is_approved']): ?>
                 <a class="nav-link" id="tab-horario" data-bs-toggle="pill" data-bs-target="#pane-horario"
                     role="tab"><ion-icon name="calendar-outline"></ion-icon> Horário & Calendário</a>
                 <a class="nav-link" id="tab-notas" data-bs-toggle="pill" data-bs-target="#pane-notas"
@@ -247,14 +249,15 @@
                     role="tab"><ion-icon name="folder-open-outline"></ion-icon> Materiais Didáticos</a>
                 <a class="nav-link" id="tab-sumarios" data-bs-toggle="pill" data-bs-target="#pane-sumarios"
                     role="tab"><ion-icon name="reader-outline"></ion-icon> Sumários de Aula</a>
-
                 <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro"
                     role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
+                <?php endif; ?>
+
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados"
                     role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
                 <hr class="text-white opacity-25">
                 <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula"><ion-icon
-                        name="add-circle-outline"></ion-icon> Nova Matrícula</a>
+                        name="add-circle-outline"></ion-icon> <?= $data['is_approved'] ? 'Renovar Matrícula' : 'Nova Matrícula' ?></a>
             </div>
         </div>
 
@@ -270,6 +273,38 @@
     <main class="content ghs-content flex-grow-1">
         <div class="ghs-container">
             <div class="ghs-content-header d-none d-lg-block mb-4">
+
+        <!-- 🔔 ALERTA DE STATUS DE MATRÍCULA -->
+        <?php if ($data['matricula_status'] === 'Rejeitada'): ?>
+            <div class="alert alert-danger shadow-sm border-0 border-start border-4 border-danger rounded-4 mb-4 p-4" role="alert">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger">
+                        <ion-icon name="close-circle" class="fs-1"></ion-icon>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 text-danger">A sua matrícula foi REJEITADA</h5>
+                        <p class="mb-2 text-muted">A administração identificou inconsistências no seu processo. Por favor, veja o motivo abaixo e submeta novamente ou dirija-se à Secretaria.</p>
+                        <div class="bg-white bg-opacity-50 p-3 rounded-3 border border-danger border-opacity-25">
+                            <span class="fw-bold text-danger small text-uppercase d-block mb-1">Motivo da Rejeição:</span>
+                            <p class="mb-0 text-dark fw-bold">"<?= htmlspecialchars($data['motivo_rejeicao'] ?? 'Documentação incompleta ou ilegível.') ?>"</p>
+                        </div>
+                        <a href="<?= URL_ROOT ?>/matricula" class="btn btn-danger btn-sm mt-3 rounded-pill px-4 fw-bold">Corrigir e Tentar Novamente</a>
+                    </div>
+                </div>
+            </div>
+        <?php elseif ($data['matricula_status'] === 'Pendente'): ?>
+            <div class="alert alert-warning shadow-sm border-0 border-start border-4 border-warning rounded-4 mb-4 p-4" role="alert">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
+                        <ion-icon name="time" class="fs-1"></ion-icon>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark">Processo em Análise</h5>
+                        <p class="mb-0 text-muted">A sua solicitação de matrícula está na fila de triagem da Secretaria. Aguarde a validação dos documentos.</p>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <?php if (isset($data['alerta_matricula'])): ?>
             <div class="alert alert-warning alert-dismissible fade show shadow-sm border-0 border-start border-4 border-warning rounded-3 mb-4"
@@ -397,6 +432,8 @@
 
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home" role="tabpanel">
+
+                <?php if ($data['is_approved']): ?>
 
                 <!-- 📢 ALERTAS DE CONVOCATÓRIA (Mediação) -->
                 <?php if (!empty($data['convocatorias'])): ?>
@@ -686,9 +723,26 @@
                                     <?php endif; ?>
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </div>
+                <?php else: ?>
+                    <!-- Candidato não validado: Mostra apenas ajuda e próximos passos -->
+                    <div class="glass-card card border-0 p-5 text-center">
+                        <div class="bg-primary bg-opacity-10 p-4 rounded-circle text-primary mx-auto mb-4" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                            <ion-icon name="school" style="font-size: 3rem;"></ion-icon>
+                        </div>
+                        <h3 class="fw-bold text-dark">Bem-vindo à sua Área de Candidato</h3>
+                        <p class="text-muted mx-auto" style="max-width: 600px;">
+                            O seu acesso ao portal acadêmico (notas, horários e materiais) será liberado assim que o seu processo de matrícula for <strong>Aprovado</strong> pela Secretaria.
+                        </p>
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <a href="<?= URL_ROOT ?>/home/guia" class="btn btn-outline-primary rounded-pill px-4">Guia do Aluno</a>
+                            <a href="https://wa.me/245xxxxxx" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2">
+                                <ion-icon name="logo-whatsapp"></ion-icon> Suporte Secretaria
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Horário & Calendário -->

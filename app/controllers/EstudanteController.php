@@ -54,17 +54,22 @@ class EstudanteController extends Controller {
             }
         }
 
-        // Buscar matrícula ativa para pegar a turma e dados extras
-        $stmt = Database::getInstance()->prepare("
-            SELECT m.turma_id, t.codigo as turma_codigo, m.ano_curso_id
+        // Buscar matrícula mais recente (independente do status) para exibir alertas ao aluno
+        $stmtMat = Database::getInstance()->prepare("
+            SELECT m.status, m.motivo_rejeicao, m.turma_id, t.codigo as turma_codigo, m.ano_curso_id
             FROM matriculas m 
             LEFT JOIN turmas t ON m.turma_id = t.id 
-            WHERE m.estudante_id = :id AND m.status = 'Aprovada' 
+            WHERE m.estudante_id = :id 
             ORDER BY m.id DESC LIMIT 1
         ");
-        $stmt->bindValue(':id', $estudanteData['id']);
-        $stmt->execute();
-        $matricula = $stmt->fetch();
+        $stmtMat->bindValue(':id', $estudanteData['id']);
+        $stmtMat->execute();
+        $matricula = $stmtMat->fetch();
+        
+        $data['matricula_status'] = $matricula['status'] ?? 'Nenhum';
+        $data['is_approved'] = ($data['matricula_status'] === 'Aprovada');
+        $data['motivo_rejeicao'] = $matricula['motivo_rejeicao'] ?? null;
+        
         $turma_id = $matricula['turma_id'] ?? null;
         $estudanteData['turma_codigo'] = $matricula['turma_codigo'] ?? null;
         $estudanteData['ano_curso_id'] = $matricula['ano_curso_id'] ?? 1;
