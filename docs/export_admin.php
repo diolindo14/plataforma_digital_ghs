@@ -63,7 +63,7 @@
 </div>
 
 <h2>1. Visão Geral do Projeto</h2>
-<p>O <strong>GHS (Green Hard &amp; Soft)</strong> é uma plataforma integrada de gestão académica, financeira e pedagógica desenvolvida em PHP nativo (padrão MVC), concebida para eliminar processos manuais e papéis nas escolas superiores. O ecossistema serve quatro perfis de utilizadores com portais independentes, garante rastreabilidade total de todas as operações e implementa padrões de segurança de nível empresarial.</p>
+<p>O <strong>GHS (Green Hard &amp; Softh)</strong> é uma plataforma integrada de gestão académica, financeira e pedagógica desenvolvida em PHP nativo (padrão MVC), concebida para eliminar processos manuais e papéis nas escolas superiores. O ecossistema serve quatro perfis de utilizadores com portais independentes, garante rastreabilidade total de todas as operações e implementa padrões de segurança de nível empresarial.</p>
 <p>Na versão 1.0, consolidou-se o sistema formal de Mediação Académica com fluxo de 8 etapas, o motor de alertas de convocatória em tempo real para alunos e professores, e a arquitectura Mobile-First com responsividade universal para todos os portais.</p>
 
 <h2>2. Problema e Solução</h2>
@@ -117,7 +117,7 @@
     <tbody>
         <tr><td>Aprovação Directa</td><td>Média Final ≥ 12 valores</td><td><span class="badge badge-green">Aprovado ✓</span></td></tr>
         <tr><td>Exame de Recurso</td><td>Média entre 8 e 11,9</td><td><span class="badge badge-yellow">Recurso ⚠</span></td></tr>
-        <tr><td>Reprovação</td><td>Nota AC &lt; 8 ou Média Final &lt; 8</td><td><span class="badge badge-red">Reprovado ✗</span></td></tr>
+        <tr><td>Reprovação</td><td>Se tiver mais que 3 negativas ou Média Final &lt; 8</td><td><span class="badge badge-red">Reprovado ✗</span></td></tr>
     </tbody>
 </table>
 

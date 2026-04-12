@@ -118,7 +118,7 @@
 <h3>2.2 Consulta de Notas</h3>
 <ul>
     <li>Aceda ao separador <strong>Notas / Avaliação</strong></li>
-    <li>Veja as notas por disciplina: TPC, Actividades Práticas (AP), TPI, Comportamento/Escrita (CE) e Exame</li>
+    <li>Veja as notas por disciplina: TPC, Apresentação (AP), Trabalho Prático Individual (TPI), Chamada Escrita (CE) e Exame</li>
     <li>Veja o <strong>Total AC</strong> (soma dos 4 tipos de avaliação contínua) e a <strong>Nota Final</strong></li>
     <li>Clique em <strong>"Confirmar"</strong> se concordar com o resultado</li>
     <li>Clique em <strong>"Contestar"</strong> para iniciar um processo formal de revisão</li>
@@ -239,7 +239,7 @@
     <li>Gerir grade horária completa</li>
 </ul>
 
-<h3>4.4 Mediação Académica — Workflow</h3>
+<h3>4.4 Mediação Académica</h3>
 <ol class="steps">
     <li>Aceda a <strong>Mediações Académicas</strong> no painel.</li>
     <li>Veja os processos em estado "Impasse" ou "Em Mediação".</li>
