@@ -358,8 +358,11 @@ class AdminController extends Controller {
             $matriculaModel = $this->model('Matricula');
             $matriculaModel->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo);
 
+            // SEGURANÇA: Bloqueia o acesso ao portal se a matrícula foi rejeitada
+            $db->prepare("UPDATE utilizadores SET status = 'pendente' WHERE id = :uid")->execute([':uid' => $m['user_id']]);
+
             $this->logActivity('Rejeitar Matrícula', ['id' => $id, 'aluno' => $m['nome_completo'], 'motivo' => $motivo]);
-            $_SESSION['flash_success'] = "Matrícula rejeitada com sucesso. O aluno foi notificado para corrigir os dados.";
+            $_SESSION['flash_success'] = "Matrícula rejeitada. O acesso do aluno ao portal foi suspenso até regularização.";
         } else {
             $_SESSION['flash_error'] = "Registo não encontrado.";
         }

@@ -136,12 +136,16 @@ class SecretariaController extends Controller {
         $motivo = $_POST['motivo'] ?? 'Documentação incompleta'; 
         
         if ($model->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo)) {
+            // SEGURANÇA: Suspende o acesso ao portal
+            $db->prepare("UPDATE utilizadores SET status = 'pendente' WHERE id = :uid")->execute([':uid' => $u['user_id']]);
+
             // Notifica o aluno sobre a rejeição (Consistência com AdminController)
             if ($u && !empty($u['email'])) {
                 Mailer::sendMatriculaRejeitada($u['email'], $u['nome_completo'] ?? 'Candidato', $motivo);
             }
 
             $this->logActivity('Rejeitar Matrícula Secretaria', ['matricula_id' => $id, 'motivo' => $motivo]);
+            $_SESSION['flash_success'] = "Matrícula rejeitada e acesso do aluno suspenso.";
             
             $notif = "A Secretaria REJEITOU a matrícula de " . ($u['nome_completo'] ?? 'N/A') . ". Motivo: $motivo.";
             $this->model('Mensagem')->notifyGroup('admin', $notif, $_SESSION['user_id']);

@@ -52,7 +52,8 @@ class MatriculaController extends Controller {
                     $user_id = $existingUser['id'];
                 } else {
                     $senha_provisoria = 'ghs' . substr($bi, -4);
-                    $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'ativo');
+                    // IMPORTANTE: Criar como 'pendente'. Só será 'ativo' após aprovação da matrícula.
+                    $user_id = $userModel->insertUser($nome, $email, $senha_provisoria, 'aluno', 'pendente');
                 }
             }
 
@@ -133,7 +134,11 @@ class MatriculaController extends Controller {
             }
 
             // 7. Notificação e Redirecionamento
-            $_SESSION['flash_success'] = "Solicitação enviada com sucesso! Aguarde a aprovação.";
+            if (isset($senha_provisoria)) {
+                Mailer::sendWelcomeCandidate($email, $nome, $senha_provisoria);
+            }
+
+            $_SESSION['flash_success'] = "Solicitação enviada com sucesso! Verifique o seu email para os dados de acesso.";
             header('Location: ' . URL_ROOT . '/matricula/sucesso');
             exit;
 
