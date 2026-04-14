@@ -136,3 +136,30 @@ useCaseDiagram
 | **Utilizadores** | Tabela de autenticação central. | Única fonte de verdade para Login (Zero-Trust). |
 | **Matrículas** | Estado dinâmico do aluno no sistema. | Controla permissões de visibilidade de módulos (ACL). |
 | **Pagamentos** | Rastreabilidade financeira. | Base para o cálculo de ROI e saúde financeira da escola nos gráficos do dashboard. |
+
+---
+
+## 5. Análise Detalhada de Cardinalidades
+
+Abaixo estão as justificações técnicas para as cardinalidades aplicadas ao sistema GHS:
+
+### 5.1 Utilizadores (1:1) Estudantes / Professores
+*   **Tipo:** Especialização (1 para 1).
+*   **Justificação:** Cada `Estudante` ou `Professor` deve possuir obrigatoriamente apenas uma conta de `Utilizador`. Isto garante que as credenciais de segurança estejam isoladas dos dados biográficos, facilitando auditorias de acesso.
+
+### 5.2 Estudantes (1:N) Matrículas
+*   **Tipo:** 1 para Muitos.
+*   **Justificação:** Um único `Estudante` pode realizar múltiplas `Matrículas` ao longo da sua vida académica (uma para cada ano letivo). No entanto, cada registo de matrícula pertence a um único aluno exclusivo.
+
+### 5.3 Turmas (1:N) Matrículas
+*   **Tipo:** 1 para Muitos.
+*   **Justificação:** Uma `Turma` comporta vários alunos (muitas matrículas), mas cada `Matrícula` específica de um aluno em um determinado ano só pode estar vinculada a uma única turma por vez.
+
+### 5.4 Professores (N:N) Disciplinas
+*   **Tipo:** Muitos para Muitos (Resolvido com tabela associativa `professor_disciplina`).
+*   **Justificação:** Um `Professor` pode lecionar várias `Disciplinas`, e uma `Disciplina` pode ter múltiplos `Professores` (ex: diferentes turmas ou turnos).
+
+---
+
+## 6. Integridade Referencial e Normas
+O MER do sistema GHS segue rigorosamente a **3ª Forma Normal (3FN)**, eliminando redundâncias de dados e garantindo que cada facto seja armazenado em um único lugar. As cardinalidades asseguram que a integridade dos dados financeiros e académicos seja mantida através de chaves estrangeiras (`Foreign Keys`) com restrições de integridade.
