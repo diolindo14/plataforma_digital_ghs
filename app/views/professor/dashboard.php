@@ -1198,19 +1198,19 @@ function saveNota(btn) {
         turma_id: row.data('turma-id'),
         disciplina_id: row.data('disc-id'),
         notas: {
-            tpc1: row.find('.val-tpc1').val(),
-            tpc2: row.find('.val-tpc2').val(),
-            tpc3: row.find('.val-tpc3').val(),
-            ap1: row.find('.val-ap1').val(),
-            ap2: row.find('.val-ap2').val(),
-            ap3: row.find('.val-ap3').val(),
-            tpi1: row.find('.val-tpi1').val(),
-            tpi2: row.find('.val-tpi2').val(),
-            tpi3: row.find('.val-tpi3').val(),
-            ce1: row.find('.val-ce1').val(),
-            ce2: row.find('.val-ce2').val(),
-            ce3: row.find('.val-ce3').val(),
-            exame: row.find('.val-exame').val()
+            tpc1: row.find('.val-tpc1').val().replace(',', '.'),
+            tpc2: row.find('.val-tpc2').val().replace(',', '.'),
+            tpc3: row.find('.val-tpc3').val().replace(',', '.'),
+            ap1: row.find('.val-ap1').val().replace(',', '.'),
+            ap2: row.find('.val-ap2').val().replace(',', '.'),
+            ap3: row.find('.val-ap3').val().replace(',', '.'),
+            tpi1: row.find('.val-tpi1').val().replace(',', '.'),
+            tpi2: row.find('.val-tpi2').val().replace(',', '.'),
+            tpi3: row.find('.val-tpi3').val().replace(',', '.'),
+            ce1: row.find('.val-ce1').val().replace(',', '.'),
+            ce2: row.find('.val-ce2').val().replace(',', '.'),
+            ce3: row.find('.val-ce3').val().replace(',', '.'),
+            exame: row.find('.val-exame').val().replace(',', '.')
         },
         csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     };

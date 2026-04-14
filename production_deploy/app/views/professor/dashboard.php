@@ -1163,9 +1163,12 @@ $(document).ready(function() {
 });
 
 function calcAvg(cl1, cl2, cl3, row) {
-        let v1 = parseFloat(row.find(cl1).val());
-        let v2 = parseFloat(row.find(cl2).val());
-        let v3 = parseFloat(row.find(cl3).val());
+        let val1 = row.find(cl1).val().replace(',', '.');
+        let val2 = row.find(cl2).val().replace(',', '.');
+        let val3 = row.find(cl3).val().replace(',', '.');
+        let v1 = parseFloat(val1);
+        let v2 = parseFloat(val2);
+        let v3 = parseFloat(val3);
         let sum = 0; let count = 0;
         if(!isNaN(v1)) { sum+=v1; count++; }
         if(!isNaN(v2)) { sum+=v2; count++; }
@@ -1183,7 +1186,8 @@ function recalcM(input) {
     let totalAC = tpcAvg + apAvg + tpiAvg + ceAvg;
     row.find('.text-total-ac').text(totalAC.toFixed(1));
     
-    let exame = parseFloat(row.find('.val-exame').val());
+    let exameStr = row.find('.val-exame').val();
+    let exame = exameStr ? parseFloat(exameStr.replace(',', '.')) : NaN;
     if(!isNaN(exame)) {
         row.find('.text-media-final').text(((totalAC + exame)/2).toFixed(1));
     } else {
@@ -1198,34 +1202,45 @@ function saveNota(btn) {
         turma_id: row.data('turma-id'),
         disciplina_id: row.data('disc-id'),
         notas: {
-            tpc1: row.find('.val-tpc1').val(),
-            tpc2: row.find('.val-tpc2').val(),
-            tpc3: row.find('.val-tpc3').val(),
-            ap1: row.find('.val-ap1').val(),
-            ap2: row.find('.val-ap2').val(),
-            ap3: row.find('.val-ap3').val(),
-            tpi1: row.find('.val-tpi1').val(),
-            tpi2: row.find('.val-tpi2').val(),
-            tpi3: row.find('.val-tpi3').val(),
-            ce1: row.find('.val-ce1').val(),
-            ce2: row.find('.val-ce2').val(),
-            ce3: row.find('.val-ce3').val(),
-            exame: row.find('.val-exame').val()
+            tpc1: row.find('.val-tpc1').val().replace(',', '.'),
+            tpc2: row.find('.val-tpc2').val().replace(',', '.'),
+            tpc3: row.find('.val-tpc3').val().replace(',', '.'),
+            ap1: row.find('.val-ap1').val().replace(',', '.'),
+            ap2: row.find('.val-ap2').val().replace(',', '.'),
+            ap3: row.find('.val-ap3').val().replace(',', '.'),
+            tpi1: row.find('.val-tpi1').val().replace(',', '.'),
+            tpi2: row.find('.val-tpi2').val().replace(',', '.'),
+            tpi3: row.find('.val-tpi3').val().replace(',', '.'),
+            ce1: row.find('.val-ce1').val().replace(',', '.'),
+            ce2: row.find('.val-ce2').val().replace(',', '.'),
+            ce3: row.find('.val-ce3').val().replace(',', '.'),
+            exame: row.find('.val-exame').val().replace(',', '.')
         },
         csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     };
 
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
-        if(res.success) {
-            alert('Notas salvas com sucesso!');
-            location.reload(); // Recarregar para ver o total atualizado
-        } else {
-            alert('Erro ao salvar notas.');
+    $.ajax({
+        url: '<?= URL_ROOT ?>/professor/saveNota',
+        type: 'POST',
+        data: data,
+        dataType: 'json',
+        success: function(res) {
+            if(res.success) {
+                alert('Notas salvas com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro ao salvar notas: ' + (res.message || 'Desconhecido. Verifique bloqueios administrativos.'));
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Erro completo:", xhr.responseText);
+            alert("A comunicação com o servidor falhou online (CSRF expulso, protecção anti-bot do alojamento ou formato incorrecto).\nCertifique-se que usa ponto (.) e não vírgula nas notas. Erro: " + error);
+        },
+        complete: function() {
+            $(btn).text('Guardar').prop('disabled', false);
         }
-    }, 'json').always(function() {
-        $(btn).text('Guardar').prop('disabled', false);
     });
 }
 
