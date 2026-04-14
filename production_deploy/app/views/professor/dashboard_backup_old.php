@@ -260,8 +260,8 @@
                 
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold text-success mb-2">IA4 - Avalia├º├úo Cont├¡nua (20 pontos)</h5>
-                        <p class="text-muted small border-bottom pb-3">A M├®trica Institucional define: TPC (2) | AP (3) | TPI (5) | CE (10)</p>
+                        <h5 class="fw-bold text-success mb-2">Avaliação Contínua (20 pontos)</h5>
+                        <p class="text-muted small border-bottom pb-3">A Métrica Institucional define: TPC (2) | AP (3) | TPI (5) | CE (10)</p>
 
                         <div class="table-responsive mt-3">
                             <table class="table table-hover align-middle datatable-simple">
