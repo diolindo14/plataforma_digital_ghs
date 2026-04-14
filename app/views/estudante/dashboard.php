@@ -261,7 +261,7 @@
             </div>
         </div>
 
-        <div class="mt-5 pt-3 border-top border-white border-opacity-10 pb-4 w-100">
+        <div class="mt-3 pt-2 border-top border-white border-opacity-10 pb-4 w-100">
             <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon>
                 Voltar ao Site</a>
             <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon

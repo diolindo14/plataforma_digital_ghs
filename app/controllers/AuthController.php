@@ -159,7 +159,7 @@ class AuthController extends Controller {
                     'bi' => 'REG-' . strtoupper(substr(uniqid(), -8)),
                     'data_nascimento' => date('Y-m-d', strtotime('-18 years')),
                     'nacionalidade' => 'Guineense',
-                    'sexo' => 'Masculino',
+                    'sexo' => '',
                     'estado_civil' => 'Solteiro',
                     'telefone' => '000000000',
                     'morada' => 'A definir',
