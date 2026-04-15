@@ -220,49 +220,30 @@
 
     <div class="d-flex overflow-hidden">
     <!-- Sidebar -->
-    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
+    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-start">
         <div>
             <div class="sidebar-brand text-center mb-4 mt-2 border-bottom border-light border-opacity-10 pb-3">
-                <div
-                    style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--ghs-primary); display: flex; align-items: center; justify-content: center; background: #fff; margin: 0 auto; overflow: hidden;">
-                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS"
-                        style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--ghs-primary); display: flex; align-items: center; justify-content: center; background: #fff; margin: 0 auto; overflow: hidden;">
+                    <img src="<?= URL_ROOT ?>/img/logo.jpg" alt="Logo GHS" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <h5 class="fw-bold text-white mb-1 mt-3" style="font-size: .95rem;">Green Hard & Softh</h5>
-                <span class="badge"
-                    style="background:rgba(16,185,129,.15); color:var(--ghs-primary); border:1px solid rgba(16,185,129,.3); font-size: .65rem; letter-spacing: .06em;">PORTAL
-                    ESTUDANTE</span>
+                <span class="badge" style="background:rgba(16,185,129,.15); color:var(--ghs-primary); border:1px solid rgba(16,185,129,.3); font-size: .65rem; letter-spacing: .06em;">PORTAL ESTUDANTE</span>
             </div>
 
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" id="tab-home" data-bs-toggle="pill" data-bs-target="#pane-home"
-                    role="tab"><ion-icon name="grid-outline"></ion-icon> Meu Painel</a>
-                <a class="nav-link" id="tab-horario" data-bs-toggle="pill" data-bs-target="#pane-horario"
-                    role="tab"><ion-icon name="calendar-outline"></ion-icon> Horário & Calendário</a>
-                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" data-bs-target="#pane-notas"
-                    role="tab"><ion-icon name="pie-chart-outline"></ion-icon> Avaliação Contínua</a>
-                <a class="nav-link" id="tab-historico" data-bs-toggle="pill" data-bs-target="#pane-historico"
-                    role="tab"><ion-icon name="document-text-outline"></ion-icon> Histórico Académico</a>
-                <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" data-bs-target="#pane-materiais"
-                    role="tab"><ion-icon name="folder-open-outline"></ion-icon> Materiais Didáticos</a>
-                <a class="nav-link" id="tab-sumarios" data-bs-toggle="pill" data-bs-target="#pane-sumarios"
-                    role="tab"><ion-icon name="reader-outline"></ion-icon> Sumários de Aula</a>
+                <a class="nav-link active" id="tab-home" data-bs-toggle="pill" data-bs-target="#pane-home" role="tab"><ion-icon name="grid-outline"></ion-icon> Meu Painel</a>
+                <a class="nav-link" id="tab-horario" data-bs-toggle="pill" data-bs-target="#pane-horario" role="tab"><ion-icon name="calendar-outline"></ion-icon> Horário & Calendário</a>
+                <a class="nav-link" id="tab-notas" data-bs-toggle="pill" data-bs-target="#pane-notas" role="tab"><ion-icon name="pie-chart-outline"></ion-icon> Avaliação Contínua</a>
+                <a class="nav-link" id="tab-historico" data-bs-toggle="pill" data-bs-target="#pane-historico" role="tab"><ion-icon name="document-text-outline"></ion-icon> Histórico Académico</a>
+                <a class="nav-link" id="tab-materiais" data-bs-toggle="pill" data-bs-target="#pane-materiais" role="tab"><ion-icon name="folder-open-outline"></ion-icon> Materiais Didáticos</a>
+                <a class="nav-link" id="tab-sumarios" data-bs-toggle="pill" data-bs-target="#pane-sumarios" role="tab"><ion-icon name="reader-outline"></ion-icon> Sumários de Aula</a>
 
-                <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro"
-                    role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
-                <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados"
-                    role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
-                <hr class="text-white opacity-25">
-                <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula"><ion-icon
-                        name="add-circle-outline"></ion-icon> Nova Matrícula</a>
+                <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro" role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
+                <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados" role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
+                <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula"><ion-icon name="add-circle-outline"></ion-icon> Nova Matrícula</a>
+                <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
+                <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
             </div>
-        </div>
-
-        <div class="pb-4 w-100">
-            <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon>
-                Voltar ao Site</a>
-            <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon
-                    name="log-out-outline"></ion-icon> Terminar Sessão</a>
         </div>
     </nav>
 
@@ -1723,3 +1704,4 @@
 </body>
 
 </html>
+
