@@ -122,7 +122,30 @@ class Mailer {
             <p>Olá, <strong>{$nome}</strong>!</p>
             <p>Infelizmente, a sua matrícula foi <strong style='color:#c0392b;'>rejeitada</strong>.</p>
             {$motivoHtml}
-            <p>Por favor, dirija-se à Secretaria ou corrija a documentação e submeta novamente.</p>
+            <p>Pode ver os detalhes e corrigir a sua submissão diretamente no portal:</p>
+            <p><a href='" . (defined('URL_ROOT') ? URL_ROOT : '#') . "/auth' style='color:#0f4c1a;font-weight:bold;text-decoration:none;background:#e8f5e9;padding:10px 20px;border-radius:6px;display:inline-block;'>Aceder ao Portal para Corrigir</a></p>
+            <p>Caso prefira, pode também dirigir-se à Secretaria da instituição.</p>
+            <p>Atenciosamente,<br><strong>Secretaria GHS</strong></p>
+        ";
+        return self::send($to, $subject, $message);
+    }
+    /**
+     * Notificação de Receção de Candidatura (Novo Ingresso)
+     * Inclui as credenciais de acesso geradas automaticamente.
+     */
+    public static function sendWelcomeCandidate($to, $nome, $senha) {
+        $subject = 'Candidatura Recebida — Portal GHS';
+        $message = "
+            <p>Olá, <strong>{$nome}</strong>!</p>
+            <p>Recebemos com sucesso o seu pedido de matrícula na nossa instituição.</p>
+            <p>Foi criada uma conta de acesso para que possa acompanhar o estado da sua candidatura em tempo real.</p>
+            <div style='background:#f9f9f9;padding:15px;border-radius:8px;margin:20px 0;border:1px solid #ddd;'>
+                <p style='margin:0 0 10px;'><strong>As suas credenciais de acesso:</strong></p>
+                <p style='margin:5px 0;'><strong>Utilizador:</strong> {$to}</p>
+                <p style='margin:5px 0;'><strong>Palavra-passe:</strong> <span style='color:#1a7a2e;font-family:monospace;font-size:1.2rem;'>{$senha}</span></p>
+            </div>
+            <p>Pode aceder ao portal aqui: <a href='" . (defined('URL_ROOT') ? URL_ROOT : '#') . "/auth' style='color:#0f4c1a;font-weight:bold;'>Portal GHS</a></p>
+            <p><strong>Nota:</strong> Guarde estes dados em segurança. Recomendamos que altere a senha no primeiro acesso.</p>
             <p>Atenciosamente,<br><strong>Secretaria GHS</strong></p>
         ";
         return self::send($to, $subject, $message);

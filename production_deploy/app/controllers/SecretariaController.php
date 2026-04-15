@@ -116,10 +116,19 @@ class SecretariaController extends Controller {
      * Rejeição de Matrícula.
      * Permite à secretaria impedir o avanço de inscrições irregulares.
      */
-    public function rejectMatricula($id) {
+    public function rejectMatricula($id = null) {
+        $id = $id ?: ($_POST['id'] ?? null);
+        
+        if (!$id) {
+            $_SESSION['flash_error'] = "Erro: ID da matrícula não identificado.";
+            header('Location: ' . URL_ROOT . '/secretaria');
+            exit;
+        }
+
         $this->verifyCsrfToken(); 
         $db = Database::getInstance(); 
-        $stmt = $db->prepare("SELECT u.nome_completo FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+        // Busca dados para notificação antes de processar
+        $stmt = $db->prepare("SELECT u.email, u.nome_completo FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
         $stmt->execute([':id' => $id]);
         $u = $stmt->fetch();
 
@@ -127,12 +136,21 @@ class SecretariaController extends Controller {
         $motivo = $_POST['motivo'] ?? 'Documentação incompleta'; 
         
         if ($model->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo)) {
+            // SEGURANÇA: Suspende o acesso ao portal
+            $db->prepare("UPDATE utilizadores SET status = 'pendente' WHERE id = :uid")->execute([':uid' => $u['user_id']]);
+
+            // Notifica o aluno sobre a rejeição (Consistência com AdminController)
+            if ($u && !empty($u['email'])) {
+                Mailer::sendMatriculaRejeitada($u['email'], $u['nome_completo'] ?? 'Candidato', $motivo);
+            }
+
             $this->logActivity('Rejeitar Matrícula Secretaria', ['matricula_id' => $id, 'motivo' => $motivo]);
+            $_SESSION['flash_success'] = "Matrícula rejeitada e acesso do aluno suspenso.";
             
             $notif = "A Secretaria REJEITOU a matrícula de " . ($u['nome_completo'] ?? 'N/A') . ". Motivo: $motivo.";
             $this->model('Mensagem')->notifyGroup('admin', $notif, $_SESSION['user_id']);
             
-            $_SESSION['flash_success'] = "Matrícula rejeitada.";
+            $_SESSION['flash_success'] = "Matrícula rejeitada e aluno notificado.";
         } else {
             $_SESSION['flash_error'] = "Erro ao rejeitar matrícula.";
         }

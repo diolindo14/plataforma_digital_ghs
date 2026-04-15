@@ -21,7 +21,7 @@
     </style>
 </head>
 <body>
-<nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
+<nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column">
         <div>
             <div class="text-center mb-4 mt-2">
                 <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="pb-4 w-100">
+        <div class="mt-5 pt-3 border-top border-white border-opacity-10 pb-4 w-100">
             <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
             <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
         </div>
@@ -185,6 +185,13 @@
             <div>
                 <h2 class="fw-bold text-dark">Portal do Professor</h2>
                 <p class="text-muted mb-0">Gestão Pedagógica - Ano Letivo 2026/2027</p>
+                
+                <?php if(isset($_SESSION['flash_success'])): ?>
+                    <div class="alert alert-success mt-2 py-2 small fw-bold"><?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?></div>
+                <?php endif; ?>
+                <?php if(isset($_SESSION['flash_error'])): ?>
+                    <div class="alert alert-danger mt-2 py-2 small fw-bold"><?= $_SESSION['flash_error']; unset($_SESSION['flash_error']); ?></div>
+                <?php endif; ?>
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="dropdown">
@@ -355,7 +362,7 @@
                 
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold text-success mb-2">Avaliação Contínua (20 pontos)</h5>
+                        <h5 class="fw-bold text-success mb-2">IA4 - Avaliação Contínua (20 pontos)</h5>
                         <p class="text-muted small border-bottom pb-3">A Métrica Institucional define: TPC (2) | AP (3) | TPI (5) | CE (10)</p>
 
                         <div class="table-responsive mt-3">
@@ -1163,12 +1170,9 @@ $(document).ready(function() {
 });
 
 function calcAvg(cl1, cl2, cl3, row) {
-        let val1 = row.find(cl1).val().replace(',', '.');
-        let val2 = row.find(cl2).val().replace(',', '.');
-        let val3 = row.find(cl3).val().replace(',', '.');
-        let v1 = parseFloat(val1);
-        let v2 = parseFloat(val2);
-        let v3 = parseFloat(val3);
+        let v1 = parseFloat(row.find(cl1).val());
+        let v2 = parseFloat(row.find(cl2).val());
+        let v3 = parseFloat(row.find(cl3).val());
         let sum = 0; let count = 0;
         if(!isNaN(v1)) { sum+=v1; count++; }
         if(!isNaN(v2)) { sum+=v2; count++; }
@@ -1186,8 +1190,7 @@ function recalcM(input) {
     let totalAC = tpcAvg + apAvg + tpiAvg + ceAvg;
     row.find('.text-total-ac').text(totalAC.toFixed(1));
     
-    let exameStr = row.find('.val-exame').val();
-    let exame = exameStr ? parseFloat(exameStr.replace(',', '.')) : NaN;
+    let exame = parseFloat(row.find('.val-exame').val());
     if(!isNaN(exame)) {
         row.find('.text-media-final').text(((totalAC + exame)/2).toFixed(1));
     } else {
@@ -1197,51 +1200,55 @@ function recalcM(input) {
 
 function saveNota(btn) {
     const row = $(btn).closest('tr');
-    const data = {
-        estudante_id: row.data('student-id'),
-        turma_id: row.data('turma-id'),
-        disciplina_id: row.data('disc-id'),
-        notas: {
-            tpc1: row.find('.val-tpc1').val().replace(',', '.'),
-            tpc2: row.find('.val-tpc2').val().replace(',', '.'),
-            tpc3: row.find('.val-tpc3').val().replace(',', '.'),
-            ap1: row.find('.val-ap1').val().replace(',', '.'),
-            ap2: row.find('.val-ap2').val().replace(',', '.'),
-            ap3: row.find('.val-ap3').val().replace(',', '.'),
-            tpi1: row.find('.val-tpi1').val().replace(',', '.'),
-            tpi2: row.find('.val-tpi2').val().replace(',', '.'),
-            tpi3: row.find('.val-tpi3').val().replace(',', '.'),
-            ce1: row.find('.val-ce1').val().replace(',', '.'),
-            ce2: row.find('.val-ce2').val().replace(',', '.'),
-            ce3: row.find('.val-ce3').val().replace(',', '.'),
-            exame: row.find('.val-exame').val().replace(',', '.')
-        },
-        csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+    
+    // Preparar os dados convertidos de virgula pra ponto diretamente da row!
+    var ns = {
+        tpc1: row.find('.val-tpc1').val().replace(',', '.'),
+        tpc2: row.find('.val-tpc2').val().replace(',', '.'),
+        tpc3: row.find('.val-tpc3').val().replace(',', '.'),
+        ap1: row.find('.val-ap1').val().replace(',', '.'),
+        ap2: row.find('.val-ap2').val().replace(',', '.'),
+        ap3: row.find('.val-ap3').val().replace(',', '.'),
+        tpi1: row.find('.val-tpi1').val().replace(',', '.'),
+        tpi2: row.find('.val-tpi2').val().replace(',', '.'),
+        tpi3: row.find('.val-tpi3').val().replace(',', '.'),
+        ce1: row.find('.val-ce1').val().replace(',', '.'),
+        ce2: row.find('.val-ce2').val().replace(',', '.'),
+        ce3: row.find('.val-ce3').val().replace(',', '.'),
+        exame: row.find('.val-exame').val().replace(',', '.')
     };
 
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    $.ajax({
-        url: '<?= URL_ROOT ?>/professor/saveNota',
-        type: 'POST',
-        data: data,
-        dataType: 'json',
-        success: function(res) {
-            if(res.success) {
-                alert('Notas salvas com sucesso!');
-                location.reload();
-            } else {
-                alert('Erro ao salvar notas: ' + (res.message || 'Desconhecido. Verifique bloqueios administrativos.'));
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Erro completo:", xhr.responseText);
-            alert("A comunicação com o servidor falhou online (CSRF expulso, protecção anti-bot do alojamento ou formato incorrecto).\nCertifique-se que usa ponto (.) e não vírgula nas notas. Erro: " + error);
-        },
-        complete: function() {
-            $(btn).text('Guardar').prop('disabled', false);
-        }
-    });
+    // Na ByetHost / InfinityFree as XHR ($.ajax) são bloqueadas aleatoriamente e retorna HTML!
+    // A única solução bulletproof é um submit DOM real.
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<?= URL_ROOT ?>/professor/saveNota';
+
+    function addF(key, val) {
+        let i = document.createElement('input');
+        i.type = 'hidden'; i.name = key; i.value = val;
+        form.appendChild(i);
+    }
+    
+    addF('estudante_id', row.data('student-id'));
+    addF('turma_id', row.data('turma-id'));
+    addF('disciplina_id', row.data('disc-id'));
+    addF('csrf_token', '<?php echo $_SESSION['csrf_token'] ?? ''; ?>');
+    addF('active_tab', 'notas');
+    
+    // Formato notas do post array esperado na action:
+    for (const k in ns) {
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'notas[' + k + ']';
+        input.value = ns[k];
+        form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
 }
 
 function enviarComunicado() {

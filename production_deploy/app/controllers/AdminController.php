@@ -334,35 +334,38 @@ class AdminController extends Controller {
 
     public function rejectMatricula($id) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->verifyCsrfToken();
-            $motivo = $_POST['motivo'] ?? 'Documentação incompleta';
-            
-            $db = Database::getInstance();
-            // Busca dados para notificação antes de apagar
-            $stmt = $db->prepare("SELECT u.email, u.nome_completo, m.tipo, e.id as estudante_id, u.id as user_id 
-                                 FROM matriculas m 
-                                 JOIN estudantes e ON m.estudante_id = e.id 
-                                 JOIN utilizadores u ON e.utilizador_id = u.id 
-                                 WHERE m.id = :id");
-            $stmt->execute([':id' => $id]);
-            $m = $stmt->fetch();
+        $this->verifyCsrfToken();
+        $motivo = $_POST['motivo'] ?? 'Documentação incompleta';
+        
+        $db = Database::getInstance();
+        // Busca dados para notificação antes de apagar
+        $stmt = $db->prepare("SELECT u.email, u.nome_completo, m.tipo, e.id as estudante_id, u.id as user_id 
+                             FROM matriculas m 
+                             JOIN estudantes e ON m.estudante_id = e.id 
+                             JOIN utilizadores u ON e.utilizador_id = u.id 
+                             WHERE m.id = :id");
+        $stmt->execute([':id' => $id]);
+        $m = $stmt->fetch();
 
-            if ($m) {
-                // Notifica o aluno sobre a rejeição
-                if (!empty($m['email'])) {
-                    Mailer::sendMatriculaRejeitada($m['email'], $m['nome_completo'] ?? 'Candidato', $motivo);
-                }
-
-                // Em vez de REMOÇÃO FÍSICA, atualizamos o status para 'Rejeitada' (Pilar 1 e 5)
-                // Usamos o modelo Matricula para garantir que as colunas corretas sejam afetadas
-                $matriculaModel = $this->model('Matricula');
-                $matriculaModel->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo);
-
-                $this->logActivity('Rejeitar Matrícula', ['id' => $id, 'aluno' => $m['nome_completo'], 'motivo' => $motivo]);
-                $_SESSION['flash_success'] = "Matrícula rejeitada com sucesso. O aluno foi notificado para corrigir os dados.";
-            } else {
-                $_SESSION['flash_error'] = "Registo não encontrado.";
+        if ($m) {
+            // Notifica o aluno sobre a rejeição
+            if (!empty($m['email'])) {
+                Mailer::sendMatriculaRejeitada($m['email'], $m['nome_completo'] ?? 'Candidato', $motivo);
             }
+
+            // Em vez de REMOÇÃO FÍSICA, atualizamos o status para 'Rejeitada' (Pilar 1 e 5)
+            // Usamos o modelo Matricula para garantir que as colunas corretas sejam afetadas
+            $matriculaModel = $this->model('Matricula');
+            $matriculaModel->updateStatus($id, 'Rejeitada', $_SESSION['user_id'], $motivo);
+
+            // SEGURANÇA: Bloqueia o acesso ao portal se a matrícula foi rejeitada
+            $db->prepare("UPDATE utilizadores SET status = 'pendente' WHERE id = :uid")->execute([':uid' => $m['user_id']]);
+
+            $this->logActivity('Rejeitar Matrícula', ['id' => $id, 'aluno' => $m['nome_completo'], 'motivo' => $motivo]);
+            $_SESSION['flash_success'] = "Matrícula rejeitada. O acesso do aluno ao portal foi suspenso até regularização.";
+        } else {
+            $_SESSION['flash_error'] = "Registo não encontrado.";
+        }
         }
         header('Location: ' . URL_ROOT . '/admin#pane-matriculas');
         exit;
@@ -424,7 +427,7 @@ class AdminController extends Controller {
             'bi'         => $bi,
             'telefone'   => $telefone,
             'data_nascimento' => $_POST['data_nascimento'] ?? null,
-            'sexo'       => $_POST['sexo'] ?? 'M',
+            'sexo'       => $_POST['sexo'] ?? '',
             'nacionalidade' => $_POST['nacionalidade'] ?? 'Guineense',
             'estado_civil' => 'Solteiro',
             'morada'     => '',
@@ -534,7 +537,7 @@ class AdminController extends Controller {
                 'bi' => $_POST['bi'],
                 'data_nascimento' => $_POST['data_nascimento'],
                 'nacionalidade' => $_POST['nacionalidade'] ?? 'Guineense',
-                'sexo' => $_POST['sexo'] ?? 'Masculino',
+                'sexo' => $_POST['sexo'] ?? '',
                 'telefone' => $_POST['telefone'] ?? '',
                 'telefone_alternativo' => $_POST['telefone_alternativo'] ?? '',
                 'estado_civil' => $_POST['estado_civil'] ?? 'Solteiro',

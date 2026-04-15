@@ -220,7 +220,7 @@
 
     <div class="d-flex overflow-hidden">
     <!-- Sidebar -->
-    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
+    <nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column">
         <div>
             <div class="sidebar-brand text-center mb-4 mt-2 border-bottom border-light border-opacity-10 pb-3">
                 <div
@@ -237,6 +237,7 @@
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <a class="nav-link active" id="tab-home" data-bs-toggle="pill" data-bs-target="#pane-home"
                     role="tab"><ion-icon name="grid-outline"></ion-icon> Meu Painel</a>
+                
                 <a class="nav-link" id="tab-horario" data-bs-toggle="pill" data-bs-target="#pane-horario"
                     role="tab"><ion-icon name="calendar-outline"></ion-icon> Horário & Calendário</a>
                 <a class="nav-link" id="tab-notas" data-bs-toggle="pill" data-bs-target="#pane-notas"
@@ -247,18 +248,18 @@
                     role="tab"><ion-icon name="folder-open-outline"></ion-icon> Materiais Didáticos</a>
                 <a class="nav-link" id="tab-sumarios" data-bs-toggle="pill" data-bs-target="#pane-sumarios"
                     role="tab"><ion-icon name="reader-outline"></ion-icon> Sumários de Aula</a>
-
                 <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro"
                     role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
+
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados"
                     role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
                 <hr class="text-white opacity-25">
                 <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula"><ion-icon
-                        name="add-circle-outline"></ion-icon> Nova Matrícula</a>
+                        name="add-circle-outline"></ion-icon> Renovar Matrícula</a>
             </div>
         </div>
 
-        <div class="pb-4 w-100">
+        <div class="mt-3 pt-2 border-top border-white border-opacity-10 pb-4 w-100">
             <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon>
                 Voltar ao Site</a>
             <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon
@@ -270,6 +271,38 @@
     <main class="content ghs-content flex-grow-1">
         <div class="ghs-container">
             <div class="ghs-content-header d-none d-lg-block mb-4">
+
+        <!-- 🔔 ALERTA DE STATUS DE MATRÍCULA -->
+        <?php if ($data['matricula_status'] === 'Rejeitada'): ?>
+            <div class="alert alert-danger shadow-sm border-0 border-start border-4 border-danger rounded-4 mb-4 p-4" role="alert">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle text-danger">
+                        <ion-icon name="close-circle" class="fs-1"></ion-icon>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 text-danger">A sua matrícula foi REJEITADA</h5>
+                        <p class="mb-2 text-muted">A administração identificou inconsistências no seu processo. Por favor, veja o motivo abaixo e submeta novamente ou dirija-se à Secretaria.</p>
+                        <div class="bg-white bg-opacity-50 p-3 rounded-3 border border-danger border-opacity-25">
+                            <span class="fw-bold text-danger small text-uppercase d-block mb-1">Motivo da Rejeição:</span>
+                            <p class="mb-0 text-dark fw-bold">"<?= htmlspecialchars($data['motivo_rejeicao'] ?? 'Documentação incompleta ou ilegível.') ?>"</p>
+                        </div>
+                        <a href="<?= URL_ROOT ?>/matricula" class="btn btn-danger btn-sm mt-3 rounded-pill px-4 fw-bold">Corrigir e Tentar Novamente</a>
+                    </div>
+                </div>
+            </div>
+        <?php elseif ($data['matricula_status'] === 'Pendente'): ?>
+            <div class="alert alert-warning shadow-sm border-0 border-start border-4 border-warning rounded-4 mb-4 p-4" role="alert">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
+                        <ion-icon name="time" class="fs-1"></ion-icon>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark">Processo em Análise</h5>
+                        <p class="mb-0 text-muted">A sua solicitação de matrícula está na fila de triagem da Secretaria. Aguarde a validação dos documentos.</p>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <?php if (isset($data['alerta_matricula'])): ?>
             <div class="alert alert-warning alert-dismissible fade show shadow-sm border-0 border-start border-4 border-warning rounded-3 mb-4"
@@ -397,6 +430,7 @@
 
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home" role="tabpanel">
+
 
                 <!-- 📢 ALERTAS DE CONVOCATÓRIA (Mediação) -->
                 <?php if (!empty($data['convocatorias'])): ?>
@@ -686,9 +720,9 @@
                                     <?php endif; ?>
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </div>
+                
             </div>
 
             <!-- Horário & Calendário -->

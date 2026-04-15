@@ -224,7 +224,7 @@
                                                     <h6 class="fw-bold text-dark mb-1"><?= $this->e($h['nome_display']) ?> (<?= $this->e($h['sigla']) ?>)</h6>
                                                     <div class="d-flex flex-wrap gap-2 mt-2">
                                                         <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="time"></ion-icon> <?= substr($h['hora_inicio'],0,5) ?> - <?= substr($h['hora_fim'],0,5) ?></span>
-                                                        <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="sunny"></ion-icon> Período: <?= $h['turno'] ?? 'N/A' ?></span>
+                                                        <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="sunny"></ion-icon> Per├¡odo: <?= $h['turno'] ?? 'N/A' ?></span>
                                                         <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="people"></ion-icon> Turma <?= $this->e($h['turma_codigo']) ?></span>
                                                         <span class="badge bg-light border text-secondary fw-medium"><ion-icon name="location"></ion-icon> Sala <?= $this->e($h['sala']) ?></span>
                                                     </div>
@@ -245,7 +245,7 @@
             <!-- Notas -->
             <div class="tab-pane fade" id="pane-notas">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">Lançamento de Avaliações</h4>
+                    <h4 class="fw-bold mb-0">Lan├ºamento de Avalia├º├Áes</h4>
                     <div class="d-flex gap-2">
                         <select class="form-select form-select-sm" onchange="switchClass(this.value)">
                             <?php foreach($data['classes'] as $c): ?>
@@ -260,19 +260,19 @@
                 
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold text-success mb-2">Avaliação Contínua (20 pontos)</h5>
-                        <p class="text-muted small border-bottom pb-3">A Métrica Institucional define: TPC (2) | AP (3) | TPI (5) | CE (10)</p>
+                        <h5 class="fw-bold text-success mb-2">IA4 - Avalia├º├úo Cont├¡nua (20 pontos)</h5>
+                        <p class="text-muted small border-bottom pb-3">A M├®trica Institucional define: TPC (2) | AP (3) | TPI (5) | CE (10)</p>
 
                         <div class="table-responsive mt-3">
                             <table class="table table-hover align-middle datatable-simple">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Matrícula</th>
+                                        <th>Matr├¡cula</th>
                                         <th>Nome do Estudante</th>
-                                        <th class="text-center" style="width: 80px;">TPC<br><small>(Máx 2)</small></th>
-                                        <th class="text-center" style="width: 80px;">AP<br><small>(Máx 3)</small></th>
-                                        <th class="text-center" style="width: 80px;">TPI<br><small>(Máx 5)</small></th>
-                                        <th class="text-center" style="width: 80px;">CE<br><small>(Máx 10)</small></th>
+                                        <th class="text-center" style="width: 80px;">TPC<br><small>(M├íx 2)</small></th>
+                                        <th class="text-center" style="width: 80px;">AP<br><small>(M├íx 3)</small></th>
+                                        <th class="text-center" style="width: 80px;">TPI<br><small>(M├íx 5)</small></th>
+                                        <th class="text-center" style="width: 80px;">CE<br><small>(M├íx 10)</small></th>
                                         <th class="text-center text-white bg-success">Total AC<br><small>(20 pts)</small></th>
                                         <th class="text-center border-start border-primary" style="width: 90px;">Exame</th>
                                         <th class="text-center text-white bg-dark">M├®dia Final</th>

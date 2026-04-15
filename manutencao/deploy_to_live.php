@@ -5,8 +5,8 @@
  * Depois, o conteúdo de production_deploy/ deve ser enviado via FTP para o servidor.
  */
 
-$source = __DIR__ . '/';
-$dest   = __DIR__ . '/production_deploy/';
+$source = dirname(__DIR__) . '/';
+$dest   = dirname(__DIR__) . '/production_deploy/';
 
 if (!is_dir($dest)) {
     mkdir($dest, 0755, true);
