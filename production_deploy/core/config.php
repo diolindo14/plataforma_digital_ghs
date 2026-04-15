@@ -10,7 +10,7 @@ define('DB_USER', 'if0_41574650');
 define('DB_PASS', '0svEjAnMHnX');
 
 // Configurações Globais
-define('URL_ROOT', '/green');
+define('URL_ROOT', '');
 define('APP_NAME', 'GHS - Green Hard & Softh');
 
 // Configurações de Segurança

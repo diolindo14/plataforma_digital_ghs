@@ -33,8 +33,11 @@ class Horario {
      * Build grid: [tempo => [inicio,fim], dias => [dia => [slot...]]]
      */
     public function buildWeeklyGrid($turma_id) {
-        $rows = $this->getHorarioByTurma($turma_id);
         $dias  = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+        if (!$turma_id) {
+            return ['tempos' => $this->getDefaultTempos('Manhã'), 'grid' => [], 'dias' => $dias];
+        }
+        $rows = $this->getHorarioByTurma($turma_id);
         $grid  = [];      
         
         // Define default 4 slots based on shift

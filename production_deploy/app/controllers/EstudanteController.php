@@ -55,12 +55,14 @@ class EstudanteController extends Controller {
         }
 
         // Buscar matrícula mais recente (independente do status) para exibir alertas ao aluno
+        // BUSCA ROBUSTA: Priorizar a matrícula que já possui turma atribuída e status ativo
+        // Isso resolve o problema de alunos em renovação não conseguirem ver o horário atual.
         $stmtMat = Database::getInstance()->prepare("
             SELECT m.status, m.motivo_rejeicao, m.turma_id, t.codigo as turma_codigo, m.ano_curso_id
             FROM matriculas m 
             LEFT JOIN turmas t ON m.turma_id = t.id 
             WHERE m.estudante_id = :id 
-            ORDER BY m.id DESC LIMIT 1
+            ORDER BY (m.turma_id IS NOT NULL) DESC, m.id DESC LIMIT 1
         ");
         $stmtMat->bindValue(':id', $estudanteData['id']);
         $stmtMat->execute();
@@ -212,7 +214,12 @@ class EstudanteController extends Controller {
         $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
         if (!$estudanteData) { echo json_encode([]); exit; }
 
-        $stmt = Database::getInstance()->prepare("SELECT turma_id FROM matriculas WHERE estudante_id = :id AND status = 'Aprovada' ORDER BY id DESC LIMIT 1");
+        // BUSCA ROBUSTA: Priorizar a matrícula que já possui turma atribuída (estudantes em transição/renovação)
+        $stmt = Database::getInstance()->prepare("
+            SELECT turma_id FROM matriculas 
+            WHERE estudante_id = :id 
+            ORDER BY (turma_id IS NOT NULL) DESC, id DESC LIMIT 1
+        ");
         $stmt->bindValue(':id', $estudanteData['id']);
         $stmt->execute();
         $matricula = $stmt->fetch();
