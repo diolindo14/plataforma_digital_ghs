@@ -389,30 +389,30 @@
                                                 <td class="fw-bold"><?= $this->e($s['nome_completo']) ?></td>
                                                 <td>
                                                     <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc1" placeholder="1º" value="<?= $sn['notas_slots'][1][1] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc2" placeholder="2º" value="<?= $sn['notas_slots'][1][2] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpc3" placeholder="3º" value="<?= $sn['notas_slots'][1][3] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="2" class="form-control form-control-sm text-center val-tpc1" placeholder="1º" value="<?= $sn['notas_slots'][1][1] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="2" class="form-control form-control-sm text-center val-tpc2" placeholder="2º" value="<?= $sn['notas_slots'][1][2] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="2" class="form-control form-control-sm text-center val-tpc3" placeholder="3º" value="<?= $sn['notas_slots'][1][3] ?? '' ?>" onchange="recalcM(this)">
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap1" placeholder="1º" value="<?= $sn['notas_slots'][2][1] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap2" placeholder="2º" value="<?= $sn['notas_slots'][2][2] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ap3" placeholder="3º" value="<?= $sn['notas_slots'][2][3] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="3" class="form-control form-control-sm text-center val-ap1" placeholder="1º" value="<?= $sn['notas_slots'][2][1] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="3" class="form-control form-control-sm text-center val-ap2" placeholder="2º" value="<?= $sn['notas_slots'][2][2] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="3" class="form-control form-control-sm text-center val-ap3" placeholder="3º" value="<?= $sn['notas_slots'][2][3] ?? '' ?>" onchange="recalcM(this)">
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi1" placeholder="1º" value="<?= $sn['notas_slots'][3][1] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi2" placeholder="2º" value="<?= $sn['notas_slots'][3][2] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-tpi3" placeholder="3º" value="<?= $sn['notas_slots'][3][3] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="5" class="form-control form-control-sm text-center val-tpi1" placeholder="1º" value="<?= $sn['notas_slots'][3][1] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="5" class="form-control form-control-sm text-center val-tpi2" placeholder="2º" value="<?= $sn['notas_slots'][3][2] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="5" class="form-control form-control-sm text-center val-tpi3" placeholder="3º" value="<?= $sn['notas_slots'][3][3] ?? '' ?>" onchange="recalcM(this)">
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex flex-column gap-1">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce1" placeholder="1º" value="<?= $sn['notas_slots'][4][1] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce2" placeholder="2º" value="<?= $sn['notas_slots'][4][2] ?? '' ?>" onchange="recalcM(this)">
-                                                        <input type="number" step="0.1" class="form-control form-control-sm text-center val-ce3" placeholder="3º" value="<?= $sn['notas_slots'][4][3] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="10" class="form-control form-control-sm text-center val-ce1" placeholder="1º" value="<?= $sn['notas_slots'][4][1] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="10" class="form-control form-control-sm text-center val-ce2" placeholder="2º" value="<?= $sn['notas_slots'][4][2] ?? '' ?>" onchange="recalcM(this)">
+                                                        <input type="number" step="0.1" min="0" max="10" class="form-control form-control-sm text-center val-ce3" placeholder="3º" value="<?= $sn['notas_slots'][4][3] ?? '' ?>" onchange="recalcM(this)">
                                                     </div>
                                                 </td>
                                                 <td class="fw-bold text-success text-center fs-5 text-total-ac">
@@ -432,7 +432,7 @@
                                                     ?>
                                                 </td>
                                                 <td class="border-start border-primary">
-                                                    <input type="number" step="0.1" class="form-control form-control-sm text-center val-exame" value="<?= $sn['notas'][5] ?? ($sn[5] ?? '') ?>" onchange="recalcM(this)">
+                                                    <input type="number" step="0.1" min="0" max="20" class="form-control form-control-sm text-center val-exame" value="<?= $sn['notas'][5] ?? ($sn[5] ?? '') ?>" onchange="recalcM(this)">
                                                 </td>
                                                 <td class="text-center fw-bold fs-5 text-media-final">
                                                     <?php 
@@ -1070,62 +1070,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered text-center align-middle shadow-sm">
-                        <thead class="table-dark">
-                            <tr>
-                                <th class="py-3">TEMPO</th>
-                                <th class="py-3">HORA</th>
-                                <?php foreach($data['dias_semana'] as $d): ?>
-                                    <th class="py-3"><?= strtoupper($d) ?></th>
-                                <?php endforeach; ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($data['tempos_aula'] as $t_label => $t_horas): ?>
-                                <tr>
-                                    <td class="fw-bold bg-light"><?= $t_label ?></td>
-                                    <td class="small fw-semibold text-muted"><?= $t_horas[0] ?> – <?= $t_horas[1] ?></td>
-                                    <?php foreach($data['dias_semana'] as $dia): ?>
-                                        <td class="p-3" style="min-width: 140px;">
-                                            <?php 
-                                            $found = false;
-                                            foreach($data['horario'] as $h) {
-                                                if($h['dia_semana'] == $dia && substr($h['hora_inicio'], 0, 5) == $t_horas[0]) {
-                                                    echo '<div class="p-2 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-25">';
-                                                    echo '<div class="fw-bold text-primary small">'.explode(':', $h['disciplina_nome'])[0].'</div>';
-                                                    echo '<div class="text-muted extra-small" style="font-size: 0.65rem;">('.$h['sala'].')</div>';
-                                                    echo '<div class="mt-1"><span class="badge bg-white text-dark border extra-small" style="font-size: 0.6rem;">'.$h['turma_codigo'].'</span></div>';
-                                                    echo '</div>';
-                                                    $found = true;
-                                                    break;
-                                                }
-                                            }
-                                            if(!$found) echo '<span class="text-muted opacity-25">-</span>';
-                                            ?>
-                                        </td>
-                                    <?php endforeach; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="row mt-4 px-2">
-                    <div class="col-12">
-                        <h6 class="fw-bold small text-muted text-uppercase mb-3">Legenda das Disciplinas & Locais</h6>
-                        <div class="d-flex flex-wrap gap-2 mb-4 text-start">
-                            <span class="badge border text-dark fw-normal bg-white">EDP: Ética e Deontologia Profissional</span>
-                            <span class="badge border text-dark fw-normal bg-white">MCG: Multimédia e Computação Gráfica</span>
-                            <span class="badge border text-dark fw-normal bg-white">RD2: Redes Digitais</span>
-                            <span class="badge border text-dark fw-normal bg-white">IA: Inteligência Artificial</span>
-                            <span class="badge border text-dark fw-normal bg-white">MC: Metodologia Científica</span>
-                            <span class="badge border text-dark fw-normal bg-white">ES: Engenharia de Software</span>
-                            <span class="badge border text-dark fw-normal bg-white">TSI: Tecnologia para Sistemas Inteligentes</span>
-                            <span class="badge border text-success fw-bold bg-white">LAB1 / LAB2 / LAB3: Laboratórios Técnicos</span>
-                        </div>
-                    </div>
-                </div>
+                <?php 
+                $turmaInfo = [
+                    'codigo' => 'PROF: ' . ($data['professor']['nome'] ?? $_SESSION['user_name']),
+                    'nivel' => 'Gestão Pedagógica'
+                ];
+                include VIEW_PATH . '/shared/horario_grid.php'; 
+                ?>
             </div>
             <div class="modal-footer border-0 pb-4">
                 <button type="button" class="btn btn-secondary px-4 fw-bold shadow-sm" data-bs-dismiss="modal">Fechar</button>
