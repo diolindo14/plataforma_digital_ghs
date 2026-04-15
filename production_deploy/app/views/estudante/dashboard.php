@@ -281,6 +281,21 @@
     <!-- Main Content -->
     <main class="content ghs-content flex-grow-1">
         <div class="ghs-container">
+            
+            <!-- 🛠 PAINEL DE DIAGNÓSTICO (Apenas para Debug) -->
+            <?php if (isset($_GET['debug']) && $_GET['debug'] == '1'): ?>
+            <div class="alert alert-secondary shadow-sm mb-4" style="font-family: monospace; font-size: 11px;">
+                <h6 class="fw-bold mb-2">DIAGNÓSTICO TÉCNICO GHS</h6>
+                <div class="row">
+                    <div class="col-md-3"><strong>ESTUDANTE ID:</strong> <?= $data['estudante']['id'] ?? 'NÃO ENCONTRADO' ?></div>
+                    <div class="col-md-3"><strong>TURMA ID:</strong> <?= $data['turma_id'] ?? 'NENHUMA' ?></div>
+                    <div class="col-md-3"><strong>NOTAS:</strong> <?= count($data['notas'] ?? []) ?></div>
+                    <div class="col-md-3"><strong>IS_APPROVED:</strong> <?= $data['is_approved'] ? 'SIM' : 'NÃO' ?></div>
+                </div>
+                <div class="mt-2"><strong>GRADE DATA:</strong> <?= isset($data['gridData']['tempos']) ? count($data['gridData']['tempos']) . ' slots carregados' : 'Vazio' ?></div>
+            </div>
+            <?php endif; ?>
+
             <div class="ghs-content-header d-none d-lg-block mb-4">
 
         <!-- 🔔 ALERTA DE STATUS DE MATRÍCULA -->
