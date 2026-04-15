@@ -238,6 +238,7 @@
                 <a class="nav-link active" id="tab-home" data-bs-toggle="pill" data-bs-target="#pane-home"
                     role="tab"><ion-icon name="grid-outline"></ion-icon> Meu Painel</a>
                 
+                <?php if ($data['is_approved']): ?>
                 <a class="nav-link" id="tab-horario" data-bs-toggle="pill" data-bs-target="#pane-horario"
                     role="tab"><ion-icon name="calendar-outline"></ion-icon> Horário & Calendário</a>
                 <a class="nav-link" id="tab-notas" data-bs-toggle="pill" data-bs-target="#pane-notas"
@@ -250,16 +251,17 @@
                     role="tab"><ion-icon name="reader-outline"></ion-icon> Sumários de Aula</a>
                 <a class="nav-link" id="tab-financeiro" data-bs-toggle="pill" data-bs-target="#pane-financeiro"
                     role="tab"><ion-icon name="wallet-outline"></ion-icon> Pagamentos</a>
+                <?php endif; ?>
 
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados"
                     role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
                 <hr class="text-white opacity-25">
                 <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula"><ion-icon
-                        name="add-circle-outline"></ion-icon> Renovar Matrícula</a>
+                        name="add-circle-outline"></ion-icon> <?= $data['is_approved'] ? 'Renovar Matrícula' : 'Nova Matrícula' ?></a>
             </div>
         </div>
 
-        <div class="mt-3 pt-2 border-top border-white border-opacity-10 pb-4 w-100">
+        <div class="mt-5 pt-3 border-top border-white border-opacity-10 pb-4 w-100">
             <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon>
                 Voltar ao Site</a>
             <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon
@@ -431,6 +433,7 @@
             <!-- Dashboard Home -->
             <div class="tab-pane fade show active" id="pane-home" role="tabpanel">
 
+                <?php if ($data['is_approved']): ?>
 
                 <!-- 📢 ALERTAS DE CONVOCATÓRIA (Mediação) -->
                 <?php if (!empty($data['convocatorias'])): ?>
@@ -722,7 +725,24 @@
                             </div>
                     </div>
                 </div>
-                
+                <?php else: ?>
+                    <!-- Candidato não validado: Mostra apenas ajuda e próximos passos -->
+                    <div class="glass-card card border-0 p-5 text-center">
+                        <div class="bg-primary bg-opacity-10 p-4 rounded-circle text-primary mx-auto mb-4" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                            <ion-icon name="school" style="font-size: 3rem;"></ion-icon>
+                        </div>
+                        <h3 class="fw-bold text-dark">Bem-vindo à sua Área de Candidato</h3>
+                        <p class="text-muted mx-auto" style="max-width: 600px;">
+                            O seu acesso ao portal acadêmico (notas, horários e materiais) será liberado assim que o seu processo de matrícula for <strong>Aprovado</strong> pela Secretaria.
+                        </p>
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <a href="<?= URL_ROOT ?>/home/guia" class="btn btn-outline-primary rounded-pill px-4">Guia do Aluno</a>
+                            <a href="https://wa.me/245xxxxxx" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2">
+                                <ion-icon name="logo-whatsapp"></ion-icon> Suporte Secretaria
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Horário & Calendário -->

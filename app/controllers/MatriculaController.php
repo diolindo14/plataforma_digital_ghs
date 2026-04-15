@@ -75,7 +75,7 @@ class MatriculaController extends Controller {
                 'bi'                   => $bi,
                 'data_nascimento'      => $_POST['data_nascimento'] ?? null,
                 'nacionalidade'        => $_POST['nacionalidade'] ?? 'Guineense',
-                'sexo'                 => !empty($_POST['sexo']) ? $_POST['sexo'] : '',
+                'sexo'                 => !empty($_POST['sexo']) ? $_POST['sexo'] : 'Masculino',
                 'estado_civil'         => $_POST['estado_civil'] ?? 'Solteiro',
                 'telefone'             => $_POST['telefone'] ?? '',
                 'morada'               => $_POST['morada'] ?? '',

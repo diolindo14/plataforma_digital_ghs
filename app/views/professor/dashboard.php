@@ -185,13 +185,6 @@
             <div>
                 <h2 class="fw-bold text-dark">Portal do Professor</h2>
                 <p class="text-muted mb-0">Gestão Pedagógica - Ano Letivo 2026/2027</p>
-                
-                <?php if(isset($_SESSION['flash_success'])): ?>
-                    <div class="alert alert-success mt-2 py-2 small fw-bold"><?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?></div>
-                <?php endif; ?>
-                <?php if(isset($_SESSION['flash_error'])): ?>
-                    <div class="alert alert-danger mt-2 py-2 small fw-bold"><?= $_SESSION['flash_error']; unset($_SESSION['flash_error']); ?></div>
-                <?php endif; ?>
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="dropdown">
@@ -1200,55 +1193,40 @@ function recalcM(input) {
 
 function saveNota(btn) {
     const row = $(btn).closest('tr');
-    
-    // Preparar os dados convertidos de virgula pra ponto diretamente da row!
-    var ns = {
-        tpc1: row.find('.val-tpc1').val().replace(',', '.'),
-        tpc2: row.find('.val-tpc2').val().replace(',', '.'),
-        tpc3: row.find('.val-tpc3').val().replace(',', '.'),
-        ap1: row.find('.val-ap1').val().replace(',', '.'),
-        ap2: row.find('.val-ap2').val().replace(',', '.'),
-        ap3: row.find('.val-ap3').val().replace(',', '.'),
-        tpi1: row.find('.val-tpi1').val().replace(',', '.'),
-        tpi2: row.find('.val-tpi2').val().replace(',', '.'),
-        tpi3: row.find('.val-tpi3').val().replace(',', '.'),
-        ce1: row.find('.val-ce1').val().replace(',', '.'),
-        ce2: row.find('.val-ce2').val().replace(',', '.'),
-        ce3: row.find('.val-ce3').val().replace(',', '.'),
-        exame: row.find('.val-exame').val().replace(',', '.')
+    const data = {
+        estudante_id: row.data('student-id'),
+        turma_id: row.data('turma-id'),
+        disciplina_id: row.data('disc-id'),
+        notas: {
+            tpc1: row.find('.val-tpc1').val(),
+            tpc2: row.find('.val-tpc2').val(),
+            tpc3: row.find('.val-tpc3').val(),
+            ap1: row.find('.val-ap1').val(),
+            ap2: row.find('.val-ap2').val(),
+            ap3: row.find('.val-ap3').val(),
+            tpi1: row.find('.val-tpi1').val(),
+            tpi2: row.find('.val-tpi2').val(),
+            tpi3: row.find('.val-tpi3').val(),
+            ce1: row.find('.val-ce1').val(),
+            ce2: row.find('.val-ce2').val(),
+            ce3: row.find('.val-ce3').val(),
+            exame: row.find('.val-exame').val()
+        },
+        csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
     };
 
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    // Na ByetHost / InfinityFree as XHR ($.ajax) são bloqueadas aleatoriamente e retorna HTML!
-    // A única solução bulletproof é um submit DOM real.
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '<?= URL_ROOT ?>/professor/saveNota';
-
-    function addF(key, val) {
-        let i = document.createElement('input');
-        i.type = 'hidden'; i.name = key; i.value = val;
-        form.appendChild(i);
-    }
-    
-    addF('estudante_id', row.data('student-id'));
-    addF('turma_id', row.data('turma-id'));
-    addF('disciplina_id', row.data('disc-id'));
-    addF('csrf_token', '<?php echo $_SESSION['csrf_token'] ?? ''; ?>');
-    addF('active_tab', 'notas');
-    
-    // Formato notas do post array esperado na action:
-    for (const k in ns) {
-        let input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'notas[' + k + ']';
-        input.value = ns[k];
-        form.appendChild(input);
-    }
-
-    document.body.appendChild(form);
-    form.submit();
+    $.post('<?= URL_ROOT ?>/professor/saveNota', data, function(res) {
+        if(res.success) {
+            alert('Notas salvas com sucesso!');
+            location.reload(); // Recarregar para ver o total atualizado
+        } else {
+            alert('Erro ao salvar notas.');
+        }
+    }, 'json').always(function() {
+        $(btn).text('Guardar').prop('disabled', false);
+    });
 }
 
 function enviarComunicado() {

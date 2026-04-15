@@ -112,19 +112,17 @@ class ProfessorController extends Controller {
     }
 
     public function saveNota() {
+        header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // InfinityFree ajax issues forced us to rely on native form submits for saveNotas
+            $this->verifyCsrfToken();
             $notaModel = $this->model('Nota');
             $res = $notaModel->saveNotasRow($_POST);
             if ($res) {
                 $this->logActivity('Lançar Nota', ['turma_id' => $_POST['turma_id'] ?? 'N/A']);
-                $_SESSION['flash_success'] = "Notas guardadas com sucesso!";
+                echo json_encode(['success' => true]);
             } else {
-                $_SESSION['flash_error'] = "Erro ao guardar notas na base de dados.";
+                echo json_encode(['success' => false, 'message' => 'Erro ao guardar notas na base de dados.']);
             }
-            
-            $tab = $_POST['active_tab'] ?? 'notas';
-            header('Location: ' . URL_ROOT . '/professor?turma_id=' . ($_POST['turma_id'] ?? '') . '&disciplina_id=' . ($_POST['disciplina_id'] ?? '') . '&tab=' . $tab);
             exit;
         }
     }
