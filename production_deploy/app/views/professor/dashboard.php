@@ -1197,51 +1197,54 @@ function recalcM(input) {
 
 function saveNota(btn) {
     const row = $(btn).closest('tr');
-    const data = {
-        estudante_id: row.data('student-id'),
-        turma_id: row.data('turma-id'),
-        disciplina_id: row.data('disc-id'),
-        notas: {
-            tpc1: row.find('.val-tpc1').val().replace(',', '.'),
-            tpc2: row.find('.val-tpc2').val().replace(',', '.'),
-            tpc3: row.find('.val-tpc3').val().replace(',', '.'),
-            ap1: row.find('.val-ap1').val().replace(',', '.'),
-            ap2: row.find('.val-ap2').val().replace(',', '.'),
-            ap3: row.find('.val-ap3').val().replace(',', '.'),
-            tpi1: row.find('.val-tpi1').val().replace(',', '.'),
-            tpi2: row.find('.val-tpi2').val().replace(',', '.'),
-            tpi3: row.find('.val-tpi3').val().replace(',', '.'),
-            ce1: row.find('.val-ce1').val().replace(',', '.'),
-            ce2: row.find('.val-ce2').val().replace(',', '.'),
-            ce3: row.find('.val-ce3').val().replace(',', '.'),
-            exame: row.find('.val-exame').val().replace(',', '.')
-        },
-        csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+    
+    // Preparar os dados convertidos de virgula pra ponto diretamente da row!
+    var ns = {
+        tpc1: row.find('.val-tpc1').val().replace(',', '.'),
+        tpc2: row.find('.val-tpc2').val().replace(',', '.'),
+        tpc3: row.find('.val-tpc3').val().replace(',', '.'),
+        ap1: row.find('.val-ap1').val().replace(',', '.'),
+        ap2: row.find('.val-ap2').val().replace(',', '.'),
+        ap3: row.find('.val-ap3').val().replace(',', '.'),
+        tpi1: row.find('.val-tpi1').val().replace(',', '.'),
+        tpi2: row.find('.val-tpi2').val().replace(',', '.'),
+        tpi3: row.find('.val-tpi3').val().replace(',', '.'),
+        ce1: row.find('.val-ce1').val().replace(',', '.'),
+        ce2: row.find('.val-ce2').val().replace(',', '.'),
+        ce3: row.find('.val-ce3').val().replace(',', '.'),
+        exame: row.find('.val-exame').val().replace(',', '.')
     };
 
     $(btn).html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
 
-    $.ajax({
-        url: '<?= URL_ROOT ?>/professor/saveNota',
-        type: 'POST',
-        data: data,
-        dataType: 'json',
-        success: function(res) {
-            if(res.success) {
-                alert('Notas salvas com sucesso!');
-                location.reload();
-            } else {
-                alert('Erro ao salvar notas: ' + (res.message || 'Desconhecido. Verifique bloqueios administrativos.'));
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Erro completo:", xhr.responseText);
-            alert("A comunicação com o servidor falhou online (CSRF expulso, protecção anti-bot do alojamento ou formato incorrecto).\nCertifique-se que usa ponto (.) e não vírgula nas notas. Erro: " + error);
-        },
-        complete: function() {
-            $(btn).text('Guardar').prop('disabled', false);
-        }
-    });
+    // Na ByetHost / InfinityFree as XHR ($.ajax) são bloqueadas aleatoriamente e retorna HTML!
+    // A única solução bulletproof é um submit DOM real.
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<?= URL_ROOT ?>/professor/saveNota';
+
+    function addF(key, val) {
+        let i = document.createElement('input');
+        i.type = 'hidden'; i.name = key; i.value = val;
+        form.appendChild(i);
+    }
+    
+    addF('estudante_id', row.data('student-id'));
+    addF('turma_id', row.data('turma-id'));
+    addF('disciplina_id', row.data('disc-id'));
+    addF('csrf_token', '<?php echo $_SESSION['csrf_token'] ?? ''; ?>');
+    
+    // Formato notas do post array esperado na action:
+    for (const k in ns) {
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'notas[' + k + ']';
+        input.value = ns[k];
+        form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
 }
 
 function enviarComunicado() {
