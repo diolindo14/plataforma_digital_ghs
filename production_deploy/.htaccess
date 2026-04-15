@@ -1,6 +1,6 @@
 Options -Indexes
 RewriteEngine On
-RewriteBase /green/
+RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

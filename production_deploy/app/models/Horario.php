@@ -38,14 +38,21 @@ class Horario {
             return ['tempos' => $this->getDefaultTempos('Manhã'), 'grid' => [], 'dias' => $dias];
         }
         $rows = $this->getHorarioByTurma($turma_id);
-        $grid  = [];      
         
         // Define default 4 slots based on shift
+        // Pilar 1: Excelência Académica - Detetar Turno da Turma
         $stmtT = $this->db->prepare("SELECT turno FROM turmas WHERE id = :tid");
         $stmtT->execute([':tid' => $turma_id]);
         $turno = $stmtT->fetchColumn() ?: 'Manhã';
+        
+        // Formatar Turno para bater com as chaves de getDefaultTempos
+        if (stripos($turno, 'Tarde') !== false) $turno = 'Tarde';
+        elseif (stripos($turno, 'Noite') !== false) $turno = 'Noite';
+        else $turno = 'Manhã';
 
         $tempos = $this->getDefaultTempos($turno);
+        $grid = [];
+        $dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
         // Group rows by dia to auto-assign tempo if tempo_aula is 0/null
         $byDia = [];

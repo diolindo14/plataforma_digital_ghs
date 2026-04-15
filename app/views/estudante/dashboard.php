@@ -15,8 +15,14 @@
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <!-- FullCalendar JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <link rel="stylesheet" href="<?= URL_ROOT ?>/public/css/responsive_global.css">
+    
+    <!-- Scripts Principais (Carregar no Head para evitar erros de dependência) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
     <style>
         :root {
             --ghs-primary: #10B981;
@@ -182,7 +188,8 @@
     // Detetar se há convocatórias activas para alerta de topo
     $temConvocatoria = false;
     $infoConvocatoria = null;
-    foreach($data['notas'] as $n) {
+    $listaNotas = is_array($data['notas'] ?? null) ? $data['notas'] : [];
+    foreach($listaNotas as $n) {
         if ($n['feedback_status'] === 'Aguardando_Comparecimento') {
             $temConvocatoria = true;
             $infoConvocatoria = $n;
@@ -200,7 +207,7 @@
                 Reunião de Mediação: <?= date('d/m/Y', strtotime($infoConvocatoria['data_reuniao'])) ?> às <?= substr($infoConvocatoria['hora_reuniao'],0,5) ?> (<?= htmlspecialchars($infoConvocatoria['local_reuniao']) ?>)
             </div>
         </div>
-        <button class="btn btn-sm btn-light fw-bold rounded-pill px-3" onclick="$('#tab-notas').tab('show'); document.getElementById('tab-notas').scrollIntoView();">Ver Detalhes</button>
+        <button class="btn btn-sm btn-light fw-bold rounded-pill px-3" onclick="bootstrap.Tab.getInstance(document.getElementById('tab-notas')).show(); document.getElementById('tab-notas').scrollIntoView();">Ver Detalhes</button>
     </div>
     <?php endif; ?>
 
@@ -1341,7 +1348,10 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+    // Logic previously before libs, now safe here
+</script>
 <?php if(isset($_SESSION['must_change_password']) && $_SESSION['must_change_password'] === true): ?>
 <script>
     $(document).ready(function() {
@@ -1357,7 +1367,7 @@
 </script>
 <?php endif; ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bibliotecas removidas daqui e movidas para o HEAD para estabilidade -->
     <!-- DataTables & Export Plugins -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
