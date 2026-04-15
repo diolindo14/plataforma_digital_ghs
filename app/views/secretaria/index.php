@@ -82,7 +82,7 @@
                 </a>
             </nav>
 
-            <hr class="border-secondary my-2">
+            <hr class="border-secondary my-4">
             <a href="<?= URL_ROOT ?>/" class="text-light mb-2"><ion-icon name="home-outline" class="me-2"></ion-icon> Voltar ao Site</a>
             <a href="<?= URL_ROOT ?>/auth/logout" class="text-danger"><ion-icon name="log-out-outline" class="me-2"></ion-icon> Sair</a>
         </div>

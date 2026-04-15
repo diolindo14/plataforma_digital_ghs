@@ -21,7 +21,7 @@
     </style>
 </head>
 <body>
-<nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-start">
+<nav class="sidebar ghs-sidebar shadow-lg d-flex flex-column justify-content-between">
         <div>
             <div class="text-center mb-4 mt-2">
                 <div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #10B981; display:flex; align-items:center; justify-content:center; background:white; margin: 0 auto; overflow:hidden;">
@@ -49,9 +49,12 @@
                 <a class="nav-link text-info fw-bold" id="tab-assiduidade" data-bs-toggle="pill" href="#pane-assiduidade">
                     <ion-icon name="calendar-check-outline"></ion-icon> Minha Assiduidade
                 </a>
-                <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
-                <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
             </div>
+        </div>
+
+        <div class="pb-4 w-100">
+            <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
+            <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
         </div>
     </nav>
 <!-- Modal Agendar Evento (Professor) -->

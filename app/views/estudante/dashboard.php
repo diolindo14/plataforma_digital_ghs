@@ -255,13 +255,17 @@
 
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados"
                     role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
-
-                <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula">
-                    <ion-icon name="add-circle-outline" class="fs-5"></ion-icon> <?= $data['is_approved'] ? 'Renovar Matrícula' : 'Nova Matrícula' ?>
-                </a>
-                <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon> Voltar ao Site</a>
-                <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon name="log-out-outline"></ion-icon> Terminar Sessão</a>
+                <hr class="text-white opacity-25">
+                <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula"><ion-icon
+                        name="add-circle-outline"></ion-icon> <?= $data['is_approved'] ? 'Renovar Matrícula' : 'Nova Matrícula' ?></a>
             </div>
+        </div>
+
+        <div class="mt-3 pt-2 border-top border-white border-opacity-10 pb-4 w-100">
+            <a class="nav-link text-warning mb-1" href="<?= URL_ROOT ?>/"><ion-icon name="earth-outline"></ion-icon>
+                Voltar ao Site</a>
+            <a class="nav-link text-danger fw-bold" href="<?= URL_ROOT ?>/auth/logout"><ion-icon
+                    name="log-out-outline"></ion-icon> Terminar Sessão</a>
         </div>
     </nav>
 
