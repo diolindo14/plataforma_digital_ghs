@@ -13,7 +13,7 @@ $creds = New-Object System.Net.NetworkCredential($ftp_user, $ftp_pass)
 
 foreach ($f in $files) {
     $local = Join-Path $local_base ($f.Replace("/", "\"))
-    $remote = "ftp://$ftp_host/htdocs/$f"
+    $remote = "ftp://$ftp_host/htdocs/green/$f"
     
     try {
         $req = [System.Net.FtpWebRequest]::Create($remote)
