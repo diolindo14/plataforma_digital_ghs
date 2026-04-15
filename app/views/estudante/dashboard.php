@@ -255,6 +255,8 @@
 
                 <a class="nav-link" id="tab-comunicados" data-bs-toggle="pill" data-bs-target="#pane-comunicados"
                     role="tab"><ion-icon name="notifications-outline"></ion-icon> Comunicados & Alertas</a>
+                <a class="nav-link text-success fw-bold" id="tab-certificados" data-bs-toggle="pill" data-bs-target="#pane-certificados"
+                    role="tab"><ion-icon name="ribbon-outline"></ion-icon> Diplomas & Certificados</a>
                 <hr class="text-white opacity-25">
                 <a class="nav-link text-info fw-bold" href="<?= URL_ROOT ?>/matricula"><ion-icon
                         name="add-circle-outline"></ion-icon> <?= $data['is_approved'] ? 'Renovar Matrícula' : 'Nova Matrícula' ?></a>
@@ -723,8 +725,9 @@
                                     <?php endif; ?>
                                 </div>
                             </div>
-                    </div>
-                </div>
+                    </div> <!-- Fim glass-card -->
+                </div> <!-- Fim col-md-6 -->
+            </div> <!-- Fim row -->
                 <?php else: ?>
                     <!-- Candidato não validado: Mostra apenas ajuda e próximos passos -->
                     <div class="glass-card card border-0 p-5 text-center">
@@ -835,6 +838,13 @@
                                         <tr>
                                             <td class="text-start fw-bold">
                                                 <?= htmlspecialchars($n['disciplina']) ?>
+                                                <?php if (isset($n['nota_final']) && $n['nota_final'] !== null && $n['nota_final'] !== ''): ?>
+                                                    <?php if ($n['nota_final'] >= 10): ?>
+                                                        <span class="badge bg-success-subtle text-success border border-success border-opacity-25 ms-2 align-middle" style="font-size: 0.65rem;">Aprovado</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 ms-2 align-middle" style="font-size: 0.65rem;">Recurso/Reprovado</span>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
                                                 <div class="mt-1">
                                                     <?php if ($n['bloqueado_admin']): ?>
                                                         <span
@@ -1018,7 +1028,50 @@
             </div>
         </div>
 
-        <!-- Tab: Mérito & Diplomas — removido do portal aluno (apenas Admin/Secretaria) -->
+        <!-- Tab: Mérito & Diplomas -->
+        <div class="tab-pane fade" id="pane-certificados" role="tabpanel">
+            <div class="card shadow-sm border-0 bg-primary bg-opacity-10 border-start border-4 border-primary rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-1">Mérito & Certificados Académicos</h4>
+                            <p class="text-muted small mb-0">Confira as condecorações e diplomas de formação obtidos no GHS.</p>
+                        </div>
+                        <ion-icon name="ribbon" class="fs-1 text-primary opacity-50"></ion-icon>
+                    </div>
+
+                    <div class="row g-3">
+                        <?php if (empty($data['certificados_merito'])): ?>
+                            <div class="col-12">
+                                <div class="bg-white p-5 text-center rounded-4 border border-dashed text-muted">
+                                    <ion-icon name="medal-outline" style="font-size: 3rem; opacity: 0.2;"></ion-icon>
+                                    <p class="mt-2">Ainda não foram emitidos certificados ou diplomas de mérito para este percurso.</p>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <?php foreach ($data['certificados_merito'] as $cert): ?>
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 20px;">
+                                        <div class="row g-0 h-100">
+                                            <div class="col-4 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center">
+                                                <ion-icon name="ribbon-outline" class="display-4 text-primary"></ion-icon>
+                                            </div>
+                                            <div class="col-8 p-3 d-flex flex-column justify-content-center">
+                                                <h6 class="fw-bold mb-1 text-dark"><?= htmlspecialchars($cert['tipo']) ?></h6>
+                                                <p class="small text-muted mb-2">Emitido em: <?= date('d/m/Y', strtotime($cert['data_emissao'])) ?></p>
+                                                <a href="<?= URL_ROOT ?>/estudante/downloadCertificado/<?= $cert['id'] ?>" target="_blank" class="btn btn-sm btn-primary rounded-pill px-3 align-self-start fw-bold">
+                                                    <ion-icon name="download" class="me-1"></ion-icon> Descarregar PDF
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Materiais Didáticos -->
         <div class="tab-pane fade" id="pane-materiais" role="tabpanel">
@@ -1237,13 +1290,12 @@
                         <?php endif; ?>
                     </div>
                 </div>
-            </div>
-        </div>
-        </div>
+            </div> <!-- Fim tab-pane pane-comunicados -->
+        </div> <!-- Fim tab-content -->
 
-        </div>
-        </div> <!-- End .ghs-container -->
-    </div>
+        </div> <!-- Fim ghs-container -->
+    </main> <!-- Fim main content -->
+</div> <!-- Fim d-flex wrapper principal -->
 
     <!-- Scripts -->
     <!-- Modal Alterar Senha Global -->

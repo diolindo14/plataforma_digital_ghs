@@ -44,14 +44,32 @@ class Horario {
 
         $tempos = $this->getDefaultTempos($turno);
 
+        // Group rows by dia to auto-assign tempo if tempo_aula is 0/null
+        $byDia = [];
         foreach ($rows as $r) {
-            $t = (int)$r['tempo_num'];
-            $d = $r['dia_semana'];
-            if (isset($tempos[$t])) {
-                $tempos[$t] = ['inicio' => substr($r['hora_inicio'], 0, 5), 'fim' => substr($r['hora_fim'], 0, 5)];
-            }
-            $grid[$t][$d] = $r;
+            $byDia[$r['dia_semana']][] = $r;
         }
+
+        foreach ($byDia as $dia => $diaRows) {
+            // Sort by hora_inicio to guarantee correct order (PHP 7.3 compatible)
+            usort($diaRows, function($a, $b) { return strcmp($a['hora_inicio'], $b['hora_inicio']); });
+            foreach ($diaRows as $idx => $r) {
+                $t = (int)$r['tempo_num'];
+                // If tempo_aula is 0 or null, derive from position (1-indexed)
+                if ($t < 1 || $t > 6) {
+                    $t = $idx + 1;
+                    $r['tempo_num'] = $t;
+                }
+                $d = $r['dia_semana'];
+                // Update tempo times from actual DB values when available
+                if (isset($tempos[$t])) {
+                    $tempos[$t] = ['inicio' => substr($r['hora_inicio'], 0, 5), 'fim' => substr($r['hora_fim'], 0, 5)];
+                }
+                $grid[$t][$d] = $r;
+            }
+        }
+
+        
         ksort($tempos);
         return ['tempos' => $tempos, 'grid' => $grid, 'dias' => $dias];
     }

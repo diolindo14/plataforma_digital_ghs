@@ -1,17 +1,17 @@
 <?php
 /**
- * Configurações Gerais do Sistema GHS
+ * Configurações Gerais do Sistema GHS - PRODUÇÃO
  */
 
-// Configurações da Base de Dados
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'ghsespf_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Configurações da Base de Dados (Produção)
+define('DB_HOST', 'sql111.infinityfree.com');
+define('DB_NAME', 'if0_41574650_ghs_sistema');
+define('DB_USER', 'if0_41574650');
+define('DB_PASS', '0svEjAnMHnX');
 
 // Configurações Globais
 define('URL_ROOT', '/green');
-define('APP_NAME', 'GHS - Green Hard & Soft');
+define('APP_NAME', 'GHS - Green Hard & Softh');
 
 // Configurações de Segurança
 define('SESSION_LIFETIME', 1800); // 30 minutos
@@ -25,4 +25,4 @@ define('PAYMENT_DUE_DAY', 15);
 
 // Configurações de arquivos
 define('ALLOWED_EXTENSIONS', ['pdf', 'jpg', 'jpeg', 'png']);
-define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB em bytes (Pilar 3)
+define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB em bytes

@@ -54,43 +54,55 @@ class EstudanteController extends Controller {
             }
         }
 
-        // Buscar a matrícula mais recente (Todos no sistema são considerados aprovados)
+        // Buscar matrícula mais recente (independente do status) para exibir alertas ao aluno
         $stmtMat = Database::getInstance()->prepare("
-            SELECT m.status, m.turma_id, t.codigo as turma_codigo, m.ano_curso_id
+            SELECT m.status, m.motivo_rejeicao, m.turma_id, t.codigo as turma_codigo, m.ano_curso_id
             FROM matriculas m 
             LEFT JOIN turmas t ON m.turma_id = t.id 
             WHERE m.estudante_id = :id 
             ORDER BY m.id DESC LIMIT 1
         ");
-        $stmtMat->execute([':id' => $estudanteData['id']]);
+        $stmtMat->bindValue(':id', $estudanteData['id']);
+        $stmtMat->execute();
         $matricula = $stmtMat->fetch();
-
-        $data['is_approved'] = true; // Sempre aprovado conforme política institucional
-        $data['matricula_status'] = $matricula['status'] ?? 'Ativo';
+        
+        $data['matricula_status'] = $matricula['status'] ?? 'Aprovada';
+        $data['is_approved'] = true; // Todos os alunos cadastrados são considerados aprovados (política institucional)
+        $data['motivo_rejeicao'] = $matricula['motivo_rejeicao'] ?? null;
         
         $turma_id = $matricula['turma_id'] ?? null;
         $estudanteData['turma_codigo'] = $matricula['turma_codigo'] ?? null;
         $estudanteData['ano_curso_id'] = $matricula['ano_curso_id'] ?? 1;
 
-        $notas = $academicoModel->getGradesByStudent($estudanteData['id']);
-        $pagamentos = $financeiroModel->getPaymentsByStudent($estudanteData['id']);
-        
-        if (count($notas) > 0) {
-            $soma = 0;
-            $soma_ac = 0;
-            foreach ($notas as $n) {
-                $soma += ($n['nota_final'] ?? 0);
-                $soma_ac += ($n['total_ac'] ?? 0);
+        // Só processar métricas e dados financeiros se o aluno estiver aprovado e ativo
+        $notas = [];
+        $pagamentos = [];
+        $media_geral = 0;
+        $desempenho_ac = 0;
+        $faltas_count = 0;
+        $smart_delinquency = ['is_delinquent' => false];
+
+        if ($data['is_approved']) {
+            $notas = $academicoModel->getGradesByStudent($estudanteData['id']);
+            $pagamentos = $financeiroModel->getPaymentsByStudent($estudanteData['id']);
+            
+            if (count($notas) > 0) {
+                $soma = 0;
+                $soma_ac = 0;
+                foreach ($notas as $n) {
+                    $soma += ($n['nota_final'] ?? 0);
+                    $soma_ac += ($n['total_ac'] ?? 0);
+                }
+                $media_geral = number_format($soma / count($notas), 1);
+                $desempenho_ac = round(($soma_ac / (count($notas) * 20)) * 100);
             }
-            $media_geral = number_format($soma / count($notas), 1);
-            $desempenho_ac = round(($soma_ac / (count($notas) * 20)) * 100);
+
+            $stmtFaltas = Database::getInstance()->prepare("SELECT COUNT(*) FROM frequencias WHERE estudante_id = :eid AND status = 'F'");
+            $stmtFaltas->execute([':eid' => $estudanteData['id']]);
+            $faltas_count = $stmtFaltas->fetchColumn();
+
+            $smart_delinquency = $financeiroModel->getStudentDelinquencyStatus($estudanteData['id']);
         }
-
-        $stmtFaltas = Database::getInstance()->prepare("SELECT COUNT(*) FROM frequencias WHERE estudante_id = :eid AND status = 'F'");
-        $stmtFaltas->execute([':eid' => $estudanteData['id']]);
-        $faltas_count = $stmtFaltas->fetchColumn();
-
-        $smart_delinquency = $financeiroModel->getStudentDelinquencyStatus($estudanteData['id']);
 
         $data['notas'] = $notas;
         $data['pagamentos'] = $pagamentos;
@@ -253,7 +265,7 @@ class EstudanteController extends Controller {
             header('Location: ' . URL_ROOT . '/auth');
             exit;
         }
-        // $this->verifyCsrfToken();
+        $this->verifyCsrfToken();
 
         $notaModel = $this->model('Nota');
         $estudanteModel = $this->model('Estudante');
@@ -300,7 +312,7 @@ class EstudanteController extends Controller {
 
     public function removerComunicado() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // $this->verifyCsrfToken();
+            $this->verifyCsrfToken();
             $comunicadoId = $_POST['comunicado_id'] ?? null;
             if ($comunicadoId) {
                 $compModel = $this->model('Comunicado');
@@ -314,7 +326,7 @@ class EstudanteController extends Controller {
 
     public function marcarLido() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comunicado_id'])) {
-            // $this->verifyCsrfToken();
+            $this->verifyCsrfToken();
             $comModel = $this->model('Comunicado');
             $success = $comModel->marcarComoLido($_POST['comunicado_id'], $_SESSION['user_id']);
             if ($success) $this->logActivity('Estudante Marcar Comunicado Lido', ['id' => $_POST['comunicado_id']]);
@@ -331,7 +343,7 @@ class EstudanteController extends Controller {
 
     public function registarFeedbackNota() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // $this->verifyCsrfToken();
+            $this->verifyCsrfToken();
             $estudanteModel = $this->model('Estudante');
             $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
             
@@ -389,7 +401,7 @@ class EstudanteController extends Controller {
             header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
-        // $this->verifyCsrfToken();
+        $this->verifyCsrfToken();
 
         $estudanteModel = $this->model('Estudante');
         $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);
@@ -573,7 +585,7 @@ class EstudanteController extends Controller {
             header('Location: ' . URL_ROOT . '/estudante');
             exit;
         }
-        // $this->verifyCsrfToken();
+        $this->verifyCsrfToken();
 
         $estudanteModel = $this->model('Estudante');
         $estudanteData = $estudanteModel->findByUserId($_SESSION['user_id']);

@@ -66,8 +66,8 @@ class EstudanteController extends Controller {
         $stmtMat->execute();
         $matricula = $stmtMat->fetch();
         
-        $data['matricula_status'] = $matricula['status'] ?? 'Nenhum';
-        $data['is_approved'] = ($data['matricula_status'] === 'Aprovada');
+        $data['matricula_status'] = $matricula['status'] ?? 'Aprovada';
+        $data['is_approved'] = true; // Todos os alunos cadastrados são considerados aprovados (política institucional)
         $data['motivo_rejeicao'] = $matricula['motivo_rejeicao'] ?? null;
         
         $turma_id = $matricula['turma_id'] ?? null;
