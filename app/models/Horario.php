@@ -57,7 +57,8 @@ class Horario {
         // Group rows by dia to auto-assign tempo if tempo_aula is 0/null
         $byDia = [];
         foreach ($rows as $r) {
-            $byDia[$r['dia_semana']][] = $r;
+            $diaNorm = trim($r['dia_semana']);
+            $byDia[$diaNorm][] = $r;
         }
 
         foreach ($byDia as $dia => $diaRows) {
@@ -70,7 +71,7 @@ class Horario {
                     $t = $idx + 1;
                     $r['tempo_num'] = $t;
                 }
-                $d = $r['dia_semana'];
+                $d = trim($r['dia_semana']);
                 // Update tempo times from actual DB values when available
                 if (isset($tempos[$t])) {
                     $tempos[$t] = ['inicio' => substr($r['hora_inicio'], 0, 5), 'fim' => substr($r['hora_fim'], 0, 5)];

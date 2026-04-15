@@ -62,11 +62,15 @@ class EstudanteController extends Controller {
             FROM matriculas m 
             LEFT JOIN turmas t ON m.turma_id = t.id 
             WHERE m.estudante_id = :id 
-            ORDER BY (m.turma_id IS NOT NULL) DESC, m.id DESC LIMIT 1
+            ORDER BY 
+                CASE WHEN m.status = 'Aprovada' THEN 1 ELSE 2 END ASC,
+                CASE WHEN m.turma_id IS NOT NULL THEN 1 ELSE 2 END ASC,
+                m.id DESC 
+            LIMIT 1
         ");
         $stmtMat->bindValue(':id', $estudanteData['id']);
         $stmtMat->execute();
-        $matricula = $stmtMat->fetch();
+        $matricula = $stmtMat->fetch(PDO::FETCH_ASSOC);
         
         $data['matricula_status'] = $matricula['status'] ?? 'Aprovada';
         $data['is_approved'] = true; // Todos os alunos cadastrados são considerados aprovados (política institucional)
