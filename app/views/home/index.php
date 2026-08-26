@@ -134,7 +134,7 @@
             <div class="row">
                 <div class="col-lg-9 col-xl-8">
                     <div class="badge-hero">
-                        <ion-icon name="school-outline" class="fs-5 text-warning"></ion-icon> Inscrições Abertas 2025/2026
+                        <ion-icon name="school-outline" class="fs-5 text-warning"></ion-icon> Inscrições Abertas 2026/2027
                     </div>
                     
                     <h1>O Futuro é <span>Hoje</span></h1>

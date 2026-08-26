@@ -126,9 +126,6 @@ class Nota {
 
             $this->db->commit();
             
-            // Backup em tempo real após mudança crítica (Pilar 3: Integridade)
-            BackupManager::createCheckpoint('Check Grads');
-
             return true;
         } catch (Exception $e) {
             $this->db->rollBack();
