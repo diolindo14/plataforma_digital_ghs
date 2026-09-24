@@ -31,12 +31,46 @@ class MatriculaController extends Controller {
             $matriculaModel = $this->model('Matricula');
 
             // 1. Captura de Dados Básicos
-            $nome  = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS);
-            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-            $bi    = filter_input(INPUT_POST, 'bi', FILTER_SANITIZE_SPECIAL_CHARS);
+            $nome            = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS);
+            $email           = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+            $bi              = filter_input(INPUT_POST, 'bi', FILTER_SANITIZE_SPECIAL_CHARS);
+            $data_nascimento = $_POST['data_nascimento'] ?? null;
+            $ano_conclusao   = !empty($_POST['ano_conclusao']) ? (int)$_POST['ano_conclusao'] : (int)date('Y');
+            $tipo_cand       = $_POST['tipo_candidatura'] ?? 'Novo Ingresso';
             
-            if (!$nome || !$email || !$bi) {
-                $_SESSION['flash_error'] = "Por favor, preencha corretamente o Nome, Email e BI.";
+            if (!$nome || !$email || !$bi || !$data_nascimento) {
+                $_SESSION['flash_error'] = "Por favor, preencha todos os campos obrigatórios (Nome, Email, BI e Data de Nascimento).";
+                header('Location: ' . URL_ROOT . '/matricula');
+                exit;
+            }
+
+            // Validação de Idade Mínima: Pelo menos 17 anos completos
+            $birthDate = DateTime::createFromFormat('Y-m-d', $data_nascimento);
+            $today = new DateTime();
+            if (!$birthDate || $birthDate > $today) {
+                $_SESSION['flash_error'] = "Data de nascimento inválida.";
+                header('Location: ' . URL_ROOT . '/matricula');
+                exit;
+            }
+            $idade = $today->diff($birthDate)->y;
+            if ($idade < 17) {
+                $_SESSION['flash_error'] = "Para efetuar a matrícula no Ensino Superior, o candidato deve ter pelo menos 17 anos de idade completos.";
+                header('Location: ' . URL_ROOT . '/matricula');
+                exit;
+            }
+
+            // Validação do B.I.: Exatamente 8 dígitos
+            $bi = trim($bi);
+            if (mb_strlen($bi) !== 8) {
+                $_SESSION['flash_error'] = "O número do Bilhete de Identidade (B.I.) deve ter exatamente 8 dígitos (sem faltar nem ultrapassar).";
+                header('Location: ' . URL_ROOT . '/matricula');
+                exit;
+            }
+
+            // Validação de Ano de Conclusão: Não pode ser ano futuro
+            $anoAtual = (int)date('Y');
+            if ($tipo_cand !== 'Estudante Interno' && $ano_conclusao > $anoAtual) {
+                $_SESSION['flash_error'] = "O Ano de Conclusão dos estudos anteriores não pode ser um ano futuro ($ano_conclusao). O ano máximo permitido é $anoAtual.";
                 header('Location: ' . URL_ROOT . '/matricula');
                 exit;
             }
@@ -121,14 +155,26 @@ class MatriculaController extends Controller {
 
             if (!$matricula_id) throw new Exception("Erro ao registar intenção de matrícula.");
 
-            // 6. Upload de Documentos (Pilar 3: Integridade)
+            // 6. Upload de Documentos (Pilar 3: Integridade & Padronização Tipo Passe 35x45mm)
             $files_map = ['doc_bi' => 'BI', 'doc_foto' => 'Fotografia', 'doc_cert' => 'Certificado', 'doc_comprovativo' => 'Comprovativo_Pagamento'];
             foreach ($files_map as $field => $doc_type) {
                 if (isset($_FILES[$field]) && $_FILES[$field]['error'] === 0) {
                     $dest = 'public/uploads/matriculas';
-                    $upload = FileHelper::upload($_FILES[$field], $dest, ALLOWED_EXTENSIONS);
+                    if ($field === 'doc_foto') {
+                        // Recorta e redimensiona automaticamente para proporção 3,5 x 4,5 cm (35 x 45 mm)
+                        $upload = FileHelper::uploadAndCropPassPhoto($_FILES[$field], $dest);
+                    } else {
+                        $upload = FileHelper::upload($_FILES[$field], $dest, ALLOWED_EXTENSIONS);
+                    }
+
                     if ($upload['success']) {
                         $matriculaModel->saveDocument($matricula_id, $doc_type, $upload['fileName'], $dest . '/' . $upload['fileName']);
+
+                        // Atualiza a foto de perfil do estudante para exibir na caderneta e cartões
+                        if ($field === 'doc_foto') {
+                            $stmtFoto = $db->prepare("UPDATE estudantes SET foto_perfil = :foto WHERE id = :eid");
+                            $stmtFoto->execute([':foto' => $dest . '/' . $upload['fileName'], ':eid' => $estudante_id]);
+                        }
                     }
                 }
             }

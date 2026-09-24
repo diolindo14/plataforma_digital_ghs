@@ -128,7 +128,7 @@ class SecretariaController extends Controller {
         $this->verifyCsrfToken(); 
         $db = Database::getInstance(); 
         // Busca dados para notificação antes de processar
-        $stmt = $db->prepare("SELECT u.email, u.nome_completo FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
+        $stmt = $db->prepare("SELECT u.id as user_id, u.email, u.nome_completo FROM matriculas m JOIN estudantes e ON m.estudante_id = e.id JOIN utilizadores u ON e.utilizador_id = u.id WHERE m.id = :id");
         $stmt->execute([':id' => $id]);
         $u = $stmt->fetch();
 

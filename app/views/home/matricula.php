@@ -138,7 +138,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Data de Nascimento *</label>
-                                        <input type="date" name="data_nascimento" class="form-control" value="<?= $data['student_profile']['data_nascimento'] ?? '' ?>" required>
+                                        <input type="date" name="data_nascimento" id="data_nascimento" class="form-control" max="<?= date('Y-m-d', strtotime('-17 years')) ?>" value="<?= $data['student_profile']['data_nascimento'] ?? '' ?>" required>
+                                        <div class="form-text mt-1" style="font-size: 0.72rem; color: #64748b;">Idade mínima permitida: 17 anos completos (nascidos até <?= date('d/m/Y', strtotime('-17 years')) ?>).</div>
                                     </div>
                                     
                                     
@@ -155,13 +156,14 @@
                                              <option <?= ($data['student_profile']['sexo'] ?? '') == 'Feminino' ? 'selected' : '' ?>>Feminino</option>
                                          </select>
                                      </div>
-                                     <div class="col-md-6">
-                                         <label class="form-label">Nº de B.I. / Passaporte *</label>
-                                         <input type="text" name="bi" class="form-control" placeholder="Número do documento" required>
-                                     </div>
+                                      <div class="col-md-6">
+                                          <label class="form-label">Nº de B.I. *</label>
+                                          <input type="text" name="bi" id="bi" class="form-control" placeholder="Ex: 12345678" maxlength="8" minlength="8" pattern=".{8,8}" title="O B.I. deve ter exatamente 8 dígitos" required oninput="this.value = this.value.toUpperCase();">
+                                          <div class="form-text mt-1" style="font-size: 0.72rem; color: #64748b;">O B.I. deve ter exatamente 8 dígitos (sem faltar nem ultrapassar).</div>
+                                      </div>
                                      
                                      <div class="col-md-6">
-                                         <label class="form-label">Estado Civil / Género</label>
+                                         <label class="form-label">Estado Civil</label>
                                          <select name="estado_civil" class="form-select">
                                              <option value="" disabled selected>Selecionar</option>
                                              <option>Solteiro/a</option><option>Casado/a</option><option>Divorciado/a</option><option>Viúvo/a</option>
@@ -238,7 +240,8 @@
                                     </div>
                                     <div class="col-md-6 extra-academico">
                                         <label class="form-label">Ano de Conclusão *</label>
-                                        <input type="number" name="ano_conclusao" id="ano_conclusao" class="form-control" placeholder="Ex: 2024" required>
+                                        <input type="number" name="ano_conclusao" id="ano_conclusao" class="form-control" min="1970" max="<?= date('Y') ?>" placeholder="Ex: <?= date('Y') ?>" required>
+                                        <div class="form-text mt-1" style="font-size: 0.72rem; color: #64748b;">Ano em que concluiu os estudos anteriores (máximo: <?= date('Y') ?>).</div>
                                     </div>
                                     <div class="col-md-6 extra-academico">
                                         <label class="form-label">Média Final</label>
@@ -285,13 +288,31 @@
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <label class="form-label text-dark">Fotografias Tipo Passe (2 fotos) *</label>
-                                        <div class="upload-zone">
-                                            <input type="file" name="doc_foto" class="upload-input" accept=".jpg,.png" required onchange="showFileName(this)">
-                                            <ion-icon name="cloud-upload-outline" class="fs-4 text-muted mb-2"></ion-icon>
-                                            <p class="mb-1 text-dark small">Arraste o ficheiro ou <strong class="text-success">clique para carregar</strong></p>
-                                            <p class="mb-0 text-muted" style="font-size: 0.75rem;">PDF, JPG ou PNG até 5MB</p>
-                                            <div class="file-status"></div>
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="form-label text-dark mb-0">Fotografia Tipo Passe (3,5 x 4,5 cm) *</label>
+                                            <span class="badge bg-light text-success border border-success-subtle fw-semibold" style="font-size: 0.72rem;">
+                                                <ion-icon name="crop-outline" class="align-middle me-1"></ion-icon>Ajuste Automático 35x45mm
+                                            </span>
+                                        </div>
+                                        <p class="text-muted small mb-2" style="font-size: 0.78rem;">Carregue uma foto de rosto nítida. O sistema corta e ajusta automaticamente para o padrão oficial de 3,5 x 4,5 cm.</p>
+                                        
+                                        <div class="upload-zone" id="upload-zone-foto">
+                                            <input type="file" name="doc_foto" id="input_doc_foto" class="upload-input" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required onchange="handleFotoUpload(this)">
+                                            <div id="foto-placeholder">
+                                                <ion-icon name="camera-outline" class="fs-3 text-muted mb-1"></ion-icon>
+                                                <p class="mb-1 text-dark small">Arraste a foto ou <strong class="text-success">clique para selecionar</strong></p>
+                                                <p class="mb-0 text-muted" style="font-size: 0.75rem;">Formatos aceites: JPG, JPEG, PNG ou WEBP (máx. 5MB)</p>
+                                            </div>
+                                            <!-- Container de Pré-visualização na Proporção Exata 3,5 x 4,5 cm -->
+                                            <div id="foto-preview-container" class="mt-2 d-none flex-column align-items-center">
+                                                <div class="position-relative shadow-sm rounded-2 overflow-hidden border border-success" style="width: 105px; height: 135px; aspect-ratio: 35/45; background-color: #fff;">
+                                                    <img id="foto-preview-img" src="" alt="Pré-visualização Tipo Passe" style="width: 100%; height: 100%; object-fit: cover;">
+                                                </div>
+                                                <span class="badge bg-success-subtle text-success mt-2" style="font-size: 0.72rem;">
+                                                    <ion-icon name="checkmark-circle-outline" class="align-middle me-1"></ion-icon>Enquadramento Tipo Passe (35 x 45 mm)
+                                                </span>
+                                            </div>
+                                            <div class="file-status mt-2"></div>
                                         </div>
                                     </div>
                                     <div class="col-12" id="box_doc_cert">
@@ -394,6 +415,50 @@
     </div>
 
     <script>
+        function handleFotoUpload(input) {
+            const previewContainer = document.getElementById('foto-preview-container');
+            const previewImg = document.getElementById('foto-preview-img');
+            const placeholder = document.getElementById('foto-placeholder');
+            const fileNameBox = input.parentElement.querySelector('.file-status');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+                
+                if (!validTypes.includes(file.type)) {
+                    alert('Por favor, selecione apenas arquivos de imagem (JPG, PNG ou WEBP).');
+                    input.value = '';
+                    if (previewContainer) previewContainer.classList.add('d-none');
+                    if (placeholder) placeholder.style.display = 'block';
+                    if (fileNameBox) fileNameBox.style.display = 'none';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.classList.remove('d-none');
+                    previewContainer.classList.add('d-flex');
+                    if (placeholder) placeholder.style.display = 'none';
+
+                    fileNameBox.innerHTML = "<ion-icon name='checkmark-done-circle-outline' class='align-middle fs-5 me-1'></ion-icon>" + file.name;
+                    fileNameBox.style.display = "block";
+                    input.parentElement.style.borderColor = "#10b981";
+                    input.parentElement.style.backgroundColor = "#f0fdf4";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (previewContainer) {
+                    previewContainer.classList.remove('d-flex');
+                    previewContainer.classList.add('d-none');
+                }
+                if (placeholder) placeholder.style.display = 'block';
+                if (fileNameBox) fileNameBox.style.display = 'none';
+                input.parentElement.style.borderColor = "#cbd5e1";
+                input.parentElement.style.backgroundColor = "#f8fafc";
+            }
+        }
+
         function showFileName(input) {
             let fileNameBox = input.parentElement.querySelector('.file-status');
             if (input.files && input.files.length > 0) {
@@ -409,6 +474,63 @@
         }
 
         function nextStep(step) {
+            // Se estiver tentando avançar do Passo 1 para frente:
+            if (step > 1) {
+                const currentActiveStep = document.querySelector('.step.active');
+                if (currentActiveStep) {
+                    const inputs = currentActiveStep.querySelectorAll('input[required], select[required]');
+                    for (let input of inputs) {
+                        if (!input.checkValidity()) {
+                            input.reportValidity();
+                            return;
+                        }
+                    }
+                }
+
+                // Validação de Idade Mínima (17 anos)
+                const dataNascInput = document.getElementById('data_nascimento');
+                if (dataNascInput && dataNascInput.value) {
+                    const birthDate = new Date(dataNascInput.value);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const m = today.getMonth() - birthDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    if (age < 17) {
+                        alert('Atenção: Para efetuar a matrícula no Ensino Superior, o candidato deve ter pelo menos 17 anos de idade completos.');
+                        dataNascInput.focus();
+                        return;
+                    }
+                }
+
+                // Validação do B.I. (Exatamente 8 dígitos)
+                const biInput = document.getElementById('bi');
+                if (biInput && biInput.value) {
+                    const biVal = biInput.value.trim();
+                    if (biVal.length !== 8) {
+                        alert('Atenção: O número do B.I. deve conter exatamente 8 dígitos (sem faltar nem ultrapassar).');
+                        biInput.focus();
+                        return;
+                    }
+                }
+            }
+
+            // Se estiver tentando avançar do Passo 2 para frente:
+            if (step > 2) {
+                const tipo = document.getElementById('tipo_candidatura').value;
+                const anoConcInput = document.getElementById('ano_conclusao');
+                const currentYear = new Date().getFullYear();
+                if (tipo !== 'Estudante Interno' && anoConcInput && anoConcInput.value) {
+                    const anoConc = parseInt(anoConcInput.value, 10);
+                    if (anoConc > currentYear) {
+                        alert(`Atenção: O Ano de Conclusão não pode ser um ano futuro (${anoConc}). O ano máximo permitido é ${currentYear}.`);
+                        anoConcInput.focus();
+                        return;
+                    }
+                }
+            }
+
             // Esconder todas as janelas do formulário
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             

@@ -1,3 +1,0 @@
-comunicado_id - int(11)
-utilizador_id - int(11)
-data_leitura - datetime

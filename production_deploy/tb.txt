@@ -1,2 +1,0 @@
-nota	tipo_avaliacao_id	nome
-15.00	5	Redes Digitais ? Sistemas, Aplica‡Æo e Servi‡os
